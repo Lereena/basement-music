@@ -10,4 +10,6 @@ class Track {
     required this.artist,
     this.cover = '',
   });
+
+  factory Track.empty() => Track(artist: '', title: 'No current track', url: '');
 }

@@ -1,17 +1,18 @@
-import 'package:audio_manager/audio_manager.dart';
+import 'package:basement_music/bottom_bar.dart';
+import 'package:basement_music/bloc/player_bloc.dart';
+import 'package:basement_music/track_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'models/track.dart';
+import 'library.dart';
 
 void main() {
   runApp(BasementMusic());
 }
 
 class BasementMusic extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    // audioManager.
     return MaterialApp(
       title: 'Basement music',
       theme: ThemeData(
@@ -32,45 +33,20 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final List<Track> tracks = [
-    Track(url: '', title: "Track 1", artist: "Artist 1"),
-    Track(url: '', title: "Track 2", artist: "Artist 2"),
-    Track(url: '', title: "Track 3", artist: "Artist 3"),
-  ];
-  final audioManager = AudioManager.instance;
-
-  @override
-  void initState() {
-    super.initState();
-    audioManager.start(
-      "file://assets/AnotherMedium.mp3",
-      "Another Medium",
-      desc: "",
-      cover: "",
-    );
-    AudioManager.instance.playOrPause();
-    AudioManager.instance.onEvents((events, args) {
-      print("$events, $args");
-    });
-  }
-
-  void setupAudio() {}
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: ListView.builder(
-          itemCount: tracks.length,
-          itemBuilder: (context, index) {
-            return Container(
-              child: Text(tracks[index].title),
-            );
-          },
+    return BlocProvider<PlayerBloc>(
+      create: (context) => PlayerBloc(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(widget.title),
         ),
+        body: ListView.separated(
+          separatorBuilder: (context, _) => Divider(),
+          itemCount: tracks.length,
+          itemBuilder: (context, index) => TrackCard(track: tracks[index]),
+        ),
+        bottomNavigationBar: BottomBar(),
       ),
     );
   }
