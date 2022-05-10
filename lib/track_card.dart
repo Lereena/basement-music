@@ -29,7 +29,7 @@ class _TrackCardState extends State<TrackCard> {
           Padding(
             padding: const EdgeInsets.all(5),
             child: Image.asset(
-              'assets/cover_placeholder.png',
+              widget.track.cover,
               width: 40,
               height: 40,
             ),

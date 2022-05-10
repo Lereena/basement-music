@@ -17,6 +17,7 @@ class _BottomBarState extends State<BottomBar> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: 70,
       color: Colors.grey.withOpacity(0.2),
       padding: EdgeInsets.all(10),
       child: BlocBuilder<PlayerBloc, AudioPlayerState>(
@@ -30,11 +31,12 @@ class _BottomBarState extends State<BottomBar> {
                 PlayButton(track: state.currentTrack, onTap: () {}),
               NextButton(),
               SizedBox(width: 15),
-              Image.asset(
-                'assets/cover_placeholder.png',
-                height: 40,
-                width: 40,
-              ),
+              if (state is PausedPlayerState || state is PlayingPlayerState)
+                Image.asset(
+                  state.currentTrack.cover,
+                  height: 40,
+                  width: 40,
+                ),
               SizedBox(width: 10),
               if (state is PlayingPlayerState || state is PausedPlayerState) ...[
                 Text(

@@ -10,7 +10,7 @@ class Track {
     required this.title,
     required this.artist,
     this.duration = 111,
-    this.cover = '',
+    this.cover = 'assets/cover_placeholder.png',
   });
 
   factory Track.empty() => Track(
