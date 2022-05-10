@@ -29,15 +29,3 @@ class ResumedPlayerState extends AudioPlayerState {
 
   ResumedPlayerState(this.currentTrack) : super(currentTrack);
 }
-
-class NextPlayerState extends AudioPlayerState {
-  final Track currentTrack;
-
-  NextPlayerState(this.currentTrack) : super(currentTrack);
-}
-
-class PreviousPlayerState extends AudioPlayerState {
-  final Track currentTrack;
-
-  PreviousPlayerState(this.currentTrack) : super(currentTrack);
-}

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:basement_music/library.dart';
 import 'package:basement_music/models/track.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -14,6 +15,8 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
     on<PlayEvent>(_onPlayEvent);
     on<PauseEvent>(_onPauseEvent);
     on<ResumeEvent>(_onResumeEvent);
+    on<NextEvent>(_onNextEvent);
+    on<PreviousEvent>(_onPreviousEvent);
   }
 
   FutureOr<void> _onPlayEvent(PlayEvent event, Emitter<AudioPlayerState> emit) {
@@ -30,5 +33,26 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
   FutureOr<void> _onResumeEvent(ResumeEvent event, Emitter<AudioPlayerState> emit) {
     audioPlayer.resume();
     emit(ResumedPlayerState(lastTrack));
+  }
+
+  FutureOr<void> _onNextEvent(NextEvent event, Emitter<AudioPlayerState> emit) {
+    audioPlayer.stop();
+    final lastTrackPosition = tracks.indexOf(lastTrack);
+    final nextTrackPosition = lastTrackPosition < tracks.length - 1 ? lastTrackPosition + 1 : 0;
+    lastTrack = tracks[nextTrackPosition];
+
+    audioPlayer.play(lastTrack.url);
+    emit(PlayingPlayerState(lastTrack));
+  }
+
+  FutureOr<void> _onPreviousEvent(PreviousEvent event, Emitter<AudioPlayerState> emit) {
+    audioPlayer.stop();
+
+    final lastTrackPosition = tracks.indexOf(lastTrack);
+    final previousTrackPosition = lastTrackPosition > 0 ? lastTrackPosition - 1 : tracks.length - 1;
+    lastTrack = tracks[previousTrackPosition];
+
+    audioPlayer.play(lastTrack.url);
+    emit(PlayingPlayerState(lastTrack));
   }
 }
