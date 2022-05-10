@@ -1,14 +1,13 @@
 import 'dart:async';
 
-import 'package:audioplayers/audioplayers.dart';
 import 'package:basement_music/models/track.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../audio_player.dart';
 import 'events/player_event.dart';
-import 'states/player_state.dart';
+import 'states/audio_player_state.dart';
 
 class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
-  final audioPlayer = AudioPlayer();
   Track lastTrack = Track.empty();
 
   PlayerBloc() : super(InitialPlayerState(Track.empty())) {

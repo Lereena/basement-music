@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'bloc/player_bloc.dart';
-import 'bloc/states/player_state.dart';
+import 'bloc/states/audio_player_state.dart';
 import 'widgets/controls/pause_button.dart';
 import 'widgets/controls/play_button.dart';
 
@@ -36,11 +36,19 @@ class _BottomBarState extends State<BottomBar> {
                 width: 40,
               ),
               SizedBox(width: 10),
-              if (state is PlayingPlayerState)
+              if (state is PlayingPlayerState || state is PausedPlayerState) ...[
                 Text(
-                  state.currentTrack.title,
+                  '${state.currentTrack.artist} - ${state.currentTrack.title}',
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(fontSize: 16),
                 ),
+                Spacer(),
+                Text(
+                  state.currentTrack.durationStr,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 16),
+                ),
+              ],
             ],
           );
         },

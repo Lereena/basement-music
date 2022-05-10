@@ -1,4 +1,4 @@
-import 'package:basement_music/bloc/states/player_state.dart';
+import 'package:basement_music/bloc/states/audio_player_state.dart';
 import 'package:basement_music/widgets/controls/pause_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -35,18 +35,27 @@ class _TrackCardState extends State<TrackCard> {
             ),
           ),
           Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 widget.track.title,
+                overflow: TextOverflow.ellipsis,
                 style: TextStyle(fontSize: 18),
               ),
               Text(
                 widget.track.artist,
+                overflow: TextOverflow.ellipsis,
                 style: TextStyle(fontSize: 16),
               ),
             ],
           ),
           Spacer(),
+          Text(
+            widget.track.durationStr,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(fontSize: 16),
+          ),
+          SizedBox(width: 20),
           if (state.currentTrack != widget.track || !(state is PlayingPlayerState))
             PlayButton(
               track: widget.track,
