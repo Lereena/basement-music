@@ -25,20 +25,20 @@ class _BottomBarState extends State<BottomBar> {
           return Row(
             children: [
               PreviousButton(),
-              if (state is PlayingPlayerState)
+              if (state is PlayingPlayerState || state is ResumedPlayerState)
                 PauseButton()
               else if (state is PausedPlayerState || state is InitialPlayerState)
-                PlayButton(track: state.currentTrack, onTap: () {}),
+                PlayButton(track: state.currentTrack, state: state),
               NextButton(),
               SizedBox(width: 15),
-              if (state is PausedPlayerState || state is PlayingPlayerState)
+              if (state is PausedPlayerState || state is PlayingPlayerState || state is ResumedPlayerState)
                 Image.asset(
                   state.currentTrack.cover,
                   height: 40,
                   width: 40,
                 ),
               SizedBox(width: 10),
-              if (state is PlayingPlayerState || state is PausedPlayerState) ...[
+              if (state is PlayingPlayerState || state is PausedPlayerState || state is ResumedPlayerState) ...[
                 Text(
                   '${state.currentTrack.artist} - ${state.currentTrack.title}',
                   overflow: TextOverflow.ellipsis,

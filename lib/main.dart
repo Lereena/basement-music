@@ -42,7 +42,7 @@ class _MyHomePageState extends State<MyHomePage> {
           title: Text(widget.title),
         ),
         body: ListView.separated(
-          separatorBuilder: (context, _) => Divider(),
+          separatorBuilder: (context, _) => Divider(height: 1),
           itemCount: tracks.length,
           itemBuilder: (context, index) => TrackCard(track: tracks[index]),
         ),

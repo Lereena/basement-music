@@ -3,7 +3,6 @@ import 'package:basement_music/widgets/controls/pause_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'bloc/events/player_event.dart';
 import 'models/track.dart';
 import 'bloc/player_bloc.dart';
 import 'widgets/controls/play_button.dart';
@@ -23,50 +22,48 @@ class _TrackCardState extends State<TrackCard> {
     final playerBloc = BlocProvider.of<PlayerBloc>(context);
 
     return BlocBuilder<PlayerBloc, AudioPlayerState>(
-      builder: (context, state) => Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(5),
-            child: Image.asset(
-              widget.track.cover,
-              width: 40,
-              height: 40,
+      builder: (context, state) => Container(
+        color: playerBloc.lastTrack == widget.track ? Colors.purple[50] : Colors.transparent,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(5),
+              child: Image.asset(
+                widget.track.cover,
+                width: 40,
+                height: 40,
+              ),
             ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                widget.track.title,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 18),
-              ),
-              Text(
-                widget.track.artist,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 16),
-              ),
-            ],
-          ),
-          Spacer(),
-          Text(
-            widget.track.durationStr,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(fontSize: 16),
-          ),
-          SizedBox(width: 20),
-          if (state.currentTrack != widget.track || !(state is PlayingPlayerState))
-            PlayButton(
-              track: widget.track,
-              onTap: state is PausedPlayerState
-                  ? () => playerBloc.add(ResumeEvent())
-                  : () => playerBloc.add(PlayEvent(widget.track)),
-            )
-          else if (state is PlayingPlayerState)
-            PauseButton(),
-          SizedBox(width: 20)
-        ],
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.track.title,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 18),
+                ),
+                Text(
+                  widget.track.artist,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 16),
+                ),
+              ],
+            ),
+            Spacer(),
+            Text(
+              widget.track.durationStr,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(fontSize: 16),
+            ),
+            SizedBox(width: 20),
+            if (playerBloc.lastTrack == widget.track && (state is PlayingPlayerState || state is ResumedPlayerState))
+              PauseButton()
+            else
+              PlayButton(track: widget.track, state: state),
+            SizedBox(width: 20)
+          ],
+        ),
       ),
     );
   }
