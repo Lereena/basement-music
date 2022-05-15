@@ -1,5 +1,6 @@
 import 'package:basement_music/widgets/controls/next_button.dart';
 import 'package:basement_music/widgets/controls/previous_button.dart';
+import 'package:basement_music/widgets/track_name.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -39,12 +40,24 @@ class _BottomBarState extends State<BottomBar> {
                 ),
               SizedBox(width: 10),
               if (state is PlayingPlayerState || state is PausedPlayerState || state is ResumedPlayerState) ...[
-                Text(
-                  '${state.currentTrack.artist} - ${state.currentTrack.title}',
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontSize: 16),
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TrackName(
+                        track: state.currentTrack,
+                        moving: true,
+                      ),
+                      Text(
+                        state.currentTrack.artist,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ],
+                  ),
                 ),
-                Spacer(),
+                SizedBox(width: 20),
                 Text(
                   state.currentTrack.durationStr,
                   overflow: TextOverflow.ellipsis,
