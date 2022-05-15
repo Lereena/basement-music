@@ -3,9 +3,9 @@ import 'package:basement_music/widgets/controls/pause_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'models/track.dart';
-import 'bloc/player_bloc.dart';
-import 'widgets/controls/play_button.dart';
+import '../models/track.dart';
+import '../bloc/player_bloc.dart';
+import 'controls/play_button.dart';
 
 class TrackCard extends StatefulWidget {
   final Track track;

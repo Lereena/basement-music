@@ -1,6 +1,7 @@
-import 'package:basement_music/bottom_bar.dart';
+import 'package:basement_music/widgets/bottom_bar.dart';
 import 'package:basement_music/bloc/player_bloc.dart';
-import 'package:basement_music/track_card.dart';
+import 'package:basement_music/widgets/side_navigation.dart';
+import 'package:basement_music/widgets/track_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -41,10 +42,18 @@ class _MyHomePageState extends State<MyHomePage> {
         appBar: AppBar(
           title: Text(widget.title),
         ),
-        body: ListView.separated(
-          separatorBuilder: (context, _) => Divider(height: 1),
-          itemCount: tracks.length,
-          itemBuilder: (context, index) => TrackCard(track: tracks[index]),
+        body: Row(
+          children: [
+            SideNavigation(),
+            VerticalDivider(width: 1),
+            Expanded(
+              child: ListView.separated(
+                separatorBuilder: (context, _) => Divider(height: 1),
+                itemCount: tracks.length,
+                itemBuilder: (context, index) => TrackCard(track: tracks[index]),
+              ),
+            ),
+          ],
         ),
         bottomNavigationBar: BottomBar(),
       ),
