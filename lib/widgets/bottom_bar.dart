@@ -8,6 +8,8 @@ import '../bloc/player_bloc.dart';
 import '../bloc/states/audio_player_state.dart';
 import 'controls/pause_button.dart';
 import 'controls/play_button.dart';
+import 'controls/repeat_toggle.dart';
+import 'controls/shuffle_toggle.dart';
 
 class BottomBar extends StatefulWidget {
   @override
@@ -63,6 +65,9 @@ class _BottomBarState extends State<BottomBar> {
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(fontSize: 16),
                 ),
+                SizedBox(width: 10),
+                ShuffleToggle(),
+                RepeatToggle(),
               ],
             ],
           );
