@@ -19,8 +19,8 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
     on<PreviousEvent>(_onPreviousEvent);
   }
 
-  FutureOr<void> _onPlayEvent(PlayEvent event, Emitter<AudioPlayerState> emit) {
-    audioPlayer.play(event.track.url);
+  FutureOr<void> _onPlayEvent(PlayEvent event, Emitter<AudioPlayerState> emit) async {
+    audioPlayer.play('http://localhost:9000/track/${event.track.id}');
     lastTrack = event.track;
     emit(PlayingPlayerState(event.track));
   }

@@ -1,22 +1,35 @@
 class Track {
-  final String url;
+  final String id;
+  String url;
   final String title;
   final String artist;
   final int duration;
   final String cover;
 
   Track({
-    required this.url,
+    required this.id,
     required this.title,
     required this.artist,
+    this.url = '',
     this.duration = 111,
     this.cover = 'assets/cover_placeholder.png',
   });
 
+  factory Track.fromJson(Map<String, dynamic> json) {
+    return Track(
+      id: json['Id'] as String,
+      url: json['Url'] as String,
+      title: json['Title'] as String,
+      artist: json['Artist'] as String,
+      duration: json['Duration'] as int,
+      // cover: json['Cover'] as String,
+    );
+  }
+
   factory Track.empty() => Track(
         artist: '',
         title: 'No current track',
-        url: '',
+        id: '',
       );
 
   String get durationStr {

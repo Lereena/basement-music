@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'library.dart';
+import 'models/track.dart';
 
 void main() {
   runApp(BasementMusic());
@@ -46,12 +47,20 @@ class _MyHomePageState extends State<MyHomePage> {
           children: [
             SideNavigation(),
             VerticalDivider(width: 1),
-            Expanded(
-              child: ListView.separated(
-                separatorBuilder: (context, _) => Divider(height: 1),
-                itemCount: tracks.length,
-                itemBuilder: (context, index) => TrackCard(track: tracks[index]),
-              ),
+            FutureBuilder<List<Track>>(
+              future: fetchAllTracks(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return Expanded(
+                    child: ListView.separated(
+                      separatorBuilder: (context, _) => Divider(height: 1),
+                      itemCount: tracks.length,
+                      itemBuilder: (context, index) => TrackCard(track: tracks[index]),
+                    ),
+                  );
+                }
+                return Center(child: CircularProgressIndicator());
+              },
             ),
           ],
         ),
