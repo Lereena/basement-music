@@ -4,6 +4,7 @@ import 'package:basement_music/library.dart';
 import 'package:basement_music/models/track.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../api.dart';
 import '../audio_player.dart';
 import 'events/player_event.dart';
 import 'states/audio_player_state.dart';
@@ -20,7 +21,7 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
   }
 
   FutureOr<void> _onPlayEvent(PlayEvent event, Emitter<AudioPlayerState> emit) async {
-    audioPlayer.play('http://localhost:9000/track/${event.track.id}');
+    audioPlayer.play('$host$reqTrack/${event.track.id}');
     lastTrack = event.track;
     emit(PlayingPlayerState(event.track));
   }
