@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class SideNavigation extends StatefulWidget {
-  SideNavigation({Key? key}) : super(key: key);
+  final Function(int) onDestinationSelected;
+  SideNavigation({Key? key, required this.onDestinationSelected}) : super(key: key);
 
   @override
   State<SideNavigation> createState() => _SideNavigationState();
@@ -14,7 +15,12 @@ class _SideNavigationState extends State<SideNavigation> {
   Widget build(BuildContext context) {
     return NavigationRail(
       selectedIndex: selectedIndex,
-      onDestinationSelected: (index) => setState(() => selectedIndex = index),
+      onDestinationSelected: (index) {
+        setState(() {
+          selectedIndex = index;
+        });
+        widget.onDestinationSelected(index);
+      },
       labelType: NavigationRailLabelType.all,
       destinations: const [
         NavigationRailDestination(
@@ -28,6 +34,10 @@ class _SideNavigationState extends State<SideNavigation> {
         NavigationRailDestination(
           icon: Icon(Icons.person_pin_sharp),
           label: Text('Artists'),
+        ),
+        NavigationRailDestination(
+          icon: Icon(Icons.cloud_upload_outlined),
+          label: Text('Upload'),
         ),
       ],
     );
