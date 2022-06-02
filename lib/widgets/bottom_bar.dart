@@ -1,9 +1,11 @@
+import 'package:basement_music/bloc/events/player_event.dart';
 import 'package:basement_music/widgets/controls/next_button.dart';
 import 'package:basement_music/widgets/controls/previous_button.dart';
 import 'package:basement_music/widgets/track_name.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../audio_player.dart';
 import '../bloc/player_bloc.dart';
 import '../bloc/states/audio_player_state.dart';
 import 'controls/pause_button.dart';
@@ -17,6 +19,16 @@ class BottomBar extends StatefulWidget {
 }
 
 class _BottomBarState extends State<BottomBar> {
+  @override
+  void initState() {
+    super.initState();
+    final playerBloc = BlocProvider.of<PlayerBloc>(context);
+
+    audioPlayer.onPlayerComplete.listen((event) {
+      playerBloc.add(NextEvent());
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(

@@ -1,13 +1,18 @@
 import 'dart:async';
+import 'dart:math';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:basement_music/library.dart';
 import 'package:basement_music/models/track.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../api.dart';
 import '../audio_player.dart';
+import '../settings.dart';
 import 'events/player_event.dart';
 import 'states/audio_player_state.dart';
+
+final random = Random();
 
 class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
   Track lastTrack = Track.empty();
@@ -21,7 +26,7 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
   }
 
   FutureOr<void> _onPlayEvent(PlayEvent event, Emitter<AudioPlayerState> emit) async {
-    audioPlayer.play('$reqTrack/${event.track.id}');
+    audioPlayer.play(UrlSource(trackPlayback(event.track.id)));
     lastTrack = event.track;
     emit(PlayingPlayerState(event.track));
   }
@@ -36,24 +41,53 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
     emit(ResumedPlayerState(lastTrack));
   }
 
-  FutureOr<void> _onNextEvent(NextEvent event, Emitter<AudioPlayerState> emit) {
+  FutureOr<void> _onNextEvent(NextEvent event, Emitter<AudioPlayerState> emit) async {
     audioPlayer.stop();
-    final lastTrackPosition = tracks.indexOf(lastTrack);
-    final nextTrackPosition = lastTrackPosition < tracks.length - 1 ? lastTrackPosition + 1 : 0;
-    lastTrack = tracks[nextTrackPosition];
 
-    audioPlayer.play('$reqTrack/${lastTrack.id}');
+    final repeat = await getRepeat();
+    final shuffle = await getShuffle();
+
+    if (!repeat) {
+      if (shuffle) {
+        final nextTrackPosition = _shuffledNext(tracks.indexOf(lastTrack));
+        lastTrack = tracks[nextTrackPosition];
+      } else {
+        final lastTrackPosition = tracks.indexOf(lastTrack);
+        final nextTrackPosition = lastTrackPosition < tracks.length - 1 ? lastTrackPosition + 1 : 0;
+        lastTrack = tracks[nextTrackPosition];
+      }
+    }
+
+    audioPlayer.play(UrlSource(trackPlayback(lastTrack.id)));
     emit(PlayingPlayerState(lastTrack));
   }
 
-  FutureOr<void> _onPreviousEvent(PreviousEvent event, Emitter<AudioPlayerState> emit) {
+  FutureOr<void> _onPreviousEvent(PreviousEvent event, Emitter<AudioPlayerState> emit) async {
     audioPlayer.stop();
 
-    final lastTrackPosition = tracks.indexOf(lastTrack);
-    final previousTrackPosition = lastTrackPosition > 0 ? lastTrackPosition - 1 : tracks.length - 1;
-    lastTrack = tracks[previousTrackPosition];
+    final repeat = await getRepeat();
+    final shuffle = await getShuffle();
 
-    audioPlayer.play('$reqTrack/${lastTrack.id}');
+    if (!repeat) {
+      if (shuffle) {
+        final nextTrackPosition = _shuffledNext(tracks.indexOf(lastTrack));
+        lastTrack = tracks[nextTrackPosition];
+      } else {
+        final lastTrackPosition = tracks.indexOf(lastTrack);
+        final previousTrackPosition = lastTrackPosition > 0 ? lastTrackPosition - 1 : tracks.length - 1;
+        lastTrack = tracks[previousTrackPosition];
+      }
+    }
+
+    audioPlayer.play(UrlSource(trackPlayback(lastTrack.id)));
     emit(PlayingPlayerState(lastTrack));
   }
+}
+
+int _shuffledNext(int excluding) {
+  var result = random.nextInt(tracks.length);
+  while (result == excluding) {
+    result = random.nextInt(tracks.length);
+  }
+  return result;
 }
