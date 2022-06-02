@@ -21,7 +21,7 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
   }
 
   FutureOr<void> _onPlayEvent(PlayEvent event, Emitter<AudioPlayerState> emit) async {
-    audioPlayer.play('$host$reqTrack/${event.track.id}');
+    audioPlayer.play('$reqTrack/${event.track.id}');
     lastTrack = event.track;
     emit(PlayingPlayerState(event.track));
   }
@@ -42,7 +42,7 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
     final nextTrackPosition = lastTrackPosition < tracks.length - 1 ? lastTrackPosition + 1 : 0;
     lastTrack = tracks[nextTrackPosition];
 
-    audioPlayer.play(lastTrack.url);
+    audioPlayer.play('$reqTrack/${lastTrack.id}');
     emit(PlayingPlayerState(lastTrack));
   }
 
@@ -53,7 +53,7 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
     final previousTrackPosition = lastTrackPosition > 0 ? lastTrackPosition - 1 : tracks.length - 1;
     lastTrack = tracks[previousTrackPosition];
 
-    audioPlayer.play(lastTrack.url);
+    audioPlayer.play('$reqTrack/${lastTrack.id}');
     emit(PlayingPlayerState(lastTrack));
   }
 }

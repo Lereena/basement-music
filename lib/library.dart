@@ -6,7 +6,7 @@ import 'models/track.dart';
 import 'package:http/http.dart' as http;
 
 Future<List<Track>> fetchAllTracks() async {
-  final uri = Uri.parse('$host$reqAllTracks');
+  final uri = Uri.parse('$reqAllTracks');
   final response = await http.get(uri);
   final List<dynamic> jsonList = jsonDecode(response.body);
   final list = <Track>[];
@@ -24,7 +24,7 @@ Future<List<Track>> fetchAllTracks() async {
 Future<bool> uploadTrack(String url) async {
   if (url == '') return false;
 
-  final uri2 = Uri.parse('$host$downloadYt$url');
+  final uri2 = Uri.parse('$downloadYt$url');
   final response = await http.get(uri2);
 
   return response.statusCode == 200;

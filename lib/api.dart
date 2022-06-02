@@ -1,5 +1,5 @@
 const host = 'http://localhost:9000';
 
-const reqAllTracks = '/tracks';
-const reqTrack = '/track';
-const downloadYt = '/yt/download?url=';
+const reqAllTracks = '$host/tracks';
+const reqTrack = '$host/track';
+const downloadYt = '$host/yt/download?url=';
