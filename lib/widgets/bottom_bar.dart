@@ -19,6 +19,8 @@ class BottomBar extends StatefulWidget {
 }
 
 class _BottomBarState extends State<BottomBar> {
+  var progress = 0.0;
+
   @override
   void initState() {
     super.initState();
@@ -27,64 +29,76 @@ class _BottomBarState extends State<BottomBar> {
     audioPlayer.onPlayerComplete.listen((event) {
       playerBloc.add(NextEvent());
     });
+    audioPlayer.onPositionChanged.listen((event) {
+      setState(() {
+        progress = event.inSeconds.toDouble() / playerBloc.state.currentTrack.duration;
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 70,
-      color: Colors.grey.withOpacity(0.2),
-      padding: EdgeInsets.all(10),
-      child: BlocBuilder<PlayerBloc, AudioPlayerState>(
-        builder: (context, state) {
-          return Row(
-            children: [
-              PreviousButton(),
-              if (state is PlayingPlayerState || state is ResumedPlayerState)
-                PauseButton()
-              else if (state is PausedPlayerState || state is InitialPlayerState)
-                PlayButton(track: state.currentTrack, state: state),
-              NextButton(),
-              SizedBox(width: 15),
-              if (state is PausedPlayerState || state is PlayingPlayerState || state is ResumedPlayerState)
-                Image.asset(
-                  state.currentTrack.cover,
-                  height: 40,
-                  width: 40,
-                ),
-              SizedBox(width: 10),
-              if (state is PlayingPlayerState || state is PausedPlayerState || state is ResumedPlayerState) ...[
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      TrackName(
-                        track: state.currentTrack,
-                        moving: true,
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        LinearProgressIndicator(value: progress),
+        Container(
+          height: 70,
+          color: Theme.of(context).primaryColor.withOpacity(0.1),
+          padding: EdgeInsets.all(10),
+          child: BlocBuilder<PlayerBloc, AudioPlayerState>(
+            builder: (context, state) {
+              return Row(
+                children: [
+                  PreviousButton(),
+                  if (state is PlayingPlayerState || state is ResumedPlayerState)
+                    PauseButton()
+                  else if (state is PausedPlayerState || state is InitialPlayerState)
+                    PlayButton(track: state.currentTrack, state: state),
+                  NextButton(),
+                  SizedBox(width: 15),
+                  if (state is PausedPlayerState || state is PlayingPlayerState || state is ResumedPlayerState)
+                    Image.asset(
+                      state.currentTrack.cover,
+                      height: 40,
+                      width: 40,
+                    ),
+                  SizedBox(width: 10),
+                  if (state is PlayingPlayerState || state is PausedPlayerState || state is ResumedPlayerState) ...[
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          TrackName(
+                            track: state.currentTrack,
+                            moving: true,
+                          ),
+                          Text(
+                            state.currentTrack.artist,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ],
                       ),
-                      Text(
-                        state.currentTrack.artist,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(width: 20),
-                Text(
-                  state.currentTrack.durationStr,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontSize: 16),
-                ),
-                SizedBox(width: 10),
-                ShuffleToggle(),
-                RepeatToggle(),
-              ],
-            ],
-          );
-        },
-      ),
+                    ),
+                    SizedBox(width: 20),
+                    Text(
+                      state.currentTrack.durationStr,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    SizedBox(width: 10),
+                    ShuffleToggle(),
+                    RepeatToggle(),
+                  ],
+                ],
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }

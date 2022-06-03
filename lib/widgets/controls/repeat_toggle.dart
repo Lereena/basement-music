@@ -14,7 +14,7 @@ class _RepeatToggleState extends State<RepeatToggle> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance?.addPostFrameCallback((_) async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       repeat = await getRepeat();
       if (mounted) setState(() {});
     });
@@ -28,8 +28,8 @@ class _RepeatToggleState extends State<RepeatToggle> {
         if (mounted) setState(() => repeat = !repeat);
       },
       child: Icon(
-        Icons.repeat,
-        color: repeat ? Theme.of(context).primaryColor : Colors.grey,
+        repeat ? Icons.repeat_on_outlined : Icons.repeat,
+        color: Theme.of(context).primaryColor,
         size: 30,
       ),
     );

@@ -22,9 +22,9 @@ class PlayButton extends StatelessWidget {
         else
           playerBloc.add(PlayEvent(track));
       },
-      child: const Icon(
+      child: Icon(
         Icons.play_arrow_rounded,
-        color: Colors.grey,
+        color: Theme.of(context).primaryColor,
         size: 30,
       ),
     );

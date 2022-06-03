@@ -14,7 +14,7 @@ class _ShuffleToggleState extends State<ShuffleToggle> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance?.addPostFrameCallback((_) async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       shuffle = await getShuffle();
       if (mounted) setState(() {});
     });
@@ -28,8 +28,8 @@ class _ShuffleToggleState extends State<ShuffleToggle> {
         if (mounted) setState(() => shuffle = !shuffle);
       },
       child: Icon(
-        Icons.shuffle,
-        color: shuffle ? Theme.of(context).primaryColor : Colors.grey,
+        shuffle ? Icons.shuffle_on_outlined : Icons.shuffle,
+        color: Theme.of(context).primaryColor,
         size: 30,
       ),
     );

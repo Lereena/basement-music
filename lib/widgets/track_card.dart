@@ -24,7 +24,8 @@ class _TrackCardState extends State<TrackCard> {
 
     return BlocBuilder<PlayerBloc, AudioPlayerState>(
       builder: (context, state) => Container(
-        color: playerBloc.lastTrack == widget.track ? Colors.purple[50] : Colors.transparent,
+        color:
+            playerBloc.lastTrack == widget.track ? Theme.of(context).primaryColor.withOpacity(0.1) : Colors.transparent,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [

@@ -35,7 +35,7 @@ class _UploadPageState extends State<UploadPage> {
           ),
           SizedBox(height: 40),
           Container(
-            width: 80,
+            width: 100,
             height: 40,
             child: ElevatedButton(
               child: Text(

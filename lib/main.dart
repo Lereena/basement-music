@@ -38,6 +38,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   var selectedPage = PageNavigation.Favourites;
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider<PlayerBloc>(
