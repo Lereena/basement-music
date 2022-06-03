@@ -44,7 +44,7 @@ class _UploadPageState extends State<UploadPage> {
               ),
               onPressed: () async {
                 await uploadTrack(controller.text);
-                controller.text = "";
+                setState(() => controller.text = "");
               },
             ),
           ),
