@@ -1,11 +1,14 @@
+import 'package:basement_music/api.dart';
 import 'package:basement_music/pages_enum.dart';
 import 'package:basement_music/widgets/bottom_bar.dart';
 import 'package:basement_music/bloc/player_bloc.dart';
+import 'package:basement_music/pages/edit_track_page.dart';
 import 'package:basement_music/widgets/side_navigation.dart';
 import 'package:basement_music/widgets/track_card.dart';
-import 'package:basement_music/widgets/upload_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:web_socket_channel/status.dart' as status;
 
 import 'library.dart';
 import 'models/track.dart';
@@ -38,6 +41,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   var selectedPage = PageNavigation.Favourites;
+  var channel = WebSocketChannel.connect(Uri.parse(wshost));
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +50,11 @@ class _MyHomePageState extends State<MyHomePage> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(widget.title),
+          // title: StreamBuilder(
+          // stream: channel.stream,
+          // builder: (context, snapshot) {
+          // return Text('${snapshot.data}');
+          // }),
         ),
         body: Row(
           children: [
@@ -69,11 +78,18 @@ class _MyHomePageState extends State<MyHomePage> {
                   return Center(child: CircularProgressIndicator());
                 },
               ),
-            if (selectedPage == PageNavigation.Upload) UploadPage(),
+            if (selectedPage == PageNavigation.Upload)
+              EditUploadedPage(
+                track: tracks[1],
+              ) //UploadPage(),
           ],
         ),
         bottomNavigationBar: BottomBar(),
       ),
     );
+  }
+
+  void _sendMessage() {
+    channel.sink.add('hello');
   }
 }

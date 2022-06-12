@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 
+import '../models/track.dart';
+
 class EditUploadedPage extends StatefulWidget {
-  EditUploadedPage({Key? key}) : super(key: key);
+  final Widget? titleText;
+  final Track track;
+
+  EditUploadedPage({Key? key, this.titleText, required this.track}) : super(key: key);
 
   @override
   State<EditUploadedPage> createState() => _EditUploadedPageState();
@@ -14,14 +19,23 @@ class _EditUploadedPageState extends State<EditUploadedPage> {
   final artistController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    titleController.text = widget.track.title;
+    artistController.text = widget.track.artist;
+  }
+
+  @override
   Widget build(BuildContext context) {
     final inputFieldWidth = MediaQuery.of(context).size.width / 2;
+
     return Expanded(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.max,
         children: [
+          widget.titleText ?? Container(),
           Text(
             'Please check track info and edit if needed',
             style: TextStyle(fontSize: 24),
