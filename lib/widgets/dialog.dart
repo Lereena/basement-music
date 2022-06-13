@@ -19,11 +19,17 @@ class _CustomDialogState extends State<CustomDialog> {
           color: Theme.of(context).primaryColor,
         ),
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          widget.child,
-        ],
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 40,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            widget.child,
+          ],
+        ),
       ),
     );
   }

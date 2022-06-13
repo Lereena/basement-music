@@ -1,3 +1,6 @@
+import 'package:basement_music/widgets/edit_track.dart';
+import 'package:basement_music/widgets/dialog.dart';
+import 'package:context_menus/context_menus.dart';
 import 'package:flutter/material.dart';
 
 import '../library.dart';
@@ -19,7 +22,22 @@ class AllTracksPage extends StatelessWidget {
           child: ListView.separated(
             separatorBuilder: (context, _) => Divider(height: 1),
             itemCount: tracks.length,
-            itemBuilder: (context, index) => TrackCard(track: tracks[index]),
+            itemBuilder: (context, index) => ContextMenuRegion(
+              child: TrackCard(track: tracks[index]),
+              contextMenu: GenericContextMenu(
+                buttonConfigs: [
+                  ContextMenuButtonConfig(
+                    'Edit track info',
+                    onPressed: () => showDialog(
+                      context: context,
+                      builder: (context) => CustomDialog(
+                        child: EditTrack(track: tracks[index]),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         );
       },

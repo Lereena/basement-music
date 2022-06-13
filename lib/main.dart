@@ -1,9 +1,13 @@
+import 'dart:html';
+
 import 'package:basement_music/api.dart';
 import 'package:basement_music/pages_enum.dart';
 import 'package:basement_music/widgets/bottom_bar.dart';
 import 'package:basement_music/bloc/player_bloc.dart';
 import 'package:basement_music/widgets/main_content.dart';
 import 'package:basement_music/widgets/side_navigation.dart';
+import 'package:context_menus/context_menus.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -20,7 +24,9 @@ class BasementMusic extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.purple,
       ),
-      home: MyHomePage(title: 'Basement music'),
+      home: ContextMenuOverlay(
+        child: MyHomePage(title: 'Basement music'),
+      ),
     );
   }
 }
@@ -37,6 +43,15 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   var selectedPage = PageNavigation.Favourites;
   var channel = WebSocketChannel.connect(Uri.parse(wshost));
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (kIsWeb) {
+      document.onContextMenu.listen((event) => event.preventDefault());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
