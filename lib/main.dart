@@ -2,15 +2,11 @@ import 'package:basement_music/api.dart';
 import 'package:basement_music/pages_enum.dart';
 import 'package:basement_music/widgets/bottom_bar.dart';
 import 'package:basement_music/bloc/player_bloc.dart';
-import 'package:basement_music/pages/edit_track_page.dart';
+import 'package:basement_music/widgets/main_content.dart';
 import 'package:basement_music/widgets/side_navigation.dart';
-import 'package:basement_music/widgets/track_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
-
-import 'library.dart';
-import 'models/track.dart';
 
 void main() {
   runApp(BasementMusic());
@@ -61,26 +57,7 @@ class _MyHomePageState extends State<MyHomePage> {
               onDestinationSelected: (index) => setState(() => selectedPage = PageNavigation.values[index]),
             ),
             VerticalDivider(width: 1),
-            if (selectedPage == PageNavigation.Favourites)
-              FutureBuilder<List<Track>>(
-                future: fetchAllTracks(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return Expanded(
-                      child: ListView.separated(
-                        separatorBuilder: (context, _) => Divider(height: 1),
-                        itemCount: tracks.length,
-                        itemBuilder: (context, index) => TrackCard(track: tracks[index]),
-                      ),
-                    );
-                  }
-                  return Center(child: CircularProgressIndicator());
-                },
-              ),
-            if (selectedPage == PageNavigation.Upload)
-              EditTrackPage(
-                track: tracks[1],
-              ) //UploadPage(),
+            MainContent(selectedPage: selectedPage),
           ],
         ),
         bottomNavigationBar: BottomBar(),
