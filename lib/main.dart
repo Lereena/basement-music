@@ -8,7 +8,6 @@ import 'package:basement_music/widgets/track_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
-import 'package:web_socket_channel/status.dart' as status;
 
 import 'library.dart';
 import 'models/track.dart';
@@ -79,7 +78,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 },
               ),
             if (selectedPage == PageNavigation.Upload)
-              EditUploadedPage(
+              EditTrackPage(
                 track: tracks[1],
               ) //UploadPage(),
           ],

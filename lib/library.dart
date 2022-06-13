@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:flutter/foundation.dart';
+
 import 'api.dart';
 import 'models/track.dart';
 import 'package:http/http.dart' as http;
@@ -28,6 +30,24 @@ Future<bool> uploadTrack(String url) async {
   final response = await http.get(uri2);
 
   return response.statusCode == 200;
+}
+
+Future<bool> editTrack(String id, {String artist = "", String title = "", String cover = ""}) async {
+  try {
+    final response = await http.patch(
+      Uri.parse(trackPlayback(id)),
+      body: {
+        "artist": artist,
+        "title": title,
+        "cover": cover,
+      },
+    );
+    debugPrint('${response.statusCode}');
+    return response.statusCode == 200;
+  } catch (e) {
+    debugPrint("Error when editing track: $e");
+    return false;
+  }
 }
 
 List<Track> tracks = [];

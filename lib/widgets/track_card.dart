@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../models/track.dart';
 import '../bloc/player_bloc.dart';
+import '../pages/edit_track_page.dart';
 import 'controls/play_button.dart';
 
 class TrackCard extends StatefulWidget {
@@ -64,6 +65,18 @@ class _TrackCardState extends State<TrackCard> {
               PauseButton()
             else
               PlayButton(track: widget.track, state: state),
+            SizedBox(width: 20),
+            InkWell(
+              child: Icon(Icons.more_horiz, color: Theme.of(context).primaryColor),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Material(child: EditTrackPage(track: widget.track)),
+                  ),
+                );
+              },
+            ),
             SizedBox(width: 20),
           ],
         ),
