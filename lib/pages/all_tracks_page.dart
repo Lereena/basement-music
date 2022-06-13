@@ -31,7 +31,12 @@ class AllTracksPage extends StatelessWidget {
                     onPressed: () => showDialog(
                       context: context,
                       builder: (context) => CustomDialog(
-                        child: EditTrack(track: tracks[index]),
+                        child: EditTrack(
+                            titleText: Text(
+                              'Edit track info',
+                              style: TextStyle(fontSize: 24),
+                            ),
+                            track: tracks[index]),
                       ),
                     ),
                   ),
