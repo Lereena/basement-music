@@ -17,6 +17,7 @@ class PlayButton extends StatelessWidget {
 
     return InkWell(
       onTap: () {
+        if (state is InitialPlayerState) return;
         if (state is PausedPlayerState && playerBloc.lastTrack == track)
           playerBloc.add(ResumeEvent());
         else
