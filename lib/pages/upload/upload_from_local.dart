@@ -1,19 +1,19 @@
-import 'package:basement_music/library.dart';
 import 'package:flutter/material.dart';
 
-class UploadPage extends StatefulWidget {
-  UploadPage({Key? key}) : super(key: key);
+class UploadFromLocal extends StatefulWidget {
+  final Function onCancelPressed;
+
+  UploadFromLocal({required this.onCancelPressed}) : super();
 
   @override
-  State<UploadPage> createState() => _UploadPageState();
+  State<UploadFromLocal> createState() => _UploadFromLocalState();
 }
 
-class _UploadPageState extends State<UploadPage> {
-  final controller = TextEditingController();
-
+class _UploadFromLocalState extends State<UploadFromLocal> {
   @override
   Widget build(BuildContext context) {
     final inputFieldWidth = MediaQuery.of(context).size.width / 2;
+
     return Expanded(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -21,14 +21,15 @@ class _UploadPageState extends State<UploadPage> {
         mainAxisSize: MainAxisSize.max,
         children: [
           Text(
-            'Insert YouTube link to extract audio',
+            'Select file to upload',
             style: TextStyle(fontSize: 24),
           ),
           SizedBox(height: 20),
           Container(
             width: inputFieldWidth,
-            child: TextField(
-              controller: controller,
+            color: Colors.grey,
+            child: Text(
+              'Drop file here',
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 18),
             ),
@@ -39,14 +40,16 @@ class _UploadPageState extends State<UploadPage> {
             height: 40,
             child: ElevatedButton(
               child: Text(
-                'Extract',
+                'Upload',
                 style: TextStyle(fontSize: 18),
               ),
-              onPressed: () async {
-                await uploadTrack(controller.text);
-                setState(() => controller.text = "");
-              },
+              onPressed: () {},
             ),
+          ),
+          SizedBox(height: 20),
+          TextButton(
+            child: Text('Cancel'),
+            onPressed: () => widget.onCancelPressed(),
           ),
         ],
       ),
