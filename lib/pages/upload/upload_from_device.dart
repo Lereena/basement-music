@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
 
-class UploadFromLocal extends StatefulWidget {
+import '../../widgets/file_upload_dropzone.dart';
+
+class UploadFromDevice extends StatefulWidget {
   final Function onCancelPressed;
 
-  UploadFromLocal({required this.onCancelPressed}) : super();
+  UploadFromDevice({required this.onCancelPressed}) : super();
 
   @override
-  State<UploadFromLocal> createState() => _UploadFromLocalState();
+  State<UploadFromDevice> createState() => _UploadFromDeviceState();
 }
 
-class _UploadFromLocalState extends State<UploadFromLocal> {
+class _UploadFromDeviceState extends State<UploadFromDevice> {
   @override
   Widget build(BuildContext context) {
     final inputFieldWidth = MediaQuery.of(context).size.width / 2;
+    final inputFieldHeight = MediaQuery.of(context).size.height / 4;
 
     return Expanded(
       child: Column(
@@ -20,19 +23,9 @@ class _UploadFromLocalState extends State<UploadFromLocal> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.max,
         children: [
-          Text(
-            'Select file to upload',
-            style: TextStyle(fontSize: 24),
-          ),
-          SizedBox(height: 20),
-          Container(
+          FileUploadDropzone(
             width: inputFieldWidth,
-            color: Colors.grey,
-            child: Text(
-              'Drop file here',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 18),
-            ),
+            height: inputFieldHeight,
           ),
           SizedBox(height: 40),
           Container(

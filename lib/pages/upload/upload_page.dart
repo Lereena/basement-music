@@ -1,7 +1,7 @@
+import 'package:basement_music/pages/upload/upload_from_device.dart';
 import 'package:flutter/material.dart';
 
 import 'extract_from_youtube.dart';
-import 'upload_from_local.dart';
 
 class UploadPage extends StatefulWidget {
   UploadPage({Key? key}) : super(key: key);
@@ -19,7 +19,7 @@ class _UploadPageState extends State<UploadPage> {
   Widget build(BuildContext context) {
     switch (uploadSource) {
       case UploadSource.local:
-        return UploadFromLocal(onCancelPressed: () => setState(() => uploadSource = UploadSource.unknown));
+        return UploadFromDevice(onCancelPressed: () => setState(() => uploadSource = UploadSource.unknown));
       case UploadSource.youtube:
         return ExtractFromYoutube(onCancelPressed: () => setState(() => uploadSource = UploadSource.unknown));
       case UploadSource.unknown:
@@ -37,7 +37,7 @@ class _UploadPageState extends State<UploadPage> {
                   }),
                   icon: Icon(Icons.upload_file_rounded),
                   label: Text(
-                    'Upload from local filesystem',
+                    'Upload from device',
                     style: TextStyle(fontSize: 24),
                   ),
                 ),
