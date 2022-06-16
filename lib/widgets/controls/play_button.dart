@@ -9,7 +9,8 @@ import '../../bloc/player_bloc.dart';
 class PlayButton extends StatelessWidget {
   final Track track;
   final AudioPlayerState state;
-  const PlayButton({Key? key, required this.track, required this.state}) : super(key: key);
+  final bool isBottomPlayer;
+  const PlayButton({Key? key, required this.track, required this.state, this.isBottomPlayer = false}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +18,7 @@ class PlayButton extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        if (state is InitialPlayerState) return;
+        if (isBottomPlayer && state is InitialPlayerState) return;
         if (state is PausedPlayerState && playerBloc.lastTrack == track)
           playerBloc.add(ResumeEvent());
         else

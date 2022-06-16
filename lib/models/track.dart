@@ -1,6 +1,8 @@
-class Track {
+import 'package:equatable/equatable.dart';
+
+class Track extends Equatable {
   final String id;
-  String url;
+  final String url;
   final String title;
   final String artist;
   final int duration;
@@ -14,6 +16,9 @@ class Track {
     this.duration = 111,
     this.cover = 'assets/cover_placeholder.png',
   });
+
+  @override
+  List<Object> get props => [id];
 
   factory Track.fromJson(Map<String, dynamic> json) {
     return Track(

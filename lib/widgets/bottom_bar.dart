@@ -55,7 +55,7 @@ class _BottomBarState extends State<BottomBar> {
                   if (state is PlayingPlayerState || state is ResumedPlayerState)
                     PauseButton()
                   else if (state is PausedPlayerState || state is InitialPlayerState)
-                    PlayButton(track: state.currentTrack, state: state),
+                    PlayButton(track: state.currentTrack, state: state, isBottomPlayer: true),
                   NextButton(),
                   SizedBox(width: 15),
                   if (state is PausedPlayerState || state is PlayingPlayerState || state is ResumedPlayerState)
