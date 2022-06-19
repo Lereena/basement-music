@@ -2,6 +2,7 @@
     package="com.example.basement_music">
    <application
         android:label="basement_music"
+        android:usesCleartextTraffic="true"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

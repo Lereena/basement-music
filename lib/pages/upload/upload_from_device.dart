@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../interactors/track_interactor.dart';
-import '../../widgets/dialogs/track_update_status_dialog.dart';
+import '../../widgets/dialogs/status_dialog.dart';
 import '../../widgets/file_upload_dropzone.dart';
 
 class UploadFromDevice extends StatefulWidget {

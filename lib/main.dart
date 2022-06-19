@@ -1,4 +1,4 @@
-import 'dart:html';
+import 'stub/stub.dart' if (dart.library.io) 'stub/stub_io.dart' if (dart.library.html) 'stub/stub_web.dart';
 
 import 'package:basement_music/api.dart';
 import 'package:basement_music/pages_enum.dart';
@@ -49,7 +49,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
 
     if (kIsWeb) {
-      document.onContextMenu.listen((event) => event.preventDefault());
+      preventDefault();
     }
   }
 
@@ -66,15 +66,21 @@ class _MyHomePageState extends State<MyHomePage> {
           // return Text('${snapshot.data}');
           // }),
         ),
-        body: Row(
-          children: [
-            SideNavigation(
-              onDestinationSelected: (index) => setState(() => selectedPage = PageNavigation.values[index]),
-            ),
-            VerticalDivider(width: 1),
-            MainContent(selectedPage: selectedPage),
-          ],
-        ),
+        body: kIsWeb
+            ? Row(
+                children: [
+                  SideNavigation(
+                    onDestinationSelected: (index) => setState(() => selectedPage = PageNavigation.values[index]),
+                  ),
+                  VerticalDivider(width: 1),
+                  MainContent(selectedPage: selectedPage),
+                ],
+              )
+            : Column(
+                children: [
+                  MainContent(selectedPage: selectedPage),
+                ],
+              ),
         bottomNavigationBar: BottomBar(),
       ),
     );

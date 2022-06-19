@@ -1,4 +1,4 @@
-import 'package:basement_music/widgets/dialogs/track_update_status_dialog.dart';
+import 'package:basement_music/widgets/dialogs/status_dialog.dart';
 import 'package:flutter/material.dart';
 
 import '../interactors/track_interactor.dart';
