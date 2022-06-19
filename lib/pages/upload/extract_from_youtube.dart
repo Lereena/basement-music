@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../library.dart';
+import '../../interactors/track_interactor.dart';
 
 class ExtractFromYoutube extends StatefulWidget {
   final Function onCancelPressed;

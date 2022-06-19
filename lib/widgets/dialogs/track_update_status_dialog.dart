@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 
 import '../dialog.dart';
 
-class TrackUpdateStatusDialog extends StatelessWidget {
+class StatusDialog extends StatelessWidget {
   final bool success;
+  final String text;
 
-  const TrackUpdateStatusDialog({required this.success}) : super();
+  const StatusDialog({required this.success, required this.text}) : super();
 
   @override
   Widget build(BuildContext context) {
@@ -28,10 +29,7 @@ class TrackUpdateStatusDialog extends StatelessWidget {
                     size: 30,
                   ),
             SizedBox(height: 20),
-            Text(
-              success ? 'Track info successfully updated' : 'Track info was not updated, please try again later',
-              style: TextStyle(fontSize: 18),
-            ),
+            Text(text, style: TextStyle(fontSize: 18)),
           ],
         ),
       ),

@@ -1,7 +1,7 @@
 import 'package:basement_music/widgets/dialogs/track_update_status_dialog.dart';
 import 'package:flutter/material.dart';
 
-import '../library.dart';
+import '../interactors/track_interactor.dart';
 import '../models/track.dart';
 
 class EditTrack extends StatefulWidget {
@@ -69,9 +69,15 @@ class _EditTrackState extends State<EditTrack> {
                       loading = false;
                     });
 
-                    await showDialog(context: context, builder: (_) => TrackUpdateStatusDialog(success: result));
-
-                    // await Future.delayed(Duration(seconds: 2));
+                    await showDialog(
+                      context: context,
+                      builder: (_) => StatusDialog(
+                        success: result,
+                        text: result
+                            ? 'Track info successfully updated'
+                            : 'Track info was not updated, please try again later',
+                      ),
+                    );
                   },
                 ),
               ),

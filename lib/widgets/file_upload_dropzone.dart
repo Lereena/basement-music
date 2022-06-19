@@ -7,8 +7,9 @@ import 'package:flutter_dropzone/flutter_dropzone.dart';
 class FileUploadDropzone extends StatefulWidget {
   final double width;
   final double height;
+  final Function(String, List<int>) saveFileName;
 
-  FileUploadDropzone({required this.width, required this.height}) : super();
+  FileUploadDropzone({required this.width, required this.height, required this.saveFileName}) : super();
 
   @override
   State<FileUploadDropzone> createState() => _FileUploadDropzoneState();
@@ -37,8 +38,16 @@ class _FileUploadDropzoneState extends State<FileUploadDropzone> {
               onLoaded: () => debugPrint('Loaded'),
               onError: (ev) => debugPrint('Error: $ev'),
               onHover: () => debugPrint('Zone hovered'),
-              onDrop: (ev) => debugPrint('Drop: $ev'),
-              onDropMultiple: (ev) => debugPrint('Drop multiple: $ev'),
+              onDrop: (file) async {
+                if (!(await isAudio(file))) {
+                  debugPrint('File is not audio');
+                  return;
+                }
+                final name = await dropController.getFilename(file);
+                final data = await dropController.getFileData(file);
+                widget.saveFileName(name, data);
+              },
+              onDropMultiple: (_) {},
               onLeave: () => debugPrint('Zone left'),
             ),
             Text(
@@ -51,17 +60,8 @@ class _FileUploadDropzoneState extends State<FileUploadDropzone> {
     );
   }
 
-  Future<Uint8List> processFile(dynamic file) async {
-    if (!(await isAudio(file))) {
-      debugPrint('File is not audio');
-      return Uint8List(0);
-    }
-
-    return await dropController.getFileData(file);
-  }
-
   Future<bool> isAudio(dynamic file) async {
     final mime = await dropController.getFileMIME(file);
-    return !mime.startsWith('audio');
+    return mime.startsWith('audio');
   }
 }

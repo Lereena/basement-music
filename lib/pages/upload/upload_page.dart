@@ -19,9 +19,17 @@ class _UploadPageState extends State<UploadPage> {
   Widget build(BuildContext context) {
     switch (uploadSource) {
       case UploadSource.local:
-        return UploadFromDevice(onCancelPressed: () => setState(() => uploadSource = UploadSource.unknown));
+        return UploadFromDevice(
+          onCancelPressed: () => setState(
+            () => uploadSource = UploadSource.unknown,
+          ),
+        );
       case UploadSource.youtube:
-        return ExtractFromYoutube(onCancelPressed: () => setState(() => uploadSource = UploadSource.unknown));
+        return ExtractFromYoutube(
+          onCancelPressed: () => setState(
+            () => uploadSource = UploadSource.unknown,
+          ),
+        );
       case UploadSource.unknown:
         return Expanded(
           child: Column(
