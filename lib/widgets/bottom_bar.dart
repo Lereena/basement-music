@@ -1,4 +1,5 @@
 import 'package:basement_music/bloc/events/player_event.dart';
+import 'package:basement_music/utils/time.dart';
 import 'package:basement_music/widgets/controls/next_button.dart';
 import 'package:basement_music/widgets/controls/previous_button.dart';
 import 'package:basement_music/widgets/track_name.dart';
@@ -19,7 +20,8 @@ class BottomBar extends StatefulWidget {
 }
 
 class _BottomBarState extends State<BottomBar> {
-  var progress = 0.0;
+  var percentProgress = 0.0;
+  var stringProgress = '00:00';
 
   @override
   void initState() {
@@ -31,7 +33,8 @@ class _BottomBarState extends State<BottomBar> {
     });
     audioPlayer.onPositionChanged.listen((event) {
       setState(() {
-        progress = event.inSeconds.toDouble() / playerBloc.state.currentTrack.duration;
+        percentProgress = event.inSeconds.toDouble() / playerBloc.state.currentTrack.duration;
+        stringProgress = durationString(event.inSeconds);
       });
     });
   }
@@ -42,7 +45,7 @@ class _BottomBarState extends State<BottomBar> {
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        LinearProgressIndicator(value: progress),
+        LinearProgressIndicator(value: percentProgress),
         Container(
           height: 70,
           color: Theme.of(context).primaryColor.withOpacity(0.1),
@@ -85,7 +88,7 @@ class _BottomBarState extends State<BottomBar> {
                     ),
                     SizedBox(width: 20),
                     Text(
-                      state.currentTrack.durationStr,
+                      stringProgress,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(fontSize: 16),
                     ),
