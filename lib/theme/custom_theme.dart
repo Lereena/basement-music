@@ -36,6 +36,15 @@ class CustomTheme with ChangeNotifier {
           color: Colors.black.withOpacity(0.8),
         ),
       ),
+      dialogTheme: DialogTheme(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(5),
+          side: BorderSide(
+            color: Colors.purple,
+            width: 2,
+          ),
+        ),
+      ),
     );
   }
 
@@ -70,6 +79,15 @@ class CustomTheme with ChangeNotifier {
           fontSize: 20,
         ),
         iconTheme: IconThemeData(color: Colors.black),
+      ),
+      dialogTheme: DialogTheme(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(5),
+          side: BorderSide(
+            color: Colors.orange,
+            width: 2,
+          ),
+        ),
       ),
     );
   }

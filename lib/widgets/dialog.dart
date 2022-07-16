@@ -13,13 +13,6 @@ class _CustomDialogState extends State<CustomDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(5),
-        side: BorderSide(
-          color: Theme.of(context).primaryColor,
-          width: 2,
-        ),
-      ),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 40),
         child: Column(
