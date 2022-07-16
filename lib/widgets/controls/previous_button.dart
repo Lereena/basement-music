@@ -17,7 +17,6 @@ class PreviousButton extends StatelessWidget {
       },
       child: Icon(
         Icons.fast_rewind,
-        color: Theme.of(context).primaryColor,
         size: 30,
       ),
     );

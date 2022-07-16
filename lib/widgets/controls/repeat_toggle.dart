@@ -29,7 +29,6 @@ class _RepeatToggleState extends State<RepeatToggle> {
       },
       child: Icon(
         repeat ? Icons.repeat_on_outlined : Icons.repeat,
-        color: Theme.of(context).primaryColor,
         size: 30,
       ),
     );

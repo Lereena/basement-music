@@ -17,7 +17,6 @@ class NextButton extends StatelessWidget {
       },
       child: Icon(
         Icons.fast_forward,
-        color: Theme.of(context).primaryColor,
         size: 30,
       ),
     );

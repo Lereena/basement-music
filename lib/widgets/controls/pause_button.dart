@@ -17,7 +17,6 @@ class PauseButton extends StatelessWidget {
       },
       child: Icon(
         Icons.pause,
-        color: Theme.of(context).primaryColor,
         size: 30,
       ),
     );

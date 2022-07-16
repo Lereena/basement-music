@@ -29,7 +29,6 @@ class _ShuffleToggleState extends State<ShuffleToggle> {
       },
       child: Icon(
         shuffle ? Icons.shuffle_on_outlined : Icons.shuffle,
-        color: Theme.of(context).primaryColor,
         size: 30,
       ),
     );

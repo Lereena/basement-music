@@ -1,3 +1,7 @@
+import 'package:basement_music/theme/config.dart';
+import 'package:basement_music/theme/custom_theme.dart';
+
+import 'pages/settings_page.dart';
 import 'stub/stub.dart' if (dart.library.io) 'stub/stub_io.dart' if (dart.library.html) 'stub/stub_web.dart';
 
 import 'package:basement_music/api.dart';
@@ -16,14 +20,34 @@ void main() {
   runApp(BasementMusic());
 }
 
-class BasementMusic extends StatelessWidget {
+class BasementMusic extends StatefulWidget {
+  @override
+  State<BasementMusic> createState() => _BasementMusicState();
+}
+
+class _BasementMusicState extends State<BasementMusic> {
+  @override
+  void initState() {
+    super.initState();
+
+    currentTheme.initTheme();
+
+    currentTheme.addListener(() {
+      setState(() {});
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Basement music',
-      theme: ThemeData(
-        primarySwatch: Colors.purple,
-      ),
+      theme: CustomTheme.lightTheme,
+      darkTheme: CustomTheme.darkTheme,
+      themeMode: currentTheme.currentThemeMode,
+      initialRoute: '/',
+      routes: {
+        '/settings': (context) => SettingsPage(),
+      },
       home: ContextMenuOverlay(
         child: MyHomePage(title: 'Basement music'),
       ),
@@ -48,9 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
 
-    if (kIsWeb) {
-      preventDefault();
-    }
+    if (kIsWeb) preventDefault();
   }
 
   @override
@@ -60,11 +82,15 @@ class _MyHomePageState extends State<MyHomePage> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(widget.title),
-          // title: StreamBuilder(
-          // stream: channel.stream,
-          // builder: (context, snapshot) {
-          // return Text('${snapshot.data}');
-          // }),
+          actions: [
+            Container(
+              padding: const EdgeInsets.all(5),
+              child: InkWell(
+                child: Icon(Icons.settings),
+                onTap: () => Navigator.pushNamed(context, '/settings'),
+              ),
+            ),
+          ],
         ),
         body: kIsWeb
             ? Row(

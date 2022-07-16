@@ -19,3 +19,13 @@ Future<bool> getRepeat() async {
   final sharedPreferences = await SharedPreferences.getInstance();
   return sharedPreferences.getBool('repeat') ?? false;
 }
+
+Future<void> setDarkTheme(bool value) async {
+  final sharedPreferences = await SharedPreferences.getInstance();
+  sharedPreferences.setBool('darkTheme', value);
+}
+
+Future<bool> getDarkTheme() async {
+  final sharedPreferences = await SharedPreferences.getInstance();
+  return sharedPreferences.getBool('darkTheme') ?? false;
+}

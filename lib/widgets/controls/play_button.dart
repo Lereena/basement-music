@@ -26,7 +26,6 @@ class PlayButton extends StatelessWidget {
       },
       child: Icon(
         Icons.play_arrow_rounded,
-        color: Theme.of(context).primaryColor,
         size: 30,
       ),
     );
