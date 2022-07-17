@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../routes.dart';
+
 class SideNavigationDrawer extends StatefulWidget {
   final int selected;
   final Function(int) onDestinationSelected;
@@ -69,7 +71,7 @@ class _SideNavigationDrawerState extends State<SideNavigationDrawer> {
             leading: const Icon(Icons.settings, size: 30),
             title: Text('Settings'),
             selected: false,
-            onTap: () => Navigator.pushNamed(context, '/settings'),
+            onTap: () => Navigator.pushNamed(context, NavigationRoute.settings.name),
           ),
         ],
       ),

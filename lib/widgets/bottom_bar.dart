@@ -33,10 +33,11 @@ class _BottomBarState extends State<BottomBar> {
       playerBloc.add(NextEvent());
     });
     audioPlayer.onPositionChanged.listen((event) {
-      setState(() {
-        percentProgress = event.inSeconds.toDouble() / playerBloc.state.currentTrack.duration;
-        stringProgress = durationString(event.inSeconds);
-      });
+      if (mounted)
+        setState(() {
+          percentProgress = event.inSeconds.toDouble() / playerBloc.state.currentTrack.duration;
+          stringProgress = durationString(event.inSeconds);
+        });
     });
   }
 

@@ -1,3 +1,4 @@
+import 'package:basement_music/routes.dart';
 import 'package:flutter/material.dart';
 
 class SettingsButton extends StatelessWidget {
@@ -16,7 +17,7 @@ class SettingsButton extends StatelessWidget {
             height: 50,
             child: const Icon(Icons.settings, size: 30),
           ),
-          onTap: () => Navigator.pushNamed(context, '/settings'),
+          onTap: () => Navigator.pushNamed(context, NavigationRoute.settings.name),
         ),
       ),
     );
