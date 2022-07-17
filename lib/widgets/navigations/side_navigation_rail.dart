@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 
-class SideNavigation extends StatefulWidget {
+class SideNavigationRail extends StatefulWidget {
   final Function(int) onDestinationSelected;
-  SideNavigation({Key? key, required this.onDestinationSelected}) : super(key: key);
+
+  SideNavigationRail({Key? key, required this.onDestinationSelected}) : super(key: key);
 
   @override
-  State<SideNavigation> createState() => _SideNavigationState();
+  State<SideNavigationRail> createState() => _SideNavigationRailState();
 }
 
-class _SideNavigationState extends State<SideNavigation> {
+class _SideNavigationRailState extends State<SideNavigationRail> {
   var selectedIndex = 0;
 
   @override

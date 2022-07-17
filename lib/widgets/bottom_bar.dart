@@ -9,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../audio_player.dart';
 import '../bloc/player_bloc.dart';
 import '../bloc/states/audio_player_state.dart';
+import '../models/track.dart';
 import 'controls/pause_button.dart';
 import 'controls/play_button.dart';
 import 'controls/repeat_toggle.dart';
@@ -41,18 +42,20 @@ class _BottomBarState extends State<BottomBar> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        LinearProgressIndicator(value: percentProgress),
-        Container(
-          height: 70,
-          color: Theme.of(context).primaryColor.withOpacity(0.1),
-          padding: EdgeInsets.all(10),
-          child: BlocBuilder<PlayerBloc, AudioPlayerState>(
-            builder: (context, state) {
-              return Row(
+    return BlocBuilder<PlayerBloc, AudioPlayerState>(
+      builder: (context, state) {
+        if (state.currentTrack == Track.empty()) return Container(height: 0);
+
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            LinearProgressIndicator(value: percentProgress),
+            Container(
+              height: 70,
+              color: Theme.of(context).primaryColor.withOpacity(0.1),
+              padding: EdgeInsets.all(10),
+              child: Row(
                 children: [
                   PreviousButton(),
                   if (state is PlayingPlayerState || state is ResumedPlayerState)
@@ -97,11 +100,11 @@ class _BottomBarState extends State<BottomBar> {
                     RepeatToggle(),
                   ],
                 ],
-              );
-            },
-          ),
-        ),
-      ],
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

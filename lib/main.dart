@@ -1,5 +1,6 @@
 import 'package:basement_music/theme/config.dart';
 import 'package:basement_music/theme/custom_theme.dart';
+import 'package:basement_music/widgets/navigations/side_navigation_drawer.dart';
 
 import 'pages/settings_page.dart';
 import 'stub/stub.dart' if (dart.library.io) 'stub/stub_io.dart' if (dart.library.html) 'stub/stub_web.dart';
@@ -9,7 +10,7 @@ import 'package:basement_music/pages_enum.dart';
 import 'package:basement_music/widgets/bottom_bar.dart';
 import 'package:basement_music/bloc/player_bloc.dart';
 import 'package:basement_music/widgets/main_content.dart';
-import 'package:basement_music/widgets/side_navigation.dart';
+import 'package:basement_music/widgets/navigations/side_navigation_rail.dart';
 import 'package:context_menus/context_menus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -95,7 +96,7 @@ class _MyHomePageState extends State<MyHomePage> {
         body: kIsWeb
             ? Row(
                 children: [
-                  SideNavigation(
+                  SideNavigationRail(
                     onDestinationSelected: (index) => setState(() => selectedPage = PageNavigation.values[index]),
                   ),
                   VerticalDivider(width: 1),
@@ -106,6 +107,15 @@ class _MyHomePageState extends State<MyHomePage> {
                 children: [
                   MainContent(selectedPage: selectedPage),
                 ],
+              ),
+        drawer: kIsWeb
+            ? null
+            : SideNavigationDrawer(
+                selected: PageNavigation.values.indexOf(selectedPage),
+                onDestinationSelected: (index) {
+                  setState(() => selectedPage = PageNavigation.values[index]);
+                  Navigator.of(context).pop();
+                },
               ),
         bottomNavigationBar: BottomBar(),
       ),
