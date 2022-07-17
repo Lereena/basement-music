@@ -26,6 +26,7 @@ class CustomTheme with ChangeNotifier {
         bodyMedium: const TextStyle(fontSize: 18),
         bodySmall: const TextStyle(fontSize: 16),
       ),
+      iconTheme: IconThemeData(color: Colors.black.withOpacity(0.6)),
       navigationRailTheme: NavigationRailThemeData(
         selectedLabelTextStyle: TextStyle(
           fontSize: 16,

@@ -64,6 +64,13 @@ class _SideNavigationDrawerState extends State<SideNavigationDrawer> {
               widget.onDestinationSelected(3);
             },
           ),
+          Divider(),
+          ListTile(
+            leading: const Icon(Icons.settings, size: 30),
+            title: Text('Settings'),
+            selected: false,
+            onTap: () => Navigator.pushNamed(context, '/settings'),
+          ),
         ],
       ),
     );

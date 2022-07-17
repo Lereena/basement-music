@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../settings/settings_button.dart';
+
 class SideNavigationRail extends StatefulWidget {
   final Function(int) onDestinationSelected;
 
@@ -41,6 +43,7 @@ class _SideNavigationRailState extends State<SideNavigationRail> {
           label: Text('Upload'),
         ),
       ],
+      trailing: SettingsButton(),
     );
   }
 }

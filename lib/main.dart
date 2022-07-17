@@ -97,7 +97,9 @@ class _MyHomePageState extends State<MyHomePage> {
             ? Row(
                 children: [
                   SideNavigationRail(
-                    onDestinationSelected: (index) => setState(() => selectedPage = PageNavigation.values[index]),
+                    onDestinationSelected: (index) => setState(
+                      () => selectedPage = PageNavigation.values[index],
+                    ),
                   ),
                   VerticalDivider(width: 1),
                   MainContent(selectedPage: selectedPage),
