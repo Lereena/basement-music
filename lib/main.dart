@@ -81,18 +81,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return BlocProvider<PlayerBloc>(
       create: (context) => PlayerBloc(),
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(widget.title),
-          actions: [
-            Container(
-              padding: const EdgeInsets.all(5),
-              child: InkWell(
-                child: Icon(Icons.settings),
-                onTap: () => Navigator.pushNamed(context, '/settings'),
-              ),
-            ),
-          ],
-        ),
+        appBar: AppBar(title: Text(widget.title)),
         body: kIsWeb
             ? Row(
                 children: [
