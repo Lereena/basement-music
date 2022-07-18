@@ -1,12 +1,15 @@
 import 'package:basement_music/bloc/states/audio_player_state.dart';
+import 'package:basement_music/cacher/cacher.dart';
 import 'package:basement_music/widgets/controls/pause_button.dart';
 import 'package:basement_music/widgets/track_name.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../cacher/caching_state.dart';
 import '../models/track.dart';
 import '../bloc/player_bloc.dart';
 import 'controls/play_button.dart';
+import 'cover.dart';
 
 class TrackCard extends StatefulWidget {
   final Track track;
@@ -18,6 +21,29 @@ class TrackCard extends StatefulWidget {
 }
 
 class _TrackCardState extends State<TrackCard> {
+  late CachingState cachingState = CachingState.errorCaching;
+
+  @override
+  void initState() {
+    super.initState();
+
+    cacher.updateSubject.listen((event) {
+      if (event.trackId != widget.track.id) return;
+
+      cachingState = event.type;
+      if (mounted) setState(() {});
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final cached = await cacher.isCached(widget.track.id);
+
+      if (!cached) return;
+
+      cachingState = CachingState.finishCaching;
+      if (mounted) setState(() {});
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final playerBloc = BlocProvider.of<PlayerBloc>(context);
@@ -30,12 +56,8 @@ class _TrackCardState extends State<TrackCard> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Padding(
-              padding: const EdgeInsets.all(5),
-              child: Image.asset(
-                widget.track.cover,
-                width: 40,
-                height: 40,
-              ),
+              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+              child: Cover(cachingState: cachingState, cover: widget.track.cover),
             ),
             Expanded(
               child: Column(
@@ -64,7 +86,7 @@ class _TrackCardState extends State<TrackCard> {
               PauseButton()
             else
               PlayButton(track: widget.track, state: state),
-            SizedBox(width: 20),
+            SizedBox(width: 15),
           ],
         ),
       ),
