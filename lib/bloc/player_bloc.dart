@@ -1,12 +1,10 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:audioplayers/audioplayers.dart';
 import 'package:basement_music/library.dart';
 import 'package:basement_music/models/track.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../api.dart';
 import '../audio_player.dart';
 import '../settings.dart';
 import 'events/player_event.dart';
@@ -26,7 +24,7 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
   }
 
   FutureOr<void> _onPlayEvent(PlayEvent event, Emitter<AudioPlayerState> emit) async {
-    audioPlayer.play(UrlSource(trackPlayback(event.track.id)));
+    audioPlayer.customPlay(event.track.id);
     lastTrack = event.track;
     emit(PlayingPlayerState(event.track));
   }
@@ -58,7 +56,7 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
       }
     }
 
-    audioPlayer.play(UrlSource(trackPlayback(lastTrack.id)));
+    audioPlayer.customPlay(lastTrack.id);
     emit(PlayingPlayerState(lastTrack));
   }
 
@@ -79,7 +77,7 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
       }
     }
 
-    audioPlayer.play(UrlSource(trackPlayback(lastTrack.id)));
+    audioPlayer.customPlay(lastTrack.id);
     emit(PlayingPlayerState(lastTrack));
   }
 }
