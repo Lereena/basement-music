@@ -37,13 +37,16 @@ class _UploadPageState extends State<UploadPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.max,
             children: [
-              SizedBox(
-                height: 40,
+              Container(
+                alignment: Alignment.center,
                 child: ElevatedButton.icon(
                   onPressed: () => setState(() {
                     uploadSource = UploadSource.local;
                   }),
-                  icon: Icon(Icons.upload_file_rounded),
+                  icon: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Icon(Icons.upload_file_rounded),
+                  ),
                   label: Text(
                     'Upload from device',
                     style: TextStyle(fontSize: 24),
@@ -51,13 +54,17 @@ class _UploadPageState extends State<UploadPage> {
                 ),
               ),
               SizedBox(height: 40),
-              SizedBox(
+              Container(
                 height: 40,
+                alignment: Alignment.center,
                 child: ElevatedButton.icon(
                   onPressed: () => setState(() {
                     uploadSource = UploadSource.youtube;
                   }),
-                  icon: Icon(Icons.cloud_upload),
+                  icon: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Icon(Icons.cloud_upload),
+                  ),
                   label: Text(
                     'Extract from YouTube video',
                     style: TextStyle(fontSize: 24),

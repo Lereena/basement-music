@@ -22,12 +22,16 @@ class _ExtractFromYoutubeState extends State<ExtractFromYoutube> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.max,
         children: [
-          Text(
-            'Insert YouTube link to extract audio',
-            style: TextStyle(fontSize: 24),
+          Align(
+            alignment: Alignment.center,
+            child: Text(
+              'Insert YouTube link to extract audio',
+              style: TextStyle(fontSize: 24),
+            ),
           ),
           SizedBox(height: 20),
           Container(
+            alignment: Alignment.center,
             width: inputFieldWidth,
             child: TextField(
               controller: controller,
@@ -37,12 +41,14 @@ class _ExtractFromYoutubeState extends State<ExtractFromYoutube> {
           ),
           SizedBox(height: 40),
           Container(
-            width: 100,
-            height: 40,
+            alignment: Alignment.center,
             child: ElevatedButton(
-              child: Text(
-                'Extract',
-                style: TextStyle(fontSize: 18),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                child: Text(
+                  'Extract',
+                  style: TextStyle(fontSize: 18),
+                ),
               ),
               onPressed: () async {
                 await uploadTrack(controller.text);
