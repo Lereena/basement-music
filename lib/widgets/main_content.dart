@@ -17,7 +17,7 @@ class _MainContentState extends State<MainContent> {
   @override
   Widget build(BuildContext context) {
     switch (widget.selectedPage) {
-      case PageNavigation.Favourites:
+      case PageNavigation.AllTracks:
         return AllTracksPage();
       case PageNavigation.Library:
         return Container();

@@ -1,1 +1,1 @@
-enum PageNavigation { Favourites, Library, Artists, Upload }
+enum PageNavigation { AllTracks, Library, Artists, Upload }

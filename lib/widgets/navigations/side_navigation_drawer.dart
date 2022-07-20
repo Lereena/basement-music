@@ -32,7 +32,7 @@ class _SideNavigationDrawerState extends State<SideNavigationDrawer> {
         children: [
           ListTile(
             leading: Icon(Icons.favorite),
-            title: Text('Favourites'),
+            title: Text('All tracks'),
             selected: selectedIndex == 0,
             onTap: () {
               setState(() => selectedIndex = 0);

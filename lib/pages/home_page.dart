@@ -22,7 +22,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  var selectedPage = PageNavigation.Favourites;
+  var selectedPage = PageNavigation.AllTracks;
   var channel = WebSocketChannel.connect(Uri.parse(wshost));
 
   @override

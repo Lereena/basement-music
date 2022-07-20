@@ -28,7 +28,7 @@ class _SideNavigationRailState extends State<SideNavigationRail> {
       destinations: const [
         NavigationRailDestination(
           icon: Icon(Icons.favorite),
-          label: Text('Favourites'),
+          label: Text('All tracks'),
         ),
         NavigationRailDestination(
           icon: Icon(Icons.featured_play_list_outlined),
