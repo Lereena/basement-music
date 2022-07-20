@@ -1,4 +1,5 @@
 import 'package:basement_music/pages/all_tracks_page.dart';
+import 'package:basement_music/pages/library_page.dart';
 import 'package:basement_music/pages_enum.dart';
 import 'package:flutter/material.dart';
 
@@ -20,7 +21,7 @@ class _MainContentState extends State<MainContent> {
       case PageNavigation.AllTracks:
         return AllTracksPage();
       case PageNavigation.Library:
-        return Container();
+        return LibraryPage();
       case PageNavigation.Artists:
         return Container();
       case PageNavigation.Upload:
