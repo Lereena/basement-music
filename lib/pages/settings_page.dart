@@ -1,3 +1,4 @@
+import 'package:basement_music/widgets/settings/server_setting_line.dart';
 import 'package:basement_music/widgets/settings/theme_setting_line.dart';
 import 'package:flutter/material.dart';
 
@@ -19,6 +20,7 @@ class _SettingsPageState extends State<SettingsPage> {
         children: [
           SizedBox(height: 8),
           ThemeSettingLine(),
+          ServerSettingLine(),
         ],
       ),
     );
