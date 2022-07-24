@@ -11,5 +11,5 @@ String trackPlayback(String trackId) => '$trackInfo/$trackId';
 
 var reqAllPlaylists = '$host/api/playlists';
 String reqPlaylist(String playlistId) => '$host/api/playlist/$playlistId';
-String createPlaylist(String title) => '$host/api/playlist/create/$title';
-String addTrackToPlaylist(String playlistId, String trackId) => '$host/api/playlist/$playlistId/addTrack/$trackId';
+String reqCreatePlaylist(String title) => '$host/api/playlist/create/$title';
+String reqAddTrackToPlaylist(String playlistId, String trackId) => '$host/api/playlist/$playlistId/addTrack/$trackId';

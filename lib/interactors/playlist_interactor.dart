@@ -15,9 +15,8 @@ Future<RequestResultModel> fetchAllPlaylists() async {
 
   if (response.statusCode == 200) {
     final jsonList = jsonDecode(response.body);
-    jsonList.map((e) => Playlist.fromJson(e)).forEach((element) {
-      playlists.add(element);
-    });
+    playlists = List.castFrom<dynamic, Playlist>(jsonList.map((e) => Playlist.fromJson(e)).toList());
+
     return RequestResultModel(result: true);
   } else {
     LogService.log('Failed to load playlists: ${response.body}');
@@ -39,11 +38,10 @@ Future<RequestResultModel> getPlaylist(String playlistId) async {
 }
 
 Future<RequestResultModel> createPlaylist(String title) async {
-  final uri = Uri.parse('${createPlaylist(title)}');
+  final uri = Uri.parse('${reqCreatePlaylist(title)}');
   final response = await postAsync(uri);
 
   if (response.statusCode == 200) {
-    playlists.add(Playlist.fromJson(jsonDecode(response.body)));
     return RequestResultModel(result: true);
   } else {
     LogService.log('Failed to create playlist: ${response.body}');

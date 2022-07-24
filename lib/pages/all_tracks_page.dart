@@ -17,6 +17,9 @@ class AllTracksPage extends StatelessWidget {
         if (!snapshot.hasData) {
           return Expanded(child: Center(child: CircularProgressIndicator()));
         }
+        if (snapshot.data!.isEmpty) {
+          return Expanded(child: Center(child: Text('No tracks')));
+        }
         return Expanded(
           child: ListView.separated(
             separatorBuilder: (context, _) => Divider(height: 1),

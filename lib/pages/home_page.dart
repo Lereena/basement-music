@@ -7,7 +7,9 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 import '../api.dart';
 import '../bloc/player_bloc.dart';
 import '../pages_enum.dart';
+import '../widgets/add_playlist.dart';
 import '../widgets/bottom_bar.dart';
+import '../widgets/dialog.dart';
 import '../widgets/main_content.dart';
 import '../widgets/navigations/side_navigation_drawer.dart';
 import '../widgets/navigations/side_navigation_rail.dart';
@@ -24,6 +26,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   var selectedPage = PageNavigation.AllTracks;
   var channel = WebSocketChannel.connect(Uri.parse(wshost));
+  final pagesWithFAB = [PageNavigation.AllTracks, PageNavigation.Library];
 
   @override
   void initState() {
@@ -65,8 +68,29 @@ class _MyHomePageState extends State<MyHomePage> {
                 },
               ),
         bottomNavigationBar: BottomBar(),
+        floatingActionButton: pagesWithFAB.contains(selectedPage)
+            ? FloatingActionButton(
+                onPressed: () => _fabActionByPage(selectedPage)(),
+                child: Icon(Icons.add),
+              )
+            : null,
       ),
     );
+  }
+
+  Function _fabActionByPage(PageNavigation page) {
+    switch (page) {
+      case PageNavigation.AllTracks:
+        return () {};
+      case PageNavigation.Library:
+        return () => showDialog(
+              context: context,
+              builder: (context) => CustomDialog(child: AddPlaylist()),
+            );
+
+      default:
+        throw Exception('No action for $page');
+    }
   }
 
   void _sendMessage() {
