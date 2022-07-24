@@ -8,7 +8,35 @@ Future<Response> getAsync(Uri uri, {Map<String, String>? headers}) async {
   return await _logRequest(() async => await get(uri, headers: headers));
 }
 
+Future<Response> postAsync(
+  Uri uri, {
+  Map<String, String>? headers,
+  Object? body,
+  Encoding? encoding,
+}) async {
+  return await _logRequest(() async => await post(
+        uri,
+        headers: headers,
+        body: body,
+        encoding: encoding,
+      ));
+}
+
 Future<Response> patchAsync(
+  Uri uri, {
+  Map<String, String>? headers,
+  Object? body,
+  Encoding? encoding,
+}) async {
+  return await _logRequest(() async => await patch(
+        uri,
+        headers: headers,
+        body: body,
+        encoding: encoding,
+      ));
+}
+
+Future<Response> deleteAsync(
   Uri uri, {
   Map<String, String>? headers,
   Object? body,
