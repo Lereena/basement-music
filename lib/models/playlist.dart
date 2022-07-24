@@ -4,12 +4,12 @@ import 'package:equatable/equatable.dart';
 class Playlist extends Equatable {
   final String id;
   final String title;
-  final List<Track> tracksIds;
+  final List<Track> tracks;
 
   Playlist({
     required this.id,
     required this.title,
-    required this.tracksIds,
+    required this.tracks,
   });
 
   @override
@@ -19,7 +19,7 @@ class Playlist extends Equatable {
     return Playlist(
       id: json['Id'],
       title: json['Title'],
-      tracksIds: List.castFrom<dynamic, Track>(json['Tracks'].map((e) => Track.fromJson(e)).toList()),
+      tracks: List.castFrom<dynamic, Track>(json['Tracks'].map((e) => Track.fromJson(e)).toList()),
     );
   }
 }

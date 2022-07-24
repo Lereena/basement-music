@@ -1,3 +1,4 @@
+import 'package:basement_music/routes.dart';
 import 'package:flutter/material.dart';
 
 import '../models/playlist.dart';
@@ -9,19 +10,34 @@ class PlaylistCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tracksCount = playlist.tracksIds.length;
+    final tracksCount = playlist.tracks.length;
 
-    return Column(
-      children: [
-        Text(
-          playlist.title,
-          style: Theme.of(context).textTheme.bodyMedium,
+    return Card(
+      child: InkWell(
+        onTap: () => Navigator.pushNamed(
+          context,
+          NavigationRoute.playlist.name,
+          arguments: {
+            'playlistId': playlist.id,
+          },
         ),
-        Text(
-          "$tracksCount ${_tracksForm(tracksCount)}",
-          style: Theme.of(context).textTheme.bodySmall,
+        child: Padding(
+          padding: const EdgeInsets.all(8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                playlist.title,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              Text(
+                "$tracksCount ${_tracksForm(tracksCount)}",
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ],
+          ),
         ),
-      ],
+      ),
     );
   }
 

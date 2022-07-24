@@ -27,7 +27,7 @@ class Cacher {
     }
   }
 
-  Future<bool> isCached(String trackId) async {
+  bool isCached(String trackId) {
     return cachedTracks.contains(trackId);
   }
 

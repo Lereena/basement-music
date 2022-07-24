@@ -3,6 +3,7 @@ import 'package:basement_music/theme/config.dart';
 import 'package:basement_music/theme/custom_theme.dart';
 
 import 'pages/home_page.dart';
+import 'pages/playlist_page.dart';
 import 'pages/settings_page.dart';
 
 import 'package:context_menus/context_menus.dart';
@@ -40,6 +41,13 @@ class _BasementMusicState extends State<BasementMusic> {
       routes: {
         NavigationRoute.settings.name: (context) => SettingsPage(),
         NavigationRoute.upload.name: (context) => UploadPage(),
+      },
+      onGenerateRoute: (settings) {
+        if (settings.name == NavigationRoute.playlist.name) {
+          final playlistId = (settings.arguments as Map<String, String>)['playlistId']!;
+          return MaterialPageRoute(builder: (context) => PlaylistPage(playlistId: playlistId));
+        }
+        return null;
       },
       home: ContextMenuOverlay(
         child: MyHomePage(title: 'Basement music'),

@@ -67,10 +67,7 @@ Future<RequestResultModel> addTrackToPlaylist(String playlistId, String trackId)
   final response = await postAsync(uri);
 
   if (response.statusCode == 200) {
-    playlists
-        .firstWhere((element) => element.id == playlistId)
-        .tracksIds
-        .add(Track.fromJson(jsonDecode(response.body)));
+    playlists.firstWhere((element) => element.id == playlistId).tracks.add(Track.fromJson(jsonDecode(response.body)));
     return RequestResultModel(result: true);
   } else {
     LogService.log('Failed to create playlist: ${response.body}');
