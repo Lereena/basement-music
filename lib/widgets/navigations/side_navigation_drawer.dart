@@ -48,24 +48,15 @@ class _SideNavigationDrawerState extends State<SideNavigationDrawer> {
               widget.onDestinationSelected(1);
             },
           ),
-          ListTile(
-            leading: Icon(Icons.person_pin_sharp),
-            title: Text('Artists'),
-            selected: selectedIndex == 2,
-            onTap: () {
-              setState(() => selectedIndex = 2);
-              widget.onDestinationSelected(2);
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.cloud_upload_outlined),
-            title: Text('Upload'),
-            selected: selectedIndex == 3,
-            onTap: () {
-              setState(() => selectedIndex = 3);
-              widget.onDestinationSelected(3);
-            },
-          ),
+          // ListTile(
+          //   leading: Icon(Icons.person_pin_sharp),
+          //   title: Text('Artists'),
+          //   selected: selectedIndex == 2,
+          //   onTap: () {
+          //     setState(() => selectedIndex = 2);
+          //     widget.onDestinationSelected(2);
+          //   },
+          // ),
           Divider(),
           ListTile(
             leading: const Icon(Icons.settings, size: 30),

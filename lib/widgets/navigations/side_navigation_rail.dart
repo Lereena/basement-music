@@ -34,14 +34,10 @@ class _SideNavigationRailState extends State<SideNavigationRail> {
           icon: Icon(Icons.featured_play_list_outlined),
           label: Text('Library'),
         ),
-        NavigationRailDestination(
-          icon: Icon(Icons.person_pin_sharp),
-          label: Text('Artists'),
-        ),
-        NavigationRailDestination(
-          icon: Icon(Icons.cloud_upload_outlined),
-          label: Text('Upload'),
-        ),
+        // NavigationRailDestination(
+        //   icon: Icon(Icons.person_pin_sharp),
+        //   label: Text('Artists'),
+        // ),
       ],
       trailing: SettingsButton(),
     );

@@ -1,4 +1,4 @@
-enum NavigationRoute { initial, settings }
+enum NavigationRoute { initial, settings, playlist, upload }
 
 extension Name on NavigationRoute {
   String get name {
@@ -7,6 +7,10 @@ extension Name on NavigationRoute {
         return '/';
       case NavigationRoute.settings:
         return '/settings';
+      case NavigationRoute.playlist:
+        return '/playlist';
+      case NavigationRoute.upload:
+        return '/upload';
     }
   }
 }

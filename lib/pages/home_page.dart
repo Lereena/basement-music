@@ -7,6 +7,7 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 import '../api.dart';
 import '../bloc/player_bloc.dart';
 import '../pages_enum.dart';
+import '../routes.dart';
 import '../widgets/add_playlist.dart';
 import '../widgets/bottom_bar.dart';
 import '../widgets/dialog.dart';
@@ -81,7 +82,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Function _fabActionByPage(PageNavigation page) {
     switch (page) {
       case PageNavigation.AllTracks:
-        return () {};
+        return () => Navigator.pushNamed(context, NavigationRoute.upload.name);
       case PageNavigation.Library:
         return () => showDialog(
               context: context,

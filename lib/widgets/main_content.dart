@@ -3,8 +3,6 @@ import 'package:basement_music/pages/library_page.dart';
 import 'package:basement_music/pages_enum.dart';
 import 'package:flutter/material.dart';
 
-import '../pages/upload/upload_page.dart';
-
 class MainContent extends StatefulWidget {
   final PageNavigation selectedPage;
 
@@ -24,8 +22,6 @@ class _MainContentState extends State<MainContent> {
         return LibraryPage();
       case PageNavigation.Artists:
         return Container();
-      case PageNavigation.Upload:
-        return UploadPage();
     }
   }
 }

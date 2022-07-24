@@ -8,6 +8,8 @@ import 'pages/settings_page.dart';
 import 'package:context_menus/context_menus.dart';
 import 'package:flutter/material.dart';
 
+import 'pages/upload/upload_page.dart';
+
 void main() {
   runApp(BasementMusic());
 }
@@ -37,6 +39,7 @@ class _BasementMusicState extends State<BasementMusic> {
       initialRoute: NavigationRoute.initial.name,
       routes: {
         NavigationRoute.settings.name: (context) => SettingsPage(),
+        NavigationRoute.upload.name: (context) => UploadPage(),
       },
       home: ContextMenuOverlay(
         child: MyHomePage(title: 'Basement music'),

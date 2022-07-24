@@ -21,13 +21,13 @@ class _UploadFromDeviceState extends State<UploadFromDevice> {
   @override
   Widget build(BuildContext context) {
     if (uploading) {
-      return Expanded(child: CircularProgressIndicator());
+      return CircularProgressIndicator();
     }
 
     final inputFieldWidth = MediaQuery.of(context).size.width / 2;
     final inputFieldHeight = MediaQuery.of(context).size.height / 4;
 
-    return Expanded(
+    return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
