@@ -1,4 +1,3 @@
-import 'package:basement_music/stub/stub.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -28,13 +27,6 @@ class _MyHomePageState extends State<MyHomePage> {
   var selectedPage = PageNavigation.AllTracks;
   var channel = WebSocketChannel.connect(Uri.parse(wshost));
   final pagesWithFAB = [PageNavigation.AllTracks, PageNavigation.Library];
-
-  @override
-  void initState() {
-    super.initState();
-
-    if (kIsWeb) preventDefault();
-  }
 
   @override
   Widget build(BuildContext context) {
