@@ -41,6 +41,7 @@ dependencies:
   equatable: ^2.0.3
   flutter_search_bar: ^2.1.0
   flutter_cache_manager: ^3.3.0
+  youtube_metadata: ^1.0.1
 
 dev_dependencies:
   flutter_test:

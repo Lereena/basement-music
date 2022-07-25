@@ -12,4 +12,4 @@ String trackPlayback(String trackId) => '$trackInfo/$trackId';
 var reqAllPlaylists = '$host/api/playlists';
 String reqPlaylist(String playlistId) => '$host/api/playlist/$playlistId';
 String reqCreatePlaylist(String title) => '$host/api/playlist/create/$title';
-String reqAddTrackToPlaylist(String playlistId, String trackId) => '$host/api/playlist/$playlistId/addTrack/$trackId';
+String reqAddTrackToPlaylist(String playlistId, String trackId) => '$host/api/playlist/$playlistId/track/$trackId';

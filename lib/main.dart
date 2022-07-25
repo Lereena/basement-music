@@ -1,7 +1,10 @@
+import 'package:basement_music/bloc/player_bloc.dart';
 import 'package:basement_music/routes.dart';
 import 'package:basement_music/theme/config.dart';
 import 'package:basement_music/theme/custom_theme.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'models/playlist.dart';
 import 'pages/home_page.dart';
 import 'pages/playlist_page.dart';
 import 'pages/settings_page.dart';
@@ -32,25 +35,28 @@ class _BasementMusicState extends State<BasementMusic> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Basement music',
-      theme: CustomTheme.lightTheme,
-      darkTheme: CustomTheme.darkTheme,
-      themeMode: currentTheme.currentThemeMode,
-      initialRoute: NavigationRoute.initial.name,
-      routes: {
-        NavigationRoute.settings.name: (context) => SettingsPage(),
-        NavigationRoute.upload.name: (context) => UploadPage(),
-      },
-      onGenerateRoute: (settings) {
-        if (settings.name == NavigationRoute.playlist.name) {
-          final playlistId = (settings.arguments as Map<String, String>)['playlistId']!;
-          return MaterialPageRoute(builder: (context) => PlaylistPage(playlistId: playlistId));
-        }
-        return null;
-      },
-      home: ContextMenuOverlay(
-        child: MyHomePage(title: 'Basement music'),
+    return BlocProvider<PlayerBloc>(
+      create: (context) => PlayerBloc(),
+      child: MaterialApp(
+        title: 'Basement music',
+        theme: CustomTheme.lightTheme,
+        darkTheme: CustomTheme.darkTheme,
+        themeMode: currentTheme.currentThemeMode,
+        initialRoute: NavigationRoute.initial.name,
+        routes: {
+          NavigationRoute.settings.name: (context) => SettingsPage(),
+          NavigationRoute.upload.name: (context) => UploadPage(),
+        },
+        onGenerateRoute: (settings) {
+          if (settings.name == NavigationRoute.playlist.name) {
+            final playlist = (settings.arguments as Map<String, Playlist>)['playlist']!;
+            return MaterialPageRoute(builder: (context) => PlaylistPage(playlist: playlist));
+          }
+          return null;
+        },
+        home: ContextMenuOverlay(
+          child: MyHomePage(title: 'Basement music'),
+        ),
       ),
     );
   }
