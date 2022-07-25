@@ -18,7 +18,7 @@ class PlaylistCard extends StatelessWidget {
           context,
           NavigationRoute.playlist.name,
           arguments: {
-            'playlistId': playlist.id,
+            'playlist': playlist,
           },
         ),
         child: Padding(

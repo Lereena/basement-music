@@ -30,7 +30,7 @@ class _CacheButtonState extends State<CacheButton> {
   Widget build(BuildContext context) {
     final title = allCached
         ? 'Do you want to remove all playlist tracks from cache?'
-        : 'Do you want to cache all playlist tracks';
+        : 'Do you want to cache all playlist tracks?';
 
     return InkWell(
       child: Padding(

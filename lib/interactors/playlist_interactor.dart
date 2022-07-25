@@ -63,11 +63,12 @@ Future<RequestResultModel> deletePlaylist(String playlistId) async {
 }
 
 Future<RequestResultModel> addTrackToPlaylist(String playlistId, String trackId) async {
-  final uri = Uri.parse('${addTrackToPlaylist(playlistId, trackId)}');
+  final uri = Uri.parse('${reqAddTrackToPlaylist(playlistId, trackId)}');
   final response = await postAsync(uri);
 
   if (response.statusCode == 200) {
-    playlists.firstWhere((element) => element.id == playlistId).tracks.add(Track.fromJson(jsonDecode(response.body)));
+    final track = tracks.firstWhere((element) => element.id == trackId);
+    playlists.firstWhere((element) => element.id == playlistId).tracks.add(track);
     return RequestResultModel(result: true);
   } else {
     LogService.log('Failed to create playlist: ${response.body}');

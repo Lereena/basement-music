@@ -34,8 +34,8 @@ class _TrackCardState extends State<TrackCard> {
       if (mounted) setState(() {});
     });
 
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final cached = await cacher.isCached(widget.track.id);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final cached = cacher.isCached(widget.track.id);
 
       if (!cached) return;
 
