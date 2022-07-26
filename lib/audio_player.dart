@@ -8,7 +8,7 @@ final audioPlayer = AudioPlayer();
 
 extension CustomPlay on AudioPlayer {
   Future<void> customPlay(String trackId) async {
-    if (!(await cacher.isCached(trackId))) {
+    if (!(cacher.isCached(trackId))) {
       this.play(UrlSource(trackPlayback(trackId)));
       return;
     }
