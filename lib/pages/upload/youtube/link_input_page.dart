@@ -1,7 +1,6 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 
+import '../../../utils/input_field_with.dart';
 import '../../../widgets/buttons/styled_button.dart';
 
 class LinkInputPage extends StatelessWidget {
@@ -18,7 +17,6 @@ class LinkInputPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final inputFieldWidth = min(MediaQuery.of(context).size.width / 1.5, 400).toDouble();
     focusNode.requestFocus();
 
     return Column(
@@ -36,7 +34,7 @@ class LinkInputPage extends StatelessWidget {
         SizedBox(height: 20),
         Container(
           alignment: Alignment.center,
-          width: inputFieldWidth,
+          width: inputFieldWidth(context),
           child: TextField(
             focusNode: focusNode,
             controller: linkController,

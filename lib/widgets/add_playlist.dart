@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../interactors/playlist_interactor.dart';
+import '../utils/input_field_with.dart';
 import 'dialogs/status_dialog.dart';
+import 'titled_field.dart';
 
 class AddPlaylist extends StatefulWidget {
   const AddPlaylist({Key? key}) : super(key: key);
@@ -18,8 +20,6 @@ class _AddPlaylistState extends State<AddPlaylist> {
 
   @override
   Widget build(BuildContext context) {
-    final inputFieldWidth = MediaQuery.of(context).size.width / 2;
-
     return loading
         ? CircularProgressIndicator()
         : Column(
@@ -32,7 +32,11 @@ class _AddPlaylistState extends State<AddPlaylist> {
                 style: TextStyle(fontSize: 24),
               ),
               SizedBox(height: 20),
-              _titledField('Title: ', titleController, inputFieldWidth),
+              TitledField(
+                title: 'Title: ',
+                controller: titleController,
+                fieldWidth: inputFieldWidth(context),
+              ),
               SizedBox(height: 20),
               Container(
                 width: 100,
@@ -69,26 +73,5 @@ class _AddPlaylistState extends State<AddPlaylist> {
 
   bool _isValidInput(String title) {
     return title.isNotEmpty;
-  }
-
-  Widget _titledField(String title, TextEditingController controller, double fieldWidth) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          title,
-          style: _textStyle,
-        ),
-        SizedBox(width: 5),
-        Container(
-          width: fieldWidth,
-          child: TextField(
-            controller: controller,
-            textAlign: TextAlign.start,
-            style: _textStyle,
-          ),
-        ),
-      ],
-    );
   }
 }

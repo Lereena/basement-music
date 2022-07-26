@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../interactors/track_interactor.dart';
 import '../models/track.dart';
+import '../utils/input_field_with.dart';
 
 class EditTrack extends StatefulWidget {
   final Widget? titleText;
@@ -34,8 +35,6 @@ class _EditTrackState extends State<EditTrack> {
 
   @override
   Widget build(BuildContext context) {
-    final inputFieldWidth = MediaQuery.of(context).size.width / 2;
-
     return loading
         ? CircularProgressIndicator()
         : Column(
@@ -45,9 +44,17 @@ class _EditTrackState extends State<EditTrack> {
             children: [
               widget.titleText ?? Container(),
               SizedBox(height: 20),
-              _titledField('Title:', titleController, inputFieldWidth),
+              _titledField(
+                'Title:',
+                titleController,
+                inputFieldWidth(context),
+              ),
               SizedBox(height: 20),
-              _titledField('Artist:', artistController, inputFieldWidth),
+              _titledField(
+                'Artist:',
+                artistController,
+                inputFieldWidth(context),
+              ),
               SizedBox(height: 40),
               Container(
                 width: 100,
