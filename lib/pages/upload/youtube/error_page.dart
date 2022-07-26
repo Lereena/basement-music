@@ -20,6 +20,7 @@ class ErrorPage extends StatelessWidget {
         StyledButton(
           title: 'Try again',
           onPressed: onTryAgainPress,
+          autofocus: true,
         ),
       ],
     );

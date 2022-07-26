@@ -4,12 +4,16 @@ class TitledField extends StatelessWidget {
   final String title;
   final double fieldWidth;
   final TextEditingController controller;
+  final Function(String)? onSubmitted;
+  final FocusNode? focusNode;
 
   const TitledField({
     Key? key,
     required this.title,
     required this.fieldWidth,
     required this.controller,
+    this.onSubmitted,
+    this.focusNode,
   }) : super(key: key);
 
   @override
@@ -26,6 +30,8 @@ class TitledField extends StatelessWidget {
           child: TextField(
             controller: controller,
             textAlign: TextAlign.start,
+            onSubmitted: onSubmitted,
+            focusNode: focusNode,
           ),
         ),
       ],

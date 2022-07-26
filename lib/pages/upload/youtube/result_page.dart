@@ -30,6 +30,7 @@ class ResultPage extends StatelessWidget {
         StyledButton(
           title: 'Upload other track',
           onPressed: onUploadOtherTrackPress,
+          autofocus: true,
         )
       ],
     );
