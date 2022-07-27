@@ -27,7 +27,16 @@ class _ExtractFromYoutubeState extends State<ExtractFromYoutube> {
   @override
   Widget build(BuildContext context) {
     if (fetchingInfo) {
-      return Center(child: CircularProgressIndicator());
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('You can leave this page, the uploading will continue'),
+            SizedBox(height: 40),
+            CircularProgressIndicator(),
+          ],
+        ),
+      );
     }
 
     if (stage == ExtractingStage.link) {
@@ -75,11 +84,11 @@ class _ExtractFromYoutubeState extends State<ExtractFromYoutube> {
 
     final splitTitle = metadata.title!.split(RegExp('[−‐‑-ー一-]'));
     if (splitTitle.length < 2) {
-      artistController.text = metadata.authorName ?? '';
-      titleController.text = splitTitle[0];
+      artistController.text = metadata.authorName?.trim() ?? '';
+      titleController.text = splitTitle[0].trim();
     } else {
-      artistController.text = splitTitle[0];
-      titleController.text = splitTitle[1];
+      artistController.text = splitTitle[0].trim();
+      titleController.text = splitTitle[1].trim();
     }
 
     setState(() {
@@ -91,7 +100,7 @@ class _ExtractFromYoutubeState extends State<ExtractFromYoutube> {
   void _uploadTrack() async {
     setState(() => fetchingInfo = true);
 
-    result = await uploadTrack(linkController.text);
+    result = await uploadYtTrack(linkController.text, artistController.text, titleController.text);
 
     setState(() {
       _clearControllers();

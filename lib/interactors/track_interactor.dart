@@ -29,10 +29,10 @@ Future<List<Track>> fetchAllTracks() async {
   return list;
 }
 
-Future<bool> uploadTrack(String url) async {
+Future<bool> uploadYtTrack(String url, String artist, String title) async {
   if (url == '') return false;
 
-  final uri2 = Uri.parse('$downloadYt$url');
+  final uri2 = Uri.parse(reqYtDownload(url, artist, title));
   final response = await getAsync(uri2);
 
   return response.statusCode == 200;
