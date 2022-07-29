@@ -1,24 +1,43 @@
+import 'package:basement_music/widgets/bottom_bar.dart';
 import 'package:basement_music/widgets/buttons/cache_button.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import '../library.dart';
 import '../models/playlist.dart';
 import '../widgets/track_card.dart';
 import '../widgets/wrappers/track_context_menu.dart';
 
-class PlaylistPage extends StatelessWidget {
+class PlaylistPage extends StatefulWidget {
   final Playlist playlist;
 
   PlaylistPage({Key? key, required this.playlist}) : super(key: key);
 
   @override
+  State<PlaylistPage> createState() => _PlaylistPageState();
+}
+
+class _PlaylistPageState extends State<PlaylistPage> {
+  @override
+  void initState() {
+    super.initState();
+    openedPlaylist = widget.playlist;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    openedPlaylist = Playlist.all();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(playlist.title),
-        actions: kIsWeb || playlist.tracks.isEmpty ? null : [CacheButton(listToCache: playlist.tracks)],
+        title: Text(widget.playlist.title),
+        actions: kIsWeb || widget.playlist.tracks.isEmpty ? null : [CacheButton(listToCache: widget.playlist.tracks)],
       ),
-      body: playlist.tracks.isEmpty
+      body: widget.playlist.tracks.isEmpty
           ? Center(
               child: Text(
                 'No tracks',
@@ -27,11 +46,12 @@ class PlaylistPage extends StatelessWidget {
             )
           : ListView.separated(
               separatorBuilder: (context, _) => Divider(height: 1),
-              itemCount: playlist.tracks.length,
+              itemCount: widget.playlist.tracks.length,
               itemBuilder: (context, index) => TrackContextMenu(
-                trackCard: TrackCard(track: playlist.tracks[index]),
+                trackCard: TrackCard(track: widget.playlist.tracks[index]),
               ),
             ),
+      bottomNavigationBar: BottomBar(),
     );
   }
 }

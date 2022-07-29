@@ -6,6 +6,7 @@ import 'package:basement_music/models/track.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../audio_player.dart';
+import '../models/playlist.dart';
 import '../settings.dart';
 import 'events/player_event.dart';
 import 'states/audio_player_state.dart';
@@ -14,6 +15,7 @@ final random = Random();
 
 class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
   Track lastTrack = Track.empty();
+  Playlist currentPlaylist = Playlist.all();
 
   PlayerBloc() : super(InitialPlayerState(Track.empty())) {
     on<PlayEvent>(_onPlayEvent);
@@ -48,11 +50,11 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
     if (!repeat) {
       if (shuffle) {
         final nextTrackPosition = _shuffledNext(tracks.indexOf(lastTrack));
-        lastTrack = tracks[nextTrackPosition];
+        lastTrack = currentPlaylist.tracks[nextTrackPosition];
       } else {
-        final lastTrackPosition = tracks.indexOf(lastTrack);
-        final nextTrackPosition = lastTrackPosition < tracks.length - 1 ? lastTrackPosition + 1 : 0;
-        lastTrack = tracks[nextTrackPosition];
+        final lastTrackPosition = currentPlaylist.tracks.indexOf(lastTrack);
+        final nextTrackPosition = lastTrackPosition < currentPlaylist.tracks.length - 1 ? lastTrackPosition + 1 : 0;
+        lastTrack = currentPlaylist.tracks[nextTrackPosition];
       }
     }
 
@@ -68,24 +70,24 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
 
     if (!repeat) {
       if (shuffle) {
-        final nextTrackPosition = _shuffledNext(tracks.indexOf(lastTrack));
-        lastTrack = tracks[nextTrackPosition];
+        final nextTrackPosition = _shuffledNext(currentPlaylist.tracks.indexOf(lastTrack));
+        lastTrack = currentPlaylist.tracks[nextTrackPosition];
       } else {
-        final lastTrackPosition = tracks.indexOf(lastTrack);
-        final previousTrackPosition = lastTrackPosition > 0 ? lastTrackPosition - 1 : tracks.length - 1;
-        lastTrack = tracks[previousTrackPosition];
+        final lastTrackPosition = currentPlaylist.tracks.indexOf(lastTrack);
+        final previousTrackPosition = lastTrackPosition > 0 ? lastTrackPosition - 1 : currentPlaylist.tracks.length - 1;
+        lastTrack = currentPlaylist.tracks[previousTrackPosition];
       }
     }
 
     audioPlayer.customPlay(lastTrack.id);
     emit(PlayingPlayerState(lastTrack));
   }
-}
 
-int _shuffledNext(int excluding) {
-  var result = random.nextInt(tracks.length);
-  while (result == excluding) {
-    result = random.nextInt(tracks.length);
+  int _shuffledNext(int excluding) {
+    var result = random.nextInt(currentPlaylist.tracks.length);
+    while (result == excluding) {
+      result = random.nextInt(currentPlaylist.tracks.length);
+    }
+    return result;
   }
-  return result;
 }

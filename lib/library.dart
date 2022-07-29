@@ -6,3 +6,5 @@ List<Track> tracks = [];
 Set<String> cachedTracks = {};
 
 List<Playlist> playlists = [];
+
+Playlist openedPlaylist = Playlist.all();

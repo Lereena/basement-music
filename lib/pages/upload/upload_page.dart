@@ -1,3 +1,4 @@
+import 'package:basement_music/widgets/bottom_bar.dart';
 import 'package:flutter/material.dart';
 
 import 'youtube/extract_from_youtube.dart';
@@ -19,6 +20,7 @@ class _UploadPageState extends State<UploadPage> {
     return Scaffold(
       appBar: AppBar(title: Text('Upload track')),
       body: body,
+      bottomNavigationBar: BottomBar(),
     );
   }
 

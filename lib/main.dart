@@ -1,4 +1,5 @@
 import 'package:basement_music/bloc/player_bloc.dart';
+import 'package:basement_music/interactors/playlist_interactor.dart';
 import 'package:basement_music/routes.dart';
 import 'package:basement_music/theme/config.dart';
 import 'package:basement_music/theme/custom_theme.dart';
@@ -36,6 +37,8 @@ class _BasementMusicState extends State<BasementMusic> {
     currentTheme.initTheme();
 
     currentTheme.addListener(() => setState(() {}));
+
+    fetchAllPlaylists();
   }
 
   @override

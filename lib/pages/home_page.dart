@@ -30,44 +30,41 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<PlayerBloc>(
-      create: (context) => PlayerBloc(),
-      child: Scaffold(
-        appBar: AppBar(title: Text(widget.title)),
-        body: kIsWeb
-            ? Row(
-                children: [
-                  SideNavigationRail(
-                    onDestinationSelected: (index) => setState(
-                      () => selectedPage = PageNavigation.values[index],
-                    ),
+    return Scaffold(
+      appBar: AppBar(title: Text(widget.title)),
+      body: kIsWeb
+          ? Row(
+              children: [
+                SideNavigationRail(
+                  onDestinationSelected: (index) => setState(
+                    () => selectedPage = PageNavigation.values[index],
                   ),
-                  VerticalDivider(width: 1),
-                  MainContent(selectedPage: selectedPage),
-                ],
-              )
-            : Column(
-                children: [
-                  MainContent(selectedPage: selectedPage),
-                ],
-              ),
-        drawer: kIsWeb
-            ? null
-            : SideNavigationDrawer(
-                selected: PageNavigation.values.indexOf(selectedPage),
-                onDestinationSelected: (index) {
-                  setState(() => selectedPage = PageNavigation.values[index]);
-                  Navigator.of(context).pop();
-                },
-              ),
-        bottomNavigationBar: BottomBar(),
-        floatingActionButton: pagesWithFAB.contains(selectedPage)
-            ? FloatingActionButton(
-                onPressed: () => _fabActionByPage(selectedPage)(),
-                child: Icon(Icons.add),
-              )
-            : null,
-      ),
+                ),
+                VerticalDivider(width: 1),
+                MainContent(selectedPage: selectedPage),
+              ],
+            )
+          : Column(
+              children: [
+                MainContent(selectedPage: selectedPage),
+              ],
+            ),
+      drawer: kIsWeb
+          ? null
+          : SideNavigationDrawer(
+              selected: PageNavigation.values.indexOf(selectedPage),
+              onDestinationSelected: (index) {
+                setState(() => selectedPage = PageNavigation.values[index]);
+                Navigator.of(context).pop();
+              },
+            ),
+      bottomNavigationBar: BottomBar(),
+      floatingActionButton: pagesWithFAB.contains(selectedPage)
+          ? FloatingActionButton(
+              onPressed: () => _fabActionByPage(selectedPage)(),
+              child: Icon(Icons.add),
+            )
+          : null,
     );
   }
 

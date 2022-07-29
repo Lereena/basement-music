@@ -1,5 +1,6 @@
 import 'package:basement_music/models/track.dart';
 import 'package:equatable/equatable.dart';
+import '../library.dart' as lib;
 
 class Playlist extends Equatable {
   final String id;
@@ -14,6 +15,10 @@ class Playlist extends Equatable {
 
   @override
   List<Object> get props => [id];
+
+  factory Playlist.all() {
+    return Playlist(id: '', title: '', tracks: lib.tracks);
+  }
 
   factory Playlist.fromJson(Map<String, dynamic> json) {
     return Playlist(
