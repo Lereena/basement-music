@@ -2,6 +2,7 @@ import 'package:basement_music/pages/upload/youtube/error_page.dart';
 import 'package:basement_music/pages/upload/youtube/link_input_page.dart';
 import 'package:basement_music/pages/upload/youtube/result_page.dart';
 import 'package:basement_music/pages/upload/youtube/track_info_page.dart';
+import 'package:basement_music/widgets/buttons/styled_button.dart';
 import 'package:flutter/material.dart';
 import 'package:youtube_metadata/youtube_metadata.dart';
 
@@ -31,9 +32,16 @@ class _ExtractFromYoutubeState extends State<ExtractFromYoutube> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            CircularProgressIndicator(),
+            SizedBox(height: 40),
             Text('You can leave this page, the uploading will continue'),
             SizedBox(height: 40),
-            CircularProgressIndicator(),
+            StyledButton(
+              title: 'Upload other track',
+              onPressed: () => setState(
+                () => stage = stage = ExtractingStage.link,
+              ),
+            )
           ],
         ),
       );
