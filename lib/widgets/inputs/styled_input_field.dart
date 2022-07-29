@@ -7,8 +7,12 @@ class StyledInputField extends StatelessWidget {
   final FocusNode focusNode;
   final Function(String) onSubmitted;
 
-  const StyledInputField({Key? key, required this.controller, required this.focusNode, required this.onSubmitted})
-      : super(key: key);
+  const StyledInputField({
+    Key? key,
+    required this.controller,
+    required this.focusNode,
+    required this.onSubmitted,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

@@ -23,9 +23,7 @@ class ResultPage extends StatelessWidget {
       children: [
         result ? SuccessIcon() : ErrorIcon(),
         const SizedBox(height: 20),
-        result
-            ? Text('Track uploading is successfully started')
-            : Text('Track uploading is failed, please try again later'),
+        result ? Text('Track was successfully uploaded') : Text('Track uploading is failed, please try again later'),
         const SizedBox(height: 20),
         StyledButton(
           title: 'Upload other track',
