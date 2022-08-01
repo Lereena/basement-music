@@ -50,8 +50,9 @@ class _TrackCardState extends State<TrackCard> {
 
     return BlocBuilder<PlayerBloc, AudioPlayerState>(
       builder: (context, state) => Container(
-        color:
-            playerBloc.lastTrack == widget.track ? Theme.of(context).primaryColor.withOpacity(0.1) : Colors.transparent,
+        color: playerBloc.currentTrack == widget.track
+            ? Theme.of(context).primaryColor.withOpacity(0.1)
+            : Colors.transparent,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -65,7 +66,7 @@ class _TrackCardState extends State<TrackCard> {
                 children: [
                   TrackName(
                     track: widget.track,
-                    moving: playerBloc.lastTrack == widget.track,
+                    moving: playerBloc.currentTrack == widget.track,
                   ),
                   Text(
                     widget.track.artist,
@@ -82,7 +83,7 @@ class _TrackCardState extends State<TrackCard> {
               style: TextStyle(fontSize: 16),
             ),
             SizedBox(width: 20),
-            if (playerBloc.lastTrack == widget.track && (state is PlayingPlayerState || state is ResumedPlayerState))
+            if (playerBloc.currentTrack == widget.track && (state is PlayingPlayerState || state is ResumedPlayerState))
               PauseButton()
             else
               PlayButton(track: widget.track, state: state),

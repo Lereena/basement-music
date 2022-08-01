@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:basement_music/library.dart';
 import 'package:basement_music/models/track.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -14,7 +13,7 @@ import 'states/audio_player_state.dart';
 final random = Random();
 
 class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
-  Track lastTrack = Track.empty();
+  Track currentTrack = Track.empty();
   Playlist currentPlaylist = Playlist.all();
 
   PlayerBloc() : super(InitialPlayerState(Track.empty())) {
@@ -27,18 +26,18 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
 
   FutureOr<void> _onPlayEvent(PlayEvent event, Emitter<AudioPlayerState> emit) async {
     audioPlayer.customPlay(event.track.id);
-    lastTrack = event.track;
+    currentTrack = event.track;
     emit(PlayingPlayerState(event.track));
   }
 
   FutureOr<void> _onPauseEvent(PauseEvent event, Emitter<AudioPlayerState> emit) {
     audioPlayer.pause();
-    emit(PausedPlayerState(lastTrack));
+    emit(PausedPlayerState(currentTrack));
   }
 
   FutureOr<void> _onResumeEvent(ResumeEvent event, Emitter<AudioPlayerState> emit) {
     audioPlayer.resume();
-    emit(ResumedPlayerState(lastTrack));
+    emit(ResumedPlayerState(currentTrack));
   }
 
   FutureOr<void> _onNextEvent(NextEvent event, Emitter<AudioPlayerState> emit) async {
@@ -49,17 +48,17 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
 
     if (!repeat) {
       if (shuffle) {
-        final nextTrackPosition = _shuffledNext(tracks.indexOf(lastTrack));
-        lastTrack = currentPlaylist.tracks[nextTrackPosition];
+        final nextTrackPosition = _shuffledNext(currentPlaylist.tracks.indexOf(currentTrack));
+        currentTrack = currentPlaylist.tracks[nextTrackPosition];
       } else {
-        final lastTrackPosition = currentPlaylist.tracks.indexOf(lastTrack);
+        final lastTrackPosition = currentPlaylist.tracks.indexOf(currentTrack);
         final nextTrackPosition = lastTrackPosition < currentPlaylist.tracks.length - 1 ? lastTrackPosition + 1 : 0;
-        lastTrack = currentPlaylist.tracks[nextTrackPosition];
+        currentTrack = currentPlaylist.tracks[nextTrackPosition];
       }
     }
 
-    audioPlayer.customPlay(lastTrack.id);
-    emit(PlayingPlayerState(lastTrack));
+    audioPlayer.customPlay(currentTrack.id);
+    emit(PlayingPlayerState(currentTrack));
   }
 
   FutureOr<void> _onPreviousEvent(PreviousEvent event, Emitter<AudioPlayerState> emit) async {
@@ -70,17 +69,17 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
 
     if (!repeat) {
       if (shuffle) {
-        final nextTrackPosition = _shuffledNext(currentPlaylist.tracks.indexOf(lastTrack));
-        lastTrack = currentPlaylist.tracks[nextTrackPosition];
+        final nextTrackPosition = _shuffledNext(currentPlaylist.tracks.indexOf(currentTrack));
+        currentTrack = currentPlaylist.tracks[nextTrackPosition];
       } else {
-        final lastTrackPosition = currentPlaylist.tracks.indexOf(lastTrack);
+        final lastTrackPosition = currentPlaylist.tracks.indexOf(currentTrack);
         final previousTrackPosition = lastTrackPosition > 0 ? lastTrackPosition - 1 : currentPlaylist.tracks.length - 1;
-        lastTrack = currentPlaylist.tracks[previousTrackPosition];
+        currentTrack = currentPlaylist.tracks[previousTrackPosition];
       }
     }
 
-    audioPlayer.customPlay(lastTrack.id);
-    emit(PlayingPlayerState(lastTrack));
+    audioPlayer.customPlay(currentTrack.id);
+    emit(PlayingPlayerState(currentTrack));
   }
 
   int _shuffledNext(int excluding) {
