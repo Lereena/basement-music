@@ -30,7 +30,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   audioplayers: ^1.0.1
   flutter_bloc: ^8.0.1
-  marquee: ^2.2.1
+  marquee: ^2.2.3
   auto_size_text: ^3.0.0
   shared_preferences: ^2.0.7
   http: ^0.13.3
