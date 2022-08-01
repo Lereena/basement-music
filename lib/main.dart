@@ -1,6 +1,8 @@
+import 'package:basement_music/bloc/events/playlists_event.dart';
 import 'package:basement_music/bloc/events/tracks_event.dart';
 import 'package:basement_music/bloc/player_bloc.dart';
-import 'package:basement_music/interactors/playlist_interactor.dart';
+import 'package:basement_music/bloc/playlists_bloc.dart';
+import 'package:basement_music/repositories/playlists_repository.dart';
 import 'package:basement_music/repositories/tracks_repository.dart';
 import 'package:basement_music/routes.dart';
 import 'package:basement_music/theme/config.dart';
@@ -32,20 +34,20 @@ class BasementMusic extends StatefulWidget {
 }
 
 class _BasementMusicState extends State<BasementMusic> {
-  final TracksBloc _tracksBloc = TracksBloc(TracksRepository());
+  final _tracksBloc = TracksBloc(TracksRepository());
+  final _playlistsBloc = PlaylistsBloc(PlaylistsRepository());
 
   @override
   void initState() {
     super.initState();
+
+    currentTheme.initTheme();
+    currentTheme.addListener(() => setState(() {}));
+
     if (kIsWeb) preventDefault();
 
     _tracksBloc.add(TracksLoadEvent());
-
-    currentTheme.initTheme();
-
-    currentTheme.addListener(() => setState(() {}));
-
-    fetchAllPlaylists();
+    _playlistsBloc.add(PlaylistsLoadEvent());
   }
 
   @override
@@ -57,6 +59,9 @@ class _BasementMusicState extends State<BasementMusic> {
         ),
         BlocProvider<TracksBloc>(
           create: (context) => _tracksBloc,
+        ),
+        BlocProvider<PlaylistsBloc>(
+          create: (context) => _playlistsBloc,
         ),
       ],
       child: MaterialApp(

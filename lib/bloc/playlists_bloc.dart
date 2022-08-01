@@ -1,0 +1,31 @@
+import 'dart:async';
+
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../repositories/playlists_repository.dart';
+import '../utils/log/log_service.dart';
+import 'events/playlists_event.dart';
+import 'states/playlists_state.dart';
+
+class PlaylistsBloc extends Bloc<PlaylistsEvent, PlaylistsState> {
+  final PlaylistsRepository _playlistsRepository;
+
+  PlaylistsBloc(this._playlistsRepository) : super(PlaylistsLoadingState()) {
+    on<PlaylistsLoadEvent>(_onLoadingEvent);
+  }
+
+  FutureOr<void> _onLoadingEvent(PlaylistsLoadEvent event, Emitter<PlaylistsState> emit) async {
+    emit(PlaylistsLoadingState());
+
+    try {
+      final playlistsList = await _playlistsRepository.getAllPlaylists();
+      if (playlistsList.isEmpty)
+        emit(PlaylistsEmptyState());
+      else
+        emit(PlaylistsLoadedState(playlistsList));
+    } catch (e) {
+      emit(PlaylistsErrorState());
+      LogService.log('Error loading Playlists: $e');
+    }
+  }
+}

@@ -1,6 +1,7 @@
-import 'package:basement_music/interactors/playlist_interactor.dart';
-import 'package:basement_music/library.dart';
+import 'package:basement_music/bloc/playlists_bloc.dart';
+import 'package:basement_music/bloc/states/playlists_state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../widgets/playlist_card.dart';
 
@@ -12,39 +13,39 @@ class LibraryPage extends StatefulWidget {
 }
 
 class _LibraryPageState extends State<LibraryPage> {
-  var loading = true;
-
-  @override
-  void initState() {
-    super.initState();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await fetchAllPlaylists();
-      setState(() {
-        loading = false;
-      });
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    if (loading) return Expanded(child: Center(child: CircularProgressIndicator()));
-
-    if (playlists.isEmpty)
-      return Expanded(
-        child: Center(
-          child: Text(
-            'No playlists',
-            style: TextStyle(fontSize: 24),
-          ),
-        ),
-      );
-
     return Expanded(
-      child: ListView.separated(
-          itemBuilder: (context, index) => PlaylistCard(playlist: playlists[index]),
-          separatorBuilder: (context, _) => Divider(height: 1),
-          itemCount: playlists.length),
+      child: BlocBuilder<PlaylistsBloc, PlaylistsState>(builder: (context, state) {
+        if (state is PlaylistsLoadingState) {
+          return Center(child: CircularProgressIndicator());
+        }
+
+        if (state is PlaylistsEmptyState) {
+          return Center(
+            child: Text(
+              'No playlists',
+              style: TextStyle(fontSize: 24),
+            ),
+          );
+        }
+
+        if (state is PlaylistsLoadedState) {
+          return ListView.separated(
+            itemBuilder: (context, index) => PlaylistCard(playlist: state.playlists[index]),
+            separatorBuilder: (context, _) => Divider(height: 1),
+            itemCount: state.playlists.length,
+          );
+        }
+
+        if (state is PlaylistsErrorState) {
+          return Center(
+            child: Text('Error loading playlists'),
+          );
+        }
+
+        return Container();
+      }),
     );
   }
 }
