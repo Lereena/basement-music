@@ -1,33 +1,9 @@
-import 'dart:convert';
-import 'package:basement_music/cacher/cacher.dart';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 
 import '../api.dart';
-import '../library.dart';
-import '../models/track.dart';
 import '../utils/log/log_service.dart';
 import '../utils/request.dart';
-
-Future<List<Track>> fetchAllTracks() async {
-  final uri = Uri.parse('$reqAllTracks');
-  final response = await getAsync(uri);
-
-  final List<dynamic> jsonList = jsonDecode(response.body);
-  final list = <Track>[];
-  if (response.statusCode == 200) {
-    jsonList.map((e) => Track.fromJson(e)).forEach((element) {
-      list.add(element);
-    });
-  } else {
-    debugPrint('Failed to load tracks');
-  }
-  tracks = list;
-  await cacher.fetchAllCachedIds();
-
-  return list;
-}
 
 Future<bool> uploadYtTrack(String url, String artist, String title) async {
   if (url == '') return false;

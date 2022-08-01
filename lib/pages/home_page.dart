@@ -1,10 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 import '../api.dart';
-import '../bloc/player_bloc.dart';
 import '../pages_enum.dart';
 import '../routes.dart';
 import '../widgets/add_playlist.dart';
@@ -81,9 +79,5 @@ class _MyHomePageState extends State<MyHomePage> {
       default:
         throw Exception('No action for $page');
     }
-  }
-
-  void _sendMessage() {
-    channel.sink.add('hello');
   }
 }

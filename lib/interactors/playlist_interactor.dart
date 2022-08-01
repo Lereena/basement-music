@@ -8,21 +8,6 @@ import '../models/playlist.dart';
 import '../utils/log/log_service.dart';
 import '../utils/request.dart';
 
-Future<RequestResultModel> fetchAllPlaylists() async {
-  final uri = Uri.parse('$reqAllPlaylists');
-  final response = await getAsync(uri);
-
-  if (response.statusCode == 200) {
-    final jsonList = jsonDecode(response.body);
-    playlists = List.castFrom<dynamic, Playlist>(jsonList.map((e) => Playlist.fromJson(e)).toList());
-
-    return RequestResultModel(result: true);
-  } else {
-    LogService.log('Failed to load playlists: ${response.body}');
-    return RequestResultModel(result: false);
-  }
-}
-
 Future<RequestResultModel> getPlaylist(String playlistId) async {
   final uri = Uri.parse('${reqPlaylist(playlistId)}');
   final response = await getAsync(uri);
