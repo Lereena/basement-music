@@ -75,7 +75,6 @@ class _MyHomePageState extends State<MyHomePage> {
               context: context,
               builder: (context) => CustomDialog(child: AddPlaylist()),
             );
-
       default:
         throw Exception('No action for $page');
     }

@@ -17,4 +17,37 @@ class PlaylistsApiProvider {
       throw Exception('Failed to load playlists: ${response.body}');
     }
   }
+
+  Future<Playlist> createPlaylist(String title) async {
+    final uri = Uri.parse('${reqCreatePlaylist(title)}');
+    final response = await postAsync(uri);
+
+    if (response.statusCode == 200) {
+      return Playlist.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to create playlist: ${response.body}');
+    }
+  }
+
+  Future<bool> deletePlaylist(String playlistId) async {
+    final uri = Uri.parse('${reqPlaylist(playlistId)}');
+    final response = await deleteAsync(uri);
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      throw Exception('Failed to create playlist: ${response.body}');
+    }
+  }
+
+  Future<bool> addTrackToPlaylist(String playlistId, String trackId) async {
+    final uri = Uri.parse('${reqAddTrackToPlaylist(playlistId, trackId)}');
+    final response = await postAsync(uri);
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      throw Exception('Failed to create playlist: ${response.body}');
+    }
+  }
 }

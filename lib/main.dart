@@ -1,3 +1,4 @@
+import 'package:basement_music/bloc/create_playlist_bloc.dart';
 import 'package:basement_music/bloc/events/playlists_event.dart';
 import 'package:basement_music/bloc/events/tracks_event.dart';
 import 'package:basement_music/bloc/player_bloc.dart';
@@ -34,8 +35,10 @@ class BasementMusic extends StatefulWidget {
 }
 
 class _BasementMusicState extends State<BasementMusic> {
+  final _playlistsRepository = PlaylistsRepository();
+
   final _tracksBloc = TracksBloc(TracksRepository());
-  final _playlistsBloc = PlaylistsBloc(PlaylistsRepository());
+  late final _playlistsBloc = PlaylistsBloc(_playlistsRepository);
 
   @override
   void initState() {
@@ -57,12 +60,15 @@ class _BasementMusicState extends State<BasementMusic> {
         BlocProvider<PlayerBloc>(
           create: (context) => PlayerBloc(),
         ),
-        BlocProvider<TracksBloc>(
-          create: (context) => _tracksBloc,
+        BlocProvider<TracksBloc>.value(
+          value: _tracksBloc,
         ),
-        BlocProvider<PlaylistsBloc>(
-          create: (context) => _playlistsBloc,
+        BlocProvider<PlaylistsBloc>.value(
+          value: _playlistsBloc,
         ),
+        BlocProvider<CreatePlaylistBloc>(
+          create: (context) => CreatePlaylistBloc(_playlistsRepository),
+        )
       ],
       child: MaterialApp(
         title: 'Basement music',
