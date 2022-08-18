@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:basement_music/bloc/playlists_bloc/playlists_bloc.dart';
+import 'package:basement_music/bloc/playlists_bloc/playlists_event.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../repositories/playlists_repository.dart';
@@ -9,8 +11,9 @@ import 'playlist_creation_state.dart';
 
 class PlaylistCreationBloc extends Bloc<PlaylistCreationEvent, PlaylistCreationState> {
   final PlaylistsRepository _playlistsRepository;
+  final PlaylistsBloc _playlistsBloc;
 
-  PlaylistCreationBloc(this._playlistsRepository) : super(GettingInputState()) {
+  PlaylistCreationBloc(this._playlistsRepository, this._playlistsBloc) : super(GettingInputState()) {
     on<GetInputEvent>(_onGettingInputEvent);
     on<LoadingEvent>(_onLoadingCreatePlaylistEvent);
   }
@@ -30,9 +33,10 @@ class PlaylistCreationBloc extends Bloc<PlaylistCreationEvent, PlaylistCreationS
     try {
       final result = await _playlistsRepository.createPlaylist(event.title);
 
-      if (result)
+      if (result) {
         emit(CreatedState());
-      else
+        _playlistsBloc.add(PlaylistAddedEvent());
+      } else
         emit(CreationErrorState());
     } catch (e) {
       emit(CreationErrorState());

@@ -67,7 +67,10 @@ class _BasementMusicState extends State<BasementMusic> {
           value: _playlistsBloc,
         ),
         BlocProvider<PlaylistCreationBloc>(
-          create: (context) => PlaylistCreationBloc(_playlistsRepository),
+          create: (context) => PlaylistCreationBloc(
+            _playlistsRepository,
+            _playlistsBloc,
+          ),
         )
       ],
       child: MaterialApp(
