@@ -1,4 +1,4 @@
-import 'package:basement_music/bloc/states/audio_player_state.dart';
+import 'package:basement_music/bloc/player_bloc/player_state.dart';
 import 'package:basement_music/cacher/cacher.dart';
 import 'package:basement_music/widgets/controls/pause_button.dart';
 import 'package:basement_music/widgets/track_name.dart';
@@ -7,7 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../cacher/caching_state.dart';
 import '../models/track.dart';
-import '../bloc/player_bloc.dart';
+import '../bloc/player_bloc/player_bloc.dart';
 import 'controls/play_button.dart';
 import 'cover.dart';
 

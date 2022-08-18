@@ -4,11 +4,11 @@ import 'dart:math';
 import 'package:basement_music/models/track.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../audio_player.dart';
-import '../models/playlist.dart';
-import '../settings.dart';
-import 'events/player_event.dart';
-import 'states/audio_player_state.dart';
+import '../../audio_player.dart';
+import '../../models/playlist.dart';
+import '../../settings.dart';
+import 'player_event.dart';
+import 'player_state.dart';
 
 final random = Random();
 

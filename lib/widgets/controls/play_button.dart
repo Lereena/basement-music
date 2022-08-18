@@ -1,11 +1,11 @@
-import 'package:basement_music/bloc/events/player_event.dart';
-import 'package:basement_music/bloc/states/audio_player_state.dart';
+import 'package:basement_music/bloc/player_bloc/player_event.dart';
+import 'package:basement_music/bloc/player_bloc/player_state.dart';
 import 'package:basement_music/library.dart';
 import 'package:basement_music/models/track.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../bloc/player_bloc.dart';
+import '../../bloc/player_bloc/player_bloc.dart';
 
 class PlayButton extends StatelessWidget {
   final Track track;

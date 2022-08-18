@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../bloc/states/tracks_state.dart';
-import '../bloc/tracks_bloc.dart';
+import '../bloc/tracks_bloc/tracks_state.dart';
+import '../bloc/tracks_bloc/tracks_bloc.dart';
 import '../widgets/wrappers/track_context_menu.dart';
 import '../widgets/track_card.dart';
 

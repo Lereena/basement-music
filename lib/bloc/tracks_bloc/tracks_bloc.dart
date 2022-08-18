@@ -4,8 +4,8 @@ import 'package:basement_music/repositories/tracks_repository.dart';
 import 'package:basement_music/utils/log/log_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'events/tracks_event.dart';
-import 'states/tracks_state.dart';
+import 'tracks_event.dart';
+import 'tracks_state.dart';
 
 class TracksBloc extends Bloc<TracksEvent, TracksState> {
   final TracksRepository _tracksRepository;

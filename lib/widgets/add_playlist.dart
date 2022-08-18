@@ -1,9 +1,9 @@
-import 'package:basement_music/bloc/create_playlist_bloc.dart';
-import 'package:basement_music/bloc/events/create_playlist_event.dart';
+import 'package:basement_music/bloc/playlist_creation_bloc/playlist_creation_bloc.dart';
+import 'package:basement_music/bloc/playlist_creation_bloc/playlist_creation_event.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../bloc/states/create_playlist_state.dart';
+import '../bloc/playlist_creation_bloc/playlist_creation_state.dart';
 import '../utils/input_field_with.dart';
 import 'titled_field.dart';
 
@@ -17,7 +17,7 @@ class AddPlaylist extends StatefulWidget {
 const _textStyle = const TextStyle(fontSize: 18);
 
 class _AddPlaylistState extends State<AddPlaylist> {
-  late final CreatePlaylistBloc createPlaylistBloc;
+  late final PlaylistCreationBloc createPlaylistBloc;
   final titleController = TextEditingController();
   final fieldFocusNode = FocusNode();
   var loading = false;
@@ -35,15 +35,15 @@ class _AddPlaylistState extends State<AddPlaylist> {
       });
     });
 
-    createPlaylistBloc = BlocProvider.of<CreatePlaylistBloc>(context);
+    createPlaylistBloc = BlocProvider.of<PlaylistCreationBloc>(context);
     createPlaylistBloc.add(GetInputEvent());
   }
 
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: BlocBuilder<CreatePlaylistBloc, CreatePlaylistState>(builder: (context, state) {
-        if (state is CreatingPlaylistState) {
+      child: BlocBuilder<PlaylistCreationBloc, PlaylistCreationState>(builder: (context, state) {
+        if (state is WaitingCreationState) {
           return CircularProgressIndicator();
         }
 
@@ -64,7 +64,7 @@ class _AddPlaylistState extends State<AddPlaylist> {
                 fieldWidth: inputFieldWidth(context),
                 focusNode: fieldFocusNode,
                 onSubmitted: (_) async => createPlaylistBloc.add(
-                  LoadingCreatePlaylistEvent(titleController.text),
+                  LoadingEvent(titleController.text),
                 ),
               ),
               const SizedBox(height: 20),
@@ -85,7 +85,7 @@ class _AddPlaylistState extends State<AddPlaylist> {
                     style: _textStyle,
                   ),
                   onPressed: () async => createPlaylistBloc.add(
-                    LoadingCreatePlaylistEvent(titleController.text),
+                    LoadingEvent(titleController.text),
                   ),
                 ),
               ),
@@ -93,14 +93,14 @@ class _AddPlaylistState extends State<AddPlaylist> {
           );
         }
 
-        if (state is PlaylistCreatedState) {
+        if (state is CreatedState) {
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text('Playlist was successfully created'),
           );
         }
 
-        if (state is CreatePlaylistErrorState) {
+        if (state is ErrorState) {
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text('Playlist was not created, please try again later'),

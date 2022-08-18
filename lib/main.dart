@@ -1,8 +1,7 @@
-import 'package:basement_music/bloc/create_playlist_bloc.dart';
-import 'package:basement_music/bloc/events/playlists_event.dart';
-import 'package:basement_music/bloc/events/tracks_event.dart';
-import 'package:basement_music/bloc/player_bloc.dart';
-import 'package:basement_music/bloc/playlists_bloc.dart';
+import 'package:basement_music/bloc/playlist_creation_bloc/playlist_creation_bloc.dart';
+import 'package:basement_music/bloc/playlists_bloc/playlists_event.dart';
+import 'package:basement_music/bloc/tracks_bloc/tracks_event.dart';
+import 'package:basement_music/bloc/player_bloc/player_bloc.dart';
 import 'package:basement_music/repositories/playlists_repository.dart';
 import 'package:basement_music/repositories/tracks_repository.dart';
 import 'package:basement_music/routes.dart';
@@ -11,7 +10,8 @@ import 'package:basement_music/theme/custom_theme.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'bloc/tracks_bloc.dart';
+import 'bloc/playlists_bloc/playlists_bloc.dart';
+import 'bloc/tracks_bloc/tracks_bloc.dart';
 import 'models/playlist.dart';
 import 'pages/home_page.dart';
 import 'pages/playlist_page.dart';
@@ -66,8 +66,8 @@ class _BasementMusicState extends State<BasementMusic> {
         BlocProvider<PlaylistsBloc>.value(
           value: _playlistsBloc,
         ),
-        BlocProvider<CreatePlaylistBloc>(
-          create: (context) => CreatePlaylistBloc(_playlistsRepository),
+        BlocProvider<PlaylistCreationBloc>(
+          create: (context) => PlaylistCreationBloc(_playlistsRepository),
         )
       ],
       child: MaterialApp(

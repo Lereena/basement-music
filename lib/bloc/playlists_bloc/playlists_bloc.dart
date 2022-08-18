@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../repositories/playlists_repository.dart';
-import '../utils/log/log_service.dart';
-import 'events/playlists_event.dart';
-import 'states/playlists_state.dart';
+import '../../repositories/playlists_repository.dart';
+import '../../utils/log/log_service.dart';
+import 'playlists_event.dart';
+import 'playlists_state.dart';
 
 class PlaylistsBloc extends Bloc<PlaylistsEvent, PlaylistsState> {
   final PlaylistsRepository _playlistsRepository;
