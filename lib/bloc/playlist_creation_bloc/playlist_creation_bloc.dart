@@ -22,15 +22,20 @@ class PlaylistCreationBloc extends Bloc<PlaylistCreationEvent, PlaylistCreationS
   FutureOr<void> _onLoadingCreatePlaylistEvent(LoadingEvent event, Emitter<PlaylistCreationState> emit) async {
     emit(WaitingCreationState());
 
+    if (event.title.isEmpty) {
+      emit(InputErrorState('Title must not be empty'));
+      return;
+    }
+
     try {
       final result = await _playlistsRepository.createPlaylist(event.title);
 
       if (result)
         emit(CreatedState());
       else
-        emit(ErrorState());
+        emit(CreationErrorState());
     } catch (e) {
-      emit(ErrorState());
+      emit(CreationErrorState());
       LogService.log('Error creating playlist: $e');
     }
   }

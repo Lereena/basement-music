@@ -21,7 +21,6 @@ class _AddPlaylistState extends State<AddPlaylist> {
   final titleController = TextEditingController();
   final fieldFocusNode = FocusNode();
   var loading = false;
-  var error = '';
 
   @override
   void initState() {
@@ -29,25 +28,39 @@ class _AddPlaylistState extends State<AddPlaylist> {
 
     fieldFocusNode.requestFocus();
 
-    titleController.addListener(() {
-      setState(() {
-        error = '';
-      });
-    });
-
     createPlaylistBloc = BlocProvider.of<PlaylistCreationBloc>(context);
     createPlaylistBloc.add(GetInputEvent());
+
+    titleController.addListener(() {
+      if (createPlaylistBloc.state is InputErrorState) {
+        createPlaylistBloc.add(GetInputEvent());
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: BlocBuilder<PlaylistCreationBloc, PlaylistCreationState>(builder: (context, state) {
-        if (state is WaitingCreationState) {
-          return CircularProgressIndicator();
-        }
+      child: BlocBuilder<PlaylistCreationBloc, PlaylistCreationState>(
+        builder: (context, state) {
+          if (state is WaitingCreationState) {
+            return CircularProgressIndicator();
+          }
 
-        if (state is GettingInputState) {
+          if (state is CreatedState) {
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text('Playlist was successfully created'),
+            );
+          }
+
+          if (state is CreationErrorState) {
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text('Playlist was not created, please try again later'),
+            );
+          }
+
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -68,13 +81,13 @@ class _AddPlaylistState extends State<AddPlaylist> {
                 ),
               ),
               const SizedBox(height: 20),
-              if (error.isEmpty)
-                const SizedBox(height: 20)
-              else
+              if (state is InputErrorState)
                 Text(
-                  error,
+                  state.errorText,
                   style: TextStyle(color: Colors.red),
-                ),
+                )
+              else
+                const SizedBox(height: 20),
               const SizedBox(height: 20),
               Container(
                 width: 100,
@@ -84,61 +97,17 @@ class _AddPlaylistState extends State<AddPlaylist> {
                     'Create',
                     style: _textStyle,
                   ),
-                  onPressed: () async => createPlaylistBloc.add(
-                    LoadingEvent(titleController.text),
-                  ),
+                  onPressed: state is InputErrorState
+                      ? () {}
+                      : () async => createPlaylistBloc.add(
+                            LoadingEvent(titleController.text),
+                          ),
                 ),
               ),
             ],
           );
-        }
-
-        if (state is CreatedState) {
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text('Playlist was successfully created'),
-          );
-        }
-
-        if (state is ErrorState) {
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text('Playlist was not created, please try again later'),
-          );
-        }
-
-        return Container();
-      }),
+        },
+      ),
     );
   }
-
-  bool _isValidInput(String title) {
-    return title.isNotEmpty;
-  }
-
-  // void _onSubmitted() async {
-  //   if (!_isValidInput(titleController.text)) {
-  //     setState(() {
-  //       error = 'Title must not be empty';
-  //       fieldFocusNode.requestFocus();
-  //     });
-  //     return;
-  //   }
-
-  //   setState(() => loading = true);
-
-  //   final requestResult = await createPlaylist(titleController.text);
-  //   setState(() => loading = false);
-  //   Navigator.pop(context);
-
-  //   await showDialog(
-  //     context: context,
-  //     builder: (_) => StatusDialog(
-  //       success: requestResult.result,
-  //       text: requestResult.result
-  //           ? 'Playlist was successfully created'
-  //           : 'Playlist was not created, please try again later',
-  //     ),
-  //   );
-  // }
 }

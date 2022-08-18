@@ -6,4 +6,10 @@ class WaitingCreationState extends PlaylistCreationState {}
 
 class CreatedState extends PlaylistCreationState {}
 
-class ErrorState extends PlaylistCreationState {}
+class InputErrorState extends PlaylistCreationState {
+  String errorText;
+
+  InputErrorState(this.errorText);
+}
+
+class CreationErrorState extends PlaylistCreationState {}
