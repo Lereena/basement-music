@@ -1,5 +1,6 @@
 import 'package:basement_music/bloc/playlist_creation_bloc/playlist_creation_bloc.dart';
 import 'package:basement_music/bloc/playlists_bloc/playlists_event.dart';
+import 'package:basement_music/bloc/track_uploading_bloc/bloc/track_uploading_bloc.dart';
 import 'package:basement_music/bloc/tracks_bloc/tracks_event.dart';
 import 'package:basement_music/bloc/player_bloc/player_bloc.dart';
 import 'package:basement_music/repositories/playlists_repository.dart';
@@ -62,6 +63,9 @@ class _BasementMusicState extends State<BasementMusic> {
         ),
         BlocProvider<TracksBloc>.value(
           value: _tracksBloc,
+        ),
+        BlocProvider<TrackUploadingBloc>(
+          create: (context) => TrackUploadingBloc(),
         ),
         BlocProvider<PlaylistsBloc>.value(
           value: _playlistsBloc,

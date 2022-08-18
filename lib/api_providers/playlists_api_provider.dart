@@ -36,7 +36,7 @@ class PlaylistsApiProvider {
     if (response.statusCode == 200) {
       return true;
     } else {
-      throw Exception('Failed to create playlist: ${response.body}');
+      throw Exception('Failed to delete playlist: ${response.body}');
     }
   }
 
@@ -47,7 +47,7 @@ class PlaylistsApiProvider {
     if (response.statusCode == 200) {
       return true;
     } else {
-      throw Exception('Failed to create playlist: ${response.body}');
+      throw Exception('Failed to add track to playlist: ${response.body}');
     }
   }
 }

@@ -1,125 +1,82 @@
+import 'package:basement_music/bloc/track_uploading_bloc/bloc/track_uploading_bloc.dart';
 import 'package:basement_music/pages/upload/youtube/error_page.dart';
 import 'package:basement_music/pages/upload/youtube/link_input_page.dart';
 import 'package:basement_music/pages/upload/youtube/result_page.dart';
 import 'package:basement_music/pages/upload/youtube/track_info_page.dart';
 import 'package:basement_music/widgets/buttons/styled_button.dart';
 import 'package:flutter/material.dart';
-import 'package:youtube_metadata/youtube_metadata.dart';
-
-import '../../../interactors/track_interactor.dart';
-import 'extraction_stage.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ExtractFromYoutube extends StatefulWidget {
-  ExtractFromYoutube() : super();
-
   @override
   State<ExtractFromYoutube> createState() => _ExtractFromYoutubeState();
 }
 
 class _ExtractFromYoutubeState extends State<ExtractFromYoutube> {
-  final linkController = TextEditingController();
-  final titleController = TextEditingController();
-  final artistController = TextEditingController();
+  late final TrackUploadingBloc trackUploadingBloc;
 
-  var stage = ExtractingStage.link;
-  var fetchingInfo = false;
-  var result = true;
+  @override
+  void initState() {
+    super.initState();
+    trackUploadingBloc = BlocProvider.of<TrackUploadingBloc>(context);
+  }
 
   @override
   Widget build(BuildContext context) {
-    if (fetchingInfo) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircularProgressIndicator(),
-            SizedBox(height: 40),
-            Text('You can leave this page, the uploading will continue'),
-            SizedBox(height: 40),
-            StyledButton(
-              title: 'Upload other track',
-              onPressed: () => setState(
-                () => stage = stage = ExtractingStage.link,
-              ),
-            )
-          ],
-        ),
-      );
-    }
+    return Center(
+      child: BlocBuilder<TrackUploadingBloc, TrackUploadingState>(
+        builder: (context, state) {
+          if (state is LoadingState) {
+            return CircularProgressIndicator();
+          }
 
-    if (stage == ExtractingStage.link) {
-      return LinkInputPage(
-        linkController: linkController,
-        onFetchPress: _fetchTrackInfo,
-      );
-    }
+          if (state is LinkInputState) {
+            return LinkInputPage(
+              onFetchPress: (link) => trackUploadingBloc.add(LinkEntered(link)),
+            );
+          }
 
-    if (stage == ExtractingStage.info) {
-      return TrackInfoPage(
-        titleController: titleController,
-        artistController: artistController,
-        onUploadPress: _uploadTrack,
-      );
-    }
+          if (state is InfoState) {
+            return TrackInfoPage(
+              artist: state.artist,
+              title: state.title,
+              onUploadPress: (artist, title) => trackUploadingBloc.add(InfoChecked(state.url, artist, title)),
+            );
+          }
 
-    if (stage == ExtractingStage.error) {
-      return ErrorPage(
-        onTryAgainPress: () => setState(() => stage = ExtractingStage.link),
-      );
-    }
+          if (state is UploadingStartedState) {
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircularProgressIndicator(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 40),
+                  child: Text(
+                    'You can leave this page, the uploading will continue',
+                    maxLines: 2,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                StyledButton(
+                  title: 'Upload other track',
+                  onPressed: () => trackUploadingBloc.add(Start()),
+                )
+              ],
+            );
+          }
 
-    return ResultPage(
-      result: result,
-      onUploadOtherTrackPress: () => setState(() => stage = ExtractingStage.link),
+          if (state is SuccessfulUploadState) {
+            return ResultPage(
+              result: true,
+              onUploadOtherTrackPress: () => trackUploadingBloc.add(Start()),
+            );
+          }
+
+          return ErrorPage(
+            onTryAgainPress: () => trackUploadingBloc.add(Start()),
+          );
+        },
+      ),
     );
-  }
-
-  void _fetchTrackInfo() async {
-    setState(() => fetchingInfo = true);
-
-    late MetaDataModel metadata;
-    try {
-      metadata = await YoutubeMetaData.getData(linkController.text);
-    } catch (e) {
-      setState(() {
-        stage = ExtractingStage.error;
-        fetchingInfo = false;
-      });
-      return;
-    }
-
-    if (metadata.title == null) return;
-
-    final splitTitle = metadata.title!.split(RegExp('[−‐‑-ー一-]'));
-    if (splitTitle.length < 2) {
-      artistController.text = metadata.authorName?.trim() ?? '';
-      titleController.text = splitTitle[0].trim();
-    } else {
-      artistController.text = splitTitle[0].trim();
-      titleController.text = splitTitle[1].trim();
-    }
-
-    setState(() {
-      stage = ExtractingStage.info;
-      fetchingInfo = false;
-    });
-  }
-
-  void _uploadTrack() async {
-    setState(() => fetchingInfo = true);
-
-    result = await uploadYtTrack(linkController.text, artistController.text, titleController.text);
-
-    setState(() {
-      _clearControllers();
-      stage = ExtractingStage.result;
-      fetchingInfo = false;
-    });
-  }
-
-  void _clearControllers() {
-    linkController.text = "";
-    artistController.text = "";
-    titleController.text = "";
   }
 }

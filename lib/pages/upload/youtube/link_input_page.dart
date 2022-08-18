@@ -4,12 +4,12 @@ import '../../../utils/input_field_with.dart';
 import '../../../widgets/buttons/styled_button.dart';
 
 class LinkInputPage extends StatelessWidget {
-  final TextEditingController linkController;
-  final Function() onFetchPress;
+  final Function(String) onFetchPress;
+
+  final linkController = TextEditingController();
 
   LinkInputPage({
     Key? key,
-    required this.linkController,
     required this.onFetchPress,
   }) : super(key: key);
 
@@ -40,13 +40,13 @@ class LinkInputPage extends StatelessWidget {
             controller: linkController,
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.headline6,
-            onSubmitted: (_) => onFetchPress(),
+            onSubmitted: (_) => onFetchPress(linkController.text),
           ),
         ),
         SizedBox(height: 40),
         StyledButton(
           title: 'Extract',
-          onPressed: onFetchPress,
+          onPressed: () => onFetchPress(linkController.text),
         ),
       ],
     );
