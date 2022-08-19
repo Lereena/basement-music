@@ -1,5 +1,6 @@
 import 'package:basement_music/bloc/player_bloc/player_state.dart';
 import 'package:basement_music/cacher/cacher.dart';
+import 'package:basement_music/widgets/buttons/more_button.dart';
 import 'package:basement_music/widgets/controls/pause_button.dart';
 import 'package:basement_music/widgets/track_name.dart';
 import 'package:flutter/material.dart';
@@ -58,7 +59,22 @@ class _TrackCardState extends State<TrackCard> {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-              child: Cover(cachingState: cachingState, cover: widget.track.cover),
+              child: Container(
+                width: 40,
+                height: 40,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Cover(cachingState: cachingState, cover: widget.track.cover),
+                    Container(color: Colors.black.withOpacity(0.1)),
+                    if (playerBloc.currentTrack == widget.track &&
+                        (state is PlayingPlayerState || state is ResumedPlayerState))
+                      PauseButton()
+                    else
+                      PlayButton(track: widget.track, state: state),
+                  ],
+                ),
+              ),
             ),
             Expanded(
               child: Column(
@@ -76,17 +92,14 @@ class _TrackCardState extends State<TrackCard> {
                 ],
               ),
             ),
-            SizedBox(width: 20),
+            SizedBox(width: 10),
             Text(
               widget.track.durationStr,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(fontSize: 16),
             ),
-            SizedBox(width: 20),
-            if (playerBloc.currentTrack == widget.track && (state is PlayingPlayerState || state is ResumedPlayerState))
-              PauseButton()
-            else
-              PlayButton(track: widget.track, state: state),
+            SizedBox(width: 15),
+            MoreButton(track: widget.track),
             SizedBox(width: 15),
           ],
         ),

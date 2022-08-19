@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bloc/tracks_bloc/tracks_state.dart';
 import '../bloc/tracks_bloc/tracks_bloc.dart';
-import '../widgets/wrappers/track_context_menu.dart';
 import '../widgets/track_card.dart';
 
 class AllTracksPage extends StatelessWidget {
@@ -28,8 +27,8 @@ class AllTracksPage extends StatelessWidget {
             return ListView.separated(
               separatorBuilder: (context, _) => Divider(height: 1),
               itemCount: state.tracks.length,
-              itemBuilder: (context, index) => TrackContextMenu(
-                trackCard: TrackCard(track: state.tracks[index]),
+              itemBuilder: (context, index) => TrackCard(
+                track: state.tracks[index],
               ),
             );
           }

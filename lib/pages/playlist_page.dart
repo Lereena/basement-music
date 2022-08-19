@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import '../library.dart';
 import '../models/playlist.dart';
 import '../widgets/track_card.dart';
-import '../widgets/wrappers/track_context_menu.dart';
 
 class PlaylistPage extends StatefulWidget {
   final Playlist playlist;
@@ -47,8 +46,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
           : ListView.separated(
               separatorBuilder: (context, _) => Divider(height: 1),
               itemCount: widget.playlist.tracks.length,
-              itemBuilder: (context, index) => TrackContextMenu(
-                trackCard: TrackCard(track: widget.playlist.tracks[index]),
+              itemBuilder: (context, index) => TrackCard(
+                track: widget.playlist.tracks[index],
               ),
             ),
       bottomNavigationBar: BottomBar(),
