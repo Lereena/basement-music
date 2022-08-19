@@ -1,34 +1,19 @@
-import 'package:basement_music/settings.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class ShuffleToggle extends StatefulWidget {
+import '../../bloc/settings_bloc/bloc/settings_bloc.dart';
+
+class ShuffleToggle extends StatelessWidget {
   ShuffleToggle({Key? key}) : super(key: key);
 
   @override
-  State<ShuffleToggle> createState() => _ShuffleToggleState();
-}
-
-class _ShuffleToggleState extends State<ShuffleToggle> {
-  bool shuffle = false;
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      shuffle = await getShuffle();
-      if (mounted) setState(() {});
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final settingsBloc = BlocProvider.of<SettingsBloc>(context);
+
     return InkWell(
-      onTap: () async {
-        await setShuffle(!shuffle);
-        if (mounted) setState(() => shuffle = !shuffle);
-      },
+      onTap: () => settingsBloc.add(SetShuffle(!settingsBloc.state.shuffle)),
       child: Icon(
-        shuffle ? Icons.shuffle_on_outlined : Icons.shuffle,
+        settingsBloc.state.shuffle ? Icons.shuffle_on_outlined : Icons.shuffle,
         size: 30,
       ),
     );

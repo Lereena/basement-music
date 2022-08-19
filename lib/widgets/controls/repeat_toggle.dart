@@ -1,34 +1,19 @@
-import 'package:basement_music/settings.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class RepeatToggle extends StatefulWidget {
+import '../../bloc/settings_bloc/bloc/settings_bloc.dart';
+
+class RepeatToggle extends StatelessWidget {
   RepeatToggle({Key? key}) : super(key: key);
 
   @override
-  State<RepeatToggle> createState() => _RepeatToggleState();
-}
-
-class _RepeatToggleState extends State<RepeatToggle> {
-  bool repeat = false;
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      repeat = await getRepeat();
-      if (mounted) setState(() {});
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final settingsBloc = BlocProvider.of<SettingsBloc>(context);
+
     return InkWell(
-      onTap: () async {
-        await setRepeat(!repeat);
-        if (mounted) setState(() => repeat = !repeat);
-      },
+      onTap: () => settingsBloc.add(SetRepeat(!settingsBloc.state.repeat)),
       child: Icon(
-        repeat ? Icons.repeat_on_outlined : Icons.repeat,
+        settingsBloc.state.repeat ? Icons.repeat_on_outlined : Icons.repeat,
         size: 30,
       ),
     );

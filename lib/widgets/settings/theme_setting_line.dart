@@ -1,7 +1,7 @@
-import 'package:basement_music/settings.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../theme/config.dart';
+import '../../bloc/settings_bloc/bloc/settings_bloc.dart';
 import 'settings_line_decoration.dart';
 
 class ThemeSettingLine extends StatefulWidget {
@@ -14,18 +14,17 @@ class ThemeSettingLine extends StatefulWidget {
 class _ThemeSettingLineState extends State<ThemeSettingLine> {
   @override
   Widget build(BuildContext context) {
+    final settingsBloc = BlocProvider.of<SettingsBloc>(context);
+
     return SettingsLineDecoration(
       child: Row(
         children: [
           Text('Night theme'),
           Spacer(),
           Switch(
-              value: currentTheme.isDarkTheme,
-              onChanged: (value) async {
-                await setDarkTheme(value);
-
-                setState(() => currentTheme.toggleTheme());
-              }),
+            value: settingsBloc.state.darkTheme,
+            onChanged: (value) => settingsBloc.add(SetDarkTheme(value)),
+          ),
         ],
       ),
     );

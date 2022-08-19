@@ -1,22 +1,24 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:basement_music/bloc/settings_bloc/bloc/settings_bloc.dart';
 import 'package:basement_music/models/track.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../audio_player.dart';
 import '../../models/playlist.dart';
-import '../../settings.dart';
 import 'player_event.dart';
 import 'player_state.dart';
 
 final random = Random();
 
 class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
+  final SettingsBloc _settingsBloc;
+
   Track currentTrack = Track.empty();
   Playlist currentPlaylist = Playlist.all();
 
-  PlayerBloc() : super(InitialPlayerState(Track.empty())) {
+  PlayerBloc(this._settingsBloc) : super(InitialPlayerState(Track.empty())) {
     on<PlayEvent>(_onPlayEvent);
     on<PauseEvent>(_onPauseEvent);
     on<ResumeEvent>(_onResumeEvent);
@@ -43,11 +45,8 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
   FutureOr<void> _onNextEvent(NextEvent event, Emitter<AudioPlayerState> emit) async {
     audioPlayer.stop();
 
-    final repeat = await getRepeat();
-    final shuffle = await getShuffle();
-
-    if (!repeat) {
-      if (shuffle) {
+    if (!_settingsBloc.state.repeat) {
+      if (_settingsBloc.state.shuffle) {
         final nextTrackPosition = _shuffledNext(currentPlaylist.tracks.indexOf(currentTrack));
         currentTrack = currentPlaylist.tracks[nextTrackPosition];
       } else {
@@ -64,11 +63,8 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
   FutureOr<void> _onPreviousEvent(PreviousEvent event, Emitter<AudioPlayerState> emit) async {
     audioPlayer.stop();
 
-    final repeat = await getRepeat();
-    final shuffle = await getShuffle();
-
-    if (!repeat) {
-      if (shuffle) {
+    if (!_settingsBloc.state.repeat) {
+      if (_settingsBloc.state.shuffle) {
         final nextTrackPosition = _shuffledNext(currentPlaylist.tracks.indexOf(currentTrack));
         currentTrack = currentPlaylist.tracks[nextTrackPosition];
       } else {
