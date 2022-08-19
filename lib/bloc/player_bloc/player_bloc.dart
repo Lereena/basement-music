@@ -7,18 +7,20 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../audio_player.dart';
 import '../../models/playlist.dart';
+import '../../repositories/tracks_repository.dart';
 import 'player_event.dart';
 import 'player_state.dart';
 
 final random = Random();
 
 class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
+  final TracksRepository _tracksRepository;
   final SettingsBloc _settingsBloc;
 
+  Playlist currentPlaylist = Playlist.empty();
   Track currentTrack = Track.empty();
-  Playlist currentPlaylist = Playlist.all();
 
-  PlayerBloc(this._settingsBloc) : super(InitialPlayerState(Track.empty())) {
+  PlayerBloc(this._settingsBloc, this._tracksRepository) : super(InitialPlayerState(Track.empty())) {
     on<PlayEvent>(_onPlayEvent);
     on<PauseEvent>(_onPauseEvent);
     on<ResumeEvent>(_onResumeEvent);
@@ -27,6 +29,10 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
   }
 
   FutureOr<void> _onPlayEvent(PlayEvent event, Emitter<AudioPlayerState> emit) async {
+    if (currentPlaylist == Playlist.empty()) {
+      currentPlaylist = Playlist(id: '', title: '', tracks: _tracksRepository.items);
+    }
+
     audioPlayer.customPlay(event.track.id);
     currentTrack = event.track;
     emit(PlayingPlayerState(event.track));

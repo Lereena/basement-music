@@ -26,7 +26,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
   @override
   void dispose() {
     super.dispose();
-    openedPlaylist = Playlist.all();
+    openedPlaylist = Playlist.empty();
   }
 
   @override

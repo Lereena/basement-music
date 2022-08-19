@@ -16,8 +16,8 @@ class Playlist extends Equatable {
   @override
   List<Object> get props => [id];
 
-  factory Playlist.all() {
-    return Playlist(id: '', title: '', tracks: lib.tracks);
+  factory Playlist.empty() {
+    return Playlist(id: '', title: '', tracks: []);
   }
 
   factory Playlist.fromJson(Map<String, dynamic> json) {

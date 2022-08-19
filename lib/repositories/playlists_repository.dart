@@ -6,7 +6,7 @@ class PlaylistsRepository {
   final _playlistsApiProvider = PlaylistsApiProvider();
   var _items = <Playlist>[];
 
-  get items => _items;
+  List<Playlist> get items => _items;
 
   Future<bool> getAllPlaylists() async {
     final result = await _playlistsApiProvider.fetchAllPlaylists();

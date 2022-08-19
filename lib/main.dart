@@ -46,10 +46,11 @@ class BasementMusic extends StatefulWidget {
 }
 
 class _BasementMusicState extends State<BasementMusic> {
+  final _tracksRepository = TracksRepository();
   final _playlistsRepository = PlaylistsRepository();
 
   final _settingsBloc = SettingsBloc();
-  final _tracksBloc = TracksBloc(TracksRepository());
+  late final _tracksBloc = TracksBloc(_tracksRepository);
   late final _playlistsBloc = PlaylistsBloc(_playlistsRepository);
 
   @override
@@ -67,7 +68,7 @@ class _BasementMusicState extends State<BasementMusic> {
     return MultiBlocProvider(
       providers: [
         BlocProvider<PlayerBloc>(
-          create: (context) => PlayerBloc(_settingsBloc),
+          create: (context) => PlayerBloc(_settingsBloc, _tracksRepository),
         ),
         BlocProvider<TracksBloc>.value(
           value: _tracksBloc,
