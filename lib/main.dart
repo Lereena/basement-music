@@ -6,6 +6,7 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'bloc/add_to_playlist_bloc/add_to_playlist_bloc.dart';
+import 'bloc/cacher_bloc/bloc/cacher_bloc.dart';
 import 'bloc/player_bloc/player_bloc.dart';
 import 'bloc/playlist_creation_bloc/playlist_creation_bloc.dart';
 import 'bloc/playlists_bloc/playlists_bloc.dart';
@@ -50,6 +51,7 @@ class _BasementMusicState extends State<BasementMusic> {
   final _playlistsRepository = PlaylistsRepository();
 
   final _settingsBloc = SettingsBloc();
+  final _cacherBloc = CacherBloc();
   late final _tracksBloc = TracksBloc(_tracksRepository);
   late final _playlistsBloc = PlaylistsBloc(_playlistsRepository);
 
@@ -71,6 +73,7 @@ class _BasementMusicState extends State<BasementMusic> {
           create: (context) => PlayerBloc(
             _settingsBloc,
             _tracksRepository,
+            _cacherBloc,
           ),
         ),
         BlocProvider<TracksBloc>.value(
@@ -96,6 +99,9 @@ class _BasementMusicState extends State<BasementMusic> {
             _tracksRepository,
             _playlistsRepository,
           ),
+        ),
+        BlocProvider<CacherBloc>.value(
+          value: _cacherBloc,
         ),
       ],
       child: BlocBuilder<SettingsBloc, SettingsState>(

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 import '../api.dart';
-import '../pages_enum.dart';
+import '../enums/pages_enum.dart';
 import '../routes.dart';
 import '../widgets/add_playlist.dart';
 import '../widgets/bottom_bar.dart';

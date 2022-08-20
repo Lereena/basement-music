@@ -7,6 +7,7 @@ import '../../audio_player.dart';
 import '../../models/playlist.dart';
 import '../../models/track.dart';
 import '../../repositories/tracks_repository.dart';
+import '../cacher_bloc/bloc/cacher_bloc.dart';
 import '../settings_bloc/settings_bloc.dart';
 import 'player_event.dart';
 import 'player_state.dart';
@@ -16,11 +17,12 @@ final random = Random();
 class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
   final TracksRepository _tracksRepository;
   final SettingsBloc _settingsBloc;
+  final CacherBloc _cacherBloc;
 
   Playlist currentPlaylist = Playlist.empty();
   Track currentTrack = Track.empty();
 
-  PlayerBloc(this._settingsBloc, this._tracksRepository) : super(InitialPlayerState(Track.empty())) {
+  PlayerBloc(this._settingsBloc, this._tracksRepository, this._cacherBloc) : super(InitialPlayerState(Track.empty())) {
     on<PlayEvent>(_onPlayEvent);
     on<PauseEvent>(_onPauseEvent);
     on<ResumeEvent>(_onResumeEvent);
@@ -33,7 +35,9 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
       currentPlaylist = Playlist(id: '', title: '', tracks: _tracksRepository.items);
     }
 
-    audioPlayer.customPlay(event.track.id);
+    final cached = _cacherBloc.state.isCached([event.track.id]);
+
+    audioPlayer.customPlay(event.track.id, cached: cached);
     currentTrack = event.track;
     emit(PlayingPlayerState(event.track));
   }
@@ -62,7 +66,9 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
       }
     }
 
-    audioPlayer.customPlay(currentTrack.id);
+    final cached = _cacherBloc.state.isCached([currentTrack.id]);
+
+    audioPlayer.customPlay(currentTrack.id, cached: cached);
     emit(PlayingPlayerState(currentTrack));
   }
 
@@ -80,7 +86,9 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
       }
     }
 
-    audioPlayer.customPlay(currentTrack.id);
+    final cached = _cacherBloc.state.isCached([currentTrack.id]);
+
+    audioPlayer.customPlay(currentTrack.id, cached: cached);
     emit(PlayingPlayerState(currentTrack));
   }
 

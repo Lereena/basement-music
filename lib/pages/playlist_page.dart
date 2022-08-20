@@ -1,5 +1,5 @@
 import 'package:basement_music/widgets/bottom_bar.dart';
-import 'package:basement_music/widgets/buttons/cache_button.dart';
+import 'package:basement_music/widgets/playlist_cache_action.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -34,7 +34,13 @@ class _PlaylistPageState extends State<PlaylistPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.playlist.title),
-        actions: kIsWeb || widget.playlist.tracks.isEmpty ? null : [CacheButton(listToCache: widget.playlist.tracks)],
+        actions: kIsWeb || widget.playlist.tracks.isEmpty
+            ? null
+            : [
+                PlaylistCacheAction(
+                  trackIds: widget.playlist.tracks.map((track) => track.id).toList(),
+                ),
+              ],
       ),
       body: widget.playlist.tracks.isEmpty
           ? Center(

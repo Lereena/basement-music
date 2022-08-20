@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../cacher/cacher.dart';
+import '../../bloc/cacher_bloc/bloc/cacher_bloc.dart';
 import '../../models/track.dart';
 import '../../pages/add_to_playlist_page.dart';
 import '../dialog.dart';
@@ -13,6 +14,8 @@ class MoreButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _cacherBloc = BlocProvider.of<CacherBloc>(context);
+
     return InkWell(
       child: Icon(Icons.more_vert),
       onTap: () async {
@@ -37,17 +40,20 @@ class MoreButton extends StatelessWidget {
               ),
               Divider(),
               SimpleDialogOption(
-                child: Text('Add to playlist'),
-                onPressed: () async => await showDialog(
-                  context: context,
-                  builder: (context) => AddToPlaylistDialog(trackId: track.id),
-                ),
-              ),
+                  child: Text('Add to playlist'),
+                  onPressed: () async {
+                    Navigator.pop(context);
+                    await showDialog(
+                      context: context,
+                      builder: (context) => AddToPlaylistDialog(trackId: track.id),
+                    );
+                  }),
               Divider(),
               SimpleDialogOption(
                 child: Text('Cache track'),
-                onPressed: () async {
-                  await cacher.startCaching(track.id);
+                onPressed: () {
+                  _cacherBloc.add(CacheTrackEvent(track.id));
+                  Navigator.pop(context);
                 },
               ),
             ],
