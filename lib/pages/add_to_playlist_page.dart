@@ -1,10 +1,10 @@
-import 'package:basement_music/widgets/icons/success_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../bloc/add_to_playlist_bloc/bloc/add_to_playlist_bloc.dart';
+import '../bloc/add_to_playlist_bloc/add_to_playlist_bloc.dart';
 import '../widgets/dialog.dart';
 import '../widgets/icons/error_icon.dart';
+import '../widgets/icons/success_icon.dart';
 
 class AddToPlaylistDialog extends StatefulWidget {
   final String trackId;
@@ -38,7 +38,7 @@ class _AddToPlaylistDialogState extends State<AddToPlaylistDialog> {
               return Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(top: 20, bottom: 20),
+                    padding: const EdgeInsets.symmetric(vertical: 20),
                     child: Text('Choose playlist'),
                   ),
                   const Divider(height: 1.5),

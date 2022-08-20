@@ -1,11 +1,12 @@
-import 'package:basement_music/bloc/track_uploading_bloc/bloc/track_uploading_bloc.dart';
-import 'package:basement_music/pages/upload/youtube/error_page.dart';
-import 'package:basement_music/pages/upload/youtube/link_input_page.dart';
-import 'package:basement_music/pages/upload/youtube/result_page.dart';
-import 'package:basement_music/pages/upload/youtube/track_info_page.dart';
-import 'package:basement_music/widgets/buttons/styled_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../bloc/track_uploading_bloc/track_uploading_bloc.dart';
+import '../../../widgets/buttons/styled_button.dart';
+import 'error_page.dart';
+import 'link_input_page.dart';
+import 'result_page.dart';
+import 'track_info_page.dart';
 
 class ExtractFromYoutube extends StatefulWidget {
   @override

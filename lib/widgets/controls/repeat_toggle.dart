@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../bloc/settings_bloc/bloc/settings_bloc.dart';
+import '../../bloc/settings_bloc/settings_bloc.dart';
 
 class RepeatToggle extends StatelessWidget {
   RepeatToggle({Key? key}) : super(key: key);

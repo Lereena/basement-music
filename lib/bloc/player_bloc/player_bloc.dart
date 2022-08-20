@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:basement_music/bloc/settings_bloc/bloc/settings_bloc.dart';
-import 'package:basement_music/models/track.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../audio_player.dart';
 import '../../models/playlist.dart';
+import '../../models/track.dart';
 import '../../repositories/tracks_repository.dart';
+import '../settings_bloc/settings_bloc.dart';
 import 'player_event.dart';
 import 'player_state.dart';
 

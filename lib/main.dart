@@ -1,29 +1,28 @@
-import 'package:basement_music/bloc/add_to_playlist_bloc/bloc/add_to_playlist_bloc.dart';
-import 'package:basement_music/bloc/playlist_creation_bloc/playlist_creation_bloc.dart';
-import 'package:basement_music/bloc/playlists_bloc/playlists_event.dart';
-import 'package:basement_music/bloc/settings_bloc/bloc/settings_bloc.dart';
-import 'package:basement_music/bloc/track_uploading_bloc/bloc/track_uploading_bloc.dart';
-import 'package:basement_music/bloc/tracks_bloc/tracks_event.dart';
-import 'package:basement_music/bloc/player_bloc/player_bloc.dart';
-import 'package:basement_music/repositories/playlists_repository.dart';
-import 'package:basement_music/repositories/tracks_repository.dart';
-import 'package:basement_music/routes.dart';
-import 'package:basement_music/theme/custom_theme.dart';
+import 'package:context_menus/context_menus.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
-import 'package:context_menus/context_menus.dart';
-import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
+import 'bloc/add_to_playlist_bloc/add_to_playlist_bloc.dart';
+import 'bloc/player_bloc/player_bloc.dart';
+import 'bloc/playlist_creation_bloc/playlist_creation_bloc.dart';
 import 'bloc/playlists_bloc/playlists_bloc.dart';
+import 'bloc/playlists_bloc/playlists_event.dart';
+import 'bloc/settings_bloc/settings_bloc.dart';
+import 'bloc/track_uploading_bloc/track_uploading_bloc.dart';
 import 'bloc/tracks_bloc/tracks_bloc.dart';
+import 'bloc/tracks_bloc/tracks_event.dart';
 import 'models/playlist.dart';
 import 'pages/home_page.dart';
 import 'pages/playlist_page.dart';
 import 'pages/settings_page.dart';
-
 import 'pages/upload/upload_page.dart';
+import 'repositories/playlists_repository.dart';
+import 'repositories/tracks_repository.dart';
+import 'routes.dart';
+import 'theme/custom_theme.dart';
 import 'platform_settings/platform_settings_stub.dart'
     if (dart.library.io) 'platform_settings/platform_settings_io.dart'
     if (dart.library.html) 'platform_settings/platform_settings_web.dart';
