@@ -1,5 +1,4 @@
 import 'package:basement_music/api_providers/playlists_api_provider.dart';
-import 'package:basement_music/library.dart';
 import 'package:basement_music/models/playlist.dart';
 
 class PlaylistsRepository {
@@ -30,13 +29,6 @@ class PlaylistsRepository {
   }
 
   Future<bool> addTrackToPlaylist(String playlistId, String trackId) async {
-    final result = await _playlistsApiProvider.addTrackToPlaylist(playlistId, trackId);
-    if (result) {
-      _items
-          .firstWhere((element) => element.id == playlistId)
-          .tracks
-          .add(tracks.firstWhere((element) => element.id == trackId));
-    }
-    return result;
+    return await _playlistsApiProvider.addTrackToPlaylist(playlistId, trackId);
   }
 }

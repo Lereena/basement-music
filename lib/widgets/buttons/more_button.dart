@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../cacher/cacher.dart';
-import '../../interactors/playlist_interactor.dart';
-import '../../library.dart';
 import '../../models/track.dart';
+import '../../pages/add_to_playlist_page.dart';
 import '../dialog.dart';
 import '../edit_track.dart';
 
@@ -27,35 +26,22 @@ class MoreButton extends StatelessWidget {
                   context: context,
                   builder: (context) => CustomDialog(
                     child: EditTrack(
-                        titleText: Text(
-                          'Edit track info',
-                          style: TextStyle(fontSize: 24),
-                        ),
-                        track: track),
+                      titleText: Text(
+                        'Edit track info',
+                        style: TextStyle(fontSize: 24),
+                      ),
+                      track: track,
+                    ),
                   ),
                 ),
               ),
               Divider(),
               SimpleDialogOption(
                 child: Text('Add to playlist'),
-                onPressed: () async {
-                  final playlistId = await showDialog(
-                    context: context,
-                    builder: (context) => SimpleDialog(
-                      title: Text('Choose playlist'),
-                      children: playlists
-                          .map((playlist) => SimpleDialogOption(
-                                onPressed: () => Navigator.pop(context, playlist.id),
-                                child: Text(playlist.title),
-                              ))
-                          .toList(),
-                    ),
-                  );
-
-                  if (playlistId == null) return;
-
-                  await addTrackToPlaylist(playlistId, track.id);
-                },
+                onPressed: () async => await showDialog(
+                  context: context,
+                  builder: (context) => AddToPlaylistDialog(trackId: track.id),
+                ),
               ),
               Divider(),
               SimpleDialogOption(

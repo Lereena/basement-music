@@ -1,25 +1,23 @@
 import 'package:flutter/material.dart';
 
-class CustomDialog extends StatefulWidget {
+class CustomDialog extends StatelessWidget {
   final Widget child;
+  final EdgeInsets padding;
 
-  CustomDialog({Key? key, required this.child}) : super(key: key);
+  CustomDialog({
+    Key? key,
+    required this.child,
+    this.padding = const EdgeInsets.symmetric(vertical: 40),
+  }) : super(key: key);
 
-  @override
-  State<CustomDialog> createState() => _CustomDialogState();
-}
-
-class _CustomDialogState extends State<CustomDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 40),
+        padding: padding,
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: [
-            widget.child,
-          ],
+          children: [child],
         ),
       ),
     );

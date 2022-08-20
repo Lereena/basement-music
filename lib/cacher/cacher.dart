@@ -36,11 +36,12 @@ class Cacher {
   }
 
   Future<void> fetchAllCachedIds() async {
-    for (var track in tracks) {
-      if (await _isInCach(track.id)) {
-        cachedTracks.add(track.id);
-      }
-    }
+    // TODO: use local tracks
+    // for (var track in tracks) {
+    //   if (await _isInCach(track.id)) {
+    //     cachedTracks.add(track.id);
+    //   }
+    // }
   }
 
   Future<bool> _isInCach(String trackId) async {

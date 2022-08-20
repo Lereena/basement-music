@@ -1,3 +1,4 @@
+import 'package:basement_music/bloc/add_to_playlist_bloc/bloc/add_to_playlist_bloc.dart';
 import 'package:basement_music/bloc/playlist_creation_bloc/playlist_creation_bloc.dart';
 import 'package:basement_music/bloc/playlists_bloc/playlists_event.dart';
 import 'package:basement_music/bloc/settings_bloc/bloc/settings_bloc.dart';
@@ -68,7 +69,10 @@ class _BasementMusicState extends State<BasementMusic> {
     return MultiBlocProvider(
       providers: [
         BlocProvider<PlayerBloc>(
-          create: (context) => PlayerBloc(_settingsBloc, _tracksRepository),
+          create: (context) => PlayerBloc(
+            _settingsBloc,
+            _tracksRepository,
+          ),
         ),
         BlocProvider<TracksBloc>.value(
           value: _tracksBloc,
@@ -87,6 +91,12 @@ class _BasementMusicState extends State<BasementMusic> {
         ),
         BlocProvider<SettingsBloc>(
           create: (context) => _settingsBloc,
+        ),
+        BlocProvider<AddToPlaylistBloc>(
+          create: (context) => AddToPlaylistBloc(
+            _tracksRepository,
+            _playlistsRepository,
+          ),
         ),
       ],
       child: BlocBuilder<SettingsBloc, SettingsState>(
