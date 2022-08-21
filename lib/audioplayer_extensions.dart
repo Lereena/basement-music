@@ -4,12 +4,10 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
 import 'api.dart';
 
-final audioPlayer = AudioPlayer();
-
 extension CustomPlay on AudioPlayer {
   Future<void> customPlay(String trackId, {bool cached = false}) async {
     if (!cached) {
-      this.play(UrlSource(trackPlayback(trackId)));
+      await this.play(UrlSource(trackPlayback(trackId)));
       return;
     }
 

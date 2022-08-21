@@ -1,4 +1,3 @@
-import 'package:basement_music/bloc/player_bloc/player_event.dart';
 import 'package:basement_music/utils/time.dart';
 import 'package:basement_music/widgets/controls/next_button.dart';
 import 'package:basement_music/widgets/controls/previous_button.dart';
@@ -6,7 +5,6 @@ import 'package:basement_music/widgets/track_name.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../audio_player.dart';
 import '../bloc/player_bloc/player_bloc.dart';
 import '../bloc/player_bloc/player_state.dart';
 import '../models/track.dart';
@@ -29,10 +27,7 @@ class _BottomBarState extends State<BottomBar> {
     super.initState();
     final playerBloc = BlocProvider.of<PlayerBloc>(context);
 
-    audioPlayer.onPlayerComplete.listen((event) {
-      playerBloc.add(NextEvent());
-    });
-    audioPlayer.onPositionChanged.listen((event) {
+    playerBloc.onPositionChanged.listen((event) {
       if (mounted)
         setState(() {
           percentProgress = event.inSeconds.toDouble() / playerBloc.state.currentTrack.duration;

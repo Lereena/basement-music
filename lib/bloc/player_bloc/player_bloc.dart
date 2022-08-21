@@ -1,9 +1,10 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../audio_player.dart';
+import '../../audioplayer_extensions.dart';
 import '../../models/playlist.dart';
 import '../../models/track.dart';
 import '../../repositories/tracks_repository.dart';
@@ -15,19 +16,30 @@ import 'player_state.dart';
 final random = Random();
 
 class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
+  final _audioPlayer = AudioPlayer();
+  late final onPositionChanged = _audioPlayer.onPositionChanged;
+
   final TracksRepository _tracksRepository;
   final SettingsBloc _settingsBloc;
   final CacherBloc _cacherBloc;
 
-  Playlist currentPlaylist = Playlist.empty();
-  Track currentTrack = Track.empty();
+  var currentPlaylist = Playlist.empty();
+  var currentTrack = Track.empty();
 
-  PlayerBloc(this._settingsBloc, this._tracksRepository, this._cacherBloc) : super(InitialPlayerState(Track.empty())) {
+  PlayerBloc(
+    this._settingsBloc,
+    this._tracksRepository,
+    this._cacherBloc,
+  ) : super(InitialPlayerState(Track.empty())) {
     on<PlayEvent>(_onPlayEvent);
     on<PauseEvent>(_onPauseEvent);
     on<ResumeEvent>(_onResumeEvent);
     on<NextEvent>(_onNextEvent);
     on<PreviousEvent>(_onPreviousEvent);
+
+    _audioPlayer.onPlayerComplete.listen((event) {
+      add(NextEvent());
+    });
   }
 
   FutureOr<void> _onPlayEvent(PlayEvent event, Emitter<AudioPlayerState> emit) async {
@@ -37,23 +49,23 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
 
     final cached = _cacherBloc.state.isCached([event.track.id]);
 
-    audioPlayer.customPlay(event.track.id, cached: cached);
+    _audioPlayer.customPlay(event.track.id, cached: cached);
     currentTrack = event.track;
     emit(PlayingPlayerState(event.track));
   }
 
   FutureOr<void> _onPauseEvent(PauseEvent event, Emitter<AudioPlayerState> emit) {
-    audioPlayer.pause();
+    _audioPlayer.pause();
     emit(PausedPlayerState(currentTrack));
   }
 
   FutureOr<void> _onResumeEvent(ResumeEvent event, Emitter<AudioPlayerState> emit) {
-    audioPlayer.resume();
+    _audioPlayer.resume();
     emit(ResumedPlayerState(currentTrack));
   }
 
   FutureOr<void> _onNextEvent(NextEvent event, Emitter<AudioPlayerState> emit) async {
-    audioPlayer.stop();
+    _audioPlayer.pause();
 
     if (!_settingsBloc.state.repeat) {
       if (_settingsBloc.state.shuffle) {
@@ -68,12 +80,12 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
 
     final cached = _cacherBloc.state.isCached([currentTrack.id]);
 
-    audioPlayer.customPlay(currentTrack.id, cached: cached);
+    _audioPlayer.customPlay(currentTrack.id, cached: cached);
     emit(PlayingPlayerState(currentTrack));
   }
 
   FutureOr<void> _onPreviousEvent(PreviousEvent event, Emitter<AudioPlayerState> emit) async {
-    audioPlayer.stop();
+    _audioPlayer.pause();
 
     if (!_settingsBloc.state.repeat) {
       if (_settingsBloc.state.shuffle) {
@@ -88,7 +100,7 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
 
     final cached = _cacherBloc.state.isCached([currentTrack.id]);
 
-    audioPlayer.customPlay(currentTrack.id, cached: cached);
+    _audioPlayer.customPlay(currentTrack.id, cached: cached);
     emit(PlayingPlayerState(currentTrack));
   }
 

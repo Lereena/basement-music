@@ -1,4 +1,3 @@
-import 'package:context_menus/context_menus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -123,9 +122,7 @@ class _BasementMusicState extends State<BasementMusic> {
               }
               return null;
             },
-            home: ContextMenuOverlay(
-              child: MyHomePage(title: 'Basement music'),
-            ),
+            home: MyHomePage(title: 'Basement music'),
           );
         },
       ),
