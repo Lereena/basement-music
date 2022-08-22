@@ -3,7 +3,7 @@ import 'package:basement_music/models/playlist.dart';
 
 class PlaylistsRepository {
   final _playlistsApiProvider = PlaylistsApiProvider();
-  var _items = <Playlist>[];
+  final _items = <Playlist>[];
 
   List<Playlist> get items => _items;
 
@@ -23,12 +23,12 @@ class PlaylistsRepository {
   Future<bool> deletePlaylist(String playlistId) async {
     final result = await _playlistsApiProvider.deletePlaylist(playlistId);
     if (result) {
-      _items.removeWhere(((element) => element.id == playlistId));
+      _items.removeWhere((element) => element.id == playlistId);
     }
     return result;
   }
 
   Future<bool> addTrackToPlaylist(String playlistId, String trackId) async {
-    return await _playlistsApiProvider.addTrackToPlaylist(playlistId, trackId);
+    return _playlistsApiProvider.addTrackToPlaylist(playlistId, trackId);
   }
 }

@@ -5,22 +5,22 @@ import '../settings/settings_button.dart';
 class SideNavigationRail extends StatefulWidget {
   final Function(int) onDestinationSelected;
 
-  SideNavigationRail({Key? key, required this.onDestinationSelected}) : super(key: key);
+  const SideNavigationRail({Key? key, required this.onDestinationSelected}) : super(key: key);
 
   @override
   State<SideNavigationRail> createState() => _SideNavigationRailState();
 }
 
 class _SideNavigationRailState extends State<SideNavigationRail> {
-  var selectedIndex = 0;
+  var _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     return NavigationRail(
-      selectedIndex: selectedIndex,
+      selectedIndex: _selectedIndex,
       onDestinationSelected: (index) {
         setState(() {
-          selectedIndex = index;
+          _selectedIndex = index;
         });
         widget.onDestinationSelected(index);
       },
@@ -39,7 +39,7 @@ class _SideNavigationRailState extends State<SideNavigationRail> {
         //   label: Text('Artists'),
         // ),
       ],
-      trailing: SettingsButton(),
+      trailing: const SettingsButton(),
     );
   }
 }

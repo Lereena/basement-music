@@ -31,9 +31,7 @@ class StyledInputField extends StatelessWidget {
         contentPadding: const EdgeInsets.all(8),
       ),
       focusNode: focusNode,
-      maxLines: 1,
       controller: controller,
-      textAlign: TextAlign.start,
       style: Theme.of(context).textTheme.headline6,
       onSubmitted: onSubmitted,
     );

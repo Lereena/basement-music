@@ -18,12 +18,13 @@ class ResultPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisSize: MainAxisSize.max,
       children: [
-        result ? SuccessIcon() : ErrorIcon(),
+        if (result) SuccessIcon() else ErrorIcon(),
         const SizedBox(height: 20),
-        result ? Text('Track was successfully uploaded') : Text('Track uploading is failed, please try again later'),
+        if (result)
+          const Text('Track was successfully uploaded')
+        else
+          const Text('Track uploading is failed, please try again later'),
         const SizedBox(height: 20),
         StyledButton(
           title: 'Upload other track',

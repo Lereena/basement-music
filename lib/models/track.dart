@@ -9,7 +9,7 @@ class Track extends Equatable {
   final int duration;
   final String cover;
 
-  Track({
+  const Track({
     required this.id,
     required this.title,
     required this.artist,
@@ -32,7 +32,7 @@ class Track extends Equatable {
     );
   }
 
-  factory Track.empty() => Track(
+  factory Track.empty() => const Track(
         artist: '',
         title: 'No current track',
         id: '',

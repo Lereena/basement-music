@@ -14,22 +14,22 @@ class MoreButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _cacherBloc = BlocProvider.of<CacherBloc>(context);
+    final cacherBloc = BlocProvider.of<CacherBloc>(context);
 
     return InkWell(
-      child: Icon(Icons.more_vert),
+      child: const Icon(Icons.more_vert),
       onTap: () async {
         await showDialog(
           context: context,
           builder: (context) => SimpleDialog(
             children: [
               SimpleDialogOption(
-                child: Text('Edit track info'),
+                child: const Text('Edit track info'),
                 onPressed: () => showDialog(
                   context: context,
                   builder: (context) => CustomDialog(
                     child: EditTrack(
-                      titleText: Text(
+                      titleText: const Text(
                         'Edit track info',
                         style: TextStyle(fontSize: 24),
                       ),
@@ -38,21 +38,22 @@ class MoreButton extends StatelessWidget {
                   ),
                 ),
               ),
-              Divider(),
+              const Divider(),
               SimpleDialogOption(
-                  child: Text('Add to playlist'),
-                  onPressed: () async {
-                    Navigator.pop(context);
-                    await showDialog(
-                      context: context,
-                      builder: (context) => AddToPlaylistDialog(trackId: track.id),
-                    );
-                  }),
-              Divider(),
+                child: const Text('Add to playlist'),
+                onPressed: () async {
+                  Navigator.pop(context);
+                  await showDialog(
+                    context: context,
+                    builder: (context) => AddToPlaylistDialog(trackId: track.id),
+                  );
+                },
+              ),
+              const Divider(),
               SimpleDialogOption(
-                child: Text('Cache track'),
+                child: const Text('Cache track'),
                 onPressed: () {
-                  _cacherBloc.add(CacheTrackEvent(track.id));
+                  cacherBloc.add(CacheTrackEvent(track.id));
                   Navigator.pop(context);
                 },
               ),

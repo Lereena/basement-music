@@ -28,8 +28,8 @@ class _AddToPlaylistDialogState extends State<AddToPlaylistDialog> {
   @override
   Widget build(BuildContext context) {
     return CustomDialog(
-      padding: const EdgeInsets.all(0),
-      child: Container(
+      padding: EdgeInsets.zero,
+      child: SizedBox(
         width: MediaQuery.of(context).size.width * 0.8,
         height: MediaQuery.of(context).size.height * 0.7,
         child: BlocBuilder<AddToPlaylistBloc, AddToPlaylistState>(
@@ -37,33 +37,34 @@ class _AddToPlaylistDialogState extends State<AddToPlaylistDialog> {
             if (state is ChoosePlaylist) {
               return Column(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 20),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 20),
                     child: Text('Choose playlist'),
                   ),
                   const Divider(height: 1.5),
                   Expanded(
                     child: ListView.separated(
-                        itemCount: state.playlists.length,
-                        separatorBuilder: (context, _) => const Divider(height: 1.5),
-                        itemBuilder: (context, index) {
-                          return SimpleDialogOption(
-                            child: Text(state.playlists[index].title),
-                            onPressed: () => _addToPlaylistBloc.add(
-                              PlaylistChoosen(
-                                widget.trackId,
-                                state.playlists[index].id,
-                              ),
+                      itemCount: state.playlists.length,
+                      separatorBuilder: (context, _) => const Divider(height: 1.5),
+                      itemBuilder: (context, index) {
+                        return SimpleDialogOption(
+                          child: Text(state.playlists[index].title),
+                          onPressed: () => _addToPlaylistBloc.add(
+                            PlaylistChoosen(
+                              widget.trackId,
+                              state.playlists[index].id,
                             ),
-                          );
-                        }),
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ],
               );
             }
 
             if (state is Loading) {
-              return CircularProgressIndicator();
+              return const CircularProgressIndicator();
             }
 
             if (state is Added) {
@@ -71,8 +72,8 @@ class _AddToPlaylistDialogState extends State<AddToPlaylistDialog> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   SuccessIcon(),
-                  SizedBox(height: 20),
-                  Text('Track is successfully added to playlist'),
+                  const SizedBox(height: 20),
+                  const Text('Track is successfully added to playlist'),
                 ],
               );
             }
@@ -82,8 +83,8 @@ class _AddToPlaylistDialogState extends State<AddToPlaylistDialog> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ErrorIcon(),
-                  SizedBox(height: 20),
-                  Text('Error adding track to playlist'),
+                  const SizedBox(height: 20),
+                  const Text('Error adding track to playlist'),
                 ],
               );
             }

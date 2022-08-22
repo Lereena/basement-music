@@ -5,7 +5,7 @@ class LogStatus {
 }
 
 LogStatus getLogStatus() {
-  var status = LogStatus();
+  final status = LogStatus();
   signUp((res) => {status.isDebug = res});
   return status;
 }

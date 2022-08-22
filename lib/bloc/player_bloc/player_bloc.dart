@@ -23,8 +23,8 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
   final SettingsBloc _settingsBloc;
   final CacherBloc _cacherBloc;
 
-  var currentPlaylist = Playlist.empty();
-  var currentTrack = Track.empty();
+  Playlist currentPlaylist = Playlist.empty();
+  Track currentTrack = Track.empty();
 
   PlayerBloc(
     this._settingsBloc,

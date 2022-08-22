@@ -19,11 +19,11 @@ class _LibraryPageState extends State<LibraryPage> {
       child: BlocBuilder<PlaylistsBloc, PlaylistsState>(
         builder: (context, state) {
           if (state is PlaylistsLoadingState) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
 
           if (state is PlaylistsEmptyState) {
-            return Center(
+            return const Center(
               child: Text(
                 'No playlists',
                 style: TextStyle(fontSize: 24),
@@ -34,13 +34,13 @@ class _LibraryPageState extends State<LibraryPage> {
           if (state is PlaylistsLoadedState) {
             return ListView.separated(
               itemBuilder: (context, index) => PlaylistCard(playlist: state.playlists[index]),
-              separatorBuilder: (context, _) => Divider(height: 1),
+              separatorBuilder: (context, _) => const Divider(height: 1),
               itemCount: state.playlists.length,
             );
           }
 
           if (state is PlaylistsErrorState) {
-            return Center(
+            return const Center(
               child: Text('Error loading playlists'),
             );
           }

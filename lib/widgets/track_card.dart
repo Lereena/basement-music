@@ -7,15 +7,15 @@ import 'package:basement_music/widgets/track_name.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../models/track.dart';
 import '../bloc/player_bloc/player_bloc.dart';
+import '../models/track.dart';
 import 'controls/play_button.dart';
 import 'cover.dart';
 
 class TrackCard extends StatelessWidget {
   final Track track;
 
-  TrackCard({Key? key, required this.track}) : super(key: key);
+  const TrackCard({Key? key, required this.track}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -27,15 +27,14 @@ class TrackCard extends StatelessWidget {
         final isCached = cacherState.isCached([track.id]);
 
         return BlocBuilder<PlayerBloc, AudioPlayerState>(
-          builder: (context, playerState) => Container(
+          builder: (context, playerState) => ColoredBox(
             color:
                 playerBloc.currentTrack == track ? Theme.of(context).primaryColor.withOpacity(0.1) : Colors.transparent,
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                  child: Container(
+                  child: SizedBox(
                     width: 40,
                     height: 40,
                     child: Stack(
@@ -45,10 +44,10 @@ class TrackCard extends StatelessWidget {
                           cover: track.cover,
                           overlay: CoverOverlay(isCaching: isCaching, isCached: isCached),
                         ),
-                        Container(color: Colors.black.withOpacity(0.1)),
+                        ColoredBox(color: Colors.black.withOpacity(0.1)),
                         if (playerBloc.currentTrack == track &&
                             (playerState is PlayingPlayerState || playerState is ResumedPlayerState))
-                          PauseButton()
+                          const PauseButton()
                         else
                           PlayButton(track: track, state: playerState),
                       ],
@@ -66,20 +65,20 @@ class TrackCard extends StatelessWidget {
                       Text(
                         track.artist,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontSize: 16),
+                        style: const TextStyle(fontSize: 16),
                       ),
                     ],
                   ),
                 ),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
                 Text(
                   track.durationStr,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontSize: 16),
+                  style: const TextStyle(fontSize: 16),
                 ),
-                SizedBox(width: 15),
+                const SizedBox(width: 15),
                 MoreButton(track: track),
-                SizedBox(width: 15),
+                const SizedBox(width: 15),
               ],
             ),
           ),

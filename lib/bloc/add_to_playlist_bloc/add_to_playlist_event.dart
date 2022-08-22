@@ -10,12 +10,12 @@ abstract class AddToPlaylistEvent extends Equatable {
 class TrackChoosen extends AddToPlaylistEvent {
   final String trackId;
 
-  TrackChoosen(this.trackId);
+  const TrackChoosen(this.trackId);
 }
 
 class PlaylistChoosen extends AddToPlaylistEvent {
   final String trackId;
   final String playlistId;
 
-  PlaylistChoosen(this.trackId, this.playlistId);
+  const PlaylistChoosen(this.trackId, this.playlistId);
 }

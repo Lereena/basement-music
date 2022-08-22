@@ -19,8 +19,8 @@ class BottomBar extends StatefulWidget {
 }
 
 class _BottomBarState extends State<BottomBar> {
-  var percentProgress = 0.0;
-  var stringProgress = '00:00';
+  var _percentProgress = 0.0;
+  var _stringProgress = '00:00';
 
   @override
   void initState() {
@@ -28,11 +28,12 @@ class _BottomBarState extends State<BottomBar> {
     final playerBloc = BlocProvider.of<PlayerBloc>(context);
 
     playerBloc.onPositionChanged.listen((event) {
-      if (mounted)
+      if (mounted) {
         setState(() {
-          percentProgress = event.inSeconds.toDouble() / playerBloc.state.currentTrack.duration;
-          stringProgress = durationString(event.inSeconds);
+          _percentProgress = event.inSeconds.toDouble() / playerBloc.state.currentTrack.duration;
+          _stringProgress = durationString(event.inSeconds);
         });
+      }
     });
   }
 
@@ -46,27 +47,27 @@ class _BottomBarState extends State<BottomBar> {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            LinearProgressIndicator(value: percentProgress),
+            LinearProgressIndicator(value: _percentProgress),
             Container(
               height: 70,
               color: Theme.of(context).primaryColor.withOpacity(0.1),
-              padding: EdgeInsets.all(10),
+              padding: const EdgeInsets.all(10),
               child: Row(
                 children: [
                   PreviousButton(),
                   if (state is PlayingPlayerState || state is ResumedPlayerState)
-                    PauseButton()
+                    const PauseButton()
                   else if (state is PausedPlayerState || state is InitialPlayerState)
                     PlayButton(track: state.currentTrack, state: state, isBottomPlayer: true),
                   NextButton(),
-                  SizedBox(width: 15),
+                  const SizedBox(width: 15),
                   if (state is PausedPlayerState || state is PlayingPlayerState || state is ResumedPlayerState)
                     Image.asset(
                       state.currentTrack.cover,
                       height: 40,
                       width: 40,
                     ),
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   if (state is PlayingPlayerState || state is PausedPlayerState || state is ResumedPlayerState) ...[
                     Expanded(
                       child: Column(
@@ -80,20 +81,20 @@ class _BottomBarState extends State<BottomBar> {
                           Text(
                             state.currentTrack.artist,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(fontSize: 16),
+                            style: const TextStyle(fontSize: 16),
                           ),
                         ],
                       ),
                     ),
-                    SizedBox(width: 20),
+                    const SizedBox(width: 20),
                     Text(
-                      stringProgress,
+                      _stringProgress,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontSize: 16),
+                      style: const TextStyle(fontSize: 16),
                     ),
-                    SizedBox(width: 10),
-                    ShuffleToggle(),
-                    RepeatToggle(),
+                    const SizedBox(width: 10),
+                    const ShuffleToggle(),
+                    const RepeatToggle(),
                   ],
                 ],
               ),

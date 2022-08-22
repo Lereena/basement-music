@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'youtube/extract_from_youtube.dart';
 
 class UploadPage extends StatefulWidget {
-  UploadPage({Key? key}) : super(key: key);
+  const UploadPage({Key? key}) : super(key: key);
 
   @override
   State<UploadPage> createState() => _UploadPageState();
@@ -13,12 +13,12 @@ class UploadPage extends StatefulWidget {
 enum UploadSource { local, youtube, unknown }
 
 class _UploadPageState extends State<UploadPage> {
-  var uploadSource = UploadSource.unknown;
+  // var _uploadSource = UploadSource.unknown;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Upload track')),
+      appBar: AppBar(title: const Text('Upload track')),
       body: body,
       bottomNavigationBar: BottomBar(),
     );

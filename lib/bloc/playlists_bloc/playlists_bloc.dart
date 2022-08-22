@@ -21,10 +21,11 @@ class PlaylistsBloc extends Bloc<PlaylistsEvent, PlaylistsState> {
     try {
       await _playlistsRepository.getAllPlaylists();
 
-      if (_playlistsRepository.items.isEmpty)
+      if (_playlistsRepository.items.isEmpty) {
         emit(PlaylistsEmptyState());
-      else
+      } else {
         emit(PlaylistsLoadedState(_playlistsRepository.items));
+      }
     } catch (e) {
       emit(PlaylistsErrorState());
       LogService.log('Error loading playlists: $e');

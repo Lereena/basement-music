@@ -12,7 +12,7 @@ class CoverOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (isCached)
+    if (isCached) {
       return Container(
         decoration: BoxDecoration(
           border: Border.all(color: Theme.of(context).colorScheme.primary, width: 2),
@@ -20,8 +20,9 @@ class CoverOverlay extends StatelessWidget {
         width: 40,
         height: 40,
       );
+    }
 
-    if (isCaching) return CircularProgressIndicator();
+    if (isCaching) return const CircularProgressIndicator();
 
     return Container();
   }

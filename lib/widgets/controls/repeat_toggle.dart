@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../bloc/settings_bloc/settings_bloc.dart';
 
 class RepeatToggle extends StatelessWidget {
-  RepeatToggle({Key? key}) : super(key: key);
+  const RepeatToggle({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

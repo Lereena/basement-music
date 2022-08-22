@@ -18,7 +18,7 @@ class InfoState extends TrackUploadingState {
   final String artist;
   final String title;
 
-  InfoState(this.url, this.artist, this.title);
+  const InfoState(this.url, this.artist, this.title);
 }
 
 class InfoInputErrorState extends TrackUploadingState {}

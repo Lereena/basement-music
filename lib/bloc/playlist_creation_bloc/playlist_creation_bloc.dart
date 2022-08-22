@@ -36,8 +36,9 @@ class PlaylistCreationBloc extends Bloc<PlaylistCreationEvent, PlaylistCreationS
       if (result) {
         emit(CreatedState());
         _playlistsBloc.add(PlaylistAddedEvent());
-      } else
+      } else {
         emit(CreationErrorState());
+      }
     } catch (e) {
       emit(CreationErrorState());
       LogService.log('Error creating playlist: $e');

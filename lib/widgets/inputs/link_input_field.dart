@@ -22,17 +22,16 @@ class LinkInputField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         StyledInputField(
           controller: controller,
           focusNode: focusNode,
           onSubmitted: onSubmitted,
         ),
-        SizedBox(width: 10),
+        const SizedBox(width: 10),
         InkWell(
-          child: Icon(Icons.close, size: 30),
           onTap: onDelete,
+          child: const Icon(Icons.close, size: 30),
         ),
       ],
     );

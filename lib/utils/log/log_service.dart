@@ -7,9 +7,7 @@ LogStatus? _status;
 
 abstract class LogService {
   static void log(String message, {Exception? exception, Object? errorObject, bool debug = false}) {
-    if (_status == null) {
-      _status = getLogStatus();
-    }
+    _status ??= getLogStatus();
 
     var output = '''
 --------------------------------------------------------

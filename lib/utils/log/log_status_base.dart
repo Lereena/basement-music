@@ -1,4 +1,3 @@
-
-void signUp(void Function(bool res) f){
+void signUp(void Function(bool res) f) {
   throw UnimplementedError('Unsupported');
 }

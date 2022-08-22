@@ -8,8 +8,8 @@ class CacheButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      child: Icon(Icons.download_outlined),
       onTap: onCache,
+      child: const Icon(Icons.download_outlined),
     );
   }
 }

@@ -21,17 +21,14 @@ class LinkInputPage extends StatelessWidget {
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisSize: MainAxisSize.max,
       children: [
         Align(
-          alignment: Alignment.center,
           child: Text(
             'Insert YouTube link to extract audio',
             style: Theme.of(context).textTheme.headline5,
           ),
         ),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         Container(
           alignment: Alignment.center,
           width: inputFieldWidth(context),
@@ -43,7 +40,7 @@ class LinkInputPage extends StatelessWidget {
             onSubmitted: (_) => onFetchPress(linkController.text),
           ),
         ),
-        SizedBox(height: 40),
+        const SizedBox(height: 40),
         StyledButton(
           title: 'Extract',
           onPressed: () => onFetchPress(linkController.text),

@@ -24,12 +24,11 @@ class TitledField extends StatelessWidget {
         Text(
           title,
         ),
-        SizedBox(width: 10),
-        Container(
+        const SizedBox(width: 10),
+        SizedBox(
           width: fieldWidth,
           child: TextField(
             controller: controller,
-            textAlign: TextAlign.start,
             onSubmitted: onSubmitted,
             focusNode: focusNode,
           ),

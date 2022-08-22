@@ -14,22 +14,22 @@ class StatusDialog extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            success
-                ? const Icon(
-                    Icons.check_circle,
-                    color: Colors.green,
-                    size: 30,
-                  )
-                : const Icon(
-                    Icons.warning,
-                    color: Colors.red,
-                    size: 30,
-                  ),
-            SizedBox(height: 20),
-            Text(text, style: TextStyle(fontSize: 18)),
+            if (success)
+              const Icon(
+                Icons.check_circle,
+                color: Colors.green,
+                size: 30,
+              )
+            else
+              const Icon(
+                Icons.warning,
+                color: Colors.red,
+                size: 30,
+              ),
+            const SizedBox(height: 20),
+            Text(text, style: const TextStyle(fontSize: 18)),
           ],
         ),
       ),

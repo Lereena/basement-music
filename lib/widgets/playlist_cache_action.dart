@@ -13,7 +13,7 @@ class PlaylistCacheAction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _cacherBloc = BlocProvider.of<CacherBloc>(context);
+    final cacherBloc = BlocProvider.of<CacherBloc>(context);
 
     return BlocBuilder<CacherBloc, CacherState>(
       builder: (context, state) {
@@ -21,11 +21,13 @@ class PlaylistCacheAction extends StatelessWidget {
           return Stack(
             alignment: Alignment.center,
             children: [
-              CacheButton(onCache: () async {
-                if (await _showCacheDialog(context)) {
-                  _cacherBloc.add(CacheTracksEvent(trackIds));
-                }
-              }),
+              CacheButton(
+                onCache: () async {
+                  if (await _showCacheDialog(context)) {
+                    cacherBloc.add(CacheTracksEvent(trackIds));
+                  }
+                },
+              ),
               CircularProgressIndicator(
                 color: Theme.of(context).shadowColor,
               )
@@ -34,39 +36,43 @@ class PlaylistCacheAction extends StatelessWidget {
         }
 
         if (state.isCached(trackIds)) {
-          return UncacheButton(onUncache: () async {
-            if (await _showUncacheDialog(context)) {
-              _cacherBloc.add(UncacheTracksEvent(trackIds));
-            }
-          });
+          return UncacheButton(
+            onUncache: () async {
+              if (await _showUncacheDialog(context)) {
+                cacherBloc.add(UncacheTracksEvent(trackIds));
+              }
+            },
+          );
         }
 
-        return CacheButton(onCache: () async {
-          if (await _showCacheDialog(context)) {
-            _cacherBloc.add(CacheTracksEvent(trackIds));
-          }
-        });
+        return CacheButton(
+          onCache: () async {
+            if (await _showCacheDialog(context)) {
+              cacherBloc.add(CacheTracksEvent(trackIds));
+            }
+          },
+        );
       },
     );
   }
 
   Future<bool> _showCacheDialog(BuildContext context) async {
-    final title = 'Do you want to cache all playlist tracks?';
+    const title = 'Do you want to cache all playlist tracks?';
 
     return await showDialog(
           context: context,
-          builder: (context) => YesOrCancelDialog(title: title),
-        ) ??
+          builder: (context) => const YesOrCancelDialog(title: title),
+        ) as bool? ??
         false;
   }
 
   Future<bool> _showUncacheDialog(BuildContext context) async {
-    final title = 'Do you want to remove all playlist tracks from cache?';
+    const title = 'Do you want to remove all playlist tracks from cache?';
 
     return await showDialog(
           context: context,
-          builder: (context) => YesOrCancelDialog(title: title),
-        ) ??
+          builder: (context) => const YesOrCancelDialog(title: title),
+        ) as bool? ??
         false;
   }
 }

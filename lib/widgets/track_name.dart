@@ -15,19 +15,19 @@ class TrackName extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: 22 * MediaQuery.of(context).textScaleFactor,
       child: moving
           ? OverflowSensitiveMarquee(
               track.title,
-              style: TextStyle(fontSize: 18),
+              style: const TextStyle(fontSize: 18),
             )
           : AutoSizeText(
               track.title,
               overflow: TextOverflow.ellipsis,
               minFontSize: 18,
               maxFontSize: 18,
-              style: TextStyle(fontSize: 18),
+              style: const TextStyle(fontSize: 18),
             ),
     );
   }

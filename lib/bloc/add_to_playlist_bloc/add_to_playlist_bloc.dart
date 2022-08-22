@@ -1,12 +1,12 @@
 import 'dart:async';
 
-import 'package:basement_music/repositories/tracks_repository.dart';
-import 'package:basement_music/utils/log/log_service.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../../models/playlist.dart';
 import '../../../repositories/playlists_repository.dart';
+import '../../repositories/tracks_repository.dart';
+import '../../utils/log/log_service.dart';
 
 part 'add_to_playlist_event.dart';
 part 'add_to_playlist_state.dart';
@@ -21,10 +21,11 @@ class AddToPlaylistBloc extends Bloc<AddToPlaylistEvent, AddToPlaylistState> {
   }
 
   FutureOr<void> _onTrackChoosen(TrackChoosen event, Emitter<AddToPlaylistState> emit) {
-    if (event.trackId.isEmpty)
+    if (event.trackId.isEmpty) {
       emit(Error());
-    else
+    } else {
       emit(ChoosePlaylist(_playlistsRepository.items));
+    }
   }
 
   FutureOr<void> _onPlaylistChoosen(PlaylistChoosen event, Emitter<AddToPlaylistState> emit) async {
@@ -41,8 +42,9 @@ class AddToPlaylistBloc extends Bloc<AddToPlaylistEvent, AddToPlaylistState> {
             .tracks
             .add(_tracksRepository.items.firstWhere((element) => element.id == event.trackId));
         emit(Added());
-      } else
+      } else {
         emit(Error());
+      }
     } catch (e) {
       emit(Error());
       LogService.log('Error adding track to playlist: $e');

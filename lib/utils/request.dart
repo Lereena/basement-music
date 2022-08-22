@@ -5,7 +5,7 @@ import 'package:http/http.dart';
 import 'log/log_service.dart';
 
 Future<Response> getAsync(Uri uri, {Map<String, String>? headers}) async {
-  return await _logRequest(() async => await get(uri, headers: headers));
+  return _logRequest(() async => get(uri, headers: headers));
 }
 
 Future<Response> postAsync(
@@ -14,12 +14,14 @@ Future<Response> postAsync(
   Object? body,
   Encoding? encoding,
 }) async {
-  return await _logRequest(() async => await post(
-        uri,
-        headers: headers,
-        body: body,
-        encoding: encoding,
-      ));
+  return _logRequest(
+    () async => post(
+      uri,
+      headers: headers,
+      body: body,
+      encoding: encoding,
+    ),
+  );
 }
 
 Future<Response> patchAsync(
@@ -28,12 +30,14 @@ Future<Response> patchAsync(
   Object? body,
   Encoding? encoding,
 }) async {
-  return await _logRequest(() async => await patch(
-        uri,
-        headers: headers,
-        body: body,
-        encoding: encoding,
-      ));
+  return _logRequest(
+    () async => patch(
+      uri,
+      headers: headers,
+      body: body,
+      encoding: encoding,
+    ),
+  );
 }
 
 Future<Response> deleteAsync(
@@ -42,22 +46,24 @@ Future<Response> deleteAsync(
   Object? body,
   Encoding? encoding,
 }) async {
-  return await _logRequest(() async => await patch(
-        uri,
-        headers: headers,
-        body: body,
-        encoding: encoding,
-      ));
+  return _logRequest(
+    () async => patch(
+      uri,
+      headers: headers,
+      body: body,
+      encoding: encoding,
+    ),
+  );
 }
 
 extension Logged on MultipartRequest {
   Future<Response> sendAsync() async {
-    return await _logRequest(() async => await this.send());
+    return _logRequest(() async => send());
   }
 }
 
 Future<Response> _logRequest(Function request) async {
-  final response = await request();
+  final response = await request() as Response;
 
   LogService.log(response.request.toString());
   LogService.log(response.body);

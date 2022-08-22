@@ -23,7 +23,7 @@ class Cover extends StatelessWidget {
           width: 40,
           height: 40,
         ),
-        overlay ?? CircularProgressIndicator(),
+        overlay ?? const CircularProgressIndicator(),
       ],
     );
   }

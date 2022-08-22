@@ -19,13 +19,13 @@ class StyledButton extends StatelessWidget {
     return Container(
       alignment: Alignment.center,
       child: ElevatedButton(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-          child: Text(title, style: TextStyle(fontSize: 18)),
-        ),
         focusNode: focusNode,
         autofocus: autofocus,
         onPressed: onPressed,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+          child: Text(title, style: const TextStyle(fontSize: 18)),
+        ),
       ),
     );
   }

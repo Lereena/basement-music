@@ -5,7 +5,7 @@ class SettingsState extends Equatable {
   final bool shuffle;
   final bool darkTheme;
 
-  SettingsState({
+  const SettingsState({
     this.repeat = false,
     this.shuffle = false,
     this.darkTheme = false,

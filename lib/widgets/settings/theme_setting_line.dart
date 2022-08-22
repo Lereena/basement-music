@@ -19,8 +19,8 @@ class _ThemeSettingLineState extends State<ThemeSettingLine> {
     return SettingsLineDecoration(
       child: Row(
         children: [
-          Text('Night theme'),
-          Spacer(),
+          const Text('Night theme'),
+          const Spacer(),
           Switch(
             value: settingsBloc.state.darkTheme,
             onChanged: (value) => settingsBloc.add(SetDarkTheme(value)),

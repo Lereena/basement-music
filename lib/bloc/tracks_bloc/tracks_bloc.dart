@@ -19,10 +19,11 @@ class TracksBloc extends Bloc<TracksEvent, TracksState> {
 
     try {
       await _tracksRepository.getAllTracks();
-      if (_tracksRepository.items.isEmpty)
+      if (_tracksRepository.items.isEmpty) {
         emit(TracksEmptyState());
-      else
+      } else {
         emit(TracksLoadedState(_tracksRepository.items));
+      }
     } catch (e) {
       emit(TracksErrorState());
       LogService.log('Error loading tracks: $e');

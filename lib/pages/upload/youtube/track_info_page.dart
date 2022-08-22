@@ -31,10 +31,8 @@ class TrackInfoPage extends StatelessWidget {
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisSize: MainAxisSize.max,
       children: [
-        Text('Please check track info and change if incorrect'),
+        const Text('Please check track info and change if incorrect'),
         const SizedBox(height: 20),
         TitledField(
           title: 'Artist',

@@ -10,7 +10,7 @@ import '../widgets/track_card.dart';
 class PlaylistPage extends StatefulWidget {
   final Playlist playlist;
 
-  PlaylistPage({Key? key, required this.playlist}) : super(key: key);
+  const PlaylistPage({Key? key, required this.playlist}) : super(key: key);
 
   @override
   State<PlaylistPage> createState() => _PlaylistPageState();
@@ -50,7 +50,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
               ),
             )
           : ListView.separated(
-              separatorBuilder: (context, _) => Divider(height: 1),
+              separatorBuilder: (context, _) => const Divider(height: 1),
               itemCount: widget.playlist.tracks.length,
               itemBuilder: (context, index) => TrackCard(
                 track: widget.playlist.tracks[index],

@@ -8,8 +8,8 @@ class CancelButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextButton(
-      child: Text('Cancel'),
       onPressed: onPressed,
+      child: const Text('Cancel'),
     );
   }
 }

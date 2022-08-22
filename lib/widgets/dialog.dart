@@ -4,7 +4,7 @@ class CustomDialog extends StatelessWidget {
   final Widget child;
   final EdgeInsets padding;
 
-  CustomDialog({
+  const CustomDialog({
     Key? key,
     required this.child,
     this.padding = const EdgeInsets.symmetric(vertical: 40),

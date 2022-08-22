@@ -12,10 +12,10 @@ class SettingsButton extends StatelessWidget {
         alignment: Alignment.bottomCenter,
         child: InkWell(
           borderRadius: BorderRadius.circular(50),
-          child: Container(
+          child: const SizedBox(
             width: 50,
             height: 50,
-            child: const Icon(Icons.settings, size: 30),
+            child: Icon(Icons.settings, size: 30),
           ),
           onTap: () => Navigator.pushNamed(context, NavigationRoute.settings.name),
         ),

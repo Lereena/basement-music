@@ -25,13 +25,13 @@ class CacherBloc extends Bloc<CacherEvent, CacherState> {
   FutureOr<void> _onCacheTracksEvent(CacheTracksEvent event, Emitter<CacherState> emit) async {
     emit(CacherState(state.caching..addAll(event.trackIds), state.cached, state.unsuccessful));
 
-    for (var trackId in event.trackIds) {
+    for (final trackId in event.trackIds) {
       _cacheOneTrack(trackId);
       emit(state);
     }
   }
 
-  void _cacheOneTrack(String trackId) async {
+  Future<void> _cacheOneTrack(String trackId) async {
     try {
       await DefaultCacheManager().downloadFile(trackPlayback(trackId), key: trackId);
 

@@ -19,13 +19,13 @@ import 'pages/home_page.dart';
 import 'pages/playlist_page.dart';
 import 'pages/settings_page.dart';
 import 'pages/upload/upload_page.dart';
+import 'platform_settings/platform_settings_stub.dart'
+    if (dart.library.html) 'platform_settings/platform_settings_web.dart'
+    if (dart.library.io) 'platform_settings/platform_settings_io.dart';
 import 'repositories/playlists_repository.dart';
 import 'repositories/tracks_repository.dart';
 import 'routes.dart';
 import 'theme/custom_theme.dart';
-import 'platform_settings/platform_settings_stub.dart'
-    if (dart.library.io) 'platform_settings/platform_settings_io.dart'
-    if (dart.library.html) 'platform_settings/platform_settings_web.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -112,17 +112,17 @@ class _BasementMusicState extends State<BasementMusic> {
             themeMode: state.darkTheme ? ThemeMode.dark : ThemeMode.light,
             initialRoute: NavigationRoute.initial.name,
             routes: {
-              NavigationRoute.settings.name: (context) => SettingsPage(),
-              NavigationRoute.upload.name: (context) => UploadPage(),
+              NavigationRoute.settings.name: (context) => const SettingsPage(),
+              NavigationRoute.upload.name: (context) => const UploadPage(),
             },
             onGenerateRoute: (settings) {
               if (settings.name == NavigationRoute.playlist.name) {
-                final playlist = (settings.arguments as Map<String, Playlist>)['playlist']!;
+                final playlist = (settings.arguments! as Map<String, Playlist>)['playlist']!;
                 return MaterialPageRoute(builder: (context) => PlaylistPage(playlist: playlist));
               }
               return null;
             },
-            home: MyHomePage(title: 'Basement music'),
+            home: const MyHomePage(title: 'Basement music'),
           );
         },
       ),

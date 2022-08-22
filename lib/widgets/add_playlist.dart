@@ -14,13 +14,12 @@ class AddPlaylist extends StatefulWidget {
   State<AddPlaylist> createState() => _AddPlaylistState();
 }
 
-const _textStyle = const TextStyle(fontSize: 18);
+const _textStyle = TextStyle(fontSize: 18);
 
 class _AddPlaylistState extends State<AddPlaylist> {
   late final PlaylistCreationBloc createPlaylistBloc;
   final titleController = TextEditingController();
   final fieldFocusNode = FocusNode();
-  var loading = false;
 
   @override
   void initState() {
@@ -44,29 +43,28 @@ class _AddPlaylistState extends State<AddPlaylist> {
       child: BlocBuilder<PlaylistCreationBloc, PlaylistCreationState>(
         builder: (context, state) {
           if (state is WaitingCreationState) {
-            return CircularProgressIndicator();
+            return const CircularProgressIndicator();
           }
 
           if (state is CreatedState) {
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
+            return const Padding(
+              padding: EdgeInsets.all(8.0),
               child: Text('Playlist was successfully created'),
             );
           }
 
           if (state is CreationErrorState) {
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
+            return const Padding(
+              padding: EdgeInsets.all(8.0),
               child: Text('Playlist was not created, please try again later'),
             );
           }
 
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
+              const Text(
                 'Create new playlist',
                 style: TextStyle(fontSize: 24),
               ),
@@ -84,24 +82,24 @@ class _AddPlaylistState extends State<AddPlaylist> {
               if (state is InputErrorState)
                 Text(
                   state.errorText,
-                  style: TextStyle(color: Colors.red),
+                  style: const TextStyle(color: Colors.red),
                 )
               else
                 const SizedBox(height: 20),
               const SizedBox(height: 20),
-              Container(
+              SizedBox(
                 width: 100,
                 height: 40,
                 child: ElevatedButton(
-                  child: Text(
-                    'Create',
-                    style: _textStyle,
-                  ),
                   onPressed: state is InputErrorState
                       ? () {}
                       : () async => createPlaylistBloc.add(
                             LoadingEvent(titleController.text),
                           ),
+                  child: const Text(
+                    'Create',
+                    style: _textStyle,
+                  ),
                 ),
               ),
             ],

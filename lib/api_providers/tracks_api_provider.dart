@@ -6,10 +6,10 @@ import '../utils/request.dart';
 
 class TracksApiProvider {
   Future<List<Track>> fetchAllTracks() async {
-    final uri = Uri.parse('$reqAllTracks');
+    final uri = Uri.parse(reqAllTracks);
     final response = await getAsync(uri);
 
-    final List<dynamic> jsonList = jsonDecode(response.body);
+    final List<dynamic> jsonList = jsonDecode(response.body) as List<dynamic>;
     final list = <Track>[];
 
     if (response.statusCode == 200) {

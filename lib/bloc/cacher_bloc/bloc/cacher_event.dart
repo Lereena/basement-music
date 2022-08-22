@@ -10,17 +10,17 @@ abstract class CacherEvent extends Equatable {
 class CacheTrackEvent extends CacherEvent {
   final String trackId;
 
-  CacheTrackEvent(this.trackId);
+  const CacheTrackEvent(this.trackId);
 }
 
 class CacheTracksEvent extends CacherEvent {
   final List<String> trackIds;
 
-  CacheTracksEvent(this.trackIds);
+  const CacheTracksEvent(this.trackIds);
 }
 
 class UncacheTracksEvent extends CacherEvent {
   final List<String> trackIds;
 
-  UncacheTracksEvent(this.trackIds);
+  const UncacheTracksEvent(this.trackIds);
 }

@@ -8,8 +8,8 @@ class UncacheButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      child: Icon(Icons.file_download_off_rounded),
       onTap: onUncache,
+      child: const Icon(Icons.file_download_off_rounded),
     );
   }
 }

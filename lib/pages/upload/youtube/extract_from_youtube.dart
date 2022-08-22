@@ -28,7 +28,7 @@ class _ExtractFromYoutubeState extends State<ExtractFromYoutube> {
       child: BlocBuilder<TrackUploadingBloc, TrackUploadingState>(
         builder: (context, state) {
           if (state is LoadingState) {
-            return CircularProgressIndicator();
+            return const CircularProgressIndicator();
           }
 
           if (state is LinkInputState) {
@@ -49,9 +49,9 @@ class _ExtractFromYoutubeState extends State<ExtractFromYoutube> {
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                CircularProgressIndicator(),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 40),
+                const CircularProgressIndicator(),
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 40, horizontal: 40),
                   child: Text(
                     'You can leave this page, the uploading will continue',
                     maxLines: 2,

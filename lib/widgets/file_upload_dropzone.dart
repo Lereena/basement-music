@@ -7,7 +7,7 @@ class FileUploadDropzone extends StatefulWidget {
   final double height;
   final Function(String, List<int>) saveFileName;
 
-  FileUploadDropzone({required this.width, required this.height, required this.saveFileName}) : super();
+  const FileUploadDropzone({required this.width, required this.height, required this.saveFileName}) : super();
 
   @override
   State<FileUploadDropzone> createState() => _FileUploadDropzoneState();
@@ -20,8 +20,7 @@ class _FileUploadDropzoneState extends State<FileUploadDropzone> {
   Widget build(BuildContext context) {
     return DottedBorder(
       color: Theme.of(context).primaryColor,
-      strokeWidth: 1,
-      dashPattern: [5, 2],
+      dashPattern: const [5, 2],
       child: Container(
         width: widget.width,
         height: widget.height,
@@ -48,7 +47,7 @@ class _FileUploadDropzoneState extends State<FileUploadDropzone> {
               onDropMultiple: (_) {},
               onLeave: () => debugPrint('Zone left'),
             ),
-            Text(
+            const Text(
               'Select file or drop it here',
               style: TextStyle(fontSize: 18),
             ),

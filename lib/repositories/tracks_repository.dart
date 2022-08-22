@@ -5,7 +5,7 @@ import '../models/track.dart';
 class TracksRepository {
   final _tracksApiProvider = TracksApiProvider();
 
-  var _items = <Track>[];
+  final _items = <Track>[];
   List<Track> get items => _items;
 
   Future<bool> getAllTracks() async {

@@ -13,7 +13,7 @@ import '../widgets/navigations/side_navigation_drawer.dart';
 import '../widgets/navigations/side_navigation_rail.dart';
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key? key, required this.title}) : super(key: key);
+  const MyHomePage({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
@@ -22,9 +22,10 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  var selectedPage = PageNavigation.AllTracks;
-  var channel = WebSocketChannel.connect(Uri.parse(wshost));
-  final pagesWithFAB = [PageNavigation.AllTracks, PageNavigation.Library];
+  PageNavigation selectedPage = PageNavigation.allTracks;
+  WebSocketChannel channel = WebSocketChannel.connect(Uri.parse(wshost));
+
+  final pagesWithFAB = [PageNavigation.allTracks, PageNavigation.library];
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +39,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     () => selectedPage = PageNavigation.values[index],
                   ),
                 ),
-                VerticalDivider(width: 1),
+                const VerticalDivider(width: 1),
                 MainContent(selectedPage: selectedPage),
               ],
             )
@@ -60,7 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: pagesWithFAB.contains(selectedPage)
           ? FloatingActionButton(
               onPressed: () => _fabActionByPage(selectedPage)(),
-              child: Icon(Icons.add),
+              child: const Icon(Icons.add),
             )
           : null,
     );
@@ -68,12 +69,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Function _fabActionByPage(PageNavigation page) {
     switch (page) {
-      case PageNavigation.AllTracks:
+      case PageNavigation.allTracks:
         return () => Navigator.pushNamed(context, NavigationRoute.upload.name);
-      case PageNavigation.Library:
+      case PageNavigation.library:
         return () => showDialog(
               context: context,
-              builder: (context) => CustomDialog(child: AddPlaylist()),
+              builder: (context) => const CustomDialog(child: AddPlaylist()),
             );
       default:
         throw Exception('No action for $page');

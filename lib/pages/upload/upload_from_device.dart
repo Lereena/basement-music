@@ -7,21 +7,21 @@ import '../../widgets/file_upload_dropzone.dart';
 class UploadFromDevice extends StatefulWidget {
   final Function onCancelPressed;
 
-  UploadFromDevice({required this.onCancelPressed}) : super();
+  const UploadFromDevice({required this.onCancelPressed}) : super();
 
   @override
   State<UploadFromDevice> createState() => _UploadFromDeviceState();
 }
 
 class _UploadFromDeviceState extends State<UploadFromDevice> {
-  var fileName = "";
-  var fileData = <int>[];
-  var uploading = false;
+  var _fileName = "";
+  var _fileData = <int>[];
+  var _uploading = false;
 
   @override
   Widget build(BuildContext context) {
-    if (uploading) {
-      return CircularProgressIndicator();
+    if (_uploading) {
+      return const CircularProgressIndicator();
     }
 
     final inputFieldWidth = MediaQuery.of(context).size.width / 2;
@@ -30,56 +30,54 @@ class _UploadFromDeviceState extends State<UploadFromDevice> {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisSize: MainAxisSize.max,
         children: [
-          if (fileName == "")
+          if (_fileName == "")
             FileUploadDropzone(
               width: inputFieldWidth,
               height: inputFieldHeight,
               saveFileName: (name, data) {
                 setState(() {
-                  fileName = name;
-                  fileData = data;
+                  _fileName = name;
+                  _fileData = data;
                 });
               },
             )
           else
-            Text(fileName, style: TextStyle(fontSize: 18)),
-          SizedBox(height: 40),
-          if (fileName != "")
-            Container(
+            Text(_fileName, style: const TextStyle(fontSize: 18)),
+          const SizedBox(height: 40),
+          if (_fileName != "")
+            SizedBox(
               width: 100,
               height: 40,
               child: ElevatedButton(
-                child: Text(
+                child: const Text(
                   'Upload',
                   style: TextStyle(fontSize: 18),
                 ),
                 onPressed: () async {
                   setState(() {
-                    uploading = true;
+                    _uploading = true;
                   });
-                  final result = await uploadLocalTrack(fileData, fileName);
+                  final result = await uploadLocalTrack(_fileData, _fileName);
                   setState(() {
-                    uploading = false;
-                    fileName = "";
-                    fileData = <int>[];
+                    _uploading = false;
+                    _fileName = "";
+                    _fileData = <int>[];
                   });
                   await showDialog(
-                      context: context,
-                      builder: (_) => StatusDialog(
-                            success: result,
-                            text: result
-                                ? 'Track was successfully uploaded'
-                                : 'Track was not uploaded. Please try again later',
-                          ));
+                    context: context,
+                    builder: (_) => StatusDialog(
+                      success: result,
+                      text:
+                          result ? 'Track was successfully uploaded' : 'Track was not uploaded. Please try again later',
+                    ),
+                  );
                 },
               ),
             ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           TextButton(
-            child: Text('Cancel'),
+            child: const Text('Cancel'),
             onPressed: () => widget.onCancelPressed(),
           ),
         ],

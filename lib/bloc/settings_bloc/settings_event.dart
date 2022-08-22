@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_positional_boolean_parameters
+
 part of 'settings_bloc.dart';
 
 abstract class SettingsEvent extends Equatable {
@@ -10,17 +12,17 @@ abstract class SettingsEvent extends Equatable {
 class SetShuffle extends SettingsEvent {
   final bool shuffleValue;
 
-  SetShuffle(this.shuffleValue);
+  const SetShuffle(this.shuffleValue);
 }
 
 class SetRepeat extends SettingsEvent {
   final bool repeatValue;
 
-  SetRepeat(this.repeatValue);
+  const SetRepeat(this.repeatValue);
 }
 
 class SetDarkTheme extends SettingsEvent {
   final bool darkThemeValue;
 
-  SetDarkTheme(this.darkThemeValue);
+  const SetDarkTheme(this.darkThemeValue);
 }

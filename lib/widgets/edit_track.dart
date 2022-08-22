@@ -11,7 +11,7 @@ class EditTrack extends StatefulWidget {
   final Widget? titleText;
   final Track track;
 
-  EditTrack({
+  const EditTrack({
     Key? key,
     this.titleText,
     required this.track,
@@ -27,7 +27,7 @@ class _EditTrackState extends State<EditTrack> {
   final titleFocusNode = FocusNode();
   final artistFocusNode = FocusNode();
 
-  var loading = false;
+  var _loading = false;
 
   @override
   void initState() {
@@ -39,15 +39,14 @@ class _EditTrackState extends State<EditTrack> {
 
   @override
   Widget build(BuildContext context) {
-    return loading
-        ? CircularProgressIndicator()
+    return _loading
+        ? const CircularProgressIndicator()
         : Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
               widget.titleText ?? Container(),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TitledField(
                 title: 'Artist:',
                 focusNode: artistFocusNode,
@@ -55,7 +54,7 @@ class _EditTrackState extends State<EditTrack> {
                 fieldWidth: inputFieldWidth(context),
                 onSubmitted: (_) => titleFocusNode.requestFocus(),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TitledField(
                 title: 'Title:',
                 focusNode: titleFocusNode,
@@ -63,22 +62,22 @@ class _EditTrackState extends State<EditTrack> {
                 fieldWidth: inputFieldWidth(context),
                 onSubmitted: (_) => _onSubmit(),
               ),
-              SizedBox(height: 40),
+              const SizedBox(height: 40),
               StyledButton(title: 'Submit', onPressed: _onSubmit),
             ],
           );
   }
 
-  void _onSubmit() async {
+  Future<void> _onSubmit() async {
     setState(() {
-      loading = true;
+      _loading = true;
     });
 
     final title = titleController.text == widget.track.title ? '' : titleController.text;
     final artist = artistController.text == widget.track.artist ? '' : artistController.text;
     final result = await editTrack(widget.track.id, artist: artist, title: title);
     setState(() {
-      loading = false;
+      _loading = false;
     });
 
     await showDialog(

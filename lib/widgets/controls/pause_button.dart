@@ -15,7 +15,7 @@ class PauseButton extends StatelessWidget {
       onTap: () {
         playerBloc.add(PauseEvent());
       },
-      child: Icon(
+      child: const Icon(
         Icons.pause,
         size: 30,
       ),

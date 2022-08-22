@@ -12,7 +12,7 @@ class AddToPlaylistInitial extends AddToPlaylistState {}
 class ChoosePlaylist extends AddToPlaylistState {
   final List<Playlist> playlists;
 
-  ChoosePlaylist(this.playlists);
+  const ChoosePlaylist(this.playlists);
 }
 
 class Loading extends AddToPlaylistState {}

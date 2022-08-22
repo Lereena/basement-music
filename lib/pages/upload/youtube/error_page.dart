@@ -15,7 +15,7 @@ class ErrorPage extends StatelessWidget {
       children: [
         ErrorIcon(),
         const SizedBox(height: 40),
-        Text('Couldn\'t fetch YouTube video. Please check the link and try again.'),
+        const Text("Couldn't fetch YouTube video. Please check the link and try again."),
         const SizedBox(height: 40),
         StyledButton(
           title: 'Try again',

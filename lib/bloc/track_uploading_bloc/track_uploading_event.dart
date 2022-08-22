@@ -12,7 +12,7 @@ class Start extends TrackUploadingEvent {}
 class LinkEntered extends TrackUploadingEvent {
   final String link;
 
-  LinkEntered(this.link);
+  const LinkEntered(this.link);
 }
 
 class InfoChecked extends TrackUploadingEvent {
@@ -20,5 +20,5 @@ class InfoChecked extends TrackUploadingEvent {
   final String artist;
   final String title;
 
-  InfoChecked(this.url, this.artist, this.title);
+  const InfoChecked(this.url, this.artist, this.title);
 }

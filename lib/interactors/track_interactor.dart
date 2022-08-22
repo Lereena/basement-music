@@ -34,12 +34,14 @@ Future<bool> editTrack(String id, {String artist = "", String title = "", String
 Future<bool> uploadLocalTrack(List<int> file, String filename) async {
   try {
     final request = http.MultipartRequest("POST", Uri.parse(upload))
-      ..files.add(http.MultipartFile.fromBytes(
-        'file',
-        file,
-        filename: filename,
-        contentType: MediaType('audio', ''),
-      ));
+      ..files.add(
+        http.MultipartFile.fromBytes(
+          'file',
+          file,
+          filename: filename,
+          contentType: MediaType('audio', ''),
+        ),
+      );
     final response = await request.sendAsync();
     return response.statusCode == 200;
   } catch (e) {

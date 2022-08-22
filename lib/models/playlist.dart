@@ -6,7 +6,7 @@ class Playlist extends Equatable {
   final String title;
   final List<Track> tracks;
 
-  Playlist({
+  const Playlist({
     required this.id,
     required this.title,
     required this.tracks,
@@ -16,7 +16,7 @@ class Playlist extends Equatable {
   List<Object> get props => [id];
 
   factory Playlist.empty() {
-    return Playlist(id: '', title: '', tracks: []);
+    return const Playlist(id: '', title: '', tracks: []);
   }
 
   factory Playlist.fromJson(Map<String, dynamic> json) {

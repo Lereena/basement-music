@@ -4,14 +4,14 @@ class CustomTheme {
   static ThemeData get lightTheme {
     return ThemeData(
       primarySwatch: Colors.purple,
-      textTheme: TextTheme(
-        bodyLarge: const TextStyle(fontSize: 20),
-        bodyMedium: const TextStyle(fontSize: 18),
-        bodySmall: const TextStyle(fontSize: 16),
+      textTheme: const TextTheme(
+        bodyLarge: TextStyle(fontSize: 20),
+        bodyMedium: TextStyle(fontSize: 18),
+        bodySmall: TextStyle(fontSize: 16),
       ),
       iconTheme: IconThemeData(color: Colors.black.withOpacity(0.6)),
       navigationRailTheme: NavigationRailThemeData(
-        selectedLabelTextStyle: TextStyle(
+        selectedLabelTextStyle: const TextStyle(
           fontSize: 16,
           color: Colors.purple,
         ),
@@ -23,7 +23,7 @@ class CustomTheme {
       dialogTheme: DialogTheme(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(5),
-          side: BorderSide(
+          side: const BorderSide(
             color: Colors.purple,
             width: 2,
           ),
@@ -36,14 +36,14 @@ class CustomTheme {
     return ThemeData(
       brightness: Brightness.dark,
       primarySwatch: Colors.orange,
-      textTheme: TextTheme(
-        bodyLarge: const TextStyle(fontSize: 20),
-        bodyMedium: const TextStyle(fontSize: 18),
-        bodySmall: const TextStyle(fontSize: 16),
+      textTheme: const TextTheme(
+        bodyLarge: TextStyle(fontSize: 20),
+        bodyMedium: TextStyle(fontSize: 18),
+        bodySmall: TextStyle(fontSize: 16),
       ),
-      iconTheme: IconThemeData(color: Colors.orange),
+      iconTheme: const IconThemeData(color: Colors.orange),
       navigationRailTheme: NavigationRailThemeData(
-        selectedLabelTextStyle: TextStyle(
+        selectedLabelTextStyle: const TextStyle(
           fontSize: 16,
           color: Colors.orange,
         ),
@@ -56,7 +56,7 @@ class CustomTheme {
         thumbColor: MaterialStateProperty.all(Colors.orange),
         trackColor: MaterialStateProperty.all(Colors.orange.withOpacity(0.8)),
       ),
-      appBarTheme: AppBarTheme(
+      appBarTheme: const AppBarTheme(
         color: Colors.orange,
         titleTextStyle: TextStyle(
           color: Colors.black,
@@ -67,7 +67,7 @@ class CustomTheme {
       dialogTheme: DialogTheme(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(5),
-          side: BorderSide(
+          side: const BorderSide(
             color: Colors.orange,
             width: 2,
           ),
