@@ -12,9 +12,13 @@ class RepeatToggle extends StatelessWidget {
 
     return InkWell(
       onTap: () => settingsBloc.add(SetRepeat(!settingsBloc.state.repeat)),
-      child: Icon(
-        settingsBloc.state.repeat ? Icons.repeat_on_outlined : Icons.repeat,
-        size: 30,
+      child: BlocBuilder<SettingsBloc, SettingsState>(
+        builder: (context, state) {
+          return Icon(
+            state.repeat ? Icons.repeat_on_outlined : Icons.repeat,
+            size: 30,
+          );
+        },
       ),
     );
   }

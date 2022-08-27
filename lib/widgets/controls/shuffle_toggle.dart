@@ -12,9 +12,13 @@ class ShuffleToggle extends StatelessWidget {
 
     return InkWell(
       onTap: () => settingsBloc.add(SetShuffle(!settingsBloc.state.shuffle)),
-      child: Icon(
-        settingsBloc.state.shuffle ? Icons.shuffle_on_outlined : Icons.shuffle,
-        size: 30,
+      child: BlocBuilder<SettingsBloc, SettingsState>(
+        builder: (context, state) {
+          return Icon(
+            state.shuffle ? Icons.shuffle_on_outlined : Icons.shuffle,
+            size: 30,
+          );
+        },
       ),
     );
   }

@@ -21,9 +21,13 @@ class _ThemeSettingLineState extends State<ThemeSettingLine> {
         children: [
           const Text('Night theme'),
           const Spacer(),
-          Switch(
-            value: settingsBloc.state.darkTheme,
-            onChanged: (value) => settingsBloc.add(SetDarkTheme(value)),
+          BlocBuilder<SettingsBloc, SettingsState>(
+            builder: (context, state) {
+              return Switch(
+                value: state.darkTheme,
+                onChanged: (value) => settingsBloc.add(SetDarkTheme(value)),
+              );
+            },
           ),
         ],
       ),
