@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -49,14 +50,16 @@ class MoreButton extends StatelessWidget {
                   );
                 },
               ),
-              const Divider(),
-              SimpleDialogOption(
-                child: const Text('Cache track'),
-                onPressed: () {
-                  cacherBloc.add(CacheTrackEvent(track.id));
-                  Navigator.pop(context);
-                },
-              ),
+              if (!kIsWeb) ...[
+                const Divider(),
+                SimpleDialogOption(
+                  child: const Text('Cache track'),
+                  onPressed: () {
+                    cacherBloc.add(CacheTrackEvent(track.id));
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
             ],
           ),
         );
