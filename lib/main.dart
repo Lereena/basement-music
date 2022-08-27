@@ -107,8 +107,8 @@ class _BasementMusicState extends State<BasementMusic> {
         builder: (context, state) {
           return MaterialApp(
             title: 'Basement music',
-            theme: CustomTheme.generatedTheme,
-            darkTheme: CustomTheme.generatedDarkTheme,
+            theme: CustomTheme.lightTheme,
+            darkTheme: CustomTheme.darkTheme,
             themeMode: state.darkTheme ? ThemeMode.dark : ThemeMode.light,
             initialRoute: NavigationRoute.initial.name,
             routes: {
