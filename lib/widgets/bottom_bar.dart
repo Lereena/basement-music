@@ -50,7 +50,6 @@ class _BottomBarState extends State<BottomBar> {
             LinearProgressIndicator(value: _percentProgress),
             Container(
               height: 70,
-              color: Theme.of(context).primaryColor.withOpacity(0.1),
               padding: const EdgeInsets.all(10),
               child: Row(
                 children: [

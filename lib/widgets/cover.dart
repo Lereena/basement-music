@@ -19,7 +19,7 @@ class Cover extends StatelessWidget {
       children: [
         image,
         Container(
-          color: Theme.of(context).shadowColor.withOpacity(0.5),
+          color: Theme.of(context).shadowColor.withOpacity(0.2),
           width: 40,
           height: 40,
         ),

@@ -44,7 +44,6 @@ class TrackCard extends StatelessWidget {
                           cover: track.cover,
                           overlay: CoverOverlay(isCaching: isCaching, isCached: isCached),
                         ),
-                        ColoredBox(color: Colors.black.withOpacity(0.1)),
                         if (playerBloc.currentTrack == track &&
                             (playerState is PlayingPlayerState || playerState is ResumedPlayerState))
                           const PauseButton()
