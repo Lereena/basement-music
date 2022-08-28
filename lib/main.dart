@@ -1,3 +1,4 @@
+import 'package:basement_music/api_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -47,14 +48,15 @@ class BasementMusic extends StatefulWidget {
 }
 
 class _BasementMusicState extends State<BasementMusic> {
-  final _tracksRepository = TracksRepository();
-  final _playlistsRepository = PlaylistsRepository();
+  final _apiService = ApiService();
+  late final _tracksRepository = TracksRepository(_apiService);
+  late final _playlistsRepository = PlaylistsRepository(_apiService);
 
-  final _settingsBloc = SettingsBloc();
-  final _cacherBloc = CacherBloc();
+  late final _cacherBloc = CacherBloc(_apiService);
+  late final _settingsBloc = SettingsBloc(_apiService);
   late final _tracksBloc = TracksBloc(_tracksRepository);
   late final _playlistsBloc = PlaylistsBloc(_playlistsRepository);
-  late final _playerBloc = PlayerBloc(_settingsBloc, _tracksRepository, _cacherBloc);
+  late final _playerBloc = PlayerBloc(_apiService, _settingsBloc, _tracksRepository, _cacherBloc);
 
   @override
   void initState() {
@@ -77,7 +79,7 @@ class _BasementMusicState extends State<BasementMusic> {
           value: _tracksBloc,
         ),
         BlocProvider<TrackUploadingBloc>(
-          create: (context) => TrackUploadingBloc(),
+          create: (context) => TrackUploadingBloc(_tracksRepository),
         ),
         BlocProvider<PlaylistsBloc>.value(
           value: _playlistsBloc,

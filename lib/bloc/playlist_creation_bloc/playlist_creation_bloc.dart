@@ -26,7 +26,7 @@ class PlaylistCreationBloc extends Bloc<PlaylistCreationEvent, PlaylistCreationS
     emit(WaitingCreationState());
 
     if (event.title.isEmpty) {
-      emit(InputErrorState('Title must not be empty'));
+      emit(const InputErrorState('Title must not be empty'));
       return;
     }
 

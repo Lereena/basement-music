@@ -1,9 +1,13 @@
-import 'package:basement_music/api_providers/playlists_api_provider.dart';
-import 'package:basement_music/models/playlist.dart';
+import '../api_providers/playlists_api_provider.dart';
+import '../api_service.dart';
+import '../models/playlist.dart';
 
 class PlaylistsRepository {
-  final _playlistsApiProvider = PlaylistsApiProvider();
+  final ApiService _apiService;
   final _items = <Playlist>[];
+  late final _playlistsApiProvider = PlaylistsApiProvider(_apiService);
+
+  PlaylistsRepository(this._apiService);
 
   List<Playlist> get items => _items;
 

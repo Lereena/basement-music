@@ -1,12 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
 
-import '../api.dart';
 import '../enums/pages_enum.dart';
 import '../routes.dart';
-import '../widgets/add_playlist.dart';
 import '../widgets/bottom_bar.dart';
+import '../widgets/create_playlist.dart';
 import '../widgets/dialog.dart';
 import '../widgets/main_content.dart';
 import '../widgets/navigations/side_navigation_drawer.dart';
@@ -23,7 +21,6 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   PageNavigation selectedPage = PageNavigation.allTracks;
-  WebSocketChannel channel = WebSocketChannel.connect(Uri.parse(wshost));
 
   final pagesWithFAB = [PageNavigation.allTracks, PageNavigation.library];
 
@@ -74,7 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
       case PageNavigation.library:
         return () => showDialog(
               context: context,
-              builder: (context) => const CustomDialog(child: AddPlaylist()),
+              builder: (context) => const CustomDialog(child: CreatePlaylist()),
             );
       default:
         throw Exception('No action for $page');

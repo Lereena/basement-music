@@ -2,12 +2,14 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:audioplayers/audioplayers.dart';
+import 'package:basement_music/api_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
-import '../../audioplayer_extensions.dart';
 import '../../models/playlist.dart';
 import '../../models/track.dart';
 import '../../repositories/tracks_repository.dart';
+import '../../utils/log/log_service.dart';
 import '../cacher_bloc/bloc/cacher_bloc.dart';
 import '../settings_bloc/settings_bloc.dart';
 import 'player_event.dart';
@@ -16,6 +18,7 @@ import 'player_state.dart';
 final random = Random();
 
 class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
+  final ApiService _apiService;
   final _audioPlayer = AudioPlayer();
   late final onPositionChanged = _audioPlayer.onPositionChanged;
 
@@ -27,6 +30,7 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
   Track currentTrack = Track.empty();
 
   PlayerBloc(
+    this._apiService,
     this._settingsBloc,
     this._tracksRepository,
     this._cacherBloc,
@@ -49,7 +53,7 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
 
     final cached = _cacherBloc.state.isCached([event.track.id]);
 
-    _audioPlayer.customPlay(event.track.id, cached: cached);
+    _customPlay(event.track.id, cached: cached);
     currentTrack = event.track;
     emit(PlayingPlayerState(event.track));
   }
@@ -80,7 +84,7 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
 
     final cached = _cacherBloc.state.isCached([currentTrack.id]);
 
-    _audioPlayer.customPlay(currentTrack.id, cached: cached);
+    _customPlay(currentTrack.id, cached: cached);
     emit(PlayingPlayerState(currentTrack));
   }
 
@@ -100,7 +104,7 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
 
     final cached = _cacherBloc.state.isCached([currentTrack.id]);
 
-    _audioPlayer.customPlay(currentTrack.id, cached: cached);
+    _customPlay(currentTrack.id, cached: cached);
     emit(PlayingPlayerState(currentTrack));
   }
 
@@ -110,5 +114,20 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
       result = random.nextInt(currentPlaylist.tracks.length);
     }
     return result;
+  }
+
+  Future<void> _customPlay(String trackId, {bool cached = false}) async {
+    if (!cached) {
+      await _audioPlayer.play(UrlSource(_apiService.trackPlayback(trackId)));
+      return;
+    }
+
+    final trackUrl = (await DefaultCacheManager().getFileFromCache(trackId))?.file.uri.path;
+
+    if (trackUrl == null) {
+      LogService.log("Couldn't play cached track $trackId");
+      return;
+    }
+    _audioPlayer.play(DeviceFileSource(trackUrl));
   }
 }

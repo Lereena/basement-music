@@ -1,10 +1,10 @@
-import 'package:basement_music/widgets/buttons/styled_button.dart';
-import 'package:basement_music/widgets/dialogs/status_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../interactors/track_interactor.dart';
+import '../bloc/edit_track_bloc/edit_track_bloc.dart';
 import '../models/track.dart';
 import '../utils/input_field_with.dart';
+import 'buttons/styled_button.dart';
 import 'titled_field.dart';
 
 class EditTrack extends StatefulWidget {
@@ -22,26 +22,57 @@ class EditTrack extends StatefulWidget {
 }
 
 class _EditTrackState extends State<EditTrack> {
+  late final EditTrackBloc editTrackBloc;
+
   final titleController = TextEditingController();
   final artistController = TextEditingController();
   final titleFocusNode = FocusNode();
   final artistFocusNode = FocusNode();
 
-  var _loading = false;
-
   @override
   void initState() {
     super.initState();
+    editTrackBloc = BlocProvider.of<EditTrackBloc>(context);
+    editTrackBloc.add(GetInputEvent());
+
     titleController.text = widget.track.title;
     artistController.text = widget.track.artist;
     artistFocusNode.requestFocus();
+
+    titleController.addListener(_removeError);
+    artistController.addListener(_removeError);
+  }
+
+  void _removeError() {
+    if (editTrackBloc.state is InputErrorState) {
+      editTrackBloc.add(GetInputEvent());
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return _loading
-        ? const CircularProgressIndicator()
-        : Column(
+    return Center(
+      child: BlocBuilder<EditTrackBloc, EditTrackState>(
+        builder: (context, state) {
+          if (state is WaitingEditingState) {
+            return const CircularProgressIndicator();
+          }
+
+          if (state is EditedState) {
+            return const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Text('Track was successfully edited'),
+            );
+          }
+
+          if (state is EditingErrorState) {
+            return const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Text('Track was not edited, please try again later'),
+            );
+          }
+
+          return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -60,31 +91,37 @@ class _EditTrackState extends State<EditTrack> {
                 focusNode: titleFocusNode,
                 controller: titleController,
                 fieldWidth: inputFieldWidth(context),
-                onSubmitted: (_) => _onSubmit(),
+                onSubmitted: (_) => editTrackBloc.add(
+                  LoadingEvent(
+                    widget.track.id,
+                    titleController.text,
+                    artistController.text,
+                    widget.track.cover,
+                  ),
+                ),
               ),
-              const SizedBox(height: 40),
-              StyledButton(title: 'Submit', onPressed: _onSubmit),
+              if (state is InputErrorState)
+                Text(
+                  state.errorText,
+                  style: const TextStyle(color: Colors.red),
+                )
+              else
+                const SizedBox(height: 20),
+              const SizedBox(height: 20),
+              StyledButton(
+                title: 'Submit',
+                onPressed: () => editTrackBloc.add(
+                  LoadingEvent(
+                    widget.track.id,
+                    titleController.text,
+                    artistController.text,
+                    widget.track.cover,
+                  ),
+                ),
+              ),
             ],
           );
-  }
-
-  Future<void> _onSubmit() async {
-    setState(() {
-      _loading = true;
-    });
-
-    final title = titleController.text == widget.track.title ? '' : titleController.text;
-    final artist = artistController.text == widget.track.artist ? '' : artistController.text;
-    final result = await editTrack(widget.track.id, artist: artist, title: title);
-    setState(() {
-      _loading = false;
-    });
-
-    await showDialog(
-      context: context,
-      builder: (_) => StatusDialog(
-        success: result,
-        text: result ? 'Track info successfully updated' : 'Track info was not updated, please try again later',
+        },
       ),
     );
   }

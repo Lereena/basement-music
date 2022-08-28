@@ -4,13 +4,15 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
-import '../../../api.dart';
+import '../../../api_service.dart';
 
 part 'cacher_event.dart';
 part 'cacher_state.dart';
 
 class CacherBloc extends Bloc<CacherEvent, CacherState> {
-  CacherBloc() : super(CacherInitial()) {
+  final ApiService _apiService;
+
+  CacherBloc(this._apiService) : super(CacherInitial()) {
     on<CacheTrackEvent>(_onCacheTrackEvent);
     on<CacheTracksEvent>(_onCacheTracksEvent);
   }
@@ -33,7 +35,7 @@ class CacherBloc extends Bloc<CacherEvent, CacherState> {
 
   Future<void> _cacheOneTrack(String trackId) async {
     try {
-      await DefaultCacheManager().downloadFile(trackPlayback(trackId), key: trackId);
+      await DefaultCacheManager().downloadFile(_apiService.trackPlayback(trackId), key: trackId);
 
       state.caching.remove(trackId);
       state.cached.add(trackId);

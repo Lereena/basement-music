@@ -1,20 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../api.dart';
+import '../../bloc/settings_bloc/settings_bloc.dart';
 import 'settings_line_decoration.dart';
 
-class ServerSettingLine extends StatefulWidget {
+class ServerSettingLine extends StatelessWidget {
   const ServerSettingLine({Key? key}) : super(key: key);
 
   @override
-  State<ServerSettingLine> createState() => _ServerSettingLineState();
-}
-
-class _ServerSettingLineState extends State<ServerSettingLine> {
-  final controller = TextEditingController(text: host);
-
-  @override
   Widget build(BuildContext context) {
+    final settingsBloc = BlocProvider.of<SettingsBloc>(context);
+    final controller = TextEditingController(text: settingsBloc.state.serverAddress);
+
     return SettingsLineDecoration(
       child: InkWell(
         child: SizedBox(
@@ -23,7 +20,11 @@ class _ServerSettingLineState extends State<ServerSettingLine> {
             children: [
               const Text('Server host'),
               const Spacer(),
-              Text(host),
+              BlocBuilder<SettingsBloc, SettingsState>(
+                builder: (context, state) {
+                  return Text(state.serverAddress);
+                },
+              ),
             ],
           ),
         ),
@@ -32,11 +33,9 @@ class _ServerSettingLineState extends State<ServerSettingLine> {
           builder: (context) => Dialog(
             child: TextField(
               controller: controller,
-              onEditingComplete: () {
-                setState(() {
-                  host = controller.text;
-                });
-              },
+              onEditingComplete: () => settingsBloc.add(
+                SetServerAddress(controller.text),
+              ),
             ),
           ),
         ),

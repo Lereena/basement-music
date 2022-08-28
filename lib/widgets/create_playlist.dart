@@ -7,16 +7,16 @@ import '../bloc/playlist_creation_bloc/playlist_creation_state.dart';
 import '../utils/input_field_with.dart';
 import 'titled_field.dart';
 
-class AddPlaylist extends StatefulWidget {
-  const AddPlaylist({Key? key}) : super(key: key);
+class CreatePlaylist extends StatefulWidget {
+  const CreatePlaylist({Key? key}) : super(key: key);
 
   @override
-  State<AddPlaylist> createState() => _AddPlaylistState();
+  State<CreatePlaylist> createState() => _CreatePlaylistState();
 }
 
 const _textStyle = TextStyle(fontSize: 18);
 
-class _AddPlaylistState extends State<AddPlaylist> {
+class _CreatePlaylistState extends State<CreatePlaylist> {
   late final PlaylistCreationBloc createPlaylistBloc;
   final titleController = TextEditingController();
   final fieldFocusNode = FocusNode();
@@ -74,7 +74,7 @@ class _AddPlaylistState extends State<AddPlaylist> {
                 controller: titleController,
                 fieldWidth: inputFieldWidth(context),
                 focusNode: fieldFocusNode,
-                onSubmitted: (_) async => createPlaylistBloc.add(
+                onSubmitted: (_) => createPlaylistBloc.add(
                   LoadingEvent(titleController.text),
                 ),
               ),

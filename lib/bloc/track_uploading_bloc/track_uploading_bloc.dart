@@ -4,13 +4,15 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:youtube_metadata/youtube_metadata.dart';
 
-import '../../../interactors/track_interactor.dart';
+import '../../repositories/tracks_repository.dart';
 
 part 'track_uploading_event.dart';
 part 'track_uploading_state.dart';
 
 class TrackUploadingBloc extends Bloc<TrackUploadingEvent, TrackUploadingState> {
-  TrackUploadingBloc() : super(LinkInputState()) {
+  final TracksRepository _tracksRepository;
+
+  TrackUploadingBloc(this._tracksRepository) : super(LinkInputState()) {
     on<Start>(_onStart);
     on<LinkEntered>(_onLinkEntered);
     on<InfoChecked>(_onInfoChecked);
@@ -62,7 +64,7 @@ class TrackUploadingBloc extends Bloc<TrackUploadingEvent, TrackUploadingState> 
 
     emit(UploadingStartedState());
 
-    final result = await uploadYtTrack(event.url, event.artist, event.title);
+    final result = await _tracksRepository.uploadYtTrack(event.url, event.artist, event.title);
 
     if (result) {
       emit(SuccessfulUploadState());

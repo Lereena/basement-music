@@ -39,4 +39,19 @@ class Track extends Equatable {
       );
 
   String get durationStr => durationString(duration);
+
+  Track copyWith({
+    String? title,
+    String? artist,
+    String? cover,
+  }) {
+    return Track(
+      id: id,
+      url: url,
+      title: title ?? this.title,
+      artist: artist ?? this.artist,
+      duration: duration,
+      cover: cover ?? this.cover,
+    );
+  }
 }
