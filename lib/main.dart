@@ -1,3 +1,4 @@
+import 'package:basement_music/bloc/track_progress_bloc/cubit/track_progress_cubit.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -53,6 +54,7 @@ class _BasementMusicState extends State<BasementMusic> {
   final _cacherBloc = CacherBloc();
   late final _tracksBloc = TracksBloc(_tracksRepository);
   late final _playlistsBloc = PlaylistsBloc(_playlistsRepository);
+  late final _playerBloc = PlayerBloc(_settingsBloc, _tracksRepository, _cacherBloc);
 
   @override
   void initState() {
@@ -69,11 +71,7 @@ class _BasementMusicState extends State<BasementMusic> {
     return MultiBlocProvider(
       providers: [
         BlocProvider<PlayerBloc>(
-          create: (context) => PlayerBloc(
-            _settingsBloc,
-            _tracksRepository,
-            _cacherBloc,
-          ),
+          create: (context) => _playerBloc,
         ),
         BlocProvider<TracksBloc>.value(
           value: _tracksBloc,
@@ -102,6 +100,9 @@ class _BasementMusicState extends State<BasementMusic> {
         BlocProvider<CacherBloc>.value(
           value: _cacherBloc,
         ),
+        BlocProvider(
+          create: (context) => TrackProgressCubit(_playerBloc),
+        )
       ],
       child: BlocBuilder<SettingsBloc, SettingsState>(
         builder: (context, state) {

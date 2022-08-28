@@ -1,4 +1,4 @@
-import 'package:basement_music/utils/time.dart';
+import 'package:basement_music/bloc/track_progress_bloc/cubit/track_progress_cubit.dart';
 import 'package:basement_music/widgets/controls/next_button.dart';
 import 'package:basement_music/widgets/controls/previous_button.dart';
 import 'package:basement_music/widgets/track_name.dart';
@@ -13,32 +13,11 @@ import 'controls/play_button.dart';
 import 'controls/repeat_toggle.dart';
 import 'controls/shuffle_toggle.dart';
 
-class BottomBar extends StatefulWidget {
-  @override
-  State<BottomBar> createState() => _BottomBarState();
-}
-
-class _BottomBarState extends State<BottomBar> {
-  var _percentProgress = 0.0;
-  var _stringProgress = '00:00';
-
-  @override
-  void initState() {
-    super.initState();
-    final playerBloc = BlocProvider.of<PlayerBloc>(context);
-
-    playerBloc.onPositionChanged.listen((event) {
-      if (mounted) {
-        setState(() {
-          _percentProgress = event.inSeconds.toDouble() / playerBloc.state.currentTrack.duration;
-          _stringProgress = durationString(event.inSeconds);
-        });
-      }
-    });
-  }
-
+class BottomBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final progress = context.watch<TrackProgressCubit>().state;
+
     return BlocBuilder<PlayerBloc, AudioPlayerState>(
       builder: (context, state) {
         if (state.currentTrack == Track.empty()) return Container(height: 0);
@@ -47,7 +26,7 @@ class _BottomBarState extends State<BottomBar> {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            LinearProgressIndicator(value: _percentProgress),
+            LinearProgressIndicator(value: progress.percentProgress),
             Container(
               height: 70,
               padding: const EdgeInsets.all(10),
@@ -87,7 +66,7 @@ class _BottomBarState extends State<BottomBar> {
                     ),
                     const SizedBox(width: 20),
                     Text(
-                      _stringProgress,
+                      progress.stringProgress,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(fontSize: 16),
                     ),
