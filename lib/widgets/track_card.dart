@@ -28,8 +28,9 @@ class TrackCard extends StatelessWidget {
 
         return BlocBuilder<PlayerBloc, AudioPlayerState>(
           builder: (context, playerState) => ColoredBox(
-            color:
-                playerBloc.currentTrack == track ? Theme.of(context).primaryColor.withOpacity(0.1) : Colors.transparent,
+            color: playerBloc.currentTrack == track
+                ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
+                : Colors.transparent,
             child: Row(
               children: [
                 Padding(

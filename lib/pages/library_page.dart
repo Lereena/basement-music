@@ -32,9 +32,8 @@ class _LibraryPageState extends State<LibraryPage> {
           }
 
           if (state is PlaylistsLoadedState) {
-            return ListView.separated(
+            return ListView.builder(
               itemBuilder: (context, index) => PlaylistCard(playlist: state.playlists[index]),
-              separatorBuilder: (context, _) => const Divider(height: 1),
               itemCount: state.playlists.length,
             );
           }
