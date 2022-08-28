@@ -104,7 +104,7 @@ class _BasementMusicState extends State<BasementMusic> {
         ),
         BlocProvider<TrackProgressCubit>(
           create: (context) => TrackProgressCubit(_playerBloc),
-        )
+        ),
       ],
       child: BlocBuilder<SettingsBloc, SettingsState>(
         builder: (context, state) {
@@ -125,7 +125,7 @@ class _BasementMusicState extends State<BasementMusic> {
               }
               return null;
             },
-            home: const MyHomePage(title: 'Basement music'),
+            home: MyHomePage(),
           );
         },
       ),

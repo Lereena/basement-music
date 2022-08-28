@@ -1,29 +1,23 @@
 import 'package:flutter/material.dart';
 
+import '../../enums/pages_enum.dart';
 import '../settings/settings_button.dart';
 
-class SideNavigationRail extends StatefulWidget {
+class SideNavigationRail extends StatelessWidget {
+  final PageNavigation selectedPage;
   final Function(int) onDestinationSelected;
 
-  const SideNavigationRail({Key? key, required this.onDestinationSelected}) : super(key: key);
-
-  @override
-  State<SideNavigationRail> createState() => _SideNavigationRailState();
-}
-
-class _SideNavigationRailState extends State<SideNavigationRail> {
-  var _selectedIndex = 0;
+  const SideNavigationRail({
+    Key? key,
+    required this.selectedPage,
+    required this.onDestinationSelected,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return NavigationRail(
-      selectedIndex: _selectedIndex,
-      onDestinationSelected: (index) {
-        setState(() {
-          _selectedIndex = index;
-        });
-        widget.onDestinationSelected(index);
-      },
+      selectedIndex: PageNavigation.values.indexWhere((element) => element == selectedPage),
+      onDestinationSelected: onDestinationSelected,
       labelType: NavigationRailLabelType.all,
       destinations: const [
         NavigationRailDestination(
