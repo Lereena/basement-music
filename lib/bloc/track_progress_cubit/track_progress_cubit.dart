@@ -2,7 +2,7 @@ import 'package:basement_music/bloc/player_bloc/player_bloc.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
-import '../../../utils/time.dart';
+import '../../utils/time.dart';
 
 part 'track_progress_state.dart';
 

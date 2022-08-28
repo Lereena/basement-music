@@ -1,17 +1,17 @@
-import 'package:basement_music/bloc/track_progress_bloc/cubit/track_progress_cubit.dart';
-import 'package:basement_music/widgets/controls/next_button.dart';
-import 'package:basement_music/widgets/controls/previous_button.dart';
-import 'package:basement_music/widgets/track_name.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bloc/player_bloc/player_bloc.dart';
 import '../bloc/player_bloc/player_state.dart';
+import '../bloc/track_progress_cubit/track_progress_cubit.dart';
 import '../models/track.dart';
+import 'controls/next_button.dart';
 import 'controls/pause_button.dart';
 import 'controls/play_button.dart';
+import 'controls/previous_button.dart';
 import 'controls/repeat_toggle.dart';
 import 'controls/shuffle_toggle.dart';
+import 'track_name.dart';
 
 class BottomBar extends StatelessWidget {
   @override

@@ -1,4 +1,3 @@
-import 'package:basement_music/bloc/track_progress_bloc/cubit/track_progress_cubit.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,6 +11,7 @@ import 'bloc/playlist_creation_bloc/playlist_creation_bloc.dart';
 import 'bloc/playlists_bloc/playlists_bloc.dart';
 import 'bloc/playlists_bloc/playlists_event.dart';
 import 'bloc/settings_bloc/settings_bloc.dart';
+import 'bloc/track_progress_cubit/track_progress_cubit.dart';
 import 'bloc/track_uploading_bloc/track_uploading_bloc.dart';
 import 'bloc/tracks_bloc/tracks_bloc.dart';
 import 'bloc/tracks_bloc/tracks_event.dart';
@@ -100,7 +100,7 @@ class _BasementMusicState extends State<BasementMusic> {
         BlocProvider<CacherBloc>.value(
           value: _cacherBloc,
         ),
-        BlocProvider(
+        BlocProvider<TrackProgressCubit>(
           create: (context) => TrackProgressCubit(_playerBloc),
         )
       ],
