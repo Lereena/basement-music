@@ -1,4 +1,5 @@
 import 'package:basement_music/bloc/side_navigation_bloc/side_navigation_cubit.dart';
+import 'package:basement_music/widgets/navigations/side_navigation_web.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,7 +11,6 @@ import '../widgets/create_playlist.dart';
 import '../widgets/dialog.dart';
 import '../widgets/main_content.dart';
 import '../widgets/navigations/side_navigation_drawer.dart';
-import '../widgets/navigations/side_navigation_rail.dart';
 
 const pagesWithFAB = [PageNavigation.allTracks, PageNavigation.library];
 
@@ -24,16 +24,16 @@ class MyHomePage extends StatelessWidget {
       child: BlocBuilder<SideNavigationCubit, SideNavigationState>(
         builder: (context, state) {
           return Scaffold(
-            appBar: AppBar(title: const Text('Basement music')),
             body: kIsWeb
                 ? Row(
                     children: [
-                      SideNavigationRail(
-                        selectedPage: state.selectedPage,
-                        onDestinationSelected: (index) {
-                          sideNavigationCubit.selectDestination(index);
-                        },
-                      ),
+                      const SideNavigationWeb(),
+                      // SideNavigationRail(
+                      //   selectedPage: state.selectedPage,
+                      //   onDestinationSelected: (index) {
+                      //     sideNavigationCubit.selectDestination(index);
+                      //   },
+                      // ),
                       const VerticalDivider(width: 1),
                       MainContent(selectedPage: state.selectedPage),
                     ],
