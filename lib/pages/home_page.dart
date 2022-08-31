@@ -12,7 +12,7 @@ import '../widgets/dialog.dart';
 import '../widgets/main_content.dart';
 import '../widgets/navigations/side_navigation_drawer.dart';
 
-const pagesWithFAB = [PageNavigation.allTracks, PageNavigation.library];
+const pagesWithFAB = [PageNavigation.home, PageNavigation.library];
 
 class MyHomePage extends StatelessWidget {
   final sideNavigationCubit = SideNavigationCubit();
@@ -27,7 +27,12 @@ class MyHomePage extends StatelessWidget {
             body: kIsWeb
                 ? Row(
                     children: [
-                      const SideNavigationRail(),
+                      SideNavigationRail(
+                        selectedPage: state.selectedPage,
+                        onDestinationSelected: (index) {
+                          sideNavigationCubit.selectDestination(index);
+                        },
+                      ),
                       const VerticalDivider(width: 1),
                       MainContent(selectedPage: state.selectedPage),
                     ],
@@ -61,7 +66,7 @@ class MyHomePage extends StatelessWidget {
 
   Function _fabActionByPage(BuildContext context, PageNavigation page) {
     switch (page) {
-      case PageNavigation.allTracks:
+      case PageNavigation.home:
         return () => Navigator.pushNamed(context, NavigationRoute.upload.name);
       case PageNavigation.library:
         return () => showDialog(

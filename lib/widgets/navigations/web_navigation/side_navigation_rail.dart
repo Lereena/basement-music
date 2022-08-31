@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../enums/pages_enum.dart';
 import '../../../models/playlist.dart';
 import '../../../routes.dart';
 import '../../playlist_card.dart';
@@ -7,7 +8,14 @@ import 'navigation_destination.dart';
 import 'rail_theme.dart';
 
 class SideNavigationRail extends StatelessWidget {
-  const SideNavigationRail({super.key});
+  final PageNavigation selectedPage;
+  final Function(int) onDestinationSelected;
+
+  const SideNavigationRail({
+    super.key,
+    required this.selectedPage,
+    required this.onDestinationSelected,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -34,14 +42,14 @@ class SideNavigationRail extends StatelessWidget {
             SideNavigationDestination(
               icon: const Icon(Icons.home),
               label: 'Home',
-              selected: false,
-              onTap: () {},
+              selected: selectedPage == PageNavigation.home,
+              onTap: () => onDestinationSelected(0),
             ),
             SideNavigationDestination(
               icon: const Icon(Icons.library_music),
               label: 'Library',
-              selected: false,
-              onTap: () {},
+              selected: selectedPage == PageNavigation.library,
+              onTap: () => onDestinationSelected(1),
             ),
             const Divider(indent: 10, endIndent: 10),
             Column(
@@ -57,7 +65,7 @@ class SideNavigationRail extends StatelessWidget {
             SideNavigationDestination(
               icon: const Icon(Icons.settings),
               label: 'Settings',
-              selected: false,
+              selected: selectedPage == PageNavigation.settings,
               onTap: () => Navigator.pushNamed(context, NavigationRoute.settings.name),
             ),
           ],

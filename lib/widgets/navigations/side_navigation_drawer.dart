@@ -8,10 +8,10 @@ class SideNavigationDrawer extends StatelessWidget {
   final Function(int) onDestinationSelected;
 
   const SideNavigationDrawer({
-    Key? key,
+    super.key,
     required this.selectedPage,
     required this.onDestinationSelected,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -20,8 +20,8 @@ class SideNavigationDrawer extends StatelessWidget {
         children: [
           ListTile(
             leading: const Icon(Icons.favorite),
-            title: const Text('All tracks'),
-            selected: selectedPage == PageNavigation.allTracks,
+            title: const Text('Home'),
+            selected: selectedPage == PageNavigation.home,
             onTap: () => onDestinationSelected(0),
           ),
           ListTile(
@@ -30,12 +30,6 @@ class SideNavigationDrawer extends StatelessWidget {
             selected: selectedPage == PageNavigation.library,
             onTap: () => onDestinationSelected(1),
           ),
-          // ListTile(
-          //   leading: Icon(Icons.person_pin_sharp),
-          //   title: const Text('Artists'),
-          //   selected: selectedPage == PageNavigation.artists,
-          //   onTap: () => onDestinationSelected(2),
-          // ),
           const Divider(),
           ListTile(
             leading: const Icon(Icons.settings, size: 30),

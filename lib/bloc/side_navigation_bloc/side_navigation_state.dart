@@ -10,5 +10,5 @@ class SideNavigationState extends Equatable {
 }
 
 class SideNavigationInitial extends SideNavigationState {
-  const SideNavigationInitial() : super(PageNavigation.allTracks);
+  const SideNavigationInitial() : super(PageNavigation.home);
 }

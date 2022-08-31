@@ -11,11 +11,11 @@ class MainContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     switch (selectedPage) {
-      case PageNavigation.allTracks:
+      case PageNavigation.home:
         return const AllTracksPage();
       case PageNavigation.library:
         return const LibraryPage();
-      case PageNavigation.artists:
+      case PageNavigation.settings:
         return Container();
     }
   }
