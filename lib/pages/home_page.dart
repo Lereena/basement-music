@@ -1,5 +1,5 @@
 import 'package:basement_music/bloc/side_navigation_bloc/side_navigation_cubit.dart';
-import 'package:basement_music/widgets/navigations/side_navigation_web.dart';
+import 'package:basement_music/widgets/navigations/web_navigation/side_navigation_rail.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -27,13 +27,7 @@ class MyHomePage extends StatelessWidget {
             body: kIsWeb
                 ? Row(
                     children: [
-                      const SideNavigationWeb(),
-                      // SideNavigationRail(
-                      //   selectedPage: state.selectedPage,
-                      //   onDestinationSelected: (index) {
-                      //     sideNavigationCubit.selectDestination(index);
-                      //   },
-                      // ),
+                      const SideNavigationRail(),
                       const VerticalDivider(width: 1),
                       MainContent(selectedPage: state.selectedPage),
                     ],
