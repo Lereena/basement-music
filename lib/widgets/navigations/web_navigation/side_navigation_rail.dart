@@ -1,9 +1,8 @@
+import 'package:basement_music/widgets/navigations/web_navigation/playlists_section.dart';
 import 'package:flutter/material.dart';
 
 import '../../../enums/pages_enum.dart';
-import '../../../models/playlist.dart';
 import '../../../routes.dart';
-import '../../playlist_card.dart';
 import 'navigation_destination.dart';
 import 'rail_theme.dart';
 
@@ -53,15 +52,7 @@ class SideNavigationRail extends StatelessWidget {
               onTap: () => onDestinationSelected(1),
             ),
             const Divider(indent: 10, endIndent: 10),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: const [
-                PlaylistCard(playlist: Playlist(id: '', tracks: [], title: 'Playlist 1')),
-                PlaylistCard(playlist: Playlist(id: '', tracks: [], title: 'Playlist 2')),
-                PlaylistCard(playlist: Playlist(id: '', tracks: [], title: 'Playlist 3')),
-              ],
-            ),
-            const Spacer(),
+            const PlaylistsSection(),
             const Divider(indent: 10, endIndent: 10),
             SideNavigationDestination(
               icon: const Icon(Icons.settings),
