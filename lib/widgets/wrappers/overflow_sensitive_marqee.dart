@@ -5,11 +5,11 @@ import 'package:marquee/marquee.dart';
 class OverflowSensitiveMarquee extends StatelessWidget {
   const OverflowSensitiveMarquee(
     this.text, {
-    Key? key,
+    super.key,
     required this.style,
     this.velocity = 10,
     this.blankSpace = 20,
-  }) : super(key: key);
+  });
 
   final String text;
   final TextStyle style;

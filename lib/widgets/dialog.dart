@@ -5,10 +5,10 @@ class CustomDialog extends StatelessWidget {
   final EdgeInsets padding;
 
   const CustomDialog({
-    Key? key,
+    super.key,
     required this.child,
     this.padding = const EdgeInsets.symmetric(vertical: 40),
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

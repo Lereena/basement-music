@@ -6,7 +6,7 @@ import '../../../widgets/icons/error_icon.dart';
 class ErrorPage extends StatelessWidget {
   final Function() onTryAgainPress;
 
-  const ErrorPage({Key? key, required this.onTryAgainPress}) : super(key: key);
+  const ErrorPage({super.key, required this.onTryAgainPress});
 
   @override
   Widget build(BuildContext context) {

@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../bloc/settings_bloc/settings_bloc.dart';
 
 class ShuffleToggle extends StatelessWidget {
-  const ShuffleToggle({Key? key}) : super(key: key);
+  const ShuffleToggle({super.key});
 
   @override
   Widget build(BuildContext context) {

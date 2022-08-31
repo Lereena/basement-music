@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 class SettingsLineDecoration extends StatelessWidget {
   final Widget child;
-  const SettingsLineDecoration({Key? key, required this.child}) : super(key: key);
+
+  const SettingsLineDecoration({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {

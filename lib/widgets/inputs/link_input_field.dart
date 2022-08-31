@@ -10,13 +10,13 @@ class LinkInputField extends StatelessWidget {
   final Function() onAdd;
 
   const LinkInputField({
-    Key? key,
+    super.key,
     required this.controller,
     required this.focusNode,
     required this.onSubmitted,
     required this.onDelete,
     required this.onAdd,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

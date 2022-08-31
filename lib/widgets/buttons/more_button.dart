@@ -11,7 +11,7 @@ import '../edit_track.dart';
 class MoreButton extends StatelessWidget {
   final Track track;
 
-  const MoreButton({Key? key, required this.track}) : super(key: key);
+  const MoreButton({super.key, required this.track});
 
   @override
   Widget build(BuildContext context) {

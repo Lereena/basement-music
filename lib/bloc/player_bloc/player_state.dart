@@ -7,17 +7,17 @@ abstract class AudioPlayerState {
 }
 
 class InitialPlayerState extends AudioPlayerState {
-  InitialPlayerState(Track currentTrack) : super(currentTrack);
+  InitialPlayerState(super.currentTrack);
 }
 
 class PlayingPlayerState extends AudioPlayerState {
-  PlayingPlayerState(Track currentTrack) : super(currentTrack);
+  PlayingPlayerState(super.currentTrack);
 }
 
 class PausedPlayerState extends AudioPlayerState {
-  PausedPlayerState(Track currentTrack) : super(currentTrack);
+  PausedPlayerState(super.currentTrack);
 }
 
 class ResumedPlayerState extends AudioPlayerState {
-  ResumedPlayerState(Track currentTrack) : super(currentTrack);
+  ResumedPlayerState(super.currentTrack);
 }

@@ -8,7 +8,7 @@ import '../utils/input_field_with.dart';
 import 'titled_field.dart';
 
 class CreatePlaylist extends StatefulWidget {
-  const CreatePlaylist({Key? key}) : super(key: key);
+  const CreatePlaylist({super.key});
 
   @override
   State<CreatePlaylist> createState() => _CreatePlaylistState();

@@ -25,8 +25,8 @@ class SideNavigationDestination extends StatelessWidget {
     final unselectedIconTheme = navigationRailTheme.unselectedIconTheme!;
     final selectedIconTheme = navigationRailTheme.selectedIconTheme!;
 
-    return InkWell(
-      onTap: onTap,
+    return TextButton(
+      onPressed: onTap,
       child: SizedBox(
         height: 50,
         child: Padding(

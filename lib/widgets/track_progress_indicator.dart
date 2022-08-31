@@ -4,9 +4,9 @@ class TrackProgressIndicator extends StatelessWidget {
   final double percentProgress;
 
   const TrackProgressIndicator({
-    Key? key,
+    super.key,
     required this.percentProgress,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

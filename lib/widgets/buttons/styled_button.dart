@@ -7,12 +7,12 @@ class StyledButton extends StatelessWidget {
   final FocusNode? focusNode;
 
   const StyledButton({
-    Key? key,
+    super.key,
     required this.title,
     required this.onPressed,
     this.autofocus = false,
     this.focusNode,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

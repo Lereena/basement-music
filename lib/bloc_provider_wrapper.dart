@@ -19,7 +19,7 @@ import 'repositories/tracks_repository.dart';
 class BlocProviderWrapper extends StatefulWidget {
   final Widget child;
 
-  const BlocProviderWrapper({Key? key, required this.child}) : super(key: key);
+  const BlocProviderWrapper({super.key, required this.child});
 
   @override
   State<BlocProviderWrapper> createState() => _BlocProviderWrapperState();

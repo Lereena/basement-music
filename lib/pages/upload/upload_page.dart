@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'youtube/extract_from_youtube.dart';
 
 class UploadPage extends StatefulWidget {
-  const UploadPage({Key? key}) : super(key: key);
+  const UploadPage({super.key});
 
   @override
   State<UploadPage> createState() => _UploadPageState();

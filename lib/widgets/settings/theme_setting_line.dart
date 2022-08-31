@@ -5,7 +5,7 @@ import '../../bloc/settings_bloc/settings_bloc.dart';
 import 'settings_line_decoration.dart';
 
 class ThemeSettingLine extends StatefulWidget {
-  const ThemeSettingLine({Key? key}) : super(key: key);
+  const ThemeSettingLine({super.key});
 
   @override
   State<ThemeSettingLine> createState() => _ThemeSettingLineState();

@@ -7,11 +7,12 @@ import 'wrappers/overflow_sensitive_marqee.dart';
 class TrackName extends StatelessWidget {
   final Track track;
   final bool moving;
+
   const TrackName({
-    Key? key,
+    super.key,
     required this.track,
     required this.moving,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

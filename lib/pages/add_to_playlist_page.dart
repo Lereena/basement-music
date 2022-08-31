@@ -9,7 +9,7 @@ import '../widgets/icons/success_icon.dart';
 class AddToPlaylistDialog extends StatefulWidget {
   final String trackId;
 
-  const AddToPlaylistDialog({Key? key, required this.trackId}) : super(key: key);
+  const AddToPlaylistDialog({super.key, required this.trackId});
 
   @override
   State<AddToPlaylistDialog> createState() => _AddToPlaylistDialogState();

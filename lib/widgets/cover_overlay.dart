@@ -5,10 +5,10 @@ class CoverOverlay extends StatelessWidget {
   final bool isCached;
 
   const CoverOverlay({
-    Key? key,
+    super.key,
     required this.isCaching,
     required this.isCached,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

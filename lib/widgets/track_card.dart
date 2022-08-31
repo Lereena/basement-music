@@ -15,7 +15,7 @@ import 'cover.dart';
 class TrackCard extends StatelessWidget {
   final Track track;
 
-  const TrackCard({Key? key, required this.track}) : super(key: key);
+  const TrackCard({super.key, required this.track});
 
   @override
   Widget build(BuildContext context) {

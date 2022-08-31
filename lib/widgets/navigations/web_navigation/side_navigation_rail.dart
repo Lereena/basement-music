@@ -39,6 +39,7 @@ class SideNavigationRail extends StatelessWidget {
                 color: Theme.of(context).colorScheme.primary,
               ),
             ),
+            const Divider(indent: 10, endIndent: 10),
             SideNavigationDestination(
               icon: const Icon(Icons.home),
               label: 'Home',

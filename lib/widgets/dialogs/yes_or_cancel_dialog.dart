@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class YesOrCancelDialog extends StatelessWidget {
   final String title;
 
-  const YesOrCancelDialog({Key? key, required this.title}) : super(key: key);
+  const YesOrCancelDialog({super.key, required this.title});
 
   @override
   Widget build(BuildContext context) {

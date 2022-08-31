@@ -5,7 +5,7 @@ import '../../bloc/settings_bloc/settings_bloc.dart';
 import 'settings_line_decoration.dart';
 
 class ServerSettingLine extends StatelessWidget {
-  const ServerSettingLine({Key? key}) : super(key: key);
+  const ServerSettingLine({super.key});
 
   @override
   Widget build(BuildContext context) {

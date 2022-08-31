@@ -9,7 +9,7 @@ import 'buttons/uncache_button.dart';
 class PlaylistCacheAction extends StatelessWidget {
   final List<String> trackIds;
 
-  const PlaylistCacheAction({Key? key, required this.trackIds}) : super(key: key);
+  const PlaylistCacheAction({super.key, required this.trackIds});
 
   @override
   Widget build(BuildContext context) {

@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../bloc/player_bloc/player_bloc.dart';
 
 class PauseButton extends StatelessWidget {
-  const PauseButton({Key? key}) : super(key: key);
+  const PauseButton({super.key});
 
   @override
   Widget build(BuildContext context) {

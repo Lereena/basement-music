@@ -6,7 +6,7 @@ import '../bloc/playlists_bloc/playlists_bloc.dart';
 import '../widgets/playlist_card.dart';
 
 class LibraryPage extends StatefulWidget {
-  const LibraryPage({Key? key}) : super(key: key);
+  const LibraryPage({super.key});
 
   @override
   State<LibraryPage> createState() => _LibraryPageState();

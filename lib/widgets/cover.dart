@@ -5,10 +5,10 @@ class Cover extends StatelessWidget {
   final Widget? overlay;
 
   const Cover({
-    Key? key,
+    super.key,
     required this.cover,
     this.overlay,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -10,7 +10,7 @@ import '../widgets/track_card.dart';
 class PlaylistPage extends StatefulWidget {
   final Playlist playlist;
 
-  const PlaylistPage({Key? key, required this.playlist}) : super(key: key);
+  const PlaylistPage({super.key, required this.playlist});
 
   @override
   State<PlaylistPage> createState() => _PlaylistPageState();

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class CacheButton extends StatelessWidget {
   final Function() onCache;
 
-  const CacheButton({Key? key, required this.onCache}) : super(key: key);
+  const CacheButton({super.key, required this.onCache});
 
   @override
   Widget build(BuildContext context) {

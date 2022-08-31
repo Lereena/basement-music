@@ -9,9 +9,9 @@ class LinkInputPage extends StatelessWidget {
   final linkController = TextEditingController();
 
   LinkInputPage({
-    Key? key,
+    super.key,
     required this.onFetchPress,
-  }) : super(key: key);
+  });
 
   final focusNode = FocusNode();
 

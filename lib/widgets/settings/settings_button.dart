@@ -2,7 +2,7 @@ import 'package:basement_music/routes.dart';
 import 'package:flutter/material.dart';
 
 class SettingsButton extends StatelessWidget {
-  const SettingsButton({Key? key}) : super(key: key);
+  const SettingsButton({super.key});
 
   @override
   Widget build(BuildContext context) {

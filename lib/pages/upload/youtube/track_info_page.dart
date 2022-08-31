@@ -11,11 +11,11 @@ class TrackInfoPage extends StatelessWidget {
   final Function(String, String) onUploadPress;
 
   TrackInfoPage({
-    Key? key,
+    super.key,
     required this.artist,
     required this.title,
     required this.onUploadPress,
-  }) : super(key: key);
+  });
 
   late final titleController = TextEditingController(text: title);
   late final artistController = TextEditingController(text: artist);

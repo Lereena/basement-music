@@ -9,10 +9,10 @@ class ResultPage extends StatelessWidget {
   final Function() onUploadOtherTrackPress;
 
   const ResultPage({
-    Key? key,
+    super.key,
     required this.result,
     required this.onUploadOtherTrackPress,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

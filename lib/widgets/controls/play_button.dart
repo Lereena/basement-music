@@ -11,12 +11,13 @@ class PlayButton extends StatelessWidget {
   final Track track;
   final AudioPlayerState state;
   final bool isBottomPlayer;
+
   const PlayButton({
-    Key? key,
+    super.key,
     required this.track,
     required this.state,
     this.isBottomPlayer = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -12,10 +12,10 @@ class EditTrack extends StatefulWidget {
   final Track track;
 
   const EditTrack({
-    Key? key,
+    super.key,
     this.titleText,
     required this.track,
-  }) : super(key: key);
+  });
 
   @override
   State<EditTrack> createState() => _EditTrackState();
