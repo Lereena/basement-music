@@ -1,8 +1,6 @@
 import 'package:basement_music/enums/pages_enum.dart';
 import 'package:flutter/material.dart';
 
-import '../../routes.dart';
-
 class SideNavigationDrawer extends StatelessWidget {
   final PageNavigation selectedPage;
   final Function(int) onDestinationSelected;
@@ -34,7 +32,8 @@ class SideNavigationDrawer extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.settings, size: 30),
             title: const Text('Settings'),
-            onTap: () => Navigator.pushNamed(context, NavigationRoute.settings.name),
+            selected: selectedPage == PageNavigation.settings,
+            onTap: () => onDestinationSelected(2),
           ),
         ],
       ),

@@ -1,4 +1,6 @@
 import 'package:basement_music/widgets/buttons/underlined_button.dart';
+import 'package:basement_music/widgets/wrappers/content_narrower.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -14,7 +16,7 @@ class HomeContent extends StatelessWidget {
 
     return Expanded(
       child: Padding(
-        padding: const EdgeInsets.only(top: 60),
+        padding: kIsWeb ? const EdgeInsets.only(top: 60) : EdgeInsets.zero,
         child: BlocBuilder<HomeContentCubit, HomeContentState>(
           builder: (context, state) {
             return Column(
@@ -35,7 +37,7 @@ class HomeContent extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 40),
+                if (kIsWeb) const SizedBox(height: 40) else const SizedBox(height: 10),
                 BlocBuilder<TracksBloc, TracksState>(
                   builder: (context, state) {
                     if (state is TracksLoadingState) {
@@ -50,19 +52,20 @@ class HomeContent extends StatelessWidget {
 
                     if (state is TracksLoadedState) {
                       return Expanded(
-                        child: ListView.separated(
-                          separatorBuilder: (context, _) => const Divider(height: 1),
-                          padding: const EdgeInsets.symmetric(horizontal: 100),
-                          itemCount: state.tracks.length + 3,
-                          itemBuilder: (context, index) {
-                            if (index == 0 || index == state.tracks.length + 1) {
-                              return const SizedBox.shrink();
-                            }
-                            if (index == state.tracks.length + 2) {
-                              return const SizedBox(height: 40);
-                            }
-                            return TrackCard(track: state.tracks[index - 1]);
-                          },
+                        child: ContentNarrower(
+                          child: ListView.separated(
+                            separatorBuilder: (context, _) => const Divider(height: 1),
+                            itemCount: state.tracks.length + 3,
+                            itemBuilder: (context, index) {
+                              if (index == 0 || index == state.tracks.length + 1) {
+                                return const SizedBox.shrink();
+                              }
+                              if (index == state.tracks.length + 2) {
+                                return const SizedBox(height: 40);
+                              }
+                              return TrackCard(track: state.tracks[index - 1]);
+                            },
+                          ),
                         ),
                       );
                     }

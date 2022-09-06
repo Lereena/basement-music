@@ -4,7 +4,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../bloc/home_content_cubit/home_content_cubit.dart';
 import '../enums/pages_enum.dart';
 import '../routes.dart';
 import '../widgets/bottom_bar.dart';
@@ -16,59 +15,50 @@ import '../widgets/navigations/side_navigation_drawer.dart';
 const pagesWithFAB = [PageNavigation.home, PageNavigation.library];
 
 class MyHomePage extends StatelessWidget {
-  final sideNavigationCubit = SideNavigationCubit();
-
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider.value(
-          value: sideNavigationCubit,
-        ),
-        BlocProvider(
-          create: (context) => HomeContentCubit(),
-        ),
-      ],
-      child: BlocBuilder<SideNavigationCubit, SideNavigationState>(
-        builder: (context, state) {
-          return Scaffold(
-            body: kIsWeb
-                ? Row(
-                    children: [
-                      SideNavigationRail(
-                        selectedPage: state.selectedPage,
-                        onDestinationSelected: (index) {
-                          sideNavigationCubit.selectDestination(index);
-                        },
-                      ),
-                      const VerticalDivider(width: 1),
-                      MainContent(selectedPage: state.selectedPage),
-                    ],
-                  )
-                : Column(
-                    children: [
-                      MainContent(selectedPage: state.selectedPage),
-                    ],
-                  ),
-            drawer: kIsWeb
-                ? null
-                : SideNavigationDrawer(
-                    selectedPage: state.selectedPage,
-                    onDestinationSelected: (index) {
-                      sideNavigationCubit.selectDestination(index);
-                      Navigator.pop(context);
-                    },
-                  ),
-            bottomNavigationBar: BottomBar(),
-            floatingActionButton: pagesWithFAB.contains(state.selectedPage)
-                ? FloatingActionButton(
-                    onPressed: () => _fabActionByPage(context, state.selectedPage)(),
-                    child: const Icon(Icons.add),
-                  )
-                : null,
-          );
-        },
-      ),
+    final sideNavigationCubit = BlocProvider.of<SideNavigationCubit>(context);
+
+    return BlocBuilder<SideNavigationCubit, SideNavigationState>(
+      builder: (context, state) {
+        return Scaffold(
+          appBar: kIsWeb ? null : AppBar(),
+          body: kIsWeb
+              ? Row(
+                  children: [
+                    SideNavigationRail(
+                      selectedPage: state.selectedPage,
+                      onDestinationSelected: (index) {
+                        sideNavigationCubit.selectDestination(index);
+                      },
+                    ),
+                    const VerticalDivider(width: 1),
+                    MainContent(selectedPage: state.selectedPage),
+                  ],
+                )
+              : Column(
+                  children: [
+                    MainContent(selectedPage: state.selectedPage),
+                  ],
+                ),
+          drawer: kIsWeb
+              ? null
+              : SideNavigationDrawer(
+                  selectedPage: state.selectedPage,
+                  onDestinationSelected: (index) {
+                    sideNavigationCubit.selectDestination(index);
+                    Navigator.pop(context);
+                  },
+                ),
+          bottomNavigationBar: BottomBar(),
+          floatingActionButton: pagesWithFAB.contains(state.selectedPage)
+              ? FloatingActionButton(
+                  onPressed: () => _fabActionByPage(context, state.selectedPage)(),
+                  child: const Icon(Icons.add),
+                )
+              : null,
+        );
+      },
     );
   }
 

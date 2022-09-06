@@ -2,7 +2,6 @@ import 'package:basement_music/widgets/navigations/web_navigation/playlists_sect
 import 'package:flutter/material.dart';
 
 import '../../../enums/pages_enum.dart';
-import '../../../routes.dart';
 import 'navigation_destination.dart';
 import 'rail_theme.dart';
 
@@ -58,7 +57,7 @@ class SideNavigationRail extends StatelessWidget {
               icon: const Icon(Icons.settings),
               label: 'Settings',
               selected: selectedPage == PageNavigation.settings,
-              onTap: () => Navigator.pushNamed(context, NavigationRoute.settings.name),
+              onTap: () => onDestinationSelected(2),
             ),
           ],
         ),

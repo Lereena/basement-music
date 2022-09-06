@@ -1,3 +1,5 @@
+import 'package:basement_music/bloc/home_content_cubit/home_content_cubit.dart';
+import 'package:basement_music/bloc/side_navigation_bloc/side_navigation_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -81,6 +83,12 @@ class _BlocProviderWrapperState extends State<BlocProviderWrapper> {
         ),
         BlocProvider<TrackProgressCubit>(
           create: (context) => TrackProgressCubit(_playerBloc),
+        ),
+        BlocProvider<SideNavigationCubit>.value(
+          value: SideNavigationCubit(),
+        ),
+        BlocProvider<HomeContentCubit>(
+          create: (context) => HomeContentCubit(),
         ),
       ],
       child: widget.child,
