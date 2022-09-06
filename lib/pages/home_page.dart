@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../bloc/home_content_cubit/home_content_cubit.dart';
 import '../enums/pages_enum.dart';
 import '../routes.dart';
 import '../widgets/bottom_bar.dart';
@@ -19,8 +20,15 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(
-      value: sideNavigationCubit,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider.value(
+          value: sideNavigationCubit,
+        ),
+        BlocProvider(
+          create: (context) => HomeContentCubit(),
+        ),
+      ],
       child: BlocBuilder<SideNavigationCubit, SideNavigationState>(
         builder: (context, state) {
           return Scaffold(
