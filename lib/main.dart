@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:sizer/sizer.dart';
 
 import 'bloc/settings_bloc/settings_bloc.dart';
 import 'bloc_provider_wrapper.dart';
@@ -29,14 +30,16 @@ class BasementMusic extends StatelessWidget {
     return BlocProviderWrapper(
       child: BlocBuilder<SettingsBloc, SettingsState>(
         builder: (context, settingsState) {
-          return MaterialApp(
-            title: 'Basement music',
-            theme: CustomTheme.lightTheme,
-            darkTheme: CustomTheme.darkTheme,
-            themeMode: settingsState.darkTheme ? ThemeMode.dark : ThemeMode.light,
-            initialRoute: NavigationRoute.initial.name,
-            onGenerateRoute: onGenerateRoute,
-            home: HomePage(),
+          return Sizer(
+            builder: (context, orientation, deviceType) => MaterialApp(
+              title: 'Basement music',
+              theme: CustomTheme.lightTheme,
+              darkTheme: CustomTheme.darkTheme,
+              themeMode: settingsState.darkTheme ? ThemeMode.dark : ThemeMode.light,
+              initialRoute: NavigationRoute.initial.name,
+              onGenerateRoute: onGenerateRoute,
+              home: HomePage(),
+            ),
           );
         },
       ),

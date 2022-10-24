@@ -1,24 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:sizer/sizer.dart';
 
 class CustomDialog extends StatelessWidget {
   final Widget child;
-  final EdgeInsets padding;
+  final double? width;
+  final double? height;
 
   const CustomDialog({
     super.key,
     required this.child,
-    this.padding = const EdgeInsets.symmetric(vertical: 40),
+    this.width,
+    this.height,
   });
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      child: Padding(
-        padding: padding,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [child],
-        ),
+      child: SizedBox(
+        width: width ?? 50.w,
+        height: height ?? 50.h,
+        child: child,
       ),
     );
   }
