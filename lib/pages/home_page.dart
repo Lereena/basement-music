@@ -14,7 +14,7 @@ import '../widgets/navigations/side_navigation_drawer.dart';
 
 const pagesWithFAB = [PageNavigation.home, PageNavigation.library];
 
-class MyHomePage extends StatelessWidget {
+class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final sideNavigationCubit = BlocProvider.of<SideNavigationCubit>(context);

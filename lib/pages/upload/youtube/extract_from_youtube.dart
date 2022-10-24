@@ -8,19 +8,10 @@ import 'link_input_page.dart';
 import 'result_page.dart';
 import 'track_info_page.dart';
 
-class ExtractFromYoutube extends StatefulWidget {
-  @override
-  State<ExtractFromYoutube> createState() => _ExtractFromYoutubeState();
-}
+class ExtractFromYoutube extends StatelessWidget {
+  final TrackUploadingBloc trackUploadingBloc;
 
-class _ExtractFromYoutubeState extends State<ExtractFromYoutube> {
-  late final TrackUploadingBloc trackUploadingBloc;
-
-  @override
-  void initState() {
-    super.initState();
-    trackUploadingBloc = BlocProvider.of<TrackUploadingBloc>(context);
-  }
+  const ExtractFromYoutube({super.key, required this.trackUploadingBloc});
 
   @override
   Widget build(BuildContext context) {
@@ -60,6 +51,7 @@ class _ExtractFromYoutubeState extends State<ExtractFromYoutube> {
                 ),
                 StyledButton(
                   title: 'Upload other track',
+                  autofocus: true,
                   onPressed: () => trackUploadingBloc.add(Start()),
                 )
               ],

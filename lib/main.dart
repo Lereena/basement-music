@@ -36,7 +36,7 @@ class BasementMusic extends StatelessWidget {
             themeMode: settingsState.darkTheme ? ThemeMode.dark : ThemeMode.light,
             initialRoute: NavigationRoute.initial.name,
             onGenerateRoute: onGenerateRoute,
-            home: MyHomePage(),
+            home: HomePage(),
           );
         },
       ),
