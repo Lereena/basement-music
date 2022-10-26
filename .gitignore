@@ -3,17 +3,17 @@
 *.log
 *.pyc
 *.swp
-.DS_Store
-.atom/
-.buildlog/
-.history
-.svn/
+frontend/.DS_Store
+frontend/.atom/
+frontend/.buildlog/
+frontend/.history
+frontend/.svn/
 
 # IntelliJ related
 *.iml
 *.ipr
 *.iws
-.idea/
+frontend/.idea/
 
 # The .vscode folder contains launch configuration and tasks you configure in
 # VS Code which you may wish to be included in version control, so this line
@@ -23,25 +23,33 @@
 # Flutter/Dart/Pub related
 **/doc/api/
 **/ios/Flutter/.last_build_id
-.dart_tool/
-.flutter-plugins
-.flutter-plugins-dependencies
-.packages
-.pub-cache/
-.pub/
-.fvm/
-/build/
+frontend/.dart_tool/
+frontend/.flutter-plugins
+frontend/.flutter-plugins-dependencies
+frontend/.packages
+frontend/.pub-cache/
+frontend/.pub/
+frontend/.fvm/
+frontend/build/
 
 # Web related
-lib/generated_plugin_registrant.dart
+frontend/lib/generated_plugin_registrant.dart
 
 # Symbolication related
-app.*.symbols
+frontend/app.*.symbols
 
 # Obfuscation related
-app.*.map.json
+frontend/app.*.map.json
 
 # Android Studio will place build artifacts here
-/android/app/debug
-/android/app/profile
-/android/app/release
+frontend/android/app/debug
+frontend/android/app/profile
+frontend/android/app/release
+
+
+.env
+backend/.work
+
+docker-compose-dev.yaml
+backend/music
+backend/server_basement_music
