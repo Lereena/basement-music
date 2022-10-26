@@ -10,7 +10,7 @@ class SettingsState extends Equatable {
     this.repeat = false,
     this.shuffle = false,
     this.darkTheme = false,
-    this.serverAddress = kIsWeb ? 'http://localhost:9000' : 'http://10.0.2.2:9000',
+    this.serverAddress = '',
   });
 
   @override
