@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sizer/sizer.dart';
+import 'package:url_strategy/url_strategy.dart';
 
 import 'bloc/settings_bloc/settings_bloc.dart';
 import 'bloc_provider_wrapper.dart';
@@ -12,6 +13,8 @@ import 'routes.dart';
 import 'theme/custom_theme.dart';
 
 void main() async {
+  setPathUrlStrategy();
+
   WidgetsFlutterBinding.ensureInitialized();
 
   final storage = await HydratedStorage.build(
