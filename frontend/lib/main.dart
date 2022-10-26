@@ -13,13 +13,13 @@ import 'routes.dart';
 import 'theme/custom_theme.dart';
 
 void main() async {
-  setPathUrlStrategy();
-
   WidgetsFlutterBinding.ensureInitialized();
 
   final storage = await HydratedStorage.build(
     storageDirectory: kIsWeb ? HydratedStorage.webStorageDirectory : await getApplicationDocumentsDirectory(),
   );
+
+  setPathUrlStrategy();
 
   HydratedBlocOverrides.runZoned(
     () => runApp(BasementMusic()),
