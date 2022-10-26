@@ -8,11 +8,9 @@ ARG FLUTTER_SDK_LINK=https://storage.googleapis.com/flutter_infra_release/releas
 RUN curl $FLUTTER_SDK_LINK --output flutter.tar.xz
 RUN tar -xf flutter.tar.xz
 ENV PATH="$PATH:/root/flutter/flutter/bin"
+RUN git config --global --add safe.directory /root/flutter/flutter
 
 WORKDIR /app
-RUN flutter doctor
-RUN flutter config --enable-web
-RUN git config --global --add safe.directory /root/flutter/flutter
 
 COPY pubspec.yaml pubspec.lock ./
 RUN flutter pub get
