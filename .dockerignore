@@ -5,3 +5,4 @@ run-dev.sh
 .env
 .gitignore
 ./music
+./build
