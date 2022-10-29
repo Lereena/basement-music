@@ -8,7 +8,7 @@ import 'package:url_strategy/url_strategy.dart';
 
 import 'bloc/settings_bloc/settings_bloc.dart';
 import 'bloc_provider_wrapper.dart';
-import 'pages/home_page.dart';
+import 'pages/new_home_page.dart';
 import 'routes.dart';
 import 'theme/custom_theme.dart';
 

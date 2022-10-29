@@ -1,5 +1,4 @@
 import 'package:basement_music/widgets/buttons/underlined_button.dart';
-import 'package:basement_music/widgets/wrappers/content_narrower.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -52,20 +51,18 @@ class HomeContent extends StatelessWidget {
 
                     if (state is TracksLoadedState) {
                       return Expanded(
-                        child: ContentNarrower(
-                          child: ListView.separated(
-                            separatorBuilder: (context, _) => const Divider(height: 1),
-                            itemCount: state.tracks.length + 3,
-                            itemBuilder: (context, index) {
-                              if (index == 0 || index == state.tracks.length + 1) {
-                                return const SizedBox.shrink();
-                              }
-                              if (index == state.tracks.length + 2) {
-                                return const SizedBox(height: 40);
-                              }
-                              return TrackCard(track: state.tracks[index - 1]);
-                            },
-                          ),
+                        child: ListView.separated(
+                          separatorBuilder: (context, _) => const Divider(height: 1),
+                          itemCount: state.tracks.length + 3,
+                          itemBuilder: (context, index) {
+                            if (index == 0 || index == state.tracks.length + 1) {
+                              return const SizedBox.shrink();
+                            }
+                            if (index == state.tracks.length + 2) {
+                              return const SizedBox(height: 40);
+                            }
+                            return TrackCard(track: state.tracks[index - 1]);
+                          },
                         ),
                       );
                     }

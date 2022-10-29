@@ -5,10 +5,10 @@ import 'package:flutter/material.dart';
 
 import '../pages/home_content_page.dart';
 
-class MainContent extends StatelessWidget {
+class MainBodyContent extends StatelessWidget {
   final PageNavigation selectedPage;
 
-  const MainContent({required this.selectedPage}) : super();
+  const MainBodyContent({required this.selectedPage}) : super();
 
   @override
   Widget build(BuildContext context) {

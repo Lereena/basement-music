@@ -9,7 +9,7 @@ import '../routes.dart';
 import '../widgets/bottom_bar.dart';
 import '../widgets/create_playlist.dart';
 import '../widgets/dialog.dart';
-import '../widgets/main_content.dart';
+import '../widgets/main_body_content.dart';
 import '../widgets/navigations/side_navigation_drawer.dart';
 
 const pagesWithFAB = [PageNavigation.home, PageNavigation.library];
@@ -33,12 +33,12 @@ class HomePage extends StatelessWidget {
                       },
                     ),
                     const VerticalDivider(width: 1),
-                    MainContent(selectedPage: state.selectedPage),
+                    MainBodyContent(selectedPage: state.selectedPage),
                   ],
                 )
               : Column(
                   children: [
-                    MainContent(selectedPage: state.selectedPage),
+                    MainBodyContent(selectedPage: state.selectedPage),
                   ],
                 ),
           drawer: kIsWeb
