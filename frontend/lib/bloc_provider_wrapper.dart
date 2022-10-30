@@ -8,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'api_service.dart';
 import 'bloc/add_to_playlist_bloc/add_to_playlist_bloc.dart';
 import 'bloc/cacher_bloc/bloc/cacher_bloc.dart';
+import 'bloc/edit_track_bloc/edit_track_bloc.dart';
 import 'bloc/player_bloc/player_bloc.dart';
 import 'bloc/playlist_creation_bloc/playlist_creation_bloc.dart';
 import 'bloc/playlists_bloc/playlists_bloc.dart';
@@ -88,6 +89,9 @@ class _BlocProviderWrapperState extends State<BlocProviderWrapper> {
         ),
         BlocProvider<SideNavigationCubit>.value(
           value: SideNavigationCubit(),
+        ),
+        BlocProvider<EditTrackBloc>(
+          create: (context) => EditTrackBloc(_tracksRepository),
         ),
         BlocProvider<HomeContentCubit>(
           create: (context) => HomeContentCubit(),
