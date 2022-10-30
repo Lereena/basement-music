@@ -1,8 +1,11 @@
 import 'package:basement_music/bloc/playlists_bloc/playlists_state.dart';
+import 'package:basement_music/widgets/wrappers/content_narrower.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bloc/playlists_bloc/playlists_bloc.dart';
+import '../widgets/create_playlist.dart';
+import '../widgets/dialog.dart';
 import '../widgets/playlist_card.dart';
 
 class LibraryPage extends StatefulWidget {
@@ -15,8 +18,8 @@ class LibraryPage extends StatefulWidget {
 class _LibraryPageState extends State<LibraryPage> {
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: BlocBuilder<PlaylistsBloc, PlaylistsState>(
+    return Scaffold(
+      body: BlocBuilder<PlaylistsBloc, PlaylistsState>(
         builder: (context, state) {
           if (state is PlaylistsLoadingState) {
             return const Center(child: CircularProgressIndicator());
@@ -32,9 +35,11 @@ class _LibraryPageState extends State<LibraryPage> {
           }
 
           if (state is PlaylistsLoadedState) {
-            return ListView.builder(
-              itemBuilder: (context, index) => PlaylistCard(playlist: state.playlists[index]),
-              itemCount: state.playlists.length,
+            return ContentNarrower(
+              child: ListView.builder(
+                itemBuilder: (context, index) => PlaylistCard(playlist: state.playlists[index]),
+                itemCount: state.playlists.length,
+              ),
             );
           }
 
@@ -46,6 +51,13 @@ class _LibraryPageState extends State<LibraryPage> {
 
           return Container();
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => showDialog(
+          context: context,
+          builder: (context) => const CustomDialog(child: CreatePlaylist()),
+        ),
+        child: const Icon(Icons.add),
       ),
     );
   }

@@ -4,15 +4,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../enums/pages_enum.dart';
-import '../routes.dart';
 import '../widgets/bottom_bar.dart';
-import '../widgets/create_playlist.dart';
-import '../widgets/dialog.dart';
 import '../widgets/main_body_content.dart';
 import '../widgets/navigations/side_navigation_drawer.dart';
-
-const pagesWithFAB = [PageNavigation.home, PageNavigation.library];
 
 class HomePage extends StatelessWidget {
   @override
@@ -26,12 +20,7 @@ class HomePage extends StatelessWidget {
           body: kIsWeb
               ? Row(
                   children: [
-                    SideNavigationRail(
-                      selectedPage: state.selectedPage,
-                      onDestinationSelected: (index) {
-                        sideNavigationCubit.selectDestination(index);
-                      },
-                    ),
+                    const SideNavigationRail(),
                     const VerticalDivider(width: 1),
                     MainBodyContent(selectedPage: state.selectedPage),
                   ],
@@ -51,28 +40,8 @@ class HomePage extends StatelessWidget {
                   },
                 ),
           bottomNavigationBar: BottomBar(),
-          floatingActionButton: pagesWithFAB.contains(state.selectedPage)
-              ? FloatingActionButton(
-                  onPressed: () => _fabActionByPage(context, state.selectedPage)(),
-                  child: const Icon(Icons.add),
-                )
-              : null,
         );
       },
     );
-  }
-
-  Function _fabActionByPage(BuildContext context, PageNavigation page) {
-    switch (page) {
-      case PageNavigation.home:
-        return () => Navigator.pushNamed(context, NavigationRoute.upload.name);
-      case PageNavigation.library:
-        return () => showDialog(
-              context: context,
-              builder: (context) => const CustomDialog(child: CreatePlaylist()),
-            );
-      default:
-        throw Exception('No action for $page');
-    }
   }
 }
