@@ -1,12 +1,16 @@
-import 'package:basement_music/routes.dart';
 import 'package:flutter/material.dart';
 
 import '../models/playlist.dart';
 
 class PlaylistCard extends StatelessWidget {
   final Playlist playlist;
+  final void Function() onTap;
 
-  const PlaylistCard({super.key, required this.playlist});
+  const PlaylistCard({
+    super.key,
+    required this.playlist,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -14,13 +18,7 @@ class PlaylistCard extends StatelessWidget {
 
     return Card(
       child: InkWell(
-        onTap: () => Navigator.pushNamed(
-          context,
-          NavigationRoute.playlist.name,
-          arguments: {
-            'playlist': playlist,
-          },
-        ),
+        onTap: onTap,
         child: Padding(
           padding: const EdgeInsets.all(8),
           child: Column(

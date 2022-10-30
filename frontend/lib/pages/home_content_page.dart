@@ -23,16 +23,16 @@ class HomeContent extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   UnderlinedButton(
-                    text: 'Recently played',
+                    text: 'All tracks', //'Recently played',
                     onPressed: () => homeContentCubit.selectSection(HomeContentSection.recentlyPlayed),
                     underlined: state.section == HomeContentSection.recentlyPlayed,
                   ),
-                  const SizedBox(width: 20),
-                  UnderlinedButton(
-                    text: 'New uploads',
-                    onPressed: () => homeContentCubit.selectSection(HomeContentSection.newUploads),
-                    underlined: state.section == HomeContentSection.newUploads,
-                  ),
+                  // const SizedBox(width: 20),
+                  // UnderlinedButton(
+                  //   text: 'New uploads',
+                  //   onPressed: () => homeContentCubit.selectSection(HomeContentSection.newUploads),
+                  //   underlined: state.section == HomeContentSection.newUploads,
+                  // ),
                 ],
               ),
               if (kIsWeb) const SizedBox(height: 40) else const SizedBox(height: 10),
