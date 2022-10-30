@@ -47,12 +47,12 @@ class SideNavigationRail extends StatelessWidget {
                   selected: state is NavigationLibrary,
                   onTap: () => navigationCubit.navigateLibrary(),
                 ),
-                SideNavigationDestination(
-                  icon: const Icon(Icons.groups),
-                  label: 'Artists',
-                  selected: state is NavigationArtistsList,
-                  onTap: () => navigationCubit.navigateArtistsList(),
-                ),
+                // SideNavigationDestination(
+                //   icon: const Icon(Icons.groups),
+                //   label: 'Artists',
+                //   selected: state is NavigationArtistsList,
+                //   onTap: () => navigationCubit.navigateArtistsList(),
+                // ),
                 SideNavigationDestination(
                   icon: const Icon(Icons.upload),
                   label: 'Upload track',
