@@ -41,13 +41,15 @@ class _LibraryPageState extends State<LibraryPage> {
             }
 
             if (state is PlaylistsLoadedState) {
-              return ContentNarrower(
-                child: ListView.builder(
-                  itemBuilder: (context, index) => PlaylistCard(
-                    playlist: state.playlists[index],
-                    onTap: () => navigationCubit.navigatePlaylist(state.playlists[index]),
+              return Expanded(
+                child: ContentNarrower(
+                  child: ListView.builder(
+                    itemBuilder: (context, index) => PlaylistCard(
+                      playlist: state.playlists[index],
+                      onTap: () => navigationCubit.navigatePlaylist(state.playlists[index]),
+                    ),
+                    itemCount: state.playlists.length,
                   ),
-                  itemCount: state.playlists.length,
                 ),
               );
             }
