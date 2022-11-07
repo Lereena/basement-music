@@ -56,6 +56,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                   itemCount: widget.playlist.tracks.length,
                   itemBuilder: (context, index) => TrackCard(
                     track: widget.playlist.tracks[index],
+                    playlist: widget.playlist,
                   ),
                 ),
               ),

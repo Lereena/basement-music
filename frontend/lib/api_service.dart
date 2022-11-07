@@ -25,7 +25,7 @@ class ApiService {
   String trackPlayback(String trackId) => '$trackInfo/$trackId';
   String reqPlaylist(String playlistId) => '$_host/api/playlist/$playlistId';
   String reqCreatePlaylist(String title) => '$_host/api/playlist/create/$title';
-  String reqAddTrackToPlaylist(String playlistId, String trackId) => '$_host/api/playlist/$playlistId/track/$trackId';
+  String reqTrackPlaylist(String playlistId, String trackId) => '$_host/api/playlist/$playlistId/track/$trackId';
   String reqYtDownload(String link, String artist, String title) =>
       '$_host/api/yt/download?url=$link&artist=$artist&title=$title';
 }

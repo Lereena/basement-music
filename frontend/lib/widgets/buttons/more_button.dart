@@ -1,17 +1,20 @@
+import 'package:basement_music/widgets/dialogs/remove_from_playlist_dialog.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../bloc/cacher_bloc/bloc/cacher_bloc.dart';
+import '../../models/playlist.dart';
 import '../../models/track.dart';
-import '../../pages/add_to_playlist_page.dart';
 import '../dialog.dart';
+import '../dialogs/add_to_playlist_dialog.dart';
 import '../edit_track.dart';
 
 class MoreButton extends StatelessWidget {
   final Track track;
+  final Playlist? playlist;
 
-  const MoreButton({super.key, required this.track});
+  const MoreButton({super.key, required this.track, this.playlist});
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +53,22 @@ class MoreButton extends StatelessWidget {
                   );
                 },
               ),
+              if (playlist != null) ...[
+                const Divider(),
+                SimpleDialogOption(
+                  child: const Text('Remove from playlist'),
+                  onPressed: () async {
+                    Navigator.pop(context);
+                    await showDialog(
+                      context: context,
+                      builder: (context) => RemoveFromPlaylistDialog(
+                        track: track,
+                        playlist: playlist,
+                      ),
+                    );
+                  },
+                ),
+              ],
               if (!kIsWeb) ...[
                 const Divider(),
                 SimpleDialogOption(

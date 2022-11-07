@@ -35,4 +35,8 @@ class PlaylistsRepository {
   Future<bool> addTrackToPlaylist(String playlistId, String trackId) async {
     return _playlistsApiProvider.addTrackToPlaylist(playlistId, trackId);
   }
+
+  Future<bool> removeTrackFromPlaylist(String playlistId, String trackId) async {
+    return _playlistsApiProvider.removeTrackFromPlaylist(playlistId, trackId);
+  }
 }

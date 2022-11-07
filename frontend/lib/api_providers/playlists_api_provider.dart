@@ -45,13 +45,24 @@ class PlaylistsApiProvider {
   }
 
   Future<bool> addTrackToPlaylist(String playlistId, String trackId) async {
-    final uri = Uri.parse(_apiService.reqAddTrackToPlaylist(playlistId, trackId));
+    final uri = Uri.parse(_apiService.reqTrackPlaylist(playlistId, trackId));
     final response = await postAsync(uri);
 
     if (response.statusCode == 200) {
       return true;
     } else {
       throw Exception('Failed to add track to playlist: ${response.body}');
+    }
+  }
+
+  Future<bool> removeTrackFromPlaylist(String playlistId, String trackId) async {
+    final uri = Uri.parse(_apiService.reqTrackPlaylist(playlistId, trackId));
+    final response = await deleteAsync(uri);
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      throw Exception('Failed to remove track from playlist: ${response.body}');
     }
   }
 }

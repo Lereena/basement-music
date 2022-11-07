@@ -28,7 +28,10 @@ class PlaylistsSection extends StatelessWidget {
 
           if (state is PlaylistsLoadedState) {
             return ListView.builder(
-              itemBuilder: (context, index) => PlaylistCard(playlist: state.playlists[index]),
+              itemBuilder: (context, index) => PlaylistCard(
+                playlist: state.playlists[index],
+                onTap: () {},
+              ),
               itemCount: state.playlists.length,
             );
           }

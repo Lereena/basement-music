@@ -1,21 +1,23 @@
-import 'package:basement_music/bloc/cacher_bloc/bloc/cacher_bloc.dart';
-import 'package:basement_music/bloc/player_bloc/player_state.dart';
-import 'package:basement_music/widgets/buttons/more_button.dart';
-import 'package:basement_music/widgets/controls/pause_button.dart';
-import 'package:basement_music/widgets/cover_overlay.dart';
-import 'package:basement_music/widgets/track_name.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../bloc/cacher_bloc/bloc/cacher_bloc.dart';
 import '../bloc/player_bloc/player_bloc.dart';
+import '../bloc/player_bloc/player_state.dart';
+import '../models/playlist.dart';
 import '../models/track.dart';
+import 'buttons/more_button.dart';
+import 'controls/pause_button.dart';
 import 'controls/play_button.dart';
 import 'cover.dart';
+import 'cover_overlay.dart';
+import 'track_name.dart';
 
 class TrackCard extends StatelessWidget {
   final Track track;
+  final Playlist? playlist;
 
-  const TrackCard({super.key, required this.track});
+  const TrackCard({super.key, required this.track, this.playlist});
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +79,7 @@ class TrackCard extends StatelessWidget {
                   style: const TextStyle(fontSize: 16),
                 ),
                 const SizedBox(width: 15),
-                MoreButton(track: track),
+                MoreButton(track: track, playlist: playlist),
                 const SizedBox(width: 15),
               ],
             ),
