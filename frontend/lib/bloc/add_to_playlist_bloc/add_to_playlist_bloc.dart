@@ -36,6 +36,8 @@ class AddToPlaylistBloc extends Bloc<AddToPlaylistEvent, AddToPlaylistState> {
 
     try {
       final result = await _playlistsRepository.addTrackToPlaylist(event.playlistId, event.trackId);
+      emit(Loading());
+
       if (result) {
         _playlistsRepository.items
             .firstWhere((element) => element.id == event.playlistId)

@@ -47,7 +47,7 @@ Future<Response> deleteAsync(
   Encoding? encoding,
 }) async {
   return _logRequest(
-    () async => patch(
+    () async => delete(
       uri,
       headers: headers,
       body: body,
