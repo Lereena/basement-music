@@ -49,6 +49,7 @@ dependencies:
   youtube_metadata: ^1.0.0
 
 dev_dependencies:
+  flutter_native_splash: ^2.2.14
   flutter_test:
     sdk: flutter
 
@@ -94,3 +95,23 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+
+flutter_native_splash:
+  # This package generates native code to customize Flutter's default white native splash screen
+  # with background color and splash image.
+  # Customize the parameters below, and run the following command in the terminal:
+  # flutter pub run flutter_native_splash:create
+  # To restore Flutter's default white splash screen, run the following command in the terminal:
+  # flutter pub run flutter_native_splash:remove
+
+  color: "#ffffff"
+  image: assets/audio-waves.png
+
+  color_dark: "#000000"
+  image_dark: assets/audio-waves-colored.png
+
+  # Android 12 handles the splash screen differently than previous versions.  Please visit
+  # https://developer.android.com/guide/topics/ui/splash-screen
+  # Following are Android 12 specific parameter.
+  android_12:
+  
