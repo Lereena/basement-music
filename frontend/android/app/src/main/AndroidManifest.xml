@@ -2,7 +2,7 @@
     package="com.example.basement_music">
     <uses-permission android:name="android.permission.INTERNET"/>
    <application
-        android:label="basement_music"
+        android:label="Basement"
         android:usesCleartextTraffic="true"
         android:icon="@mipmap/ic_launcher">
         <activity

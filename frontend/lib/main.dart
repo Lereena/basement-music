@@ -35,7 +35,7 @@ class BasementMusic extends StatelessWidget {
         builder: (context, settingsState) {
           return Sizer(
             builder: (context, orientation, deviceType) => MaterialApp(
-              title: 'Basement music',
+              title: 'Basement',
               theme: CustomTheme.lightTheme,
               darkTheme: CustomTheme.darkTheme,
               themeMode: settingsState.darkTheme ? ThemeMode.dark : ThemeMode.light,
