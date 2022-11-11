@@ -15,10 +15,14 @@
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="description" content="Your music player">
 
-  <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png" media="(prefers-color-scheme: light)">
+  <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png" media="(prefers-color-scheme: light)">
+  <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png" media="(prefers-color-scheme: light)">
   
+  <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon-colored.png" media="(prefers-color-scheme: dark)">
+  <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32-colored.png" media="(prefers-color-scheme: dark)">
+  <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16-colored.png" media="(prefers-color-scheme: dark)">
+
   <title>Basement</title>
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" type="text/css" href="splash/style.css">
@@ -31,6 +35,29 @@
       <source srcset="splash/img/dark-1x.png 1x, splash/img/dark-2x.png 2x, splash/img/dark-3x.png 3x, splash/img/dark-4x.png 4x" media="(prefers-color-scheme: dark)">
       <img class="center" aria-hidden="true" src="splash/img/light-1x.png" alt="">
   </picture>        
+
+   <!-- Change the favicon depending on color mode -->
+  <script>
+    const favicon32 = document.querySelector('link[rel="icon" sizes="32x32"]')
+    const favicon16 = document.querySelector('link[rel="icon" sizes="16x16"]')
+    const appleTouchFavicon = document.querySelector('link[rel="apple-touch-icon""]')
+
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+    mediaQuery.addEventListener('change', themeChange)
+
+    function themeChange(event) {
+        if (event.matches) {
+            favicon32.setAttribute('href', '/icons/favicon-32x32-colored.png')
+            favicon16.setAttribute('href', '/icons/favicon-16x16-colored.png')
+            appleTouchFavicon.setAttribute('href', '/icons/apple-touch-icon-colored.png')
+        } else {
+            favicon32.setAttribute('href', '/icons/favicon-32x32.png')
+            favicon16.setAttribute('href', '/icons/favicon-16x16.png')
+            appleTouchFavicon.setAttribute('href', '/icons/apple-touch-icon.png')
+        }
+    }
+  </script>
+
   <!-- This script installs service_worker.js to provide PWA functionality to
        application. For more information, see:
        https://developers.google.com/web/fundamentals/primers/service-workers -->
