@@ -1,3 +1,4 @@
+import 'package:basement_music/widgets/app_logo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -26,14 +27,7 @@ class SideNavigationRail extends StatelessWidget {
             width: 300,
             child: Column(
               children: [
-                SizedBox(
-                  height: 100,
-                  child: Icon(
-                    Icons.music_note,
-                    size: 40,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                ),
+                const SizedBox(height: 100, child: AppLogo()),
                 const Divider(indent: 10, endIndent: 10),
                 SideNavigationDestination(
                   icon: const Icon(Icons.home),
