@@ -7,7 +7,7 @@ class ApiService {
     if (host != null && host.isNotEmpty) {
       _host = host;
     } else {
-      _host = kIsWeb ? '' : 'http://10.0.2.2:9000';
+      _host = kIsWeb ? 'http://localhost:8080' : 'http://10.0.2.2:9000';
     }
   }
 
