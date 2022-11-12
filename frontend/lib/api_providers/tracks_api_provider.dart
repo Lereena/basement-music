@@ -24,6 +24,18 @@ class TracksApiProvider {
     throw Exception('Failed to load tracks: ${response.body}');
   }
 
+  Future<List<Track>> searchTracks(String searchQuery) async {
+    final uri = _apiService.reqSearch(searchQuery);
+    final response = await getAsync(uri);
+
+    if (response.statusCode == 200) {
+      final jsonList = jsonDecode(response.body) as List<dynamic>;
+      return List.castFrom<dynamic, Track>(jsonList.map((e) => Track.fromJson(e)).toList());
+    }
+
+    throw Exception('Failed to search tracks: ${response.body}');
+  }
+
   Future<bool> uploadYtTrack(String url, String artist, String title) async {
     if (url == '') return false;
 
