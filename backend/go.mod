@@ -15,6 +15,7 @@ require (
 
 require (
 	github.com/BrianAllred/goydl v0.0.0-20200922193158-6eeb623d0fe8 // indirect
+	github.com/agnivade/levenshtein v1.1.1 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/pgconn v1.12.1 // indirect

@@ -6,11 +6,13 @@ import (
 	"net/http"
 	"net/url"
 	"path/filepath"
+	"sort"
 	"strings"
 
 	"github.com/Lereena/server_basement_music/config"
 	"github.com/Lereena/server_basement_music/models"
 	"github.com/Lereena/server_basement_music/respond"
+	"github.com/agnivade/levenshtein"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"gorm.io/gorm"
@@ -32,9 +34,9 @@ func (repo *TracksRepository) GetTracks(w http.ResponseWriter, r *http.Request) 
 }
 
 func (repo *TracksRepository) SearchTracks(w http.ResponseWriter, r *http.Request) {
-	params := mux.Vars(r)
+	query := r.URL.Query().Get("query")
 
-	urlDecodedQuery, err := url.QueryUnescape(params["query"])
+	urlDecodedQuery, err := url.QueryUnescape(query)
 	if err != nil {
 		respond.RespondError(w, http.StatusBadRequest, "Failed to decode search query")
 		return
@@ -45,7 +47,17 @@ func (repo *TracksRepository) SearchTracks(w http.ResponseWriter, r *http.Reques
 	var tracks []models.Track
 	repo.DB.Where("title ILIKE ?", searchQuery).Or("artist ILIKE ?", searchQuery).Table("tracks").Find(&tracks)
 
+	if urlDecodedQuery != "" {
+		sort.Slice(tracks, func(i, j int) bool {
+			return similarity(tracks[i].Title, searchQuery) > similarity(tracks[j].Title, searchQuery) || similarity(tracks[i].Artist, searchQuery) > similarity(tracks[j].Artist, searchQuery)
+		})
+	}
+
 	json.NewEncoder(w).Encode(&tracks)
+}
+
+func similarity(s1, s2 string) int {
+	return levenshtein.ComputeDistance(s1, s2)
 }
 
 func (repo *TracksRepository) GetTrack(w http.ResponseWriter, r *http.Request) {
