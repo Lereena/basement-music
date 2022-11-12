@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"path/filepath"
 	"strings"
 
@@ -27,6 +28,23 @@ func (repo *TracksRepository) Init() {
 func (repo *TracksRepository) GetTracks(w http.ResponseWriter, r *http.Request) {
 	var tracks []models.Track
 	repo.DB.Model(&models.Track{}).Find(&tracks)
+	json.NewEncoder(w).Encode(&tracks)
+}
+
+func (repo *TracksRepository) SearchTracks(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+
+	urlDecodedQuery, err := url.QueryUnescape(params["query"])
+	if err != nil {
+		respond.RespondError(w, http.StatusBadRequest, "Failed to decode search query")
+		return
+	}
+
+	searchQuery := "%" + strings.ToLower(urlDecodedQuery) + "%"
+
+	var tracks []models.Track
+	repo.DB.Where("title ILIKE ?", searchQuery).Or("artist ILIKE ?", searchQuery).Table("tracks").Find(&tracks)
+
 	json.NewEncoder(w).Encode(&tracks)
 }
 
