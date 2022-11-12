@@ -28,4 +28,6 @@ class ApiService {
   String reqTrackPlaylist(String playlistId, String trackId) => '$_host/api/playlist/$playlistId/track/$trackId';
   String reqYtDownload(String link, String artist, String title) =>
       '$_host/api/yt/download?url=$link&artist=$artist&title=$title';
+
+  String reqSearch(String searchQuery) => Uri.encodeComponent('$reqAllTracks/search?query=$searchQuery');
 }

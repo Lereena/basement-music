@@ -4,16 +4,25 @@ import '../models/track.dart';
 
 class TracksRepository {
   final _items = <Track>[];
+  final _searchItems = <Track>[];
   final ApiService _apiService;
   late final _tracksApiProvider = TracksApiProvider(_apiService);
 
   TracksRepository(this._apiService);
 
   List<Track> get items => _items;
+  List<Track> get searchItems => _searchItems;
 
   Future<void> getAllTracks() async {
     final result = await _tracksApiProvider.fetchAllTracks();
     _items.addAll(result);
+  }
+
+  Future<void> searchTracks(String searchQuery) async {
+    _searchItems.clear();
+
+    final result = await _tracksApiProvider.searchTracks(searchQuery);
+    _searchItems.addAll(result);
   }
 
   Future<bool> uploadYtTrack(String url, String artist, String title) {
