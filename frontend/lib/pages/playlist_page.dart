@@ -1,7 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../library.dart';
+import '../bloc/playlists_bloc/playlists_bloc.dart';
 import '../models/playlist.dart';
 import '../widgets/buttons/underlined_button.dart';
 import '../widgets/track_card.dart';
@@ -17,16 +18,19 @@ class PlaylistPage extends StatefulWidget {
 }
 
 class _PlaylistPageState extends State<PlaylistPage> {
+  late final PlaylistsBloc _playlistsBloc;
+
   @override
   void initState() {
     super.initState();
-    openedPlaylist = widget.playlist;
+    _playlistsBloc = BlocProvider.of<PlaylistsBloc>(context);
+    _playlistsBloc.openedPlaylist = widget.playlist;
   }
 
   @override
   void dispose() {
     super.dispose();
-    openedPlaylist = Playlist.empty();
+    _playlistsBloc.openedPlaylist = Playlist.empty();
   }
 
   @override
@@ -56,7 +60,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                   itemCount: widget.playlist.tracks.length,
                   itemBuilder: (context, index) => TrackCard(
                     track: widget.playlist.tracks[index],
-                    playlist: widget.playlist,
+                    containingPlaylist: widget.playlist,
                   ),
                 ),
               ),

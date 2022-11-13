@@ -2,7 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../bloc/playlists_bloc/playlists_bloc.dart';
 import '../bloc/trackst_search_cubit/tracks_search_cubit.dart';
+import '../models/playlist.dart';
 import '../widgets/search_field.dart';
 import '../widgets/track_card.dart';
 import '../widgets/wrappers/content_narrower.dart';
@@ -16,14 +18,24 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   final _controller = TextEditingController();
-  late final TracksSearchCubit searchCubit;
+
+  late final TracksSearchCubit _searchCubit;
+  late final PlaylistsBloc _playlistsBloc;
 
   @override
   void initState() {
     super.initState();
 
-    searchCubit = BlocProvider.of<TracksSearchCubit>(context);
-    _controller.text = searchCubit.state.searchQuery;
+    _searchCubit = BlocProvider.of<TracksSearchCubit>(context);
+    _playlistsBloc = BlocProvider.of<PlaylistsBloc>(context);
+    _controller.text = _searchCubit.state.searchQuery;
+    _playlistsBloc.openedPlaylist = _searchCubit.searchResultsPlaylist;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _playlistsBloc.openedPlaylist = Playlist.empty();
   }
 
   @override
@@ -35,7 +47,7 @@ class _SearchPageState extends State<SearchPage> {
           children: [
             SearchField(
               controller: _controller,
-              onSearch: (query) => searchCubit.onSearch(query),
+              onSearch: (query) => _searchCubit.onSearch(query),
             ),
             const SizedBox(height: 15),
             Expanded(
@@ -56,6 +68,7 @@ class _SearchPageState extends State<SearchPage> {
                       itemCount: state.tracks.length,
                       itemBuilder: (context, index) => TrackCard(
                         track: state.tracks[index],
+                        openedPlaylist: _playlistsBloc.openedPlaylist,
                       ),
                     );
                   }

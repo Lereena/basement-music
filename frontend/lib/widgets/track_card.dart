@@ -15,9 +15,10 @@ import 'track_name.dart';
 
 class TrackCard extends StatelessWidget {
   final Track track;
-  final Playlist? playlist;
+  final Playlist? containingPlaylist;
+  final Playlist? openedPlaylist;
 
-  const TrackCard({super.key, required this.track, this.playlist});
+  const TrackCard({super.key, required this.track, this.containingPlaylist, this.openedPlaylist});
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +52,11 @@ class TrackCard extends StatelessWidget {
                             (playerState is PlayingPlayerState || playerState is ResumedPlayerState))
                           const PauseButton()
                         else
-                          PlayButton(track: track, state: playerState),
+                          PlayButton(
+                            track: track,
+                            state: playerState,
+                            openedPlaylist: openedPlaylist,
+                          ),
                       ],
                     ),
                   ),
@@ -79,7 +84,7 @@ class TrackCard extends StatelessWidget {
                   style: const TextStyle(fontSize: 16),
                 ),
                 const SizedBox(width: 15),
-                MoreButton(track: track, playlist: playlist),
+                MoreButton(track: track, playlist: containingPlaylist),
                 const SizedBox(width: 15),
               ],
             ),
