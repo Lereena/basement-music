@@ -12,6 +12,8 @@ class NavigationCubit extends Cubit<NavigationState> {
 
   void navigateLibrary() => emit(NavigationLibrary());
 
+  void navigateSearch() => emit(NavigationSearch());
+
   void navigateArtistsList() => emit(NavigationArtistsList());
 
   void navigateSettings() => emit(NavigationSettings());

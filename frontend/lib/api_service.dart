@@ -29,5 +29,5 @@ class ApiService {
   String reqYtDownload(String link, String artist, String title) =>
       '$_host/api/yt/download?url=$link&artist=$artist&title=$title';
 
-  String reqSearch(String searchQuery) => Uri.encodeComponent('$reqAllTracks/search?query=$searchQuery');
+  String reqSearch(String searchQuery) => '$reqAllTracks/search?query=$searchQuery';
 }

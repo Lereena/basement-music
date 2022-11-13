@@ -41,6 +41,12 @@ class SideNavigationRail extends StatelessWidget {
                   selected: state is NavigationLibrary,
                   onTap: () => navigationCubit.navigateLibrary(),
                 ),
+                SideNavigationDestination(
+                  icon: const Icon(Icons.search),
+                  label: 'Search',
+                  selected: state is NavigationSearch,
+                  onTap: () => navigationCubit.navigateSearch(),
+                ),
                 // SideNavigationDestination(
                 //   icon: const Icon(Icons.groups),
                 //   label: 'Artists',
