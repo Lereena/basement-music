@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/navigation_cubit/navigation_cubit.dart';
 import '../pages/home_content_page.dart';
 import '../pages/playlist_page.dart';
+import '../pages/search_page.dart';
 import '../pages/upload/upload_page.dart';
 
 class MainBodyContent extends StatelessWidget {
@@ -21,6 +22,7 @@ class MainBodyContent extends StatelessWidget {
         builder: (context, state) {
           if (state is NavigationHome) return HomeContent();
           if (state is NavigationLibrary) return const LibraryPage();
+          if (state is NavigationSearch) return const SearchPage();
           if (state is NavigationArtistsList) return _unimplemented(state);
           if (state is NavigationSettings) return const SettingsPage();
           if (state is NavigationArtist) return _unimplemented(state);

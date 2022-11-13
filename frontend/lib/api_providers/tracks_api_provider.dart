@@ -25,7 +25,7 @@ class TracksApiProvider {
   }
 
   Future<List<Track>> searchTracks(String searchQuery) async {
-    final uri = _apiService.reqSearch(searchQuery);
+    final uri = Uri.parse(_apiService.reqSearch(Uri.encodeComponent(searchQuery)));
     final response = await getAsync(uri);
 
     if (response.statusCode == 200) {

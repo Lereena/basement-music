@@ -7,6 +7,8 @@ class NavigationHome extends NavigationState {}
 
 class NavigationLibrary extends NavigationState {}
 
+class NavigationSearch extends NavigationState {}
+
 class NavigationArtistsList extends NavigationState {}
 
 class NavigationSettings extends NavigationState {}

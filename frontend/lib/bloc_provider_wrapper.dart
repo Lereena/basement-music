@@ -2,6 +2,7 @@ import 'package:basement_music/bloc/home_content_cubit/home_content_cubit.dart';
 import 'package:basement_music/bloc/navigation_cubit/navigation_cubit.dart';
 import 'package:basement_music/bloc/remove_from_playlist_bloc/remove_from_playlist_cubit.dart';
 import 'package:basement_music/bloc/side_navigation_bloc/side_navigation_cubit.dart';
+import 'package:basement_music/bloc/trackst_search_cubit/tracks_search_cubit.dart';
 import 'package:basement_music/shortcuts_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -72,6 +73,9 @@ class _BlocProviderWrapperState extends State<BlocProviderWrapper> {
             _playlistsRepository,
             _playlistsBloc,
           ),
+        ),
+        BlocProvider<TracksSearchCubit>(
+          create: (context) => TracksSearchCubit(_tracksRepository),
         ),
         BlocProvider<SettingsBloc>(
           create: (context) => _settingsBloc,

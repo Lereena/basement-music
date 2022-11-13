@@ -14,14 +14,19 @@ class TracksSearchCubit extends Cubit<TracksSearchState> {
   TracksSearchCubit(this._tracksRepository) : super(TracksSearchInitial());
 
   FutureOr<void> onSearch(String searchQuery) async {
-    emit(TracksSearchLoadingState());
+    if (searchQuery.trim().isEmpty) {
+      emit(TracksSearchInitial());
+      return;
+    }
+
+    emit(TracksSearchLoadingState(searchQuery));
 
     try {
       await _tracksRepository.searchTracks(searchQuery);
       if (_tracksRepository.searchItems.isEmpty) {
-        emit(TracksSearchEmptyState());
+        emit(TracksSearchEmptyState(searchQuery));
       } else {
-        emit(TracksSearchLoadedState(_tracksRepository.searchItems));
+        emit(TracksSearchLoadedState(searchQuery, _tracksRepository.searchItems));
       }
     } catch (e) {
       emit(TracksSearchErrorState());
