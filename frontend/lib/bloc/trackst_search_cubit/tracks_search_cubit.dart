@@ -23,6 +23,7 @@ class TracksSearchCubit extends Cubit<TracksSearchState> {
   FutureOr<void> onSearch(String searchQuery) async {
     final query = searchQuery.trim();
     if (lastSearch == query) return;
+    lastSearch = query;
 
     if (query.isEmpty) {
       emit(TracksSearchInitial());
