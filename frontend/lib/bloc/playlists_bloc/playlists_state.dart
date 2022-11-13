@@ -1,4 +1,4 @@
-import 'package:basement_music/models/playlist.dart';
+import '../../models/playlist.dart';
 
 abstract class PlaylistsState {}
 

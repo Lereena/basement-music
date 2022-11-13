@@ -1,6 +1,7 @@
-import 'package:basement_music/widgets/settings/theme_setting_line.dart';
-import 'package:basement_music/widgets/wrappers/content_narrower.dart';
 import 'package:flutter/material.dart';
+
+import '../widgets/settings/theme_setting_line.dart';
+import '../widgets/wrappers/content_narrower.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});

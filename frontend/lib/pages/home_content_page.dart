@@ -1,4 +1,3 @@
-import 'package:basement_music/widgets/buttons/underlined_button.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -6,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/home_content_cubit/home_content_cubit.dart';
 import '../bloc/tracks_bloc/tracks_bloc.dart';
 import '../bloc/tracks_bloc/tracks_state.dart';
+import '../widgets/buttons/underlined_button.dart';
 import '../widgets/track_card.dart';
 
 class HomeContent extends StatelessWidget {

@@ -1,7 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:basement_music/models/track.dart';
 import 'package:flutter/material.dart';
 
+import '../models/track.dart';
 import 'wrappers/overflow_sensitive_marqee.dart';
 
 class TrackName extends StatelessWidget {

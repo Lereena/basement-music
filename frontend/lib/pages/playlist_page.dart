@@ -1,4 +1,3 @@
-import 'package:basement_music/widgets/wrappers/content_narrower.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -6,6 +5,7 @@ import '../library.dart';
 import '../models/playlist.dart';
 import '../widgets/buttons/underlined_button.dart';
 import '../widgets/track_card.dart';
+import '../widgets/wrappers/content_narrower.dart';
 
 class PlaylistPage extends StatefulWidget {
   final Playlist playlist;

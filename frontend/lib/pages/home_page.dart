@@ -1,12 +1,12 @@
-import 'package:basement_music/bloc/side_navigation_bloc/side_navigation_cubit.dart';
-import 'package:basement_music/widgets/navigations/web_navigation/side_navigation_rail.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../bloc/side_navigation_bloc/side_navigation_cubit.dart';
 import '../widgets/bottom_bar.dart';
 import '../widgets/main_body_content.dart';
 import '../widgets/navigations/side_navigation_drawer.dart';
+import '../widgets/navigations/web_navigation/side_navigation_rail.dart';
 
 class HomePage extends StatelessWidget {
   @override

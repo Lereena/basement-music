@@ -1,5 +1,6 @@
-import 'package:basement_music/enums/pages_enum.dart';
 import 'package:flutter/material.dart';
+
+import '../../enums/pages_enum.dart';
 
 class SideNavigationDrawer extends StatelessWidget {
   final PageNavigation selectedPage;

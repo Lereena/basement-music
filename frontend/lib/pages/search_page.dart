@@ -1,11 +1,11 @@
-import 'package:basement_music/bloc/trackst_search_cubit/tracks_search_cubit.dart';
-import 'package:basement_music/widgets/search_field.dart';
-import 'package:basement_music/widgets/wrappers/content_narrower.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../bloc/trackst_search_cubit/tracks_search_cubit.dart';
+import '../widgets/search_field.dart';
 import '../widgets/track_card.dart';
+import '../widgets/wrappers/content_narrower.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});

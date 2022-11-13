@@ -1,5 +1,6 @@
-import 'package:basement_music/routes.dart';
 import 'package:flutter/material.dart';
+
+import '../../routes.dart';
 
 class SettingsButton extends StatelessWidget {
   const SettingsButton({super.key});

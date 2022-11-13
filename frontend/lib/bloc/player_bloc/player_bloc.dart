@@ -2,10 +2,10 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:audioplayers/audioplayers.dart';
-import 'package:basement_music/api_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
+import '../../api_service.dart';
 import '../../models/playlist.dart';
 import '../../models/track.dart';
 import '../../repositories/tracks_repository.dart';

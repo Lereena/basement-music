@@ -1,4 +1,4 @@
-import 'package:basement_music/models/track.dart';
+import '../../models/track.dart';
 
 abstract class AudioPlayerState {
   final Track currentTrack;

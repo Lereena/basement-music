@@ -1,13 +1,13 @@
 import 'dart:async';
 
-import 'package:basement_music/repositories/playlists_repository.dart';
 import 'package:bloc/bloc.dart';
 
+import '../../repositories/playlists_repository.dart';
 import '../../repositories/tracks_repository.dart';
 import '../../utils/log/log_service.dart';
 
-part 'remove_from_playlist_state.dart';
 part 'remove_from_playlist_event.dart';
+part 'remove_from_playlist_state.dart';
 
 class RemoveFromPlaylistBloc extends Bloc<RemoveFromPlaylistEvent, RemoveFromPlaylistState> {
   final TracksRepository _tracksRepository;
