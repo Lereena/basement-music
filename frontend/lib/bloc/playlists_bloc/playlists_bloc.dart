@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../models/playlist.dart';
 import '../../repositories/playlists_repository.dart';
 import '../../utils/log/log_service.dart';
 import 'playlists_event.dart';
@@ -14,6 +15,8 @@ class PlaylistsBloc extends Bloc<PlaylistsEvent, PlaylistsState> {
     on<PlaylistsLoadEvent>(_onLoadingEvent);
     on<PlaylistAddedEvent>(_onPlaylistAddedEvent);
   }
+
+  Playlist openedPlaylist = Playlist.empty();
 
   FutureOr<void> _onLoadingEvent(PlaylistsLoadEvent event, Emitter<PlaylistsState> emit) async {
     emit(PlaylistsLoadingState());

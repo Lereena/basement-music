@@ -75,7 +75,10 @@ class _BlocProviderWrapperState extends State<BlocProviderWrapper> {
           ),
         ),
         BlocProvider<TracksSearchCubit>(
-          create: (context) => TracksSearchCubit(_tracksRepository),
+          create: (context) => TracksSearchCubit(
+            _tracksRepository,
+            _playlistsBloc,
+          ),
         ),
         BlocProvider<SettingsBloc>(
           create: (context) => _settingsBloc,

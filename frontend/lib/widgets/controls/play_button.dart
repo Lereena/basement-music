@@ -4,19 +4,21 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../bloc/player_bloc/player_bloc.dart';
 import '../../bloc/player_bloc/player_event.dart';
 import '../../bloc/player_bloc/player_state.dart';
-import '../../library.dart';
+import '../../models/playlist.dart';
 import '../../models/track.dart';
 
 class PlayButton extends StatelessWidget {
   final Track track;
   final AudioPlayerState state;
   final bool isBottomPlayer;
+  final Playlist? openedPlaylist;
 
   const PlayButton({
     super.key,
     required this.track,
     required this.state,
     this.isBottomPlayer = false,
+    this.openedPlaylist,
   });
 
   @override
@@ -30,13 +32,10 @@ class PlayButton extends StatelessWidget {
           playerBloc.add(ResumeEvent());
         } else {
           playerBloc.add(PlayEvent(track));
-          playerBloc.currentPlaylist = openedPlaylist;
+          playerBloc.currentPlaylist = openedPlaylist ?? Playlist.empty();
         }
       },
-      child: const Icon(
-        Icons.play_arrow_rounded,
-        size: 30,
-      ),
+      child: const Icon(Icons.play_arrow_rounded, size: 30),
     );
   }
 }

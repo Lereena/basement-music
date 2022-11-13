@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:uuid/uuid.dart';
 
 import 'track.dart';
 
@@ -18,6 +19,10 @@ class Playlist extends Equatable {
 
   factory Playlist.empty() {
     return const Playlist(id: '', title: '', tracks: []);
+  }
+
+  factory Playlist.anonymous(List<Track> tracks) {
+    return Playlist(id: const Uuid().v1(), title: '', tracks: tracks);
   }
 
   factory Playlist.fromJson(Map<String, dynamic> json) {

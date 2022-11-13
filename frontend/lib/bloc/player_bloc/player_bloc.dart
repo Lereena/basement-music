@@ -48,7 +48,7 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
 
   FutureOr<void> _onPlayEvent(PlayEvent event, Emitter<AudioPlayerState> emit) async {
     if (currentPlaylist == Playlist.empty()) {
-      currentPlaylist = Playlist(id: '', title: '', tracks: _tracksRepository.items);
+      currentPlaylist = Playlist.anonymous(_tracksRepository.items);
     }
 
     final cached = _cacherBloc.state.isCached([event.track.id]);
