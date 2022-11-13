@@ -1,5 +1,6 @@
-import 'package:basement_music/utils/time.dart';
 import 'package:equatable/equatable.dart';
+
+import '../utils/time.dart';
 
 class Track extends Equatable {
   final String id;

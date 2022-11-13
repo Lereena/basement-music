@@ -1,9 +1,9 @@
-import 'package:basement_music/models/playlist.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../bloc/remove_from_playlist_bloc/remove_from_playlist_cubit.dart';
+import '../../models/playlist.dart';
 import '../../models/track.dart';
 import '../dialog.dart';
 import '../icons/error_icon.dart';

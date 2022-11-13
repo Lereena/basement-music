@@ -1,5 +1,6 @@
-import 'package:basement_music/models/track.dart';
 import 'package:equatable/equatable.dart';
+
+import 'track.dart';
 
 class Playlist extends Equatable {
   final String id;

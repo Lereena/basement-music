@@ -1,4 +1,3 @@
-import 'package:basement_music/widgets/dialogs/remove_from_playlist_dialog.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,6 +7,7 @@ import '../../models/playlist.dart';
 import '../../models/track.dart';
 import '../dialog.dart';
 import '../dialogs/add_to_playlist_dialog.dart';
+import '../dialogs/remove_from_playlist_dialog.dart';
 import '../edit_track.dart';
 
 class MoreButton extends StatelessWidget {

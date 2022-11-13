@@ -1,7 +1,7 @@
-import 'package:basement_music/bloc/player_bloc/player_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'bloc/player_bloc/player_bloc.dart';
 import 'bloc/player_bloc/player_event.dart';
 import 'bloc/player_bloc/player_state.dart';
 

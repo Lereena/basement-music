@@ -1,8 +1,7 @@
 import 'dart:convert';
 
-import 'package:basement_music/models/playlist.dart';
-
 import '../api_service.dart';
+import '../models/playlist.dart';
 import '../utils/request.dart';
 
 class PlaylistsApiProvider {

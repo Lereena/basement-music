@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:basement_music/repositories/tracks_repository.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
+import '../../repositories/tracks_repository.dart';
 import '../../utils/log/log_service.dart';
 
 part 'edit_track_event.dart';

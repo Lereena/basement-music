@@ -1,11 +1,11 @@
 import 'dart:async';
 
-import 'package:basement_music/bloc/playlists_bloc/playlists_bloc.dart';
-import 'package:basement_music/bloc/playlists_bloc/playlists_event.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../repositories/playlists_repository.dart';
 import '../../utils/log/log_service.dart';
+import '../playlists_bloc/playlists_bloc.dart';
+import '../playlists_bloc/playlists_event.dart';
 import 'playlist_creation_event.dart';
 import 'playlist_creation_state.dart';
 

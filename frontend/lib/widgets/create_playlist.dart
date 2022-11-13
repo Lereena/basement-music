@@ -1,8 +1,8 @@
-import 'package:basement_music/bloc/playlist_creation_bloc/playlist_creation_bloc.dart';
-import 'package:basement_music/bloc/playlist_creation_bloc/playlist_creation_event.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../bloc/playlist_creation_bloc/playlist_creation_bloc.dart';
+import '../bloc/playlist_creation_bloc/playlist_creation_event.dart';
 import '../bloc/playlist_creation_bloc/playlist_creation_state.dart';
 import '../utils/input_field_with.dart';
 import 'titled_field.dart';

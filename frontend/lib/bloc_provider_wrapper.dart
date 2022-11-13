@@ -1,9 +1,3 @@
-import 'package:basement_music/bloc/home_content_cubit/home_content_cubit.dart';
-import 'package:basement_music/bloc/navigation_cubit/navigation_cubit.dart';
-import 'package:basement_music/bloc/remove_from_playlist_bloc/remove_from_playlist_cubit.dart';
-import 'package:basement_music/bloc/side_navigation_bloc/side_navigation_cubit.dart';
-import 'package:basement_music/bloc/trackst_search_cubit/tracks_search_cubit.dart';
-import 'package:basement_music/shortcuts_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -11,17 +5,23 @@ import 'api_service.dart';
 import 'bloc/add_to_playlist_bloc/add_to_playlist_bloc.dart';
 import 'bloc/cacher_bloc/bloc/cacher_bloc.dart';
 import 'bloc/edit_track_bloc/edit_track_bloc.dart';
+import 'bloc/home_content_cubit/home_content_cubit.dart';
+import 'bloc/navigation_cubit/navigation_cubit.dart';
 import 'bloc/player_bloc/player_bloc.dart';
 import 'bloc/playlist_creation_bloc/playlist_creation_bloc.dart';
 import 'bloc/playlists_bloc/playlists_bloc.dart';
 import 'bloc/playlists_bloc/playlists_event.dart';
+import 'bloc/remove_from_playlist_bloc/remove_from_playlist_cubit.dart';
 import 'bloc/settings_bloc/settings_bloc.dart';
+import 'bloc/side_navigation_bloc/side_navigation_cubit.dart';
 import 'bloc/track_progress_cubit/track_progress_cubit.dart';
 import 'bloc/track_uploading_bloc/track_uploading_bloc.dart';
 import 'bloc/tracks_bloc/tracks_bloc.dart';
 import 'bloc/tracks_bloc/tracks_event.dart';
+import 'bloc/trackst_search_cubit/tracks_search_cubit.dart';
 import 'repositories/playlists_repository.dart';
 import 'repositories/tracks_repository.dart';
+import 'shortcuts_wrapper.dart';
 
 class BlocProviderWrapper extends StatefulWidget {
   final Widget child;

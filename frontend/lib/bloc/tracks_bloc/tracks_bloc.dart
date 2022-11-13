@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:basement_music/repositories/tracks_repository.dart';
-import 'package:basement_music/utils/log/log_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../repositories/tracks_repository.dart';
+import '../../utils/log/log_service.dart';
 import 'tracks_event.dart';
 import 'tracks_state.dart';
 
