@@ -24,3 +24,5 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /app/build/web /app
 
 EXPOSE 8080
+
+LABEL name="frontend"

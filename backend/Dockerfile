@@ -23,3 +23,5 @@ RUN mkdir ./music
 COPY --from=build ./server ./
 
 CMD [ "./server" ]
+
+LABEL name="backend"

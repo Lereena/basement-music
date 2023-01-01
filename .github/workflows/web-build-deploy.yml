@@ -1,0 +1,43 @@
+name: Web build and deploy
+on: [push]
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      packages: write
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: KengoTODA/actions-setup-docker-compose@main
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Create .env
+      run: echo "${{ secrets.DOT_ENV_FILE }}" > .env
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v2
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    - name: Build the Docker images
+      run: docker-compose build
+    - name: Publish images
+      run: docker-compose push
+    - name: Copy docker-compose.yml
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.HOST_IP }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.KEY }}
+        source: "docker-compose.yml,.env"
+        target: "basement-music"
+    - name: Set up SSH
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST_IP }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.KEY }}
+        script: |
+          cd basement-music
+          docker-compose up -d
