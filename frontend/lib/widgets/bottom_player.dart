@@ -14,7 +14,7 @@ import 'controls/repeat_toggle.dart';
 import 'controls/shuffle_toggle.dart';
 import 'track_name.dart';
 
-class BottomBar extends StatelessWidget {
+class BottomPlayer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final progress = context.watch<TrackProgressCubit>().state;
@@ -23,7 +23,8 @@ class BottomBar extends StatelessWidget {
       builder: (context, state) {
         if (state.currentTrack == Track.empty()) return Container(height: 0);
 
-        return BottomAppBar(
+        return ColoredBox(
+          color: Theme.of(context).backgroundColor,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [

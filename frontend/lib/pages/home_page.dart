@@ -20,7 +20,7 @@ class HomePage extends StatelessWidget {
           body: kIsWeb
               ? Row(
                   children: [
-                    const SideNavigationRail(),
+                    const SideNavigationRail(extended: true),
                     const VerticalDivider(width: 1),
                     MainBodyContent(selectedPage: state.selectedPage),
                   ],

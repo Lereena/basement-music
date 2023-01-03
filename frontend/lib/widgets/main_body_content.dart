@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bloc/navigation_cubit/navigation_cubit.dart';
-import '../enums/pages_enum.dart';
 import '../pages/home_content_page.dart';
 import '../pages/library_page.dart';
 import '../pages/playlist_page.dart';
@@ -11,13 +10,12 @@ import '../pages/settings_page.dart';
 import '../pages/upload/upload_page.dart';
 
 class MainBodyContent extends StatelessWidget {
-  final PageNavigation selectedPage;
-
-  const MainBodyContent({required this.selectedPage}) : super();
+  const MainBodyContent() : super();
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
       child: BlocBuilder<NavigationCubit, NavigationState>(
         builder: (context, state) {
           if (state is NavigationHome) return HomeContent();

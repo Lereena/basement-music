@@ -13,7 +13,6 @@ import 'bloc/playlists_bloc/playlists_bloc.dart';
 import 'bloc/playlists_bloc/playlists_event.dart';
 import 'bloc/remove_from_playlist_bloc/remove_from_playlist_cubit.dart';
 import 'bloc/settings_bloc/settings_bloc.dart';
-import 'bloc/side_navigation_bloc/side_navigation_cubit.dart';
 import 'bloc/track_progress_cubit/track_progress_cubit.dart';
 import 'bloc/track_uploading_bloc/track_uploading_bloc.dart';
 import 'bloc/tracks_bloc/tracks_bloc.dart';
@@ -100,9 +99,6 @@ class _BlocProviderWrapperState extends State<BlocProviderWrapper> {
         ),
         BlocProvider<TrackProgressCubit>(
           create: (context) => TrackProgressCubit(_playerBloc),
-        ),
-        BlocProvider<SideNavigationCubit>.value(
-          value: SideNavigationCubit(),
         ),
         BlocProvider<EditTrackBloc>(
           create: (context) => EditTrackBloc(_tracksRepository),

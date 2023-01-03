@@ -1,62 +1,65 @@
-import 'package:basement_music/widgets/secondary_body_content.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_adaptive_scaffold/flutter_adaptive_scaffold.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../bloc/side_navigation_bloc/side_navigation_cubit.dart';
+import '../widgets/bottom_player.dart';
 import '../widgets/main_body_content.dart';
+import '../widgets/navigations/web_navigation/side_navigation_rail.dart';
+import '../widgets/secondary_body_content.dart';
+
+const largeBreakpoint = WidthPlatformBreakpoint(begin: 1000);
+const mediumBreakpoint = WidthPlatformBreakpoint(begin: 600, end: 1000);
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final sideNavigationCubit = BlocProvider.of<SideNavigationCubit>(context);
-
-    return BlocBuilder<SideNavigationCubit, SideNavigationState>(
-      builder: (context, state) {
-        return AdaptiveScaffold(
-          destinations: const [
-            NavigationDestination(
-              icon: Icon(Icons.home),
-              label: 'Home',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.library_music),
-              label: 'Library',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.settings),
-              label: 'Settings',
-            ),
-          ],
-          bodyRatio: 0.6,
-          onSelectedIndexChange: (index) => sideNavigationCubit.selectDestination(index),
-          body: (_) => MainBodyContent(selectedPage: state.selectedPage),
-          smallBody: (_) => MainBodyContent(selectedPage: state.selectedPage),
-          secondaryBody: (_) => const SecondaryBodyContent(),
-          smallSecondaryBody: AdaptiveScaffold.emptyBuilder,
-          smallBreakpoint: const WidthPlatformBreakpoint(end: 700),
-          mediumBreakpoint: const WidthPlatformBreakpoint(begin: 700, end: 1000),
-          largeBreakpoint: const WidthPlatformBreakpoint(begin: 1000),
-          leadingExtendedNavRail: SizedBox(
-            height: 100,
-            child: Icon(
-              Icons.music_note,
-              size: 40,
-              color: Theme.of(context).colorScheme.primary,
-            ),
+    return AdaptiveLayout(
+      bodyRatio: 0.65,
+      primaryNavigation: SlotLayout(
+        config: {
+          largeBreakpoint: _navigationRail(extended: true),
+          mediumBreakpoint: _navigationRail(extended: false),
+        },
+      ),
+      body: SlotLayout(
+        config: {
+          Breakpoints.standard: _body,
+        },
+      ),
+      secondaryBody: SlotLayout(
+        config: {
+          largeBreakpoint: SlotLayout.from(
+            inAnimation: AdaptiveScaffold.fadeIn,
+            key: const Key('Secondary body large'),
+            builder: (_) => const SecondaryBodyContent(),
           ),
-          leadingUnextendedNavRail: SizedBox(
-            height: 100,
-            child: Icon(
-              Icons.music_note,
-              size: 40,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-          ),
-        );
-      },
+        },
+      ),
+      bottomNavigation: SlotLayout(
+        config: {
+          mediumBreakpoint: _bottomBar,
+          Breakpoints.small: _bottomBar,
+        },
+      ),
     );
   }
+
+  SlotLayoutConfig _navigationRail({required bool extended}) => SlotLayout.from(
+        key: Key('navigation $extended'),
+        inAnimation: AdaptiveScaffold.fadeIn,
+        builder: (_) => SideNavigationRail(extended: extended),
+      );
+
+  SlotLayoutConfig get _body => SlotLayout.from(
+        inAnimation: AdaptiveScaffold.stayOnScreen,
+        key: const Key('body'),
+        builder: (_) => const MainBodyContent(),
+      );
+
+  SlotLayoutConfig get _bottomBar => SlotLayout.from(
+        inAnimation: AdaptiveScaffold.bottomToTop,
+        key: const Key('bottom bar'),
+        builder: (_) => BottomPlayer(),
+      );
 }
