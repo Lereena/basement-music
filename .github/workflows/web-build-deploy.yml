@@ -1,5 +1,11 @@
 name: Web build and deploy
-on: [push]
+
+on: 
+  workflow_dispatch:
+  push:
+    tags:
+      - '*'
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -7,13 +13,19 @@ jobs:
     permissions:
       packages: write
 
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     steps:
     - uses: actions/checkout@v2
     - uses: KengoTODA/actions-setup-docker-compose@main
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        version: '1.29.2'
     - name: Create .env
-      run: echo "${{ secrets.DOT_ENV_FILE }}" > .env
+      run: |
+        tag_version=$(echo "${GITHUB_REF}" | cut -d'/' -f3)
+        echo "${{ secrets.DOT_ENV_FILE }}" > .env
+        echo "VERSION=${tag_version}" >> .env
     - name: Login to GitHub Container Registry
       uses: docker/login-action@v2
       with:
@@ -38,6 +50,9 @@ jobs:
         host: ${{ secrets.HOST_IP }}
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.KEY }}
+        envs: GITHUB_TOKEN
         script: |
+          echo $GITHUB_TOKEN | docker login ghcr.io -u lereena --password-stdin
           cd basement-music
-          docker-compose up -d
+          docker-compose pull
+          docker-compose up -d --no-build
