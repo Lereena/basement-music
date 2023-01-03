@@ -12,7 +12,7 @@ services:
     volumes:
       - db-data:/var/lib/postgresql/data
   backend:
-    image: ghcr.io/lereena/basement-music/backend:$VERSION
+    image: 'ghcr.io/lereena/basement-music/backend:$VERSION'
     build:
       context: "./backend/"
     environment:
@@ -33,7 +33,7 @@ services:
     depends_on:
       - postgres
   frontend:
-    image: ghcr.io/lereena/basement-music/frontend:$VERSION
+    image: 'ghcr.io/lereena/basement-music/frontend:$VERSION'
     build:
       context: "./frontend/"
     container_name: frontend
