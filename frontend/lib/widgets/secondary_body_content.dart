@@ -57,18 +57,16 @@ class SecondaryBodyContent extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Flexible(
-                      child: Visibility(
-                        visible: false,
-                        maintainSize: true,
-                        maintainAnimation: true,
-                        maintainState: true,
-                        child: Row(
-                          children: const [
-                            ShuffleToggle(),
-                            RepeatToggle(),
-                          ],
-                        ),
+                    Visibility(
+                      visible: false,
+                      maintainSize: true,
+                      maintainAnimation: true,
+                      maintainState: true,
+                      child: Row(
+                        children: const [
+                          ShuffleToggle(),
+                          RepeatToggle(),
+                        ],
                       ),
                     ),
                     const Spacer(),
