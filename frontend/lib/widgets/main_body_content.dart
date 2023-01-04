@@ -10,15 +10,17 @@ import '../pages/tracks_page.dart';
 import '../pages/upload/upload_page.dart';
 
 class MainBodyContent extends StatelessWidget {
-  const MainBodyContent() : super();
+  final bool narrow;
+
+  const MainBodyContent({super.key, this.narrow = false});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
+      padding: EdgeInsets.symmetric(horizontal: narrow ? 100 : 10),
       child: BlocBuilder<NavigationCubit, NavigationState>(
         builder: (context, state) {
-          if (state is NavigationHome) return HomeContent();
+          if (state is NavigationHome) return TracksPage();
           if (state is NavigationLibrary) return const LibraryPage();
           if (state is NavigationSearch) return const SearchPage();
           if (state is NavigationArtistsList) return _unimplemented(state);

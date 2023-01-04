@@ -5,10 +5,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/home_content_cubit/home_content_cubit.dart';
 import '../bloc/tracks_bloc/tracks_bloc.dart';
 import '../bloc/tracks_bloc/tracks_state.dart';
+import '../models/track.dart';
 import '../widgets/buttons/underlined_button.dart';
 import '../widgets/track_card.dart';
 
-class HomeContent extends StatelessWidget {
+class TracksPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final homeContentCubit = BlocProvider.of<HomeContentCubit>(context);
@@ -50,18 +51,25 @@ class HomeContent extends StatelessWidget {
 
                   if (state is TracksLoadedState) {
                     return Expanded(
-                      child: ListView.separated(
-                        separatorBuilder: (context, _) => const Divider(height: 1),
-                        itemCount: state.tracks.length + 3,
+                      child: ListView.builder(
+                        itemCount: state.tracks.length + 1,
                         itemBuilder: (context, index) {
-                          if (index == 0 || index == state.tracks.length + 1) {
-                            return const SizedBox.shrink();
-                          }
-                          if (index == state.tracks.length + 2) {
+                          if (index == state.tracks.length) {
                             return const SizedBox(height: 40);
                           }
-                          return TrackCard(track: state.tracks[index - 1]);
+                          return Column(
+                            children: [
+                              TrackCard(track: state.tracks[index]),
+                              const Divider(height: 1),
+                            ],
+                          );
                         },
+                        prototypeItem: Column(
+                          children: [
+                            TrackCard(track: Track.empty()),
+                            const Divider(height: 1),
+                          ],
+                        ),
                       ),
                     );
                   }

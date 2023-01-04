@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_adaptive_scaffold/flutter_adaptive_scaffold.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../bloc/player_bloc/player_bloc.dart';
+import '../models/track.dart';
 import '../widgets/bottom_player.dart';
 import '../widgets/main_body_content.dart';
 import '../widgets/navigations/web_navigation/side_navigation_rail.dart';
@@ -14,6 +17,9 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final playerBloc = context.watch<PlayerBloc>();
+    final hasCurrentTrack = playerBloc.currentTrack != Track.empty();
+
     return AdaptiveLayout(
       bodyRatio: 0.65,
       primaryNavigation: SlotLayout(
@@ -24,16 +30,19 @@ class HomePage extends StatelessWidget {
       ),
       body: SlotLayout(
         config: {
-          Breakpoints.standard: _body,
+          largeBreakpoint: _body(narrow: !hasCurrentTrack),
+          mediumBreakpoint: _body(narrow: false),
+          Breakpoints.small: _body(narrow: false),
         },
       ),
       secondaryBody: SlotLayout(
         config: {
-          largeBreakpoint: SlotLayout.from(
-            inAnimation: AdaptiveScaffold.fadeIn,
-            key: const Key('Secondary body large'),
-            builder: (_) => const SecondaryBodyContent(),
-          ),
+          if (hasCurrentTrack)
+            largeBreakpoint: SlotLayout.from(
+              inAnimation: AdaptiveScaffold.fadeIn,
+              key: const Key('secondary body'),
+              builder: (_) => const SecondaryBodyContent(),
+            ),
         },
       ),
       bottomNavigation: SlotLayout(
@@ -51,10 +60,10 @@ class HomePage extends StatelessWidget {
         builder: (_) => SideNavigationRail(extended: extended),
       );
 
-  SlotLayoutConfig get _body => SlotLayout.from(
+  SlotLayoutConfig _body({required bool narrow}) => SlotLayout.from(
         inAnimation: AdaptiveScaffold.stayOnScreen,
         key: const Key('body'),
-        builder: (_) => const MainBodyContent(),
+        builder: (_) => MainBodyContent(narrow: narrow),
       );
 
   SlotLayoutConfig get _bottomBar => SlotLayout.from(
