@@ -54,15 +54,13 @@ class _PlaylistPageState extends State<PlaylistPage> {
             )
           else
             Expanded(
-              child: ContentNarrower(
-                child: ListView.separated(
-                  separatorBuilder: (context, _) => const Divider(height: 1),
-                  itemCount: widget.playlist.tracks.length,
-                  itemBuilder: (context, index) => TrackCard(
-                    track: widget.playlist.tracks[index],
-                    containingPlaylist: widget.playlist,
-                    openedPlaylist: widget.playlist,
-                  ),
+              child: ListView.separated(
+                separatorBuilder: (context, _) => const Divider(height: 1),
+                itemCount: widget.playlist.tracks.length,
+                itemBuilder: (context, index) => TrackCard(
+                  track: widget.playlist.tracks[index],
+                  containingPlaylist: widget.playlist,
+                  openedPlaylist: widget.playlist,
                 ),
               ),
             ),

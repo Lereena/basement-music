@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../widgets/settings/theme_setting_line.dart';
-import '../widgets/wrappers/content_narrower.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -38,13 +37,11 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
           ),
         ),
-        ContentNarrower(
-          child: Column(
-            children: const [
-              SizedBox(height: 8),
-              ThemeSettingLine(),
-            ],
-          ),
+        Column(
+          children: const [
+            SizedBox(height: 8),
+            ThemeSettingLine(),
+          ],
         ),
       ],
     );

@@ -101,8 +101,8 @@ class _BlocProviderWrapperState extends State<BlocProviderWrapper> {
         BlocProvider<TrackProgressCubit>(
           create: (context) => TrackProgressCubit(_playerBloc),
         ),
-        BlocProvider<SideNavigationCubit>.value(
-          value: SideNavigationCubit(),
+        BlocProvider<EditTrackBloc>(
+          create: (context) => EditTrackBloc(_tracksRepository),
         ),
         BlocProvider<EditTrackBloc>(
           create: (context) => EditTrackBloc(_tracksRepository),

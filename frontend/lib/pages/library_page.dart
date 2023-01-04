@@ -8,7 +8,6 @@ import '../bloc/playlists_bloc/playlists_state.dart';
 import '../widgets/create_playlist.dart';
 import '../widgets/dialog.dart';
 import '../widgets/playlist_card.dart';
-import '../widgets/wrappers/content_narrower.dart';
 
 class LibraryPage extends StatefulWidget {
   const LibraryPage({super.key});
@@ -45,15 +44,13 @@ class _LibraryPageState extends State<LibraryPage> {
                 direction: Axis.vertical,
                 children: [
                   Expanded(
-                    child: ContentNarrower(
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        itemBuilder: (context, index) => PlaylistCard(
-                          playlist: state.playlists[index],
-                          onTap: () => navigationCubit.navigatePlaylist(state.playlists[index]),
-                        ),
-                        itemCount: state.playlists.length,
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) => PlaylistCard(
+                        playlist: state.playlists[index],
+                        onTap: () => navigationCubit.navigatePlaylist(state.playlists[index]),
                       ),
+                      itemCount: state.playlists.length,
                     ),
                   ),
                 ],

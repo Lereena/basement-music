@@ -2,25 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bloc/navigation_cubit/navigation_cubit.dart';
-import '../enums/pages_enum.dart';
-import '../pages/home_content_page.dart';
 import '../pages/library_page.dart';
 import '../pages/playlist_page.dart';
 import '../pages/search_page.dart';
 import '../pages/settings_page.dart';
+import '../pages/tracks_page.dart';
 import '../pages/upload/upload_page.dart';
 
-class MainContent extends StatelessWidget {
-  final PageNavigation selectedPage;
+class MainBodyContent extends StatelessWidget {
+  final bool narrow;
 
-  const MainContent({required this.selectedPage}) : super();
+  const MainBodyContent({super.key, this.narrow = false});
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: narrow ? 100 : 10),
       child: BlocBuilder<NavigationCubit, NavigationState>(
         builder: (context, state) {
-          if (state is NavigationHome) return HomeContent();
+          if (state is NavigationHome) return TracksPage();
           if (state is NavigationLibrary) return const LibraryPage();
           if (state is NavigationSearch) return const SearchPage();
           if (state is NavigationArtistsList) return _unimplemented(state);

@@ -4,8 +4,14 @@ import 'package:outline_search_bar/outline_search_bar.dart';
 class SearchField extends StatelessWidget {
   final Function(String) onSearch;
   final TextEditingController controller;
+  final FocusNode focusNode;
 
-  const SearchField({super.key, required this.onSearch, required this.controller});
+  const SearchField({
+    super.key,
+    required this.onSearch,
+    required this.controller,
+    required this.focusNode,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -17,6 +23,11 @@ class SearchField extends StatelessWidget {
       textEditingController: controller,
       onTypingFinished: onSearch,
       onSearchButtonPressed: onSearch,
+      onClearButtonPressed: (_) {
+        onSearch('');
+        focusNode.requestFocus();
+      },
+      focusNode: focusNode,
     );
   }
 }
