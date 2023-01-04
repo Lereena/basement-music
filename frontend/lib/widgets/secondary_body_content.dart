@@ -38,58 +38,56 @@ class SecondaryBodyContent extends StatelessWidget {
               ),
             ),
           ),
-          child: Flexible(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 3.w),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Cover(cover: track.cover, size: 27.w),
-                  const SizedBox(height: 20),
-                  TrackName(track: track, moving: true),
-                  Text(
-                    track.artist,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                  const SizedBox(height: 20),
-                  AnimatedProgressBar(value: progress.percentProgress),
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Flexible(
-                        child: Visibility(
-                          visible: false,
-                          maintainSize: true,
-                          maintainAnimation: true,
-                          maintainState: true,
-                          child: Row(
-                            children: const [
-                              ShuffleToggle(),
-                              RepeatToggle(),
-                            ],
-                          ),
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 3.w),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Cover(cover: track.cover, size: 27.w),
+                const SizedBox(height: 20),
+                TrackName(track: track, moving: true),
+                Text(
+                  track.artist,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontSize: 16),
+                ),
+                const SizedBox(height: 20),
+                AnimatedProgressBar(value: progress.percentProgress),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Flexible(
+                      child: Visibility(
+                        visible: false,
+                        maintainSize: true,
+                        maintainAnimation: true,
+                        maintainState: true,
+                        child: Row(
+                          children: const [
+                            ShuffleToggle(),
+                            RepeatToggle(),
+                          ],
                         ),
                       ),
-                      const Spacer(),
-                      PreviousButton(),
-                      if (state is PlayingPlayerState || state is ResumedPlayerState)
-                        const PauseButton()
-                      else if (state is PausedPlayerState || state is InitialPlayerState)
-                        PlayButton(track: track, state: state, isBottomPlayer: true),
-                      NextButton(),
-                      const Spacer(),
-                      Row(
-                        children: const [
-                          ShuffleToggle(),
-                          RepeatToggle(),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                    ),
+                    const Spacer(),
+                    PreviousButton(),
+                    if (state is PlayingPlayerState || state is ResumedPlayerState)
+                      const PauseButton()
+                    else if (state is PausedPlayerState || state is InitialPlayerState)
+                      PlayButton(track: track, state: state, isBottomPlayer: true),
+                    NextButton(),
+                    const Spacer(),
+                    Row(
+                      children: const [
+                        ShuffleToggle(),
+                        RepeatToggle(),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
         );

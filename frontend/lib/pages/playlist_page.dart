@@ -6,7 +6,6 @@ import '../bloc/playlists_bloc/playlists_bloc.dart';
 import '../models/playlist.dart';
 import '../widgets/buttons/underlined_button.dart';
 import '../widgets/track_card.dart';
-import '../widgets/wrappers/content_narrower.dart';
 
 class PlaylistPage extends StatefulWidget {
   final Playlist playlist;
