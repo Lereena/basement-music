@@ -4,7 +4,7 @@ WORKDIR /root/flutter
 
 RUN apt-get update && apt-get install -y curl xz-utils git
 
-ARG FLUTTER_SDK_LINK=https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.3.5-stable.tar.xz
+ARG FLUTTER_SDK_LINK=https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.3.10-stable.tar.xz
 RUN curl $FLUTTER_SDK_LINK --output flutter.tar.xz
 RUN tar -xf flutter.tar.xz
 ENV PATH="$PATH:/root/flutter/flutter/bin"
