@@ -16,7 +16,7 @@ COPY pubspec.yaml pubspec.lock ./
 RUN flutter pub get
 
 COPY ./ ./
-RUN flutter build web
+RUN flutter build web --release --web-renderer canvaskit
 
 FROM nginxinc/nginx-unprivileged:1.19-alpine
 
