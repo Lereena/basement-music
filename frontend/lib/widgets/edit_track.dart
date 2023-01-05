@@ -1,9 +1,11 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sizer/sizer.dart';
 
 import '../bloc/edit_track_bloc/edit_track_bloc.dart';
 import '../models/track.dart';
-import '../utils/input_field_with.dart';
 import 'buttons/styled_button.dart';
 import 'titled_field.dart';
 
@@ -79,18 +81,18 @@ class _EditTrackState extends State<EditTrack> {
               widget.titleText ?? Container(),
               const SizedBox(height: 20),
               TitledField(
-                title: 'Artist:',
+                title: 'Artist',
                 focusNode: artistFocusNode,
                 controller: artistController,
-                fieldWidth: inputFieldWidth(context),
+                fieldWidth: min(60.w, 400),
                 onSubmitted: (_) => titleFocusNode.requestFocus(),
               ),
               const SizedBox(height: 20),
               TitledField(
-                title: 'Title:',
+                title: 'Title',
                 focusNode: titleFocusNode,
                 controller: titleController,
-                fieldWidth: inputFieldWidth(context),
+                fieldWidth: min(60.w, 400),
                 onSubmitted: (_) => editTrackBloc.add(
                   LoadingEvent(
                     widget.track.id,

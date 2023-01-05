@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart';
+import 'dart:math';
 
-import '../../utils/input_field_with.dart';
+import 'package:flutter/material.dart';
+import 'package:sizer/sizer.dart';
 
 class StyledInputField extends StatelessWidget {
   final TextEditingController controller;
@@ -26,7 +27,7 @@ class StyledInputField extends StatelessWidget {
         enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(color: Theme.of(context).primaryColor),
         ),
-        constraints: BoxConstraints(maxWidth: inputFieldWidth(context)),
+        constraints: BoxConstraints(maxWidth: min(40.w, 400)),
         isDense: true,
         contentPadding: const EdgeInsets.all(8),
       ),

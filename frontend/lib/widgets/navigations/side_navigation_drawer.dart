@@ -31,7 +31,7 @@ class _SideNavigationDrawerState extends State<SideNavigationDrawer> {
             title: const Text('Home'),
             selected: _navigationCubit.state is NavigationTracks,
             onTap: () {
-              Navigator.pop(context);
+              Scaffold.of(context).closeDrawer();
               _navigationCubit.navigateHome();
             },
           ),
@@ -40,7 +40,7 @@ class _SideNavigationDrawerState extends State<SideNavigationDrawer> {
             title: const Text('Library'),
             selected: _navigationCubit.state is NavigationLibrary,
             onTap: () {
-              Navigator.pop(context);
+              Scaffold.of(context).closeDrawer();
               _navigationCubit.navigateLibrary();
             },
           ),
@@ -49,7 +49,7 @@ class _SideNavigationDrawerState extends State<SideNavigationDrawer> {
             title: const Text('Search'),
             selected: _navigationCubit.state is NavigationSearch,
             onTap: () {
-              Navigator.pop(context);
+              Scaffold.of(context).closeDrawer();
               _navigationCubit.navigateSearch();
             },
           ),
@@ -58,7 +58,7 @@ class _SideNavigationDrawerState extends State<SideNavigationDrawer> {
             title: const Text('Upload'),
             selected: _navigationCubit.state is NavigationUploadTrack,
             onTap: () {
-              Navigator.pop(context);
+              Scaffold.of(context).closeDrawer();
               _navigationCubit.navigateUploadTrack();
             },
           ),
@@ -68,7 +68,7 @@ class _SideNavigationDrawerState extends State<SideNavigationDrawer> {
             title: const Text('Settings'),
             selected: _navigationCubit.state is NavigationSettings,
             onTap: () {
-              Navigator.pop(context);
+              Scaffold.of(context).closeDrawer();
               _navigationCubit.navigateSettings();
             },
           ),

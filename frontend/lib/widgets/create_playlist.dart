@@ -1,10 +1,12 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sizer/sizer.dart';
 
 import '../bloc/playlist_creation_bloc/playlist_creation_bloc.dart';
 import '../bloc/playlist_creation_bloc/playlist_creation_event.dart';
 import '../bloc/playlist_creation_bloc/playlist_creation_state.dart';
-import '../utils/input_field_with.dart';
 import 'titled_field.dart';
 
 class CreatePlaylist extends StatefulWidget {
@@ -70,9 +72,9 @@ class _CreatePlaylistState extends State<CreatePlaylist> {
               ),
               const SizedBox(height: 20),
               TitledField(
-                title: 'Title: ',
+                title: 'Title',
                 controller: titleController,
-                fieldWidth: inputFieldWidth(context),
+                fieldWidth: min(40.w, 400),
                 focusNode: fieldFocusNode,
                 onSubmitted: (_) => createPlaylistBloc.add(
                   LoadingEvent(titleController.text),

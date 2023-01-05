@@ -22,9 +22,15 @@ class ResultPage extends StatelessWidget {
         if (result) SuccessIcon() else ErrorIcon(),
         const SizedBox(height: 20),
         if (result)
-          const Text('Track was successfully uploaded')
+          Text(
+            'Track was successfully uploaded',
+            style: Theme.of(context).textTheme.headline6,
+          )
         else
-          const Text('Track uploading is failed, please try again later'),
+          Text(
+            'Track uploading is failed, please try again later',
+            style: Theme.of(context).textTheme.headline6,
+          ),
         const SizedBox(height: 20),
         StyledButton(
           title: 'Upload other track',

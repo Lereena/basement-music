@@ -1,6 +1,9 @@
+import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sizer/sizer.dart';
 
 import '../../bloc/cacher_bloc/bloc/cacher_bloc.dart';
 import '../../models/playlist.dart';
@@ -22,26 +25,29 @@ class MoreButton extends StatelessWidget {
 
     return InkWell(
       child: const Icon(Icons.more_vert),
-      onTap: () async {
-        await showDialog(
+      onTap: () {
+        showDialog(
           context: context,
           builder: (context) => SimpleDialog(
             children: [
               SimpleDialogOption(
-                child: const Text('Edit track info'),
-                onPressed: () => showDialog(
-                  context: context,
-                  builder: (context) => CustomDialog(
-                    child: EditTrack(
-                      titleText: const Text(
-                        'Edit track info',
-                        style: TextStyle(fontSize: 24),
+                  child: const Text('Edit track info'),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    showDialog(
+                      context: context,
+                      builder: (context) => CustomDialog(
+                        width: min(80.w, 600),
+                        child: EditTrack(
+                          titleText: const Text(
+                            'Edit track info',
+                            style: TextStyle(fontSize: 24),
+                          ),
+                          track: track,
+                        ),
                       ),
-                      track: track,
-                    ),
-                  ),
-                ),
-              ),
+                    );
+                  }),
               const Divider(),
               SimpleDialogOption(
                 child: const Text('Add to playlist'),

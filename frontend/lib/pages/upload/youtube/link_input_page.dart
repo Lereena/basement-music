@@ -1,6 +1,8 @@
-import 'package:flutter/material.dart';
+import 'dart:math';
 
-import '../../../utils/input_field_with.dart';
+import 'package:flutter/material.dart';
+import 'package:sizer/sizer.dart';
+
 import '../../../widgets/buttons/styled_button.dart';
 
 class LinkInputPage extends StatelessWidget {
@@ -31,7 +33,7 @@ class LinkInputPage extends StatelessWidget {
         const SizedBox(height: 20),
         Container(
           alignment: Alignment.center,
-          width: inputFieldWidth(context),
+          width: min(70.w, 400),
           child: TextField(
             focusNode: focusNode,
             controller: linkController,

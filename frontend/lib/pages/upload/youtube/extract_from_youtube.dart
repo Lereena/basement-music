@@ -21,7 +21,7 @@ class ExtractFromYoutube extends StatelessWidget {
         BlocBuilder<TrackUploadingBloc, TrackUploadingState>(
           builder: (context, state) {
             if (state is LoadingState) {
-              return const CircularProgressIndicator();
+              return const Center(child: CircularProgressIndicator());
             }
 
             if (state is LinkInputState) {
@@ -43,10 +43,11 @@ class ExtractFromYoutube extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const CircularProgressIndicator(),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 40, horizontal: 40),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 40),
                     child: Text(
                       'You can leave this page, the uploading will continue',
+                      style: Theme.of(context).textTheme.headline6,
                       maxLines: 2,
                       textAlign: TextAlign.center,
                     ),

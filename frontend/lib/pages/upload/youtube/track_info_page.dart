@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:sizer/sizer.dart';
 
 import '../../../widgets/buttons/styled_button.dart';
 import '../../../widgets/titled_field.dart';
@@ -26,13 +27,17 @@ class TrackInfoPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final inputFieldWidth = min(MediaQuery.of(context).size.width / 1.5, 400).toDouble();
+    final inputFieldWidth = min(60.w, 400).toDouble();
     artistFocusNode.requestFocus();
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Text('Please check track info and change if incorrect'),
+        Text(
+          'Please check track info and change if incorrect',
+          style: Theme.of(context).textTheme.headline6,
+          textAlign: TextAlign.center,
+        ),
         const SizedBox(height: 20),
         TitledField(
           title: 'Artist',
