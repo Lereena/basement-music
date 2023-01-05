@@ -3,9 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../bloc/add_to_playlist_bloc/add_to_playlist_bloc.dart';
-import '../dialog.dart';
 import '../icons/error_icon.dart';
 import '../icons/success_icon.dart';
+import 'dialog.dart';
 
 class AddToPlaylistDialog extends StatefulWidget {
   final String trackId;

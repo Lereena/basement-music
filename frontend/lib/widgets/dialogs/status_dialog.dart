@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../dialog.dart';
+import 'dialog.dart';
 
 class StatusDialog extends StatelessWidget {
   final bool success;

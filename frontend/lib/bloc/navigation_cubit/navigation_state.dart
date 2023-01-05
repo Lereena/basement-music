@@ -3,7 +3,7 @@ part of 'navigation_cubit.dart';
 @immutable
 abstract class NavigationState {}
 
-class NavigationHome extends NavigationState {}
+class NavigationTracks extends NavigationState {}
 
 class NavigationLibrary extends NavigationState {}
 

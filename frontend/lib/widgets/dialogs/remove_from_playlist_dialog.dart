@@ -5,9 +5,9 @@ import 'package:sizer/sizer.dart';
 import '../../bloc/remove_from_playlist_bloc/remove_from_playlist_cubit.dart';
 import '../../models/playlist.dart';
 import '../../models/track.dart';
-import '../dialog.dart';
 import '../icons/error_icon.dart';
 import '../icons/success_icon.dart';
+import 'dialog.dart';
 
 class RemoveFromPlaylistDialog extends StatefulWidget {
   final Track track;

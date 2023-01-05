@@ -20,7 +20,7 @@ class MainBodyContent extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: narrow ? 100 : 10),
       child: BlocBuilder<NavigationCubit, NavigationState>(
         builder: (context, state) {
-          if (state is NavigationHome) return TracksPage();
+          if (state is NavigationTracks) return TracksPage();
           if (state is NavigationLibrary) return const LibraryPage();
           if (state is NavigationSearch) return const SearchPage();
           if (state is NavigationArtistsList) return _unimplemented(state);

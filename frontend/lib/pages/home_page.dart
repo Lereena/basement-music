@@ -6,8 +6,9 @@ import '../bloc/player_bloc/player_bloc.dart';
 import '../models/track.dart';
 import '../widgets/bottom_player.dart';
 import '../widgets/main_body_content.dart';
-import '../widgets/navigations/web_navigation/side_navigation_rail.dart';
+import '../widgets/navigations/side_navigation_rail.dart';
 import '../widgets/secondary_body_content.dart';
+import '../widgets/wrappers/small_screen_navigation_wrapper.dart';
 
 const largeBreakpoint = WidthPlatformBreakpoint(begin: 1000);
 const mediumBreakpoint = WidthPlatformBreakpoint(begin: 600, end: 1000);
@@ -32,7 +33,7 @@ class HomePage extends StatelessWidget {
         config: {
           largeBreakpoint: _body(narrow: !hasCurrentTrack),
           mediumBreakpoint: _body(narrow: false),
-          Breakpoints.small: _body(narrow: false),
+          Breakpoints.small: _body(narrow: false, small: true),
         },
       ),
       secondaryBody: SlotLayout(
@@ -60,15 +61,19 @@ class HomePage extends StatelessWidget {
         builder: (_) => SideNavigationRail(extended: extended),
       );
 
-  SlotLayoutConfig _body({required bool narrow}) => SlotLayout.from(
+  SlotLayoutConfig _body({required bool narrow, bool small = false}) => SlotLayout.from(
         inAnimation: AdaptiveScaffold.stayOnScreen,
         key: const Key('body'),
-        builder: (_) => MainBodyContent(narrow: narrow),
+        builder: (context) => small
+            ? SmallScreenNavigationWrapper(
+                child: MainBodyContent(narrow: narrow),
+              )
+            : MainBodyContent(narrow: narrow),
       );
 
   SlotLayoutConfig get _bottomBar => SlotLayout.from(
         inAnimation: AdaptiveScaffold.bottomToTop,
-        key: const Key('bottom bar'),
+        key: const Key('bottom'),
         builder: (_) => BottomPlayer(),
       );
 }

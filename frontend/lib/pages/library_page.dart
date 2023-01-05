@@ -6,7 +6,7 @@ import '../bloc/navigation_cubit/navigation_cubit.dart';
 import '../bloc/playlists_bloc/playlists_bloc.dart';
 import '../bloc/playlists_bloc/playlists_state.dart';
 import '../widgets/create_playlist.dart';
-import '../widgets/dialog.dart';
+import '../widgets/dialogs/dialog.dart';
 import '../widgets/playlist_card.dart';
 
 class LibraryPage extends StatefulWidget {

@@ -6,9 +6,9 @@ import '../../models/playlist.dart';
 part 'navigation_state.dart';
 
 class NavigationCubit extends Cubit<NavigationState> {
-  NavigationCubit() : super(NavigationHome());
+  NavigationCubit() : super(NavigationTracks());
 
-  void navigateHome() => emit(NavigationHome());
+  void navigateHome() => emit(NavigationTracks());
 
   void navigateLibrary() => emit(NavigationLibrary());
 

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_adaptive_scaffold/flutter_adaptive_scaffold.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../bloc/navigation_cubit/navigation_cubit.dart';
-import '../../app_logo.dart';
+import '../../bloc/navigation_cubit/navigation_cubit.dart';
+import '../app_logo.dart';
 import 'rail_theme.dart';
 
 class SideNavigationRail extends StatefulWidget {
