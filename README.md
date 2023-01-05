@@ -1,4 +1,5 @@
-[![style: lint](https://img.shields.io/badge/style-lint-4BC0F5.svg)](https://pub.dev/packages/lint)
+[![style: lint](https://img.shields.io/badge/style-lint-4BC0F5.svg)](https://pub.dev/packages/lint) 
+[![Web build and deploy](https://github.com/Lereena/basement-music/actions/workflows/web-build-deploy.yml/badge.svg)](https://github.com/Lereena/basement-music/actions/workflows/web-build-deploy.yml)
 
 # Basement
 
