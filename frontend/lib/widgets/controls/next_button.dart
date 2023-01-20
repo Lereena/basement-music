@@ -6,6 +6,8 @@ import '../../bloc/player_bloc/player_event.dart';
 import '../../bloc/player_bloc/player_state.dart';
 
 class NextButton extends StatelessWidget {
+  const NextButton({super.key});
+
   @override
   Widget build(BuildContext context) {
     final playerBloc = BlocProvider.of<PlayerBloc>(context);
