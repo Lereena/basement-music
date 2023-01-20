@@ -9,7 +9,11 @@ abstract class TrackUploadingState extends Equatable {
 
 class LoadingState extends TrackUploadingState {}
 
-class LinkInputState extends TrackUploadingState {}
+class LinkInputState extends TrackUploadingState {
+  final String? url;
+
+  const LinkInputState({this.url});
+}
 
 class LinkInputErrorState extends TrackUploadingState {}
 

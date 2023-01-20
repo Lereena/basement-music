@@ -6,15 +6,16 @@ import 'package:sizer/sizer.dart';
 import '../../../widgets/buttons/styled_button.dart';
 
 class LinkInputPage extends StatelessWidget {
-  final Function(String) onFetchPress;
-
-  final linkController = TextEditingController();
+  final void Function(String) onFetchPress;
+  final String? url;
 
   LinkInputPage({
     super.key,
     required this.onFetchPress,
+    this.url,
   });
 
+  late final linkController = TextEditingController(text: url ?? '');
   final focusNode = FocusNode();
 
   @override

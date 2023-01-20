@@ -12,14 +12,16 @@ part 'track_uploading_state.dart';
 class TrackUploadingBloc extends Bloc<TrackUploadingEvent, TrackUploadingState> {
   final TracksRepository _tracksRepository;
 
-  TrackUploadingBloc(this._tracksRepository) : super(LinkInputState()) {
+  String link = "";
+
+  TrackUploadingBloc(this._tracksRepository) : super(const LinkInputState()) {
     on<Start>(_onStart);
     on<LinkEntered>(_onLinkEntered);
     on<InfoChecked>(_onInfoChecked);
   }
 
   FutureOr<void> _onStart(Start event, Emitter<TrackUploadingState> emit) {
-    emit(LinkInputState());
+    emit(LinkInputState(url: event.url));
   }
 
   FutureOr<void> _onLinkEntered(LinkEntered event, Emitter<TrackUploadingState> emit) async {
@@ -29,6 +31,8 @@ class TrackUploadingBloc extends Bloc<TrackUploadingEvent, TrackUploadingState> 
     }
 
     emit(LoadingState());
+
+    link = event.link;
 
     late MetaDataModel metadata;
     try {
@@ -65,6 +69,8 @@ class TrackUploadingBloc extends Bloc<TrackUploadingEvent, TrackUploadingState> 
     emit(UploadingStartedState());
 
     final result = await _tracksRepository.uploadYtTrack(event.url, event.artist, event.title);
+
+    if (link != event.url) return; // when we are already uploading other track
 
     if (result) {
       emit(SuccessfulUploadState());

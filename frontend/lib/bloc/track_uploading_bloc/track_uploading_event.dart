@@ -7,7 +7,11 @@ abstract class TrackUploadingEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class Start extends TrackUploadingEvent {}
+class Start extends TrackUploadingEvent {
+  final String? url;
+
+  const Start({this.url});
+}
 
 class LinkEntered extends TrackUploadingEvent {
   final String link;

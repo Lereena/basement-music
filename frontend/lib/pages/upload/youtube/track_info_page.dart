@@ -9,13 +9,15 @@ import '../../../widgets/titled_field.dart';
 class TrackInfoPage extends StatelessWidget {
   final String artist;
   final String title;
-  final Function(String, String) onUploadPress;
+  final void Function(String, String) onUploadPress;
+  final void Function() onCancel;
 
   TrackInfoPage({
     super.key,
     required this.artist,
     required this.title,
     required this.onUploadPress,
+    required this.onCancel,
   });
 
   late final titleController = TextEditingController(text: title);
@@ -54,11 +56,16 @@ class TrackInfoPage extends StatelessWidget {
           focusNode: titleFocusNode,
           onSubmitted: (_) => uploadFocusNode.requestFocus(),
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 40),
         StyledButton(
           title: 'Upload',
           onPressed: () => onUploadPress(artistController.text, titleController.text),
           focusNode: uploadFocusNode,
+        ),
+        const SizedBox(height: 20),
+        TextButton(
+          onPressed: onCancel,
+          child: const Text('Cancel'),
         ),
       ],
     );

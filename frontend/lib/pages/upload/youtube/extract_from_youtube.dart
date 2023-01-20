@@ -27,6 +27,7 @@ class ExtractFromYoutube extends StatelessWidget {
             if (state is LinkInputState) {
               return LinkInputPage(
                 onFetchPress: (link) => trackUploadingBloc.add(LinkEntered(link)),
+                url: state.url,
               );
             }
 
@@ -35,6 +36,7 @@ class ExtractFromYoutube extends StatelessWidget {
                 artist: state.artist,
                 title: state.title,
                 onUploadPress: (artist, title) => trackUploadingBloc.add(InfoChecked(state.url, artist, title)),
+                onCancel: () => trackUploadingBloc.add(Start(url: trackUploadingBloc.link)),
               );
             }
 
@@ -55,7 +57,7 @@ class ExtractFromYoutube extends StatelessWidget {
                   StyledButton(
                     title: 'Upload other track',
                     autofocus: true,
-                    onPressed: () => trackUploadingBloc.add(Start()),
+                    onPressed: () => trackUploadingBloc.add(const Start()),
                   )
                 ],
               );
@@ -64,12 +66,12 @@ class ExtractFromYoutube extends StatelessWidget {
             if (state is SuccessfulUploadState) {
               return ResultPage(
                 result: true,
-                onUploadOtherTrackPress: () => trackUploadingBloc.add(Start()),
+                onUploadOtherTrackPress: () => trackUploadingBloc.add(const Start()),
               );
             }
 
             return ErrorPage(
-              onTryAgainPress: () => trackUploadingBloc.add(Start()),
+              onTryAgainPress: () => trackUploadingBloc.add(const Start()),
             );
           },
         ),
