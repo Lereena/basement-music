@@ -31,23 +31,24 @@ class MoreButton extends StatelessWidget {
           builder: (context) => SimpleDialog(
             children: [
               SimpleDialogOption(
-                  child: const Text('Edit track info'),
-                  onPressed: () {
-                    Navigator.pop(context);
-                    showDialog(
-                      context: context,
-                      builder: (context) => CustomDialog(
-                        width: min(80.w, 600),
-                        child: EditTrack(
-                          titleText: const Text(
-                            'Edit track info',
-                            style: TextStyle(fontSize: 24),
-                          ),
-                          track: track,
+                child: const Text('Edit track info'),
+                onPressed: () {
+                  Navigator.pop(context);
+                  showDialog(
+                    context: context,
+                    builder: (context) => CustomDialog(
+                      width: min(80.w, 600),
+                      child: EditTrack(
+                        titleText: const Text(
+                          'Edit track info',
+                          style: TextStyle(fontSize: 24),
                         ),
+                        track: track,
                       ),
-                    );
-                  }),
+                    ),
+                  );
+                },
+              ),
               const Divider(),
               SimpleDialogOption(
                 child: const Text('Add to playlist'),

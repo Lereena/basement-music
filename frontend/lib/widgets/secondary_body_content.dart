@@ -43,7 +43,11 @@ class SecondaryBodyContent extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Cover(cover: track.cover, size: 27.w),
+                Cover(
+                  key: const Key('album_cover'),
+                  cover: track.cover,
+                  size: 27.w,
+                ),
                 const SizedBox(height: 20),
                 TrackName(track: track, moving: true),
                 Text(
@@ -57,31 +61,30 @@ class SecondaryBodyContent extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Visibility(
-                      visible: false,
-                      maintainSize: true,
-                      maintainAnimation: true,
-                      maintainState: true,
+                    SizedBox(
+                      width: 60,
+                      child: Text(
+                        progress.stringProgress,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                    ),
+                    const Spacer(),
+                    const PreviousButton(),
+                    if (state is PlayingPlayerState || state is ResumedPlayerState)
+                      const PauseButton()
+                    else if (state is PausedPlayerState || state is InitialPlayerState)
+                      PlayButton(track: track, state: state, isBottomPlayer: true),
+                    const NextButton(),
+                    const Spacer(),
+                    SizedBox(
+                      width: 60,
                       child: Row(
                         children: const [
                           ShuffleToggle(),
                           RepeatToggle(),
                         ],
                       ),
-                    ),
-                    const Spacer(),
-                    PreviousButton(),
-                    if (state is PlayingPlayerState || state is ResumedPlayerState)
-                      const PauseButton()
-                    else if (state is PausedPlayerState || state is InitialPlayerState)
-                      PlayButton(track: track, state: state, isBottomPlayer: true),
-                    NextButton(),
-                    const Spacer(),
-                    Row(
-                      children: const [
-                        ShuffleToggle(),
-                        RepeatToggle(),
-                      ],
                     ),
                   ],
                 ),

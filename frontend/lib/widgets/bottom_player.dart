@@ -34,12 +34,12 @@ class BottomPlayer extends StatelessWidget {
                 padding: const EdgeInsets.all(10),
                 child: Row(
                   children: [
-                    PreviousButton(),
+                    const PreviousButton(),
                     if (state is PlayingPlayerState || state is ResumedPlayerState)
                       const PauseButton()
                     else if (state is PausedPlayerState || state is InitialPlayerState)
                       PlayButton(track: state.currentTrack, state: state, isBottomPlayer: true),
-                    NextButton(),
+                    const NextButton(),
                     const SizedBox(width: 15),
                     if (state is PausedPlayerState || state is PlayingPlayerState || state is ResumedPlayerState)
                       Image.asset(
