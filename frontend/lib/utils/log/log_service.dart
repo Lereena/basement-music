@@ -31,12 +31,4 @@ ${DateTime.now().toUtc()} $message\n''';
       log(output);
     }
   }
-
-  static void recordFlutterError(FlutterErrorDetails err) {
-    if (!kReleaseMode) {
-      kIsWeb ? debugPrint(err.exception.toString()) : devlog.log(err.exception.toString());
-    } else if (!kIsWeb) {
-      log(err.exception.toString());
-    }
-  }
 }

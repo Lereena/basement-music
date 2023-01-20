@@ -53,3 +53,6 @@ backend/.work
 docker-compose-dev.yaml
 backend/music
 backend/server_basement_music
+
+GoogleService-Info.plist
+google-services.json

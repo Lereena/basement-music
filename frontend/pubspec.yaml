@@ -27,6 +27,8 @@ dependencies:
   cupertino_icons: ^1.0.2
   dotted_border: ^2.0.0
   equatable: ^2.0.3
+  firebase_core: ^2.4.1
+  firebase_crashlytics: ^3.0.11
   flex_color_scheme: ^6.0.0
   flutter:
     sdk: flutter
