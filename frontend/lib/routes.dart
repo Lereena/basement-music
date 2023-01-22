@@ -1,3 +1,4 @@
+import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'models/playlist.dart';
@@ -16,12 +17,36 @@ MaterialPageRoute<dynamic> onGenerateRoute(RouteSettings settings) {
       return MaterialPageRoute(builder: (context) => PlaylistPage(playlist: playlist));
     case NavigationRoute.upload:
       return MaterialPageRoute(builder: (context) => const UploadPage());
+    case NavigationRoute.signIn:
+      return MaterialPageRoute(
+        builder: (context) => SelectionArea(
+          child: SignInScreen(
+            providers: [EmailAuthProvider()],
+            actions: [
+              AuthStateChangeAction<SignedIn>((context, state) {
+                Navigator.pushReplacementNamed(context, NavigationRoute.profile.name);
+              }),
+            ],
+          ),
+        ),
+      );
+    case NavigationRoute.profile:
+      return MaterialPageRoute(
+        builder: (context) => ProfileScreen(
+          providers: [EmailAuthProvider()],
+          actions: [
+            SignedOutAction((context) {
+              Navigator.pushReplacementNamed(context, NavigationRoute.signIn.name);
+            }),
+          ],
+        ),
+      );
   }
 
   throw Exception('No route with name ${settings.name}');
 }
 
-enum NavigationRoute { initial, settings, playlist, upload }
+enum NavigationRoute { signIn, profile, initial, settings, playlist, upload }
 
 extension Name on NavigationRoute {
   String get name {
@@ -34,6 +59,10 @@ extension Name on NavigationRoute {
         return '/playlist';
       case NavigationRoute.upload:
         return '/upload';
+      case NavigationRoute.signIn:
+        return '/signIn';
+      case NavigationRoute.profile:
+        return '/profile';
     }
   }
 }
@@ -49,6 +78,10 @@ extension Route on String {
         return NavigationRoute.playlist;
       case '/upload':
         return NavigationRoute.upload;
+      case '/signIn':
+        return NavigationRoute.signIn;
+      case '/profile':
+        return NavigationRoute.profile;
       default:
         throw Exception('No route with name $this');
     }
