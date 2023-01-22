@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:outline_search_bar/outline_search_bar.dart';
 
 class SearchField extends StatelessWidget {
-  final Function(String) onSearch;
+  final void Function(String) onSearch;
   final TextEditingController controller;
   final FocusNode focusNode;
 
@@ -15,19 +14,24 @@ class SearchField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return OutlineSearchBar(
-      borderColor: Theme.of(context).primaryColor,
-      searchButtonIconColor: Theme.of(context).primaryColor,
-      clearButtonColor: Theme.of(context).primaryColor.withOpacity(0.3),
-      clearButtonIconColor: Theme.of(context).backgroundColor,
-      textEditingController: controller,
-      onTypingFinished: onSearch,
-      onSearchButtonPressed: onSearch,
-      onClearButtonPressed: (_) {
-        onSearch('');
-        focusNode.requestFocus();
-      },
+    return TextField(
       focusNode: focusNode,
+      controller: controller,
+      textAlign: TextAlign.left,
+      textInputAction: TextInputAction.search,
+      style: Theme.of(context).textTheme.headline6,
+      onSubmitted: (text) => onSearch(text),
+      decoration: InputDecoration(
+        suffixIcon: InkWell(
+          hoverColor: Theme.of(context).primaryColor.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(30),
+          onTap: () {
+            focusNode.unfocus();
+            onSearch(controller.text);
+          },
+          child: const Icon(Icons.search, size: 30),
+        ),
+      ),
     );
   }
 }
