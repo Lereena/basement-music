@@ -1,8 +1,7 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:marquee_text/marquee_text.dart';
 
 import '../models/track.dart';
-import 'wrappers/overflow_sensitive_marqee.dart';
 
 class TrackName extends StatelessWidget {
   final Track track;
@@ -19,16 +18,16 @@ class TrackName extends StatelessWidget {
     return SizedBox(
       height: 22 * MediaQuery.of(context).textScaleFactor,
       child: moving
-          ? OverflowSensitiveMarquee(
-              track.title,
+          ? MarqueeText(
+              text: TextSpan(text: track.title),
               style: const TextStyle(fontSize: 18),
+              speed: 10,
+              textAlign: TextAlign.start,
             )
-          : AutoSizeText(
+          : Text(
               track.title,
-              overflow: TextOverflow.ellipsis,
-              minFontSize: 18,
-              maxFontSize: 18,
               style: const TextStyle(fontSize: 18),
+              overflow: TextOverflow.ellipsis,
             ),
     );
   }
