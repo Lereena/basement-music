@@ -13,6 +13,7 @@ class TracksPage extends StatelessWidget {
     return BlocBuilder<HomeContentCubit, HomeContentState>(
       builder: (context, state) {
         return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             BlocBuilder<TracksBloc, TracksState>(
               builder: (context, state) {

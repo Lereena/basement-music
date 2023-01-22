@@ -21,7 +21,8 @@ environment:
   sdk: ">=2.18.0 <3.0.0"
 
 dependencies:
-  audioplayers: ^1.0.1
+  audio_service: ^0.18.9
+  audioplayers: ^2.0.0
   auto_size_text: ^3.0.0
   bloc: ^8.0.3
   cupertino_icons: ^1.0.2

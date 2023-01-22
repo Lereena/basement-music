@@ -24,24 +24,31 @@ import 'shortcuts_wrapper.dart';
 
 class BlocProviderWrapper extends StatefulWidget {
   final Widget child;
+  final ApiService apiService;
 
-  const BlocProviderWrapper({super.key, required this.child});
+  const BlocProviderWrapper({
+    super.key,
+    required this.apiService,
+    required this.child,
+  });
 
   @override
   State<BlocProviderWrapper> createState() => _BlocProviderWrapperState();
 }
 
 class _BlocProviderWrapperState extends State<BlocProviderWrapper> {
-  final _apiService = ApiService();
+  late final _tracksRepository = TracksRepository(widget.apiService);
+  late final _playlistsRepository = PlaylistsRepository(widget.apiService);
 
-  late final _tracksRepository = TracksRepository(_apiService);
-  late final _playlistsRepository = PlaylistsRepository(_apiService);
-
-  late final _cacherBloc = CacherBloc(_apiService);
-  late final _settingsBloc = SettingsBloc(_apiService);
+  late final _cacherBloc = CacherBloc(widget.apiService);
+  late final _settingsBloc = SettingsBloc(widget.apiService);
   late final _tracksBloc = TracksBloc(_tracksRepository);
   late final _playlistsBloc = PlaylistsBloc(_playlistsRepository);
-  late final _playerBloc = PlayerBloc(_apiService, _settingsBloc, _tracksRepository, _cacherBloc);
+  late final _playerBloc = PlayerBloc(
+    _settingsBloc,
+    _tracksRepository,
+    _cacherBloc,
+  );
 
   @override
   void initState() {

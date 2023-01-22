@@ -8,12 +8,16 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:url_strategy/url_strategy.dart';
 
+import 'api_service.dart';
+import 'audio_player_handler.dart';
 import 'bloc/settings_bloc/settings_bloc.dart';
 import 'bloc_provider_wrapper.dart';
 import 'firebase_options.dart';
 import 'pages/home_page.dart';
 import 'routes.dart';
 import 'theme/custom_theme.dart';
+
+late final AudioPlayerHandler audioHandler;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,16 +37,24 @@ void main() async {
 
   setPathUrlStrategy();
 
+  final apiService = ApiService();
+  initAudioHandler(apiService);
+
   HydratedBlocOverrides.runZoned(
-    () => runApp(BasementMusic()),
+    () => runApp(BasementMusic(apiService: apiService)),
     storage: storage,
   );
 }
 
 class BasementMusic extends StatelessWidget {
+  final ApiService apiService;
+
+  const BasementMusic({super.key, required this.apiService});
+
   @override
   Widget build(BuildContext context) {
     return BlocProviderWrapper(
+      apiService: apiService,
       child: BlocBuilder<SettingsBloc, SettingsState>(
         builder: (context, settingsState) {
           return Sizer(
