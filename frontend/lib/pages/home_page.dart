@@ -41,7 +41,7 @@ class HomePage extends StatelessWidget {
             largeBreakpoint: SlotLayout.from(
               inAnimation: AdaptiveScaffold.fadeIn,
               key: const Key('secondary body'),
-              builder: (_) => const SecondaryBodyContent(),
+              builder: (_) => const SelectionArea(child: SecondaryBodyContent()),
             ),
         },
       ),
@@ -57,21 +57,23 @@ class HomePage extends StatelessWidget {
   SlotLayoutConfig _navigationRail({required bool extended}) => SlotLayout.from(
         key: Key('navigation $extended'),
         inAnimation: AdaptiveScaffold.fadeIn,
-        builder: (_) => SideNavigationRail(extended: extended),
+        builder: (_) => SelectionArea(child: SideNavigationRail(extended: extended)),
       );
 
   SlotLayoutConfig _body({required bool narrow, bool drawerNavigation = false}) => SlotLayout.from(
         inAnimation: AdaptiveScaffold.stayOnScreen,
         key: const Key('body'),
-        builder: (context) => MainBodyContent(
-          narrow: narrow,
-          drawerNavigation: drawerNavigation,
+        builder: (context) => SelectionArea(
+          child: MainBodyContent(
+            narrow: narrow,
+            drawerNavigation: drawerNavigation,
+          ),
         ),
       );
 
   SlotLayoutConfig get _bottomBar => SlotLayout.from(
         inAnimation: AdaptiveScaffold.bottomToTop,
         key: const Key('bottom'),
-        builder: (_) => BottomPlayer(),
+        builder: (_) => SelectionArea(child: BottomPlayer()),
       );
 }
