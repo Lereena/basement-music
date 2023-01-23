@@ -40,7 +40,7 @@ dependencies:
   flutter_search_bar: ^2.1.0
   http: ^0.13.3
   http_parser: ^4.0.0
-  hydrated_bloc: ^8.1.0
+  hydrated_bloc: ^9.0.0
   js: ^0.6.4
   lint: ^1.10.0
   marquee_text: ^2.5.0+1

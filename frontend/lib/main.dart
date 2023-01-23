@@ -17,8 +17,6 @@ import 'pages/home_page.dart';
 import 'routes.dart';
 import 'theme/custom_theme.dart';
 
-late final AudioPlayerHandler audioHandler;
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -31,30 +29,30 @@ void main() async {
     return true;
   };
 
-  final storage = await HydratedStorage.build(
+  HydratedBloc.storage = await HydratedStorage.build(
     storageDirectory: kIsWeb ? HydratedStorage.webStorageDirectory : await getApplicationDocumentsDirectory(),
   );
 
   setPathUrlStrategy();
 
   final apiService = ApiService();
-  initAudioHandler(apiService);
+  final settingsBloc = SettingsBloc();
+  initAudioHandler(apiService, settingsBloc);
 
-  HydratedBlocOverrides.runZoned(
-    () => runApp(BasementMusic(apiService: apiService)),
-    storage: storage,
-  );
+  runApp(BasementMusic(apiService: apiService, settingsBloc: settingsBloc));
 }
 
 class BasementMusic extends StatelessWidget {
   final ApiService apiService;
+  final SettingsBloc settingsBloc;
 
-  const BasementMusic({super.key, required this.apiService});
+  const BasementMusic({super.key, required this.apiService, required this.settingsBloc});
 
   @override
   Widget build(BuildContext context) {
     return BlocProviderWrapper(
       apiService: apiService,
+      settingsBloc: settingsBloc,
       child: BlocBuilder<SettingsBloc, SettingsState>(
         builder: (context, settingsState) {
           return Sizer(

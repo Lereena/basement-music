@@ -26,9 +26,3 @@ class SetDarkTheme extends SettingsEvent {
 
   const SetDarkTheme(this.darkThemeValue);
 }
-
-class SetServerAddress extends SettingsEvent {
-  final String serverAddressValue;
-
-  const SetServerAddress(this.serverAddressValue);
-}
