@@ -6,7 +6,6 @@ import '../bloc/player_bloc/player_bloc.dart';
 import '../bloc/player_bloc/player_state.dart';
 import '../bloc/track_progress_cubit/track_progress_cubit.dart';
 import '../models/track.dart';
-import 'animated_progress_bar.dart';
 import 'controls/next_button.dart';
 import 'controls/pause_button.dart';
 import 'controls/play_button.dart';
@@ -15,6 +14,7 @@ import 'controls/repeat_toggle.dart';
 import 'controls/shuffle_toggle.dart';
 import 'cover.dart';
 import 'track_name.dart';
+import 'track_progress_indicator.dart';
 
 class SecondaryBodyContent extends StatelessWidget {
   const SecondaryBodyContent({super.key});
@@ -56,7 +56,9 @@ class SecondaryBodyContent extends StatelessWidget {
                   style: const TextStyle(fontSize: 16),
                 ),
                 const SizedBox(height: 20),
-                AnimatedProgressBar(value: progress.percentProgress),
+                TrackProgressIndicator(
+                  percentProgress: progress.percentProgress,
+                ),
                 const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -71,10 +73,16 @@ class SecondaryBodyContent extends StatelessWidget {
                     ),
                     const Spacer(),
                     const PreviousButton(),
-                    if (state is PlayingPlayerState || state is ResumedPlayerState)
+                    if (state is PlayingPlayerState ||
+                        state is ResumedPlayerState)
                       const PauseButton()
-                    else if (state is PausedPlayerState || state is InitialPlayerState)
-                      PlayButton(track: track, state: state, isBottomPlayer: true),
+                    else if (state is PausedPlayerState ||
+                        state is InitialPlayerState)
+                      PlayButton(
+                        track: track,
+                        state: state,
+                        isBottomPlayer: true,
+                      ),
                     const NextButton(),
                     const Spacer(),
                     SizedBox(
