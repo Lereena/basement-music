@@ -14,11 +14,11 @@ abstract class LogService {
 ${DateTime.now().toUtc()} $message\n''';
 
     if (exception != null) {
-      output += 'Exception: ${exception.toString()}\n';
+      output += 'Exception: $exception\n';
     }
 
     if (errorObject != null) {
-      output += 'Error: ${errorObject.toString()}\n';
+      output += 'Error: $errorObject\n';
     }
 
     output += '--------------------------------------------------------';

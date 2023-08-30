@@ -33,7 +33,7 @@ class StyledInputField extends StatelessWidget {
       ),
       focusNode: focusNode,
       controller: controller,
-      style: Theme.of(context).textTheme.headline6,
+      style: Theme.of(context).textTheme.titleLarge,
       onSubmitted: onSubmitted,
     );
   }

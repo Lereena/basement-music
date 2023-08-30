@@ -24,7 +24,7 @@ class BottomPlayer extends StatelessWidget {
         if (state.currentTrack == Track.empty()) return Container(height: 0);
 
         return ColoredBox(
-          color: Theme.of(context).backgroundColor,
+          color: Theme.of(context).colorScheme.background,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [

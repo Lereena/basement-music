@@ -40,7 +40,7 @@ class _AddToPlaylistDialogState extends State<AddToPlaylistDialog> {
                   padding: const EdgeInsets.symmetric(vertical: 20),
                   child: Text(
                     'Choose playlist',
-                    style: Theme.of(context).textTheme.headline5,
+                    style: Theme.of(context).textTheme.headlineSmall,
                   ),
                 ),
                 const Divider(

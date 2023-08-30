@@ -85,10 +85,10 @@ class SecondaryBodyContent extends StatelessWidget {
                       ),
                     const NextButton(),
                     const Spacer(),
-                    SizedBox(
+                    const SizedBox(
                       width: 60,
                       child: Row(
-                        children: const [
+                        children: [
                           ShuffleToggle(),
                           RepeatToggle(),
                         ],

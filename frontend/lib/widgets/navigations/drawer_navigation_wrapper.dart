@@ -33,7 +33,7 @@ class DrawerNavigationWrapper extends StatelessWidget {
                 ),
               )
             : null,
-        backgroundColor: Theme.of(context).backgroundColor,
+        backgroundColor: Theme.of(context).colorScheme.background,
       ),
       drawer: drawerNavigation ? const SideNavigationDrawer() : null,
       body: child,

@@ -30,7 +30,7 @@ class PlaylistCacheAction extends StatelessWidget {
               ),
               CircularProgressIndicator(
                 color: Theme.of(context).shadowColor,
-              )
+              ),
             ],
           );
         }

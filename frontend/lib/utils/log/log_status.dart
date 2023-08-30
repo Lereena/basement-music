@@ -6,6 +6,6 @@ class LogStatus {
 
 LogStatus getLogStatus() {
   final status = LogStatus();
-  signUp((res) => {status.isDebug = res});
+  signUp((res) => status.isDebug = res);
   return status;
 }

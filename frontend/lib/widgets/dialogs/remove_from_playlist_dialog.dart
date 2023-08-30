@@ -58,7 +58,7 @@ class _RemoveFromPlaylistDialogState extends State<RemoveFromPlaylistDialog> {
                           text: '${widget.playlist?.title} ',
                           style: const TextStyle(fontStyle: FontStyle.italic),
                         ),
-                      const TextSpan(text: 'playlist?')
+                      const TextSpan(text: 'playlist?'),
                     ],
                   ),
                 ),

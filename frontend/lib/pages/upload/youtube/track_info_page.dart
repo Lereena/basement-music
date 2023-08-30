@@ -37,7 +37,7 @@ class TrackInfoPage extends StatelessWidget {
       children: [
         Text(
           'Please check track info and change if incorrect',
-          style: Theme.of(context).textTheme.headline6,
+          style: Theme.of(context).textTheme.titleLarge,
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 20),

@@ -28,7 +28,7 @@ class LinkInputPage extends StatelessWidget {
         Align(
           child: Text(
             'Insert YouTube link to extract audio',
-            style: Theme.of(context).textTheme.headline5,
+            style: Theme.of(context).textTheme.headlineSmall,
           ),
         ),
         const SizedBox(height: 20),
@@ -39,7 +39,7 @@ class LinkInputPage extends StatelessWidget {
             focusNode: focusNode,
             controller: linkController,
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.headline6,
+            style: Theme.of(context).textTheme.titleLarge,
             onSubmitted: (_) => onFetchPress(linkController.text),
           ),
         ),

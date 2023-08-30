@@ -49,7 +49,7 @@ class ExtractFromYoutube extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 40),
                     child: Text(
                       'You can leave this page, the uploading will continue',
-                      style: Theme.of(context).textTheme.headline6,
+                      style: Theme.of(context).textTheme.titleLarge,
                       maxLines: 2,
                       textAlign: TextAlign.center,
                     ),
@@ -58,7 +58,7 @@ class ExtractFromYoutube extends StatelessWidget {
                     title: 'Upload other track',
                     autofocus: true,
                     onPressed: () => trackUploadingBloc.add(const Start()),
-                  )
+                  ),
                 ],
               );
             }
