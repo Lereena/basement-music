@@ -31,8 +31,10 @@ void main() async {
     return true;
   };
 
-  final storage = await HydratedStorage.build(
-    storageDirectory: kIsWeb ? HydratedStorage.webStorageDirectory : await getApplicationDocumentsDirectory(),
+  HydratedBloc.storage = await HydratedStorage.build(
+    storageDirectory: kIsWeb
+        ? HydratedStorage.webStorageDirectory
+        : await getApplicationDocumentsDirectory(),
   );
 
   setPathUrlStrategy();
@@ -40,10 +42,7 @@ void main() async {
   final apiService = ApiService();
   initAudioHandler(apiService);
 
-  HydratedBlocOverrides.runZoned(
-    () => runApp(BasementMusic(apiService: apiService)),
-    storage: storage,
-  );
+  runApp(BasementMusic(apiService: apiService));
 }
 
 class BasementMusic extends StatelessWidget {
@@ -62,7 +61,8 @@ class BasementMusic extends StatelessWidget {
               title: 'Basement',
               theme: CustomTheme.lightTheme,
               darkTheme: CustomTheme.darkTheme,
-              themeMode: settingsState.darkTheme ? ThemeMode.dark : ThemeMode.light,
+              themeMode:
+                  settingsState.darkTheme ? ThemeMode.dark : ThemeMode.light,
               initialRoute: NavigationRoute.initial.name,
               onGenerateRoute: onGenerateRoute,
               home: const Material(child: HomePage()),

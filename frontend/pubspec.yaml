@@ -24,7 +24,7 @@ dependencies:
   audio_service: ^0.18.9
   audioplayers: ^2.0.0
   auto_size_text: ^3.0.0
-  bloc: ^8.0.3
+  bloc: ^8.1.2
   cupertino_icons: ^1.0.2
   dotted_border: ^2.0.0
   equatable: ^2.0.3
@@ -40,7 +40,7 @@ dependencies:
   flutter_search_bar: ^3.0.0-dev.1
   http: ^0.13.3
   http_parser: ^4.0.0
-  hydrated_bloc: ^8.1.0
+  hydrated_bloc: ^9.1.2
   js: ^0.6.4
   lint: ^2.1.2
   marquee_text: ^2.5.0+1
