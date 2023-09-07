@@ -1,33 +1,22 @@
-import 'package:flutter/foundation.dart';
-
 class ApiService {
-  late String _host;
+  final String baseUrl;
 
-  ApiService([String? host]) {
-    if (host != null && host.isNotEmpty) {
-      _host = host;
-    } else {
-      _host = kIsWeb ? '' : 'http://10.0.2.2:9000';
-    }
-  }
+  ApiService(this.baseUrl);
 
-  void setHost(String value) {
-    if (value.isNotEmpty) {
-      _host = value;
-    }
-  }
-
-  String get reqAllTracks => '$_host/api/tracks';
-  String get trackInfo => '$_host/api/track';
-  String get upload => '$_host/api/track/upload';
-  String get reqAllPlaylists => '$_host/api/playlists';
+  String get reqAllTracks => '$baseUrl/api/tracks';
+  String get trackInfo => '$baseUrl/api/track';
+  String get upload => '$baseUrl/api/track/upload';
+  String get reqAllPlaylists => '$baseUrl/api/playlists';
 
   String trackPlayback(String trackId) => '$trackInfo/$trackId';
-  String reqPlaylist(String playlistId) => '$_host/api/playlist/$playlistId';
-  String reqCreatePlaylist(String title) => '$_host/api/playlist/create/$title';
-  String reqTrackPlaylist(String playlistId, String trackId) => '$_host/api/playlist/$playlistId/track/$trackId';
+  String reqPlaylist(String playlistId) => '$baseUrl/api/playlist/$playlistId';
+  String reqCreatePlaylist(String title) =>
+      '$baseUrl/api/playlist/create/$title';
+  String reqTrackPlaylist(String playlistId, String trackId) =>
+      '$baseUrl/api/playlist/$playlistId/track/$trackId';
   String reqYtDownload(String link, String artist, String title) =>
-      '$_host/api/yt/download?url=$link&artist=$artist&title=$title';
+      '$baseUrl/api/yt/download?url=$link&artist=$artist&title=$title';
 
-  String reqSearch(String searchQuery) => '$reqAllTracks/search?query=$searchQuery';
+  String reqSearch(String searchQuery) =>
+      '$reqAllTracks/search?query=$searchQuery';
 }

@@ -16,8 +16,6 @@ class SettingsBloc extends HydratedBloc<SettingsEvent, SettingsState> {
     on<SetShuffle>(_onSetShuffle);
     on<SetRepeat>(_onSetRepeat);
     on<SetDarkTheme>(_onSetDarkTheme);
-    on<SetServerAddress>(_onSetServerAddress);
-    apiService.setHost(state.serverAddress);
   }
 
   FutureOr<void> _onSetShuffle(SetShuffle event, Emitter<SettingsState> emit) {
@@ -28,13 +26,11 @@ class SettingsBloc extends HydratedBloc<SettingsEvent, SettingsState> {
     emit(state.copyWith(repeat: event.repeatValue));
   }
 
-  FutureOr<void> _onSetDarkTheme(SetDarkTheme event, Emitter<SettingsState> emit) {
+  FutureOr<void> _onSetDarkTheme(
+    SetDarkTheme event,
+    Emitter<SettingsState> emit,
+  ) {
     emit(state.copyWith(darkTheme: event.darkThemeValue));
-  }
-
-  FutureOr<void> _onSetServerAddress(SetServerAddress event, Emitter<SettingsState> emit) {
-    apiService.setHost(state.serverAddress);
-    emit(state.copyWith(serverAddress: event.serverAddressValue));
   }
 
   @override

@@ -4,17 +4,15 @@ class SettingsState extends Equatable {
   final bool repeat;
   final bool shuffle;
   final bool darkTheme;
-  final String serverAddress;
 
   const SettingsState({
     this.repeat = false,
     this.shuffle = false,
     this.darkTheme = false,
-    this.serverAddress = '',
   });
 
   @override
-  List<Object> get props => [repeat, shuffle, darkTheme, serverAddress];
+  List<Object> get props => [repeat, shuffle, darkTheme];
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -34,7 +32,8 @@ class SettingsState extends Equatable {
 
   String toJson() => json.encode(toMap());
 
-  factory SettingsState.fromJson(String source) => SettingsState.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory SettingsState.fromJson(String source) =>
+      SettingsState.fromMap(json.decode(source) as Map<String, dynamic>);
 
   SettingsState copyWith({
     bool? repeat,
@@ -46,7 +45,6 @@ class SettingsState extends Equatable {
       repeat: repeat ?? this.repeat,
       shuffle: shuffle ?? this.shuffle,
       darkTheme: darkTheme ?? this.darkTheme,
-      serverAddress: serverAddress ?? this.serverAddress,
     );
   }
 }

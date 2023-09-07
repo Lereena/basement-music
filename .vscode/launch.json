@@ -5,21 +5,25 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "basement_music",
-            "request": "launch",
-            "type": "dart"
-        },
-        {
-            "name": "basement_music (profile mode)",
+            "name": "dev",
             "request": "launch",
             "type": "dart",
-            "flutterMode": "profile"
+            "program": "frontend/lib/main_dev.dart",
+            "flutterMode": "debug"
         },
         {
-            "name": "basement_music (release mode)",
+            "name": "prod (debug)",
             "request": "launch",
             "type": "dart",
+            "program": "frontend/lib/main_prod.dart",
+            "flutterMode": "debug"
+        },
+        {
+            "name": "prod (release)",
+            "request": "launch",
+            "type": "dart",
+            "program": "frontend/lib/main_prod.dart",
             "flutterMode": "release"
-        }
+        },
     ]
 }

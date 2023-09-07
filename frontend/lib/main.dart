@@ -9,6 +9,7 @@ import 'package:sizer/sizer.dart';
 import 'package:url_strategy/url_strategy.dart';
 
 import 'api_service.dart';
+import 'app_config.dart';
 import 'audio_player_handler.dart';
 import 'bloc/settings_bloc/settings_bloc.dart';
 import 'bloc_provider_wrapper.dart';
@@ -19,7 +20,7 @@ import 'theme/custom_theme.dart';
 
 late final AudioPlayerHandler audioHandler;
 
-void main() async {
+Future<void> runBasement(AppConfig config) async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -39,8 +40,8 @@ void main() async {
 
   setPathUrlStrategy();
 
-  final apiService = ApiService();
-  initAudioHandler(apiService);
+  final apiService = ApiService(config.baseUrl);
+  await initAudioHandler(apiService);
 
   runApp(BasementMusic(apiService: apiService));
 }

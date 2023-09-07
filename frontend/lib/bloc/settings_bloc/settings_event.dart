@@ -1,5 +1,3 @@
-// ignore_for_file: avoid_positional_boolean_parameters
-
 part of 'settings_bloc.dart';
 
 abstract class SettingsEvent extends Equatable {
@@ -25,10 +23,4 @@ class SetDarkTheme extends SettingsEvent {
   final bool darkThemeValue;
 
   const SetDarkTheme(this.darkThemeValue);
-}
-
-class SetServerAddress extends SettingsEvent {
-  final String serverAddressValue;
-
-  const SetServerAddress(this.serverAddressValue);
 }
