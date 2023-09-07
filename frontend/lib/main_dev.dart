@@ -1,7 +1,7 @@
 import 'dart:io';
 
+import 'app.dart';
 import 'app_config.dart';
-import 'main.dart';
 
 void main() async {
   final config = AppConfig(
