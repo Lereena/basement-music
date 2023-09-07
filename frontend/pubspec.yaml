@@ -22,7 +22,7 @@ environment:
 
 dependencies:
   audio_service: ^0.18.9
-  audioplayers: ^2.0.0
+  audioplayers: ^5.1.0
   auto_size_text: ^3.0.0
   bloc: ^8.1.2
   cupertino_icons: ^1.0.2
