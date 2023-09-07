@@ -3,8 +3,8 @@ import 'dart:math';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../app.dart';
 import '../../audio_player_handler.dart';
-import '../../main.dart';
 import '../../models/playlist.dart';
 import '../../models/track.dart';
 import '../../repositories/tracks_repository.dart';
@@ -42,7 +42,10 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
     });
   }
 
-  FutureOr<void> _onPlayEvent(PlayEvent event, Emitter<AudioPlayerState> emit) async {
+  FutureOr<void> _onPlayEvent(
+    PlayEvent event,
+    Emitter<AudioPlayerState> emit,
+  ) async {
     if (currentPlaylist == Playlist.empty()) {
       currentPlaylist = Playlist.anonymous(_tracksRepository.items);
     }
@@ -55,26 +58,39 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
     emit(PlayingPlayerState(event.track));
   }
 
-  FutureOr<void> _onPauseEvent(PauseEvent event, Emitter<AudioPlayerState> emit) {
+  FutureOr<void> _onPauseEvent(
+    PauseEvent event,
+    Emitter<AudioPlayerState> emit,
+  ) {
     _audioHandler.pause();
     emit(PausedPlayerState(currentTrack));
   }
 
-  FutureOr<void> _onResumeEvent(ResumeEvent event, Emitter<AudioPlayerState> emit) {
+  FutureOr<void> _onResumeEvent(
+    ResumeEvent event,
+    Emitter<AudioPlayerState> emit,
+  ) {
     _audioHandler.resume();
     emit(ResumedPlayerState(currentTrack));
   }
 
-  FutureOr<void> _onNextEvent(NextEvent event, Emitter<AudioPlayerState> emit) async {
+  FutureOr<void> _onNextEvent(
+    NextEvent event,
+    Emitter<AudioPlayerState> emit,
+  ) async {
     _audioHandler.pause();
 
     if (!_settingsBloc.state.repeat) {
       if (_settingsBloc.state.shuffle) {
-        final nextTrackPosition = _shuffledNext(currentPlaylist.tracks.indexOf(currentTrack));
+        final nextTrackPosition =
+            _shuffledNext(currentPlaylist.tracks.indexOf(currentTrack));
         currentTrack = currentPlaylist.tracks[nextTrackPosition];
       } else {
         final lastTrackPosition = currentPlaylist.tracks.indexOf(currentTrack);
-        final nextTrackPosition = lastTrackPosition < currentPlaylist.tracks.length - 1 ? lastTrackPosition + 1 : 0;
+        final nextTrackPosition =
+            lastTrackPosition < currentPlaylist.tracks.length - 1
+                ? lastTrackPosition + 1
+                : 0;
         currentTrack = currentPlaylist.tracks[nextTrackPosition];
       }
     }
@@ -87,16 +103,22 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
     emit(PlayingPlayerState(currentTrack));
   }
 
-  FutureOr<void> _onPreviousEvent(PreviousEvent event, Emitter<AudioPlayerState> emit) async {
+  FutureOr<void> _onPreviousEvent(
+    PreviousEvent event,
+    Emitter<AudioPlayerState> emit,
+  ) async {
     _audioHandler.pause();
 
     if (!_settingsBloc.state.repeat) {
       if (_settingsBloc.state.shuffle) {
-        final nextTrackPosition = _shuffledNext(currentPlaylist.tracks.indexOf(currentTrack));
+        final nextTrackPosition =
+            _shuffledNext(currentPlaylist.tracks.indexOf(currentTrack));
         currentTrack = currentPlaylist.tracks[nextTrackPosition];
       } else {
         final lastTrackPosition = currentPlaylist.tracks.indexOf(currentTrack);
-        final previousTrackPosition = lastTrackPosition > 0 ? lastTrackPosition - 1 : currentPlaylist.tracks.length - 1;
+        final previousTrackPosition = lastTrackPosition > 0
+            ? lastTrackPosition - 1
+            : currentPlaylist.tracks.length - 1;
         currentTrack = currentPlaylist.tracks[previousTrackPosition];
       }
     }

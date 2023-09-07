@@ -3,7 +3,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
 import 'api_service.dart';
-import 'main.dart';
+import 'app.dart';
 import 'models/track.dart';
 import 'utils/log/log_service.dart';
 
@@ -31,7 +31,8 @@ class AudioPlayerHandler extends BaseAudioHandler {
 
   void addMediaItem(Track track) {
     _currentTrack = track;
-    mediaItem.add(MediaItem(id: track.id, title: track.title, artist: track.artist));
+    mediaItem
+        .add(MediaItem(id: track.id, title: track.title, artist: track.artist));
   }
 
   @override
@@ -48,7 +49,8 @@ class AudioPlayerHandler extends BaseAudioHandler {
       return;
     }
 
-    final trackUrl = (await DefaultCacheManager().getFileFromCache(trackId))?.file.uri.path;
+    final trackUrl =
+        (await DefaultCacheManager().getFileFromCache(trackId))?.file.uri.path;
 
     if (trackUrl == null) {
       LogService.log("Couldn't play cached track $trackId");
