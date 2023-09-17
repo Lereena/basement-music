@@ -18,19 +18,24 @@ class TracksApiProvider {
 
     if (response.statusCode == 200) {
       final jsonList = jsonDecode(response.body) as List<dynamic>;
-      return List.castFrom<dynamic, Track>(jsonList.map((e) => Track.fromJson(e)).toList());
+      return List.castFrom<dynamic, Track>(
+        jsonList.map((e) => Track.fromJson(e as Map<String, dynamic>)).toList(),
+      );
     }
 
     throw Exception('Failed to load tracks: ${response.body}');
   }
 
   Future<List<Track>> searchTracks(String searchQuery) async {
-    final uri = Uri.parse(_apiService.reqSearch(Uri.encodeComponent(searchQuery)));
+    final uri =
+        Uri.parse(_apiService.reqSearch(Uri.encodeComponent(searchQuery)));
     final response = await getAsync(uri);
 
     if (response.statusCode == 200) {
       final jsonList = jsonDecode(response.body) as List<dynamic>;
-      return List.castFrom<dynamic, Track>(jsonList.map((e) => Track.fromJson(e)).toList());
+      return List.castFrom<dynamic, Track>(
+        jsonList.map((e) => Track.fromJson(e as Map<String, dynamic>)).toList(),
+      );
     }
 
     throw Exception('Failed to search tracks: ${response.body}');
@@ -49,13 +54,18 @@ class TracksApiProvider {
     throw Exception('Failed to upload YouTube track: ${response.body}');
   }
 
-  Future<bool> editTrack(String id, {String artist = "", String title = "", String cover = ""}) async {
+  Future<bool> editTrack(
+    String id, {
+    String? artist,
+    String? title,
+    String? cover,
+  }) async {
     final response = await patchAsync(
       Uri.parse(_apiService.trackPlayback(id)),
       body: {
-        "artist": artist.trim(),
-        "title": title.trim(),
-        "cover": cover.trim(),
+        "artist": artist?.trim() ?? '',
+        "title": title?.trim() ?? '',
+        "cover": cover?.trim() ?? '',
       },
     );
 
@@ -66,16 +76,22 @@ class TracksApiProvider {
     throw Exception('Failed to edit track: ${response.body}');
   }
 
-  Future<bool> uploadLocalTrack(List<int> file, String filename) async {
-    final request = http.MultipartRequest("POST", Uri.parse(_apiService.upload))
-      ..files.add(
+  Future<bool> uploadLocalTracks(
+    List<({List<int> bytes, String filename})> files,
+  ) async {
+    final request =
+        http.MultipartRequest("POST", Uri.parse(_apiService.upload));
+
+    for (final file in files) {
+      request.files.add(
         http.MultipartFile.fromBytes(
           'file',
-          file,
-          filename: filename,
+          file.bytes,
+          filename: file.filename,
           contentType: MediaType('audio', ''),
         ),
       );
+    }
 
     final response = await request.sendAsync();
 
@@ -83,6 +99,6 @@ class TracksApiProvider {
       return true;
     }
 
-    throw Exception('Failed to upload local track: ${response.body}');
+    throw Exception('Failed to upload local track: $response');
   }
 }

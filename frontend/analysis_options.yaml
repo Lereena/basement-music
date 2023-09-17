@@ -8,9 +8,6 @@ analyzer:
   exclude:
     #- '**.freezed.dart'
 
-  errors: 
-    argument_type_not_assignable: false
-
 # You can customize the lint rules set to your own liking. A list of all rules
 # can be found at https://dart-lang.github.io/linter/lints/options/options.html
 linter:

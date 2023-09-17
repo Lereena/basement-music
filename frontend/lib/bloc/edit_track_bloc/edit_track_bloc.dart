@@ -17,11 +17,17 @@ class EditTrackBloc extends Bloc<EditTrackEvent, EditTrackState> {
     on<LoadingEvent>(_onLoadingEvent);
   }
 
-  FutureOr<void> _onGettingInputEvent(GetInputEvent event, Emitter<EditTrackState> emit) {
+  FutureOr<void> _onGettingInputEvent(
+    GetInputEvent event,
+    Emitter<EditTrackState> emit,
+  ) {
     emit(GettingInputState());
   }
 
-  FutureOr<void> _onLoadingEvent(LoadingEvent event, Emitter<EditTrackState> emit) async {
+  FutureOr<void> _onLoadingEvent(
+    LoadingEvent event,
+    Emitter<EditTrackState> emit,
+  ) async {
     emit(WaitingEditingState());
 
     if (event.title.isEmpty) {
@@ -36,10 +42,10 @@ class EditTrackBloc extends Bloc<EditTrackEvent, EditTrackState> {
 
     try {
       final result = await _tracksRepository.editTrack(
-        event.trackId,
-        event.title,
-        event.artist,
-        event.cover,
+        id: event.trackId,
+        artist: event.artist,
+        title: event.title,
+        cover: event.cover,
       );
 
       if (result) {

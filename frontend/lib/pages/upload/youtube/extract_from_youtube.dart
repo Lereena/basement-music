@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../bloc/track_uploading_bloc/track_uploading_bloc.dart';
-import '../../../widgets/buttons/styled_button.dart';
+import '../upload_is_in_progress_page.dart';
 import 'error_page.dart';
 import 'link_input_page.dart';
 import 'result_page.dart';
@@ -26,7 +26,8 @@ class ExtractFromYoutube extends StatelessWidget {
 
             if (state is LinkInputState) {
               return LinkInputPage(
-                onFetchPress: (link) => trackUploadingBloc.add(LinkEntered(link)),
+                onFetchPress: (link) =>
+                    trackUploadingBloc.add(LinkEntered(link)),
                 url: state.url,
               );
             }
@@ -35,38 +36,24 @@ class ExtractFromYoutube extends StatelessWidget {
               return TrackInfoPage(
                 artist: state.artist,
                 title: state.title,
-                onUploadPress: (artist, title) => trackUploadingBloc.add(InfoChecked(state.url, artist, title)),
-                onCancel: () => trackUploadingBloc.add(Start(url: trackUploadingBloc.currentUploadingLink)),
+                onUploadPress: (artist, title) => trackUploadingBloc
+                    .add(InfoChecked(state.url, artist, title)),
+                onCancel: () => trackUploadingBloc
+                    .add(Start(url: trackUploadingBloc.currentUploadingLink)),
               );
             }
 
             if (state is UploadingStartedState) {
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const CircularProgressIndicator(),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 40),
-                    child: Text(
-                      'You can leave this page, the uploading will continue',
-                      style: Theme.of(context).textTheme.titleLarge,
-                      maxLines: 2,
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  StyledButton(
-                    title: 'Upload other track',
-                    autofocus: true,
-                    onPressed: () => trackUploadingBloc.add(const Start()),
-                  ),
-                ],
+              return UploadIsInProgressPage(
+                onUploadOtherTrack: () => trackUploadingBloc.add(const Start()),
               );
             }
 
             if (state is SuccessfulUploadState) {
               return ResultPage(
                 result: true,
-                onUploadOtherTrackPress: () => trackUploadingBloc.add(const Start()),
+                onUploadOtherTrackPress: () =>
+                    trackUploadingBloc.add(const Start()),
               );
             }
 

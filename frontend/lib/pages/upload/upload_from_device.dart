@@ -1,86 +1,119 @@
-// import 'package:flutter/material.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-// import '../../widgets/dialogs/status_dialog.dart';
-// import '../../widgets/file_upload_dropzone.dart';
+import '../../bloc/local_track_uploading_bloc/local_track_uploading_bloc.dart';
+import '../../utils/track_data.dart';
+import '../../widgets/dialogs/track_edit_dialog.dart';
+import 'files_input_page.dart';
+import 'upload_is_in_progress_page.dart';
+import 'youtube/error_page.dart';
+import 'youtube/result_page.dart';
 
-// class UploadFromDevice extends StatefulWidget {
-//   final Function onCancelPressed;
+class UploadFromDevice extends StatelessWidget {
+  final Function onCancelPressed;
+  final LocalTrackUploadingBloc trackUploadingBloc;
 
-//   const UploadFromDevice({required this.onCancelPressed}) : super();
+  const UploadFromDevice({
+    required this.onCancelPressed,
+    required this.trackUploadingBloc,
+  }) : super();
 
-//   @override
-//   State<UploadFromDevice> createState() => _UploadFromDeviceState();
-// }
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        BlocBuilder<LocalTrackUploadingBloc, LocalTrackUploadingState>(
+          builder: (context, state) {
+            if (state is LoadingState) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-// class _UploadFromDeviceState extends State<UploadFromDevice> {
-//   var _fileName = "";
-//   var _fileData = <int>[];
-//   var _uploading = false;
+            if (state is NoFileSelectedState) {
+              return FilesInputPage(
+                onSelectFiles: () => _onSelectFiles(),
+              );
+            }
 
-//   @override
-//   Widget build(BuildContext context) {
-//     if (_uploading) {
-//       return const CircularProgressIndicator();
-//     }
+            if (state is FilesSelectedState) {
+              return FilesInputPage(
+                selectedFiles: state.files,
+                onSelectFiles: () => _onSelectFiles(currentFiles: state.files),
+                onMoveNext: () =>
+                    trackUploadingBloc.add(FilesApproved(files: state.files)),
+                onRemoveFile: (file) {
+                  state.files.removeWhere((element) => element.file == file);
+                  trackUploadingBloc.add(FilesSelected(files: state.files));
+                },
+                onEditFileInfo: (fileInfo) {
+                  final (artist, title) = getArtistAndTitle(fileInfo.name);
 
-//     final inputFieldWidth = MediaQuery.of(context).size.width / 2;
-//     final inputFieldHeight = MediaQuery.of(context).size.height / 4;
+                  TrackEditDialog.show(
+                    context: context,
+                    artist: artist,
+                    title: title,
+                    onSubmit: (result) {
+                      final fileIndex = state.files.indexWhere(
+                        (element) => element.file == fileInfo.file,
+                      );
+                      state.files.removeAt(fileIndex);
+                      state.files.insert(
+                        fileIndex,
+                        (
+                          file: fileInfo.file,
+                          name: constructFilename(result.artist, result.title)
+                        ),
+                      );
 
-//     return Center(
-//       child: Column(
-//         mainAxisAlignment: MainAxisAlignment.center,
-//         children: [
-//           if (_fileName == "")
-//             FileUploadDropzone(
-//               width: inputFieldWidth,
-//               height: inputFieldHeight,
-//               saveFileName: (name, data) {
-//                 setState(() {
-//                   _fileName = name;
-//                   _fileData = data;
-//                 });
-//               },
-//             )
-//           else
-//             Text(_fileName, style: const TextStyle(fontSize: 18)),
-//           const SizedBox(height: 40),
-//           if (_fileName != "")
-//             SizedBox(
-//               width: 100,
-//               height: 40,
-//               child: ElevatedButton(
-//                 child: const Text(
-//                   'Upload',
-//                   style: TextStyle(fontSize: 18),
-//                 ),
-//                 onPressed: () async {
-//                   setState(() {
-//                     _uploading = true;
-//                   });
-//                   final result = await uploadLocalTrack(_fileData, _fileName);
-//                   setState(() {
-//                     _uploading = false;
-//                     _fileName = "";
-//                     _fileData = <int>[];
-//                   });
-//                   await showDialog(
-//                     context: context,
-//                     builder: (_) => StatusDialog(
-//                       success: result,
-//                       text:
-//                           result ? 'Track was successfully uploaded' : 'Track was not uploaded. Please try again later',
-//                     ),
-//                   );
-//                 },
-//               ),
-//             ),
-//           const SizedBox(height: 20),
-//           TextButton(
-//             child: const Text('Cancel'),
-//             onPressed: () => widget.onCancelPressed(),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
+                      trackUploadingBloc.add(FilesSelected(files: state.files));
+                    },
+                  );
+                },
+              );
+            }
+
+            if (state is UploadingStartedState) {
+              return UploadIsInProgressPage(
+                onUploadOtherTrack: () => trackUploadingBloc.add(Start()),
+              );
+            }
+
+            if (state is SuccessfulUploadState) {
+              return ResultPage(
+                result: true,
+                onUploadOtherTrackPress: () => trackUploadingBloc.add(Start()),
+              );
+            }
+
+            return ErrorPage(
+              onTryAgainPress: () => trackUploadingBloc.add(Start()),
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  Future<void> _onSelectFiles({
+    List<({String name, PlatformFile file})>? currentFiles,
+  }) async {
+    final FilePickerResult? result = await FilePicker.platform.pickFiles(
+      allowMultiple: true,
+      type: FileType.custom,
+      withData: true,
+      allowedExtensions: ['mp3', 'm4a'],
+    );
+
+    if (result == null) return;
+
+    final newFiles = result.files.where(
+      (file) => currentFiles?.any((element) => element.file == file) != true,
+    );
+
+    final selectedFiles = currentFiles ?? [];
+    selectedFiles.addAll(newFiles.map((file) => (name: file.name, file: file)));
+
+    trackUploadingBloc.add(FilesSelected(files: selectedFiles));
+  }
+}

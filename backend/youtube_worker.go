@@ -51,6 +51,4 @@ func (yw *YoutubeWorker) FetchFromYoutube(w http.ResponseWriter, r *http.Request
 		log.Print("Couldn't create track in db: ", err)
 		return
 	}
-
-	return
 }

@@ -5,11 +5,13 @@ import 'package:equatable/equatable.dart';
 import 'package:youtube_metadata/youtube_metadata.dart';
 
 import '../../repositories/tracks_repository.dart';
+import '../../utils/track_data.dart';
 
 part 'track_uploading_event.dart';
 part 'track_uploading_state.dart';
 
-class TrackUploadingBloc extends Bloc<TrackUploadingEvent, TrackUploadingState> {
+class TrackUploadingBloc
+    extends Bloc<TrackUploadingEvent, TrackUploadingState> {
   final TracksRepository _tracksRepository;
 
   String currentUploadingLink = '';
@@ -25,7 +27,10 @@ class TrackUploadingBloc extends Bloc<TrackUploadingEvent, TrackUploadingState> 
     currentUploadingLink = event.url ?? '';
   }
 
-  FutureOr<void> _onLinkEntered(LinkEntered event, Emitter<TrackUploadingState> emit) async {
+  FutureOr<void> _onLinkEntered(
+    LinkEntered event,
+    Emitter<TrackUploadingState> emit,
+  ) async {
     if (event.link.isEmpty) {
       emit(LinkInputErrorState());
       return;
@@ -43,21 +48,17 @@ class TrackUploadingBloc extends Bloc<TrackUploadingEvent, TrackUploadingState> 
       return;
     }
 
-    final splitTitle = metadata.title!.split(RegExp('[−‐‑-ー一-]'));
-    var artist = '';
-    var title = '';
-    if (splitTitle.length < 2) {
-      artist = metadata.authorName?.trim() ?? '';
-      title = splitTitle[0].trim();
-    } else {
-      artist = splitTitle[0].trim();
-      title = splitTitle[1].trim();
-    }
+    var (artist, title) = getArtistAndTitle(metadata.title);
+
+    artist ??= metadata.authorName?.trim() ?? '';
 
     emit(InfoState(event.link, artist, title));
   }
 
-  FutureOr<void> _onInfoChecked(InfoChecked event, Emitter<TrackUploadingState> emit) async {
+  FutureOr<void> _onInfoChecked(
+    InfoChecked event,
+    Emitter<TrackUploadingState> emit,
+  ) async {
     if (event.artist.isEmpty) {
       emit(InfoInputErrorState()); // TODO: propagate error text
       return;
@@ -69,9 +70,15 @@ class TrackUploadingBloc extends Bloc<TrackUploadingEvent, TrackUploadingState> 
 
     emit(UploadingStartedState());
 
-    final result = await _tracksRepository.uploadYtTrack(event.url, event.artist, event.title);
+    final result = await _tracksRepository.uploadYtTrack(
+      event.url,
+      event.artist,
+      event.title,
+    );
 
-    if (currentUploadingLink != event.url) return; // when we are already uploading other track
+    if (currentUploadingLink != event.url) {
+      return; // when we are already uploading other track
+    }
 
     if (result) {
       emit(SuccessfulUploadState());
