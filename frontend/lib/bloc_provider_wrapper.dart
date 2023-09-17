@@ -6,6 +6,7 @@ import 'bloc/add_to_playlist_bloc/add_to_playlist_bloc.dart';
 import 'bloc/cacher_bloc/bloc/cacher_bloc.dart';
 import 'bloc/edit_track_bloc/edit_track_bloc.dart';
 import 'bloc/home_content_cubit/home_content_cubit.dart';
+import 'bloc/local_track_uploading_bloc/local_track_uploading_bloc.dart';
 import 'bloc/navigation_cubit/navigation_cubit.dart';
 import 'bloc/player_bloc/player_bloc.dart';
 import 'bloc/playlist_creation_bloc/playlist_creation_bloc.dart';
@@ -70,6 +71,9 @@ class _BlocProviderWrapperState extends State<BlocProviderWrapper> {
         ),
         BlocProvider<TrackUploadingBloc>(
           create: (context) => TrackUploadingBloc(_tracksRepository),
+        ),
+        BlocProvider<LocalTrackUploadingBloc>(
+          create: (context) => LocalTrackUploadingBloc(_tracksRepository),
         ),
         BlocProvider<PlaylistsBloc>.value(
           value: _playlistsBloc,

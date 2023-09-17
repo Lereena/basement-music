@@ -57,8 +57,12 @@ Future<Response> deleteAsync(
 }
 
 extension Logged on MultipartRequest {
-  Future<Response> sendAsync() async {
-    return _logRequest(() async => send());
+  Future<StreamedResponse> sendAsync() async {
+    final response = await send();
+
+    LogService.log(response.request.toString());
+
+    return response;
   }
 }
 

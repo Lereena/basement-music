@@ -38,13 +38,7 @@ class MoreButton extends StatelessWidget {
                     context: context,
                     builder: (context) => CustomDialog(
                       width: min(80.w, 600),
-                      child: EditTrack(
-                        titleText: const Text(
-                          'Edit track info',
-                          style: TextStyle(fontSize: 24),
-                        ),
-                        track: track,
-                      ),
+                      child: EditTrack(track: track),
                     ),
                   );
                 },
@@ -56,7 +50,8 @@ class MoreButton extends StatelessWidget {
                   Navigator.pop(context);
                   await showDialog(
                     context: context,
-                    builder: (context) => AddToPlaylistDialog(trackId: track.id),
+                    builder: (context) =>
+                        AddToPlaylistDialog(trackId: track.id),
                   );
                 },
               ),

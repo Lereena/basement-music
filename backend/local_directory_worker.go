@@ -35,25 +35,7 @@ func (ldw *LocalDirectoryWorker) ScanMusicDirectory() {
 			continue
 		}
 
-		splitSymbols := regexp.MustCompile("[−‐‑-ー一-]")
-
-		titleSplit := splitSymbols.Split(f.Name(), -1)
-
-		if len(titleSplit) == 1 {
-			log.Printf("Title '%s' has no split symbols, skipping", f.Name())
-			continue
-		}
-
-		fmt.Println(f.Name())
-		artist, title := strings.TrimSpace(titleSplit[0]), strings.TrimSpace(titleSplit[1])
-
-		index := strings.LastIndex(title, ".")
-		if index > -1 {
-			title = title[:index]
-		}
-
-		duration := ldw.Cfg.GetTrackDuration(f.Name())
-		ldw.musicRepo.CreateTrack(artist, title, duration, f.Name(), "")
+		ldw.saveTrack(f.Name())
 	}
 }
 
@@ -83,4 +65,28 @@ func (ldw *LocalDirectoryWorker) UploadFile(w http.ResponseWriter, r *http.Reque
 		return
 	}
 	fmt.Println("file uploaded successfully")
+
+	ldw.saveTrack(header.Filename)
+}
+
+func (ldw *LocalDirectoryWorker) saveTrack(filename string) {
+	splitSymbols := regexp.MustCompile("[−‐‑-ー一-]")
+
+	titleSplit := splitSymbols.Split(filename, -1)
+
+	if len(titleSplit) == 1 {
+		log.Printf("Title '%s' has no split symbols, skipping", filename)
+		return
+	}
+
+	fmt.Println(filename)
+	artist, title := strings.TrimSpace(titleSplit[0]), strings.TrimSpace(titleSplit[1])
+
+	index := strings.LastIndex(title, ".")
+	if index > -1 {
+		title = title[:index]
+	}
+
+	duration := ldw.Cfg.GetTrackDuration(filename)
+	ldw.musicRepo.CreateTrack(artist, title, duration, filename, "")
 }

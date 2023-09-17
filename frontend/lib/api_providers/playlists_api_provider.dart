@@ -15,7 +15,11 @@ class PlaylistsApiProvider {
 
     if (response.statusCode == 200) {
       final jsonList = jsonDecode(response.body);
-      return List.castFrom<dynamic, Playlist>(jsonList.map((e) => Playlist.fromJson(e)).toList());
+      return List.castFrom<dynamic, Playlist>(
+        jsonList
+            .map((e) => Playlist.fromJson(e as Map<String, dynamic>))
+            .toList() as List<dynamic>,
+      );
     } else {
       throw Exception('Failed to load playlists: ${response.body}');
     }
@@ -26,7 +30,9 @@ class PlaylistsApiProvider {
     final response = await postAsync(uri);
 
     if (response.statusCode == 200) {
-      return Playlist.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+      return Playlist.fromJson(
+        jsonDecode(response.body) as Map<String, dynamic>,
+      );
     }
 
     throw Exception('Failed to create playlist: ${response.body}');
@@ -54,7 +60,10 @@ class PlaylistsApiProvider {
     }
   }
 
-  Future<bool> removeTrackFromPlaylist(String playlistId, String trackId) async {
+  Future<bool> removeTrackFromPlaylist(
+    String playlistId,
+    String trackId,
+  ) async {
     final uri = Uri.parse(_apiService.reqTrackPlaylist(playlistId, trackId));
     final response = await deleteAsync(uri);
 

@@ -15,6 +15,7 @@ class TracksRepository {
 
   Future<void> getAllTracks() async {
     final result = await _tracksApiProvider.fetchAllTracks();
+    _items.clear();
     _items.addAll(result.reversed);
   }
 
@@ -29,12 +30,18 @@ class TracksRepository {
     return _tracksApiProvider.uploadYtTrack(url, artist, title);
   }
 
-  Future<bool> editTrack(
-    String id,
-    String artist,
-    String title,
-    String cover,
-  ) async {
+  Future<bool> uploadLocalTracks(
+    List<({List<int> bytes, String filename})> files,
+  ) {
+    return _tracksApiProvider.uploadLocalTracks(files);
+  }
+
+  Future<bool> editTrack({
+    required String id,
+    String? artist,
+    String? title,
+    String? cover,
+  }) async {
     final result = await _tracksApiProvider.editTrack(
       id,
       artist: artist,
@@ -52,9 +59,5 @@ class TracksRepository {
     }
 
     return result;
-  }
-
-  Future<bool> uploadLocalTrack(List<int> file, String filename) {
-    return _tracksApiProvider.uploadLocalTrack(file, filename);
   }
 }

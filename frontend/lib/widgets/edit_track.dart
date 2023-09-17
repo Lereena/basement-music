@@ -7,15 +7,12 @@ import 'package:sizer/sizer.dart';
 import '../bloc/edit_track_bloc/edit_track_bloc.dart';
 import '../models/track.dart';
 import 'buttons/styled_button.dart';
-import 'titled_field.dart';
 
 class EditTrack extends StatefulWidget {
-  final Widget? titleText;
   final Track track;
 
   const EditTrack({
     super.key,
-    this.titleText,
     required this.track,
   });
 
@@ -74,54 +71,57 @@ class _EditTrackState extends State<EditTrack> {
             );
           }
 
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              widget.titleText ?? Container(),
-              const SizedBox(height: 20),
-              TitledField(
-                title: 'Artist',
-                focusNode: artistFocusNode,
-                controller: artistController,
-                fieldWidth: min(60.w, 400),
-                onSubmitted: (_) => titleFocusNode.requestFocus(),
-              ),
-              const SizedBox(height: 20),
-              TitledField(
-                title: 'Title',
-                focusNode: titleFocusNode,
-                controller: titleController,
-                fieldWidth: min(60.w, 400),
-                onSubmitted: (_) => editTrackBloc.add(
-                  LoadingEvent(
-                    widget.track.id,
-                    titleController.text,
-                    artistController.text,
-                    widget.track.cover,
-                  ),
+          return SizedBox(
+            width: min(60.w, 400),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  'Edit track info',
+                  style: TextStyle(fontSize: 24),
                 ),
-              ),
-              if (state is InputErrorState)
-                Text(
-                  state.errorText,
-                  style: const TextStyle(color: Colors.red),
-                )
-              else
                 const SizedBox(height: 20),
-              const SizedBox(height: 20),
-              StyledButton(
-                title: 'Submit',
-                onPressed: () => editTrackBloc.add(
-                  LoadingEvent(
-                    widget.track.id,
-                    titleController.text,
-                    artistController.text,
-                    widget.track.cover,
+                TextField(
+                  decoration: const InputDecoration(label: Text('Artist')),
+                  focusNode: artistFocusNode,
+                  controller: artistController,
+                  onSubmitted: (_) => titleFocusNode.requestFocus(),
+                ),
+                TextField(
+                  decoration: const InputDecoration(label: Text('Title')),
+                  focusNode: titleFocusNode,
+                  controller: titleController,
+                  onSubmitted: (_) => editTrackBloc.add(
+                    LoadingEvent(
+                      widget.track.id,
+                      titleController.text,
+                      artistController.text,
+                      widget.track.cover,
+                    ),
                   ),
                 ),
-              ),
-            ],
+                if (state is InputErrorState)
+                  Text(
+                    state.errorText,
+                    style: const TextStyle(color: Colors.red),
+                  )
+                else
+                  const SizedBox(height: 20),
+                const SizedBox(height: 20),
+                StyledButton(
+                  title: 'Submit',
+                  onPressed: () => editTrackBloc.add(
+                    LoadingEvent(
+                      widget.track.id,
+                      titleController.text,
+                      artistController.text,
+                      widget.track.cover,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           );
         },
       ),
