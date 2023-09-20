@@ -28,9 +28,9 @@ class _SideNavigationRailState extends State<SideNavigationRail> {
       children: [
         AdaptiveScaffold.standardNavigationRail(
           extended: widget.extended,
-          unselectedIconTheme: navigationRailTheme.unselectedIconTheme!,
-          selectedIconTheme: navigationRailTheme.selectedIconTheme!,
-          selectedLabelTextStyle: navigationRailTheme.selectedLabelTextStyle!,
+          unselectedIconTheme: navigationRailTheme.unselectedIconTheme,
+          selectedIconTheme: navigationRailTheme.selectedIconTheme,
+          selectedLabelTextStyle: navigationRailTheme.selectedLabelTextStyle,
           leading: Column(
             children: [
               SizedBox(

@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../logger.dart';
 import '../../models/playlist.dart';
 import '../../repositories/playlists_repository.dart';
-import '../../utils/log/log_service.dart';
 import 'playlists_event.dart';
 import 'playlists_state.dart';
 
@@ -18,7 +18,10 @@ class PlaylistsBloc extends Bloc<PlaylistsEvent, PlaylistsState> {
 
   Playlist openedPlaylist = Playlist.empty();
 
-  FutureOr<void> _onLoadingEvent(PlaylistsLoadEvent event, Emitter<PlaylistsState> emit) async {
+  FutureOr<void> _onLoadingEvent(
+    PlaylistsLoadEvent event,
+    Emitter<PlaylistsState> emit,
+  ) async {
     emit(PlaylistsLoadingState());
 
     try {
@@ -31,11 +34,14 @@ class PlaylistsBloc extends Bloc<PlaylistsEvent, PlaylistsState> {
       }
     } catch (e) {
       emit(PlaylistsErrorState());
-      LogService.log('Error loading playlists: $e');
+      logger.e('Error loading playlists: $e');
     }
   }
 
-  FutureOr<void> _onPlaylistAddedEvent(PlaylistAddedEvent event, Emitter<PlaylistsState> emit) {
+  FutureOr<void> _onPlaylistAddedEvent(
+    PlaylistAddedEvent event,
+    Emitter<PlaylistsState> emit,
+  ) {
     emit(PlaylistsLoadedState(_playlistsRepository.items));
   }
 }

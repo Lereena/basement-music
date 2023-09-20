@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 
+import '../../logger.dart';
 import '../../repositories/playlists_repository.dart';
 import '../../repositories/tracks_repository.dart';
-import '../../utils/log/log_service.dart';
 
 part 'remove_from_playlist_event.dart';
 part 'remove_from_playlist_state.dart';
@@ -58,7 +58,7 @@ class RemoveFromPlaylistBloc
       }
     } catch (e) {
       emit(RemoveFromPlaylistError());
-      LogService.log('Error removing track from playlist: $e');
+      logger.e('Error removing track from playlist: $e');
     }
   }
 }

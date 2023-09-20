@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart';
 
-import 'log/log_service.dart';
+import '../logger.dart';
 
 Future<Response> getAsync(Uri uri, {Map<String, String>? headers}) async {
   return _logRequest(() async => get(uri, headers: headers));
@@ -60,7 +60,7 @@ extension Logged on MultipartRequest {
   Future<StreamedResponse> sendAsync() async {
     final response = await send();
 
-    LogService.log(response.request.toString());
+    logger.i(response.request.toString());
 
     return response;
   }
@@ -69,8 +69,8 @@ extension Logged on MultipartRequest {
 Future<Response> _logRequest(Function request) async {
   final response = await request() as Response;
 
-  LogService.log(response.request.toString());
-  LogService.log(response.body);
+  logger.i(response.request.toString());
+  logger.i(response.body);
 
   return response;
 }

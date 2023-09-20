@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../logger.dart';
 import '../../repositories/tracks_repository.dart';
-import '../../utils/log/log_service.dart';
 import 'tracks_event.dart';
 import 'tracks_state.dart';
 
@@ -14,7 +14,10 @@ class TracksBloc extends Bloc<TracksEvent, TracksState> {
     on<TracksLoadEvent>(_onLoadingEvent);
   }
 
-  FutureOr<void> _onLoadingEvent(TracksLoadEvent event, Emitter<TracksState> emit) async {
+  FutureOr<void> _onLoadingEvent(
+    TracksLoadEvent event,
+    Emitter<TracksState> emit,
+  ) async {
     emit(TracksLoadingState());
 
     try {
@@ -26,7 +29,7 @@ class TracksBloc extends Bloc<TracksEvent, TracksState> {
       }
     } catch (e) {
       emit(TracksErrorState());
-      LogService.log('Error loading tracks: $e');
+      logger.e('Error loading tracks: $e');
     }
   }
 }

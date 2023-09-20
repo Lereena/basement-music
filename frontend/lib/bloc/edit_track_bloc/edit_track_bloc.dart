@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
+import '../../logger.dart';
 import '../../repositories/tracks_repository.dart';
-import '../../utils/log/log_service.dart';
 
 part 'edit_track_event.dart';
 part 'edit_track_state.dart';
@@ -55,7 +55,7 @@ class EditTrackBloc extends Bloc<EditTrackEvent, EditTrackState> {
       }
     } catch (e) {
       emit(EditingErrorState());
-      LogService.log('Error editing track: $e');
+      logger.e('Error editing track: $e');
     }
   }
 }
