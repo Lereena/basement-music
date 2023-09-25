@@ -45,7 +45,6 @@ dependencies:
   http_parser: ^4.0.0
   hydrated_bloc: ^9.1.2
   js: ^0.6.4
-  lint: ^2.1.2
   logger: ^2.0.2
   marquee_text: ^2.5.0+1
   meta: ^1.9.1
@@ -61,6 +60,7 @@ dev_dependencies:
   flutter_native_splash: ^2.2.14
   flutter_test:
     sdk: flutter
+  lint: ^2.1.2
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

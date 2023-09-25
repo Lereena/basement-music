@@ -457,7 +457,7 @@ packages:
     source: hosted
     version: "0.6.7"
   lint:
-    dependency: "direct main"
+    dependency: "direct dev"
     description:
       name: lint
       sha256: f4bd4dbaa39f4ae8836f2d1275f2f32bc68b3a8cce0a0735dd1f7a601f06682a
