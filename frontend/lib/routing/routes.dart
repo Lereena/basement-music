@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 
+abstract class Routes {
+  static String playlist(String id) => '/library/$id';
+}
+
 enum NavigationRoute {
   initial,
   tracks,
   library,
-  libraryDetails,
   search,
   playlist,
   upload,
@@ -20,14 +23,12 @@ extension Name on NavigationRoute {
         return '/tracks';
       case NavigationRoute.library:
         return '/library';
-      case NavigationRoute.libraryDetails:
-        return '/library_details';
       case NavigationRoute.search:
         return '/search';
       case NavigationRoute.settings:
         return '/settings';
       case NavigationRoute.playlist:
-        return '/playlist';
+        return '/library/:id';
       case NavigationRoute.upload:
         return '/upload';
     }
@@ -41,8 +42,6 @@ extension Name on NavigationRoute {
         return 'All tracks';
       case NavigationRoute.library:
         return 'Library';
-      case NavigationRoute.libraryDetails:
-        return 'Playlist';
       case NavigationRoute.search:
         return 'Search';
       case NavigationRoute.settings:
@@ -61,8 +60,6 @@ extension Name on NavigationRoute {
       case NavigationRoute.tracks:
         return const Icon(Icons.home);
       case NavigationRoute.library:
-        return const Icon(Icons.library_music);
-      case NavigationRoute.libraryDetails:
         return const Icon(Icons.library_music);
       case NavigationRoute.search:
         return const Icon(Icons.search);

@@ -1,3 +1,5 @@
+import 'package:collection/collection.dart';
+
 import '../api_providers/playlists_api_provider.dart';
 import '../api_service.dart';
 import '../models/playlist.dart';
@@ -18,6 +20,17 @@ class PlaylistsRepository {
     return true;
   }
 
+  Future<Playlist> getPlaylist(String playlistId) async {
+    final localPlaylist =
+        items.firstWhereOrNull((item) => item.id == playlistId);
+
+    if (localPlaylist == null) {
+      return _playlistsApiProvider.getPlaylist(playlistId);
+    }
+
+    return localPlaylist;
+  }
+
   Future<bool> createPlaylist(String title) async {
     final result = await _playlistsApiProvider.createPlaylist(title);
     _items.add(result);
@@ -36,7 +49,10 @@ class PlaylistsRepository {
     return _playlistsApiProvider.addTrackToPlaylist(playlistId, trackId);
   }
 
-  Future<bool> removeTrackFromPlaylist(String playlistId, String trackId) async {
+  Future<bool> removeTrackFromPlaylist(
+    String playlistId,
+    String trackId,
+  ) async {
     return _playlistsApiProvider.removeTrackFromPlaylist(playlistId, trackId);
   }
 }

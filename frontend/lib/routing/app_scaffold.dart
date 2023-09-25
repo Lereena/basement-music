@@ -65,7 +65,7 @@ class AppScaffold extends StatelessWidget {
               padding: EdgeInsets.only(
                 left: horizontalPadding,
                 right: horizontalPadding,
-                top: drawerNavigation ? 10 : 70,
+                top: 10,
               ),
               child: child,
             ),

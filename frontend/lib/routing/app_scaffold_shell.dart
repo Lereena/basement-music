@@ -9,9 +9,9 @@ class AppScaffoldShell extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
 
   const AppScaffoldShell({
-    Key? key,
+    super.key,
     required this.navigationShell,
-  }) : super(key: key ?? const ValueKey('scaffoldWithNestedNavigation'));
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -44,6 +44,5 @@ class AppScaffoldShell extends StatelessWidget {
       index,
       initialLocation: index == navigationShell.currentIndex,
     );
-    Scaffold.of(context).closeDrawer();
   }
 }
