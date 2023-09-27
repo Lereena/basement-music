@@ -4,7 +4,6 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
 import 'api_service.dart';
 import 'app.dart';
-import 'logger.dart';
 import 'models/track.dart';
 
 Future<void> initAudioHandler(ApiService apiService) async {
@@ -43,19 +42,17 @@ class AudioPlayerHandler extends BaseAudioHandler {
 
   Future<void> resume() => _audioPlayer.resume();
 
-  Future<void> _customPlay(String trackId, {bool cached = false}) async {
-    if (!cached) {
+  Future<void> _customPlay(String trackId) async {
+    _audioPlayer.pause();
+
+    final cachedFile =
+        (await DefaultCacheManager().getFileFromCache(trackId))?.file.uri.path;
+
+    if (cachedFile == null) {
       await _audioPlayer.play(UrlSource(apiService.trackPlayback(trackId)));
       return;
     }
 
-    final trackUrl =
-        (await DefaultCacheManager().getFileFromCache(trackId))?.file.uri.path;
-
-    if (trackUrl == null) {
-      logger.e("Couldn't play cached track $trackId");
-      return;
-    }
-    _audioPlayer.play(DeviceFileSource(trackUrl));
+    _audioPlayer.play(DeviceFileSource(cachedFile));
   }
 }

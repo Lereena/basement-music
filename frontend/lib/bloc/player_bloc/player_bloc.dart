@@ -8,7 +8,6 @@ import '../../audio_player_handler.dart';
 import '../../models/playlist.dart';
 import '../../models/track.dart';
 import '../../repositories/tracks_repository.dart';
-import '../cacher_bloc/bloc/cacher_bloc.dart';
 import '../settings_bloc/settings_bloc.dart';
 import 'player_event.dart';
 import 'player_state.dart';
@@ -18,7 +17,6 @@ final random = Random();
 class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
   final TracksRepository _tracksRepository;
   final SettingsBloc _settingsBloc;
-  final CacherBloc _cacherBloc;
 
   final AudioPlayerHandler _audioHandler = audioHandler;
   late final onPositionChanged = _audioHandler.onPositionChanged;
@@ -29,7 +27,6 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
   PlayerBloc(
     this._settingsBloc,
     this._tracksRepository,
-    this._cacherBloc,
   ) : super(InitialPlayerState(Track.empty())) {
     on<PlayEvent>(_onPlayEvent);
     on<PauseEvent>(_onPauseEvent);
@@ -49,8 +46,6 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
     if (currentPlaylist == Playlist.empty()) {
       currentPlaylist = Playlist.anonymous(_tracksRepository.items);
     }
-
-    // final cached = _cacherBloc.state.isCached([event.track.id]);
 
     currentTrack = event.track;
     _audioHandler.addMediaItem(currentTrack);

@@ -48,7 +48,6 @@ class _BlocProviderWrapperState extends State<BlocProviderWrapper> {
   late final _playerBloc = PlayerBloc(
     _settingsBloc,
     _tracksRepository,
-    _cacherBloc,
   );
 
   @override

@@ -1,47 +1,73 @@
 import 'dart:async';
+import 'dart:convert';
 
-import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
 
 import '../../../api_service.dart';
+import '../../../logger.dart';
 
 part 'cacher_event.dart';
 part 'cacher_state.dart';
 
-class CacherBloc extends Bloc<CacherEvent, CacherState> {
+class CacherBloc extends HydratedBloc<CacherEvent, CacherState> {
   final ApiService _apiService;
 
-  CacherBloc(this._apiService) : super(CacherInitial()) {
+  CacherBloc(this._apiService) : super(const CacherInitial()) {
     on<CacheTrackEvent>(_onCacheTrackEvent);
     on<CacheTracksEvent>(_onCacheTracksEvent);
   }
 
-  FutureOr<void> _onCacheTrackEvent(CacheTrackEvent event, Emitter<CacherState> emit) async {
-    emit(CacherState(state.caching..add(event.trackId), state.cached, state.unsuccessful));
+  FutureOr<void> _onCacheTrackEvent(
+    CacheTrackEvent event,
+    Emitter<CacherState> emit,
+  ) async {
+    emit(
+      state.copyWith(caching: {...state.caching, event.trackId}),
+    );
 
-    _cacheOneTrack(event.trackId);
-    emit(state);
+    emit(await _cacheOneTrack(event.trackId));
+    logger.w('emit $state');
   }
 
-  FutureOr<void> _onCacheTracksEvent(CacheTracksEvent event, Emitter<CacherState> emit) async {
-    emit(CacherState(state.caching..addAll(event.trackIds), state.cached, state.unsuccessful));
+  FutureOr<void> _onCacheTracksEvent(
+    CacheTracksEvent event,
+    Emitter<CacherState> emit,
+  ) async {
+    emit(
+      state.copyWith(caching: {...state.caching, ...event.trackIds}),
+    );
 
     for (final trackId in event.trackIds) {
-      _cacheOneTrack(trackId);
-      emit(state);
+      emit(await _cacheOneTrack(trackId));
     }
   }
 
-  Future<void> _cacheOneTrack(String trackId) async {
+  Future<CacherState> _cacheOneTrack(String trackId) async {
     try {
-      await DefaultCacheManager().downloadFile(_apiService.trackPlayback(trackId), key: trackId);
+      await DefaultCacheManager()
+          .downloadFile(_apiService.trackPlayback(trackId), key: trackId);
 
-      state.caching.remove(trackId);
-      state.cached.add(trackId);
+      return state.copyWith(
+        caching: state.caching.where((id) => id != trackId).toSet(),
+        cached: {...state.cached, trackId},
+      );
     } catch (e) {
-      state.caching.remove(trackId);
-      state.unsuccessful.add(trackId);
+      return state.copyWith(
+        caching: state.caching.where((id) => id != trackId).toSet(),
+        unsuccessful: {...state.unsuccessful, trackId},
+      );
     }
+  }
+
+  @override
+  CacherState? fromJson(Map<String, dynamic> json) {
+    return CacherState.fromJson(json['cacher'] as String);
+  }
+
+  @override
+  Map<String, dynamic>? toJson(CacherState state) {
+    return {'cacher': state.toJson()};
   }
 }

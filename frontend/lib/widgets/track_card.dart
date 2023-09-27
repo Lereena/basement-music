@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/cacher_bloc/bloc/cacher_bloc.dart';
 import '../bloc/player_bloc/player_bloc.dart';
 import '../bloc/player_bloc/player_state.dart';
+import '../logger.dart';
 import '../models/playlist.dart';
 import '../models/track.dart';
 import 'buttons/more_button.dart';
@@ -18,7 +19,12 @@ class TrackCard extends StatelessWidget {
   final Playlist? containingPlaylist;
   final Playlist? openedPlaylist;
 
-  const TrackCard({super.key, required this.track, this.containingPlaylist, this.openedPlaylist});
+  const TrackCard({
+    super.key,
+    required this.track,
+    this.containingPlaylist,
+    this.openedPlaylist,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +32,7 @@ class TrackCard extends StatelessWidget {
 
     return BlocBuilder<CacherBloc, CacherState>(
       builder: (context, cacherState) {
+        logger.i('cacher state: $cacherState');
         final isCaching = cacherState.isCaching([track.id]);
         final isCached = cacherState.isCached([track.id]);
 
@@ -37,7 +44,8 @@ class TrackCard extends StatelessWidget {
             child: Row(
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                   child: SizedBox(
                     width: 40,
                     height: 40,
@@ -46,10 +54,14 @@ class TrackCard extends StatelessWidget {
                       children: [
                         Cover(
                           cover: track.cover,
-                          overlay: CoverOverlay(isCaching: isCaching, isCached: isCached),
+                          overlay: CoverOverlay(
+                            isCaching: isCaching,
+                            isCached: isCached,
+                          ),
                         ),
                         if (playerBloc.currentTrack == track &&
-                            (playerState is PlayingPlayerState || playerState is ResumedPlayerState))
+                            (playerState is PlayingPlayerState ||
+                                playerState is ResumedPlayerState))
                           const PauseButton()
                         else
                           PlayButton(
