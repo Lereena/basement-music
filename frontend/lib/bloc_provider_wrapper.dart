@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'api_service.dart';
 import 'bloc/add_to_playlist_bloc/add_to_playlist_bloc.dart';
-import 'bloc/cacher_bloc/bloc/cacher_bloc.dart';
+import 'bloc/cacher_bloc/cacher_bloc.dart';
 import 'bloc/edit_track_bloc/edit_track_bloc.dart';
 import 'bloc/home_content_cubit/home_content_cubit.dart';
 import 'bloc/local_track_uploading_bloc/local_track_uploading_bloc.dart';
@@ -41,7 +41,6 @@ class _BlocProviderWrapperState extends State<BlocProviderWrapper> {
   late final _tracksRepository = TracksRepository(widget.apiService);
   late final _playlistsRepository = PlaylistsRepository(widget.apiService);
 
-  late final _cacherBloc = CacherBloc(widget.apiService);
   late final _settingsBloc = SettingsBloc(widget.apiService);
   late final _tracksBloc = TracksBloc(_tracksRepository);
   late final _playlistsBloc = PlaylistsBloc(_playlistsRepository);
@@ -104,8 +103,8 @@ class _BlocProviderWrapperState extends State<BlocProviderWrapper> {
             _playlistsRepository,
           ),
         ),
-        BlocProvider<CacherBloc>.value(
-          value: _cacherBloc,
+        BlocProvider<CacherBloc>(
+          create: (context) => CacherBloc(widget.apiService),
         ),
         BlocProvider<TrackProgressCubit>(
           create: (context) => TrackProgressCubit(_playerBloc),

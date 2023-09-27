@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../bloc/cacher_bloc/bloc/cacher_bloc.dart';
+import '../../bloc/cacher_bloc/cacher_bloc.dart';
 import '../../models/playlist.dart';
 import '../../models/track.dart';
 import '../dialogs/add_to_playlist_dialog.dart';

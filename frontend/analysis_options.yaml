@@ -5,6 +5,9 @@ include: package:lint/analysis_options.yaml
 
 # You might want to exclude auto-generated files from dart analysis
 analyzer:
+  errors:
+    todo: info
+    
   exclude:
     #- '**.freezed.dart'
 

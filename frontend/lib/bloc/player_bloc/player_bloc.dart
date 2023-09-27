@@ -90,8 +90,6 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
       }
     }
 
-    // final cached = _cacherBloc.state.isCached([currentTrack.id]);
-
     _audioHandler.addMediaItem(currentTrack);
     _audioHandler.play();
 

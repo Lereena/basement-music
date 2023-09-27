@@ -43,16 +43,13 @@ class AudioPlayerHandler extends BaseAudioHandler {
   Future<void> resume() => _audioPlayer.resume();
 
   Future<void> _customPlay(String trackId) async {
-    _audioPlayer.pause();
-
-    final cachedFile =
-        (await DefaultCacheManager().getFileFromCache(trackId))?.file.uri.path;
+    final cachedFile = await DefaultCacheManager().getFileFromCache(trackId);
 
     if (cachedFile == null) {
       await _audioPlayer.play(UrlSource(apiService.trackPlayback(trackId)));
       return;
     }
 
-    _audioPlayer.play(DeviceFileSource(cachedFile));
+    _audioPlayer.play(DeviceFileSource(cachedFile.file.uri.path));
   }
 }

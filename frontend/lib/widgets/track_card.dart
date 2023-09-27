@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../bloc/cacher_bloc/bloc/cacher_bloc.dart';
+import '../bloc/cacher_bloc/cacher_bloc.dart';
 import '../bloc/player_bloc/player_bloc.dart';
 import '../bloc/player_bloc/player_state.dart';
 import '../models/playlist.dart';
