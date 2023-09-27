@@ -53,7 +53,7 @@ class _DrawerNavigationWrapperState extends State<DrawerNavigationWrapper> {
     message: 'Cached tracks are available to listen',
     margin: const EdgeInsets.all(8),
     borderRadius: BorderRadius.circular(16),
-    backgroundColor: _theme.colorScheme.primaryContainer.withOpacity(0.5),
+    backgroundColor: _theme.colorScheme.primaryContainer,
     titleColor: _theme.colorScheme.onSurface,
     messageColor: _theme.colorScheme.onSurface,
     forwardAnimationCurve: Curves.easeIn,

@@ -63,7 +63,10 @@ class _BlocProviderWrapperState extends State<BlocProviderWrapper> {
     return MultiBlocProvider(
       providers: [
         BlocProvider<ConnectivityStatusCubit>(
-          create: (_) => ConnectivityStatusCubit(),
+          create: (_) => ConnectivityStatusCubit(
+            tracksBloc: _tracksBloc,
+            playlistsBloc: _playlistsBloc,
+          ),
         ),
         BlocProvider<PlayerBloc>(
           create: (_) => _playerBloc,
