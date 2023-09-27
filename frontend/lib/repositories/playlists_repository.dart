@@ -13,6 +13,7 @@ class PlaylistsRepository {
 
   Future<bool> getAllPlaylists() async {
     final result = await _playlistsApiProvider.fetchAllPlaylists();
+    _items.clear();
     _items.addAll(result);
 
     return true;
@@ -36,7 +37,10 @@ class PlaylistsRepository {
     return _playlistsApiProvider.addTrackToPlaylist(playlistId, trackId);
   }
 
-  Future<bool> removeTrackFromPlaylist(String playlistId, String trackId) async {
+  Future<bool> removeTrackFromPlaylist(
+    String playlistId,
+    String trackId,
+  ) async {
     return _playlistsApiProvider.removeTrackFromPlaylist(playlistId, trackId);
   }
 }

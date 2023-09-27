@@ -8,25 +8,6 @@ import '../../bloc/connectivity_status_bloc/connectivity_status_cubit.dart';
 import '../page_title.dart';
 import 'side_navigation_drawer.dart';
 
-class NoConnectionFlushbar extends StatelessWidget {
-  const NoConnectionFlushbar({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Flushbar(
-      title: 'You are offline',
-      message: 'Cached tracks are available to listen',
-      margin: const EdgeInsets.all(8),
-      borderRadius: BorderRadius.circular(16),
-      backgroundColor: theme.colorScheme.primaryContainer.withOpacity(0.5),
-      titleColor: theme.colorScheme.onBackground,
-      messageColor: theme.colorScheme.onSurface,
-    );
-  }
-}
-
 class DrawerNavigationWrapper extends StatefulWidget {
   final bool drawerNavigation;
   final String pageTitle;
