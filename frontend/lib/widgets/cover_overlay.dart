@@ -16,10 +16,13 @@ class CoverOverlay extends StatelessWidget {
       return Positioned(
         bottom: 0,
         right: 0,
-        child: Icon(
-          Icons.download_done,
-          size: 15,
-          color: Theme.of(context).primaryColor,
+        child: Tooltip(
+          message: 'Track is saved to cache',
+          child: Icon(
+            Icons.download_done,
+            size: 15,
+            color: Theme.of(context).primaryColor,
+          ),
         ),
       );
     }
@@ -28,19 +31,22 @@ class CoverOverlay extends StatelessWidget {
       return Positioned(
         bottom: 2,
         right: 2,
-        child: Stack(
-          children: [
-            Icon(
-              Icons.download_outlined,
-              size: 15,
-              color: Theme.of(context).primaryColor,
-            ),
-            const SizedBox(
-              height: 15,
-              width: 15,
-              child: CircularProgressIndicator(strokeWidth: 1),
-            ),
-          ],
+        child: Tooltip(
+          message: 'Saving track to cache',
+          child: Stack(
+            children: [
+              Icon(
+                Icons.download_outlined,
+                size: 15,
+                color: Theme.of(context).primaryColor,
+              ),
+              const SizedBox(
+                height: 15,
+                width: 15,
+                child: CircularProgressIndicator(strokeWidth: 1),
+              ),
+            ],
+          ),
         ),
       );
     }
