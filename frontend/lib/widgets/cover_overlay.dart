@@ -13,16 +13,37 @@ class CoverOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (isCached) {
-      return Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: Theme.of(context).colorScheme.primary, width: 2),
+      return Positioned(
+        bottom: 0,
+        right: 0,
+        child: Icon(
+          Icons.download_done,
+          size: 15,
+          color: Theme.of(context).primaryColor,
         ),
-        width: 40,
-        height: 40,
       );
     }
 
-    if (isCaching) return const CircularProgressIndicator();
+    if (isCaching) {
+      return Positioned(
+        bottom: 2,
+        right: 2,
+        child: Stack(
+          children: [
+            Icon(
+              Icons.download_outlined,
+              size: 15,
+              color: Theme.of(context).primaryColor,
+            ),
+            const SizedBox(
+              height: 15,
+              width: 15,
+              child: CircularProgressIndicator(strokeWidth: 1),
+            ),
+          ],
+        ),
+      );
+    }
 
     return Container();
   }
