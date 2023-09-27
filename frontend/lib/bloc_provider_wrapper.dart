@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'api_service.dart';
 import 'bloc/add_to_playlist_bloc/add_to_playlist_bloc.dart';
 import 'bloc/cacher_bloc/cacher_bloc.dart';
+import 'bloc/connectivity_status_bloc/connectivity_status_cubit.dart';
 import 'bloc/edit_track_bloc/edit_track_bloc.dart';
 import 'bloc/home_content_cubit/home_content_cubit.dart';
 import 'bloc/local_track_uploading_bloc/local_track_uploading_bloc.dart';
@@ -61,65 +62,68 @@ class _BlocProviderWrapperState extends State<BlocProviderWrapper> {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        BlocProvider<ConnectivityStatusCubit>(
+          create: (_) => ConnectivityStatusCubit(),
+        ),
         BlocProvider<PlayerBloc>(
-          create: (context) => _playerBloc,
+          create: (_) => _playerBloc,
         ),
         BlocProvider<TracksBloc>.value(
           value: _tracksBloc,
         ),
         BlocProvider<TrackUploadingBloc>(
-          create: (context) => TrackUploadingBloc(_tracksRepository),
+          create: (_) => TrackUploadingBloc(_tracksRepository),
         ),
         BlocProvider<LocalTrackUploadingBloc>(
-          create: (context) => LocalTrackUploadingBloc(_tracksRepository),
+          create: (_) => LocalTrackUploadingBloc(_tracksRepository),
         ),
         BlocProvider<PlaylistsBloc>.value(
           value: _playlistsBloc,
         ),
         BlocProvider<PlaylistCreationBloc>(
-          create: (context) => PlaylistCreationBloc(
+          create: (_) => PlaylistCreationBloc(
             _playlistsRepository,
             _playlistsBloc,
           ),
         ),
         BlocProvider<TracksSearchCubit>(
-          create: (context) => TracksSearchCubit(
+          create: (_) => TracksSearchCubit(
             _tracksRepository,
             _playlistsBloc,
           ),
         ),
-        BlocProvider<SettingsBloc>(
-          create: (context) => _settingsBloc,
+        BlocProvider<SettingsBloc>.value(
+          value: _settingsBloc,
         ),
         BlocProvider<AddToPlaylistBloc>(
-          create: (context) => AddToPlaylistBloc(
+          create: (_) => AddToPlaylistBloc(
             _tracksRepository,
             _playlistsRepository,
           ),
         ),
         BlocProvider<RemoveFromPlaylistBloc>(
-          create: (context) => RemoveFromPlaylistBloc(
+          create: (_) => RemoveFromPlaylistBloc(
             _tracksRepository,
             _playlistsRepository,
           ),
         ),
         BlocProvider<CacherBloc>(
-          create: (context) => CacherBloc(widget.apiService),
+          create: (_) => CacherBloc(widget.apiService),
         ),
         BlocProvider<TrackProgressCubit>(
-          create: (context) => TrackProgressCubit(_playerBloc),
+          create: (_) => TrackProgressCubit(_playerBloc),
         ),
         BlocProvider<EditTrackBloc>(
-          create: (context) => EditTrackBloc(_tracksRepository),
+          create: (_) => EditTrackBloc(_tracksRepository),
         ),
         BlocProvider<EditTrackBloc>(
-          create: (context) => EditTrackBloc(_tracksRepository),
+          create: (_) => EditTrackBloc(_tracksRepository),
         ),
         BlocProvider<HomeContentCubit>(
-          create: (context) => HomeContentCubit(),
+          create: (_) => HomeContentCubit(),
         ),
         BlocProvider<NavigationCubit>(
-          create: (context) => NavigationCubit(),
+          create: (_) => NavigationCubit(),
         ),
       ],
       child: ShortcutsWrapper(
