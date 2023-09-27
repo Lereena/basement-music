@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../bloc/home_content_cubit/home_content_cubit.dart';
+import '../bloc/connectivity_status_bloc/connectivity_status_cubit.dart';
 import '../bloc/tracks_bloc/tracks_bloc.dart';
 import '../bloc/tracks_bloc/tracks_event.dart';
 import '../bloc/tracks_bloc/tracks_state.dart';
@@ -13,8 +13,8 @@ class TracksPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return RefreshIndicator(
       onRefresh: () => _onRefresh(context),
-      child: BlocBuilder<HomeContentCubit, HomeContentState>(
-        builder: (context, state) {
+      child: BlocBuilder<ConnectivityStatusCubit, ConnectivityStatusState>(
+        builder: (context, connectivityStatus) {
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -40,7 +40,11 @@ class TracksPage extends StatelessWidget {
                           }
                           return Column(
                             children: [
-                              TrackCard(track: state.tracks[index]),
+                              TrackCard(
+                                track: state.tracks[index],
+                                active:
+                                    connectivityStatus is HasConnectionState,
+                              ),
                               const Divider(height: 1),
                             ],
                           );
