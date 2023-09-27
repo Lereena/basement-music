@@ -45,9 +45,16 @@ class _BlocProviderWrapperState extends State<BlocProviderWrapper> {
   late final _settingsBloc = SettingsBloc(widget.apiService);
   late final _tracksBloc = TracksBloc(_tracksRepository);
   late final _playlistsBloc = PlaylistsBloc(_playlistsRepository);
+  late final _cacherBloc = CacherBloc(widget.apiService);
+  late final _connectivityStatusCubit = ConnectivityStatusCubit(
+    tracksBloc: _tracksBloc,
+    playlistsBloc: _playlistsBloc,
+  );
   late final _playerBloc = PlayerBloc(
-    _settingsBloc,
-    _tracksRepository,
+    tracksRepository: _tracksRepository,
+    settingsBloc: _settingsBloc,
+    cacherBloc: _cacherBloc,
+    connectivityStatusCubit: _connectivityStatusCubit,
   );
 
   @override
@@ -62,11 +69,8 @@ class _BlocProviderWrapperState extends State<BlocProviderWrapper> {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider<ConnectivityStatusCubit>(
-          create: (_) => ConnectivityStatusCubit(
-            tracksBloc: _tracksBloc,
-            playlistsBloc: _playlistsBloc,
-          ),
+        BlocProvider<ConnectivityStatusCubit>.value(
+          value: _connectivityStatusCubit,
         ),
         BlocProvider<PlayerBloc>(
           create: (_) => _playerBloc,
@@ -110,8 +114,8 @@ class _BlocProviderWrapperState extends State<BlocProviderWrapper> {
             _playlistsRepository,
           ),
         ),
-        BlocProvider<CacherBloc>(
-          create: (_) => CacherBloc(widget.apiService),
+        BlocProvider<CacherBloc>.value(
+          value: _cacherBloc,
         ),
         BlocProvider<TrackProgressCubit>(
           create: (_) => TrackProgressCubit(_playerBloc),

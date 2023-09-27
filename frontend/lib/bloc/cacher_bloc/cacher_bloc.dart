@@ -6,7 +6,6 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 
 import '../../../api_service.dart';
-import '../../../logger.dart';
 
 part 'cacher_event.dart';
 part 'cacher_state.dart';
@@ -28,7 +27,6 @@ class CacherBloc extends HydratedBloc<CacherEvent, CacherState> {
     );
 
     emit(await _cacheOneTrack(event.trackId));
-    logger.w('emit $state');
   }
 
   FutureOr<void> _onCacheTracksEvent(
