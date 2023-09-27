@@ -29,9 +29,10 @@ class CacherState extends Equatable {
   }
 
   factory CacherState.fromMap(Map<String, dynamic> map) {
-    logger.i('cache: ${(map['cached'] as List<String>).join(' ')}');
     return CacherState(
-      cached: (map['cached'] as List<String>).toSet(),
+      cached: (json.decode(map['cached'] as String) as List<dynamic>)
+          .map((e) => e as String)
+          .toSet(),
     );
   }
 
@@ -44,12 +45,13 @@ class CacherState extends Equatable {
     Set<String>? caching,
     Set<String>? cached,
     Set<String>? unsuccessful,
-  }) =>
-      CacherState(
-        caching: caching ?? this.caching,
-        cached: cached ?? this.cached,
-        unsuccessful: unsuccessful ?? this.unsuccessful,
-      );
+  }) {
+    return CacherState(
+      caching: caching ?? this.caching,
+      cached: cached ?? this.cached,
+      unsuccessful: unsuccessful ?? this.unsuccessful,
+    );
+  }
 
   @override
   String toString() {

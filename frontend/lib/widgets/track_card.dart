@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/cacher_bloc/bloc/cacher_bloc.dart';
 import '../bloc/player_bloc/player_bloc.dart';
 import '../bloc/player_bloc/player_state.dart';
-import '../logger.dart';
 import '../models/playlist.dart';
 import '../models/track.dart';
 import 'buttons/more_button.dart';
@@ -32,7 +31,6 @@ class TrackCard extends StatelessWidget {
 
     return BlocBuilder<CacherBloc, CacherState>(
       builder: (context, cacherState) {
-        logger.i('cacher state: $cacherState');
         final isCaching = cacherState.isCaching([track.id]);
         final isCached = cacherState.isCached([track.id]);
 

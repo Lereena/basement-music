@@ -62,12 +62,9 @@ class CacherBloc extends HydratedBloc<CacherEvent, CacherState> {
   }
 
   @override
-  CacherState? fromJson(Map<String, dynamic> json) {
-    return CacherState.fromJson(json['cacher'] as String);
-  }
+  CacherState? fromJson(Map<String, dynamic> json) =>
+      CacherState.fromJson(json['cacher'] as String);
 
   @override
-  Map<String, dynamic>? toJson(CacherState state) {
-    return {'cacher': state.toJson()};
-  }
+  Map<String, dynamic>? toJson(CacherState state) => {'cacher': state.toJson()};
 }
