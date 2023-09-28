@@ -71,7 +71,7 @@ class MoreButton extends StatelessWidget {
                   },
                 ),
               ],
-              if (!kIsWeb) ...[
+              if (!kIsWeb && !cacherBloc.state.cached.contains(track.id)) ...[
                 const Divider(),
                 SimpleDialogOption(
                   child: const Text('Cache track'),
