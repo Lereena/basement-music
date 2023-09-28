@@ -35,6 +35,7 @@ class _MainBodyContentState extends State<MainBodyContent> {
   late final _flushbar = Flushbar(
     title: 'You are offline',
     message: 'Cached tracks are available to listen',
+    icon: const Icon(Icons.wifi_off, size: 32),
     margin: const EdgeInsets.all(8),
     borderRadius: BorderRadius.circular(16),
     backgroundColor: _theme.colorScheme.primaryContainer,
