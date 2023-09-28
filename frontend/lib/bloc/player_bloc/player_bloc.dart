@@ -83,6 +83,11 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
 
     final availableTracks = _getAvailableTracks();
 
+    if (availableTracks.isEmpty) {
+      emit(PausedPlayerState(currentTrack));
+      return;
+    }
+
     if (!settingsBloc.state.repeat) {
       if (settingsBloc.state.shuffle) {
         final nextTrackPosition = _shuffledNext(
@@ -112,6 +117,11 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
     _audioHandler.pause();
 
     final availableTracks = _getAvailableTracks();
+
+    if (availableTracks.isEmpty) {
+      emit(PausedPlayerState(currentTrack));
+      return;
+    }
 
     if (!settingsBloc.state.repeat) {
       if (settingsBloc.state.shuffle) {

@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/foundation.dart';
 
 import '../playlists_bloc/playlists_bloc.dart';
 import '../playlists_bloc/playlists_event.dart';
@@ -18,6 +19,11 @@ class ConnectivityStatusCubit extends Cubit<ConnectivityStatusState> {
     required this.tracksBloc,
     required this.playlistsBloc,
   }) : super(ConnectivityStatusInitial()) {
+    if (kIsWeb) {
+      emit(HasConnectionState());
+      _updateAll();
+    }
+
     _connectivity.onConnectivityChanged.listen(_emitStatus);
   }
 

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
@@ -27,6 +28,11 @@ class CacherBloc extends HydratedBloc<CacherEvent, CacherState> {
     CacheValidateEvent event,
     Emitter<CacherState> emit,
   ) async {
+    if (kIsWeb) {
+      emit(const CacherInitial());
+      return;
+    }
+
     final cachedFilesCount = await _getCachedFilesCount();
 
     // cache is broken

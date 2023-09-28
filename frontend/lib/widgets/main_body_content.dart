@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:another_flushbar/flushbar.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -34,7 +35,9 @@ class _MainBodyContentState extends State<MainBodyContent> {
   late final _theme = Theme.of(context);
   late final _flushbar = Flushbar(
     title: 'You are offline',
-    message: 'Cached tracks are available to listen',
+    message: kIsWeb
+        ? 'Please check your network connection'
+        : 'Cached tracks are available to listen',
     icon: const Icon(Icons.wifi_off, size: 32),
     margin: const EdgeInsets.all(8),
     borderRadius: BorderRadius.circular(16),
@@ -44,6 +47,7 @@ class _MainBodyContentState extends State<MainBodyContent> {
     forwardAnimationCurve: Curves.easeIn,
     reverseAnimationCurve: Curves.easeOut,
     dismissDirection: FlushbarDismissDirection.HORIZONTAL,
+    onTap: (flushbar) => flushbar.dismiss(),
   );
 
   @override
