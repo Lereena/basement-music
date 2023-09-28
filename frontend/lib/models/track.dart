@@ -55,4 +55,14 @@ class Track extends Equatable {
       cover: cover ?? this.cover,
     );
   }
+
+  bool matchesQuery(String query) {
+    final lcaseQuery = query.toLowerCase();
+    final lcaseTitle = title.toLowerCase();
+    final lcaseArtist = artist.toLowerCase();
+
+    return lcaseTitle.contains(lcaseQuery) ||
+        lcaseArtist.contains(lcaseQuery) ||
+        '$lcaseArtist - $lcaseTitle'.contains(lcaseQuery);
+  }
 }

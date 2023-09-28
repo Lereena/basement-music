@@ -19,7 +19,14 @@ class TracksRepository {
     _items.addAll(result.reversed);
   }
 
-  Future<void> searchTracks(String searchQuery) async {
+  void searchTracksOffline(String searchQuery) {
+    _searchItems.clear();
+
+    final result = _items.where((track) => track.matchesQuery(searchQuery));
+    _searchItems.addAll(result);
+  }
+
+  Future<void> searchTracksOnline(String searchQuery) async {
     _searchItems.clear();
 
     final result = await _tracksApiProvider.searchTracks(searchQuery);

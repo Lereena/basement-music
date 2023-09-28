@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../bloc/connectivity_status_bloc/connectivity_status_cubit.dart';
 import '../bloc/playlists_bloc/playlists_bloc.dart';
 import '../models/playlist.dart';
 import '../widgets/track_card.dart';
@@ -26,8 +27,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
 
   @override
   void dispose() {
-    super.dispose();
     _playlistsBloc.openedPlaylist = Playlist.empty();
+    super.dispose();
   }
 
   @override
@@ -42,16 +43,21 @@ class _PlaylistPageState extends State<PlaylistPage> {
             ),
           )
         else
-          Expanded(
-            child: ListView.separated(
-              separatorBuilder: (context, _) => const Divider(height: 1),
-              itemCount: widget.playlist.tracks.length,
-              itemBuilder: (context, index) => TrackCard(
-                track: widget.playlist.tracks[index],
-                containingPlaylist: widget.playlist,
-                openedPlaylist: widget.playlist,
-              ),
-            ),
+          BlocBuilder<ConnectivityStatusCubit, ConnectivityStatusState>(
+            builder: (_, state) {
+              return Expanded(
+                child: ListView.separated(
+                  separatorBuilder: (context, _) => const Divider(height: 1),
+                  itemCount: widget.playlist.tracks.length,
+                  itemBuilder: (context, index) => TrackCard(
+                    track: widget.playlist.tracks[index],
+                    containingPlaylist: widget.playlist,
+                    openedPlaylist: widget.playlist,
+                    active: state is HasConnectionState,
+                  ),
+                ),
+              );
+            },
           ),
       ],
     );
