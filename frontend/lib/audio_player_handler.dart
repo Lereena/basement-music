@@ -50,6 +50,6 @@ class AudioPlayerHandler extends BaseAudioHandler {
       return;
     }
 
-    _audioPlayer.play(DeviceFileSource(cachedFile.file.uri.path));
+    await _audioPlayer.play(DeviceFileSource(cachedFile.file.uri.path));
   }
 }

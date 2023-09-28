@@ -7,6 +7,8 @@ abstract class CacherEvent extends Equatable {
   List<Object> get props => [];
 }
 
+class CacheValidateEvent extends CacherEvent {}
+
 class CacheTrackEvent extends CacherEvent {
   final String trackId;
 
