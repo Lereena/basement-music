@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../bloc/cacher_bloc/bloc/cacher_bloc.dart';
+import '../bloc/cacher_bloc/cacher_bloc.dart';
 import 'buttons/cache_button.dart';
 import 'buttons/uncache_button.dart';
 import 'dialogs/yes_or_cancel_dialog.dart';

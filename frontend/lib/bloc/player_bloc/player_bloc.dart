@@ -8,7 +8,8 @@ import '../../audio_player_handler.dart';
 import '../../models/playlist.dart';
 import '../../models/track.dart';
 import '../../repositories/tracks_repository.dart';
-import '../cacher_bloc/bloc/cacher_bloc.dart';
+import '../cacher_bloc/cacher_bloc.dart';
+import '../connectivity_status_bloc/connectivity_status_cubit.dart';
 import '../settings_bloc/settings_bloc.dart';
 import 'player_event.dart';
 import 'player_state.dart';
@@ -16,9 +17,10 @@ import 'player_state.dart';
 final random = Random();
 
 class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
-  final TracksRepository _tracksRepository;
-  final SettingsBloc _settingsBloc;
-  final CacherBloc _cacherBloc;
+  final TracksRepository tracksRepository;
+  final SettingsBloc settingsBloc;
+  final CacherBloc cacherBloc;
+  final ConnectivityStatusCubit connectivityStatusCubit;
 
   final AudioPlayerHandler _audioHandler = audioHandler;
   late final onPositionChanged = _audioHandler.onPositionChanged;
@@ -26,11 +28,12 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
   Playlist currentPlaylist = Playlist.empty();
   Track currentTrack = Track.empty();
 
-  PlayerBloc(
-    this._settingsBloc,
-    this._tracksRepository,
-    this._cacherBloc,
-  ) : super(InitialPlayerState(Track.empty())) {
+  PlayerBloc({
+    required this.tracksRepository,
+    required this.settingsBloc,
+    required this.cacherBloc,
+    required this.connectivityStatusCubit,
+  }) : super(InitialPlayerState(Track.empty())) {
     on<PlayEvent>(_onPlayEvent);
     on<PauseEvent>(_onPauseEvent);
     on<ResumeEvent>(_onResumeEvent);
@@ -47,10 +50,8 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
     Emitter<AudioPlayerState> emit,
   ) async {
     if (currentPlaylist == Playlist.empty()) {
-      currentPlaylist = Playlist.anonymous(_tracksRepository.items);
+      currentPlaylist = Playlist.anonymous(tracksRepository.items);
     }
-
-    // final cached = _cacherBloc.state.isCached([event.track.id]);
 
     currentTrack = event.track;
     _audioHandler.addMediaItem(currentTrack);
@@ -80,22 +81,28 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
   ) async {
     _audioHandler.pause();
 
-    if (!_settingsBloc.state.repeat) {
-      if (_settingsBloc.state.shuffle) {
-        final nextTrackPosition =
-            _shuffledNext(currentPlaylist.tracks.indexOf(currentTrack));
-        currentTrack = currentPlaylist.tracks[nextTrackPosition];
-      } else {
-        final lastTrackPosition = currentPlaylist.tracks.indexOf(currentTrack);
-        final nextTrackPosition =
-            lastTrackPosition < currentPlaylist.tracks.length - 1
-                ? lastTrackPosition + 1
-                : 0;
-        currentTrack = currentPlaylist.tracks[nextTrackPosition];
-      }
+    final availableTracks = _getAvailableTracks();
+
+    if (availableTracks.isEmpty) {
+      emit(PausedPlayerState(currentTrack));
+      return;
     }
 
-    // final cached = _cacherBloc.state.isCached([currentTrack.id]);
+    if (!settingsBloc.state.repeat) {
+      if (settingsBloc.state.shuffle) {
+        final nextTrackPosition = _shuffledNext(
+          availableTracks,
+          availableTracks.indexOf(currentTrack),
+        );
+        currentTrack = availableTracks[nextTrackPosition];
+      } else {
+        final lastTrackPosition = availableTracks.indexOf(currentTrack);
+        final nextTrackPosition = lastTrackPosition < availableTracks.length - 1
+            ? lastTrackPosition + 1
+            : 0;
+        currentTrack = availableTracks[nextTrackPosition];
+      }
+    }
 
     _audioHandler.addMediaItem(currentTrack);
     _audioHandler.play();
@@ -109,21 +116,28 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
   ) async {
     _audioHandler.pause();
 
-    if (!_settingsBloc.state.repeat) {
-      if (_settingsBloc.state.shuffle) {
-        final nextTrackPosition =
-            _shuffledNext(currentPlaylist.tracks.indexOf(currentTrack));
-        currentTrack = currentPlaylist.tracks[nextTrackPosition];
-      } else {
-        final lastTrackPosition = currentPlaylist.tracks.indexOf(currentTrack);
-        final previousTrackPosition = lastTrackPosition > 0
-            ? lastTrackPosition - 1
-            : currentPlaylist.tracks.length - 1;
-        currentTrack = currentPlaylist.tracks[previousTrackPosition];
-      }
+    final availableTracks = _getAvailableTracks();
+
+    if (availableTracks.isEmpty) {
+      emit(PausedPlayerState(currentTrack));
+      return;
     }
 
-    // final cached = _cacherBloc.state.isCached([currentTrack.id]);
+    if (!settingsBloc.state.repeat) {
+      if (settingsBloc.state.shuffle) {
+        final nextTrackPosition = _shuffledNext(
+          availableTracks,
+          availableTracks.indexOf(currentTrack),
+        );
+        currentTrack = availableTracks[nextTrackPosition];
+      } else {
+        final lastTrackPosition = availableTracks.indexOf(currentTrack);
+        final previousTrackPosition = lastTrackPosition > 0
+            ? lastTrackPosition - 1
+            : availableTracks.length - 1;
+        currentTrack = availableTracks[previousTrackPosition];
+      }
+    }
 
     _audioHandler.addMediaItem(currentTrack);
     _audioHandler.play();
@@ -131,10 +145,20 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
     emit(PlayingPlayerState(currentTrack));
   }
 
-  int _shuffledNext(int excluding) {
-    var result = random.nextInt(currentPlaylist.tracks.length);
+  List<Track> _getAvailableTracks() {
+    final isOffline = connectivityStatusCubit.state is NoConnectionState;
+
+    return isOffline
+        ? currentPlaylist.tracks
+            .where((track) => cacherBloc.state.cached.contains(track.id))
+            .toList()
+        : currentPlaylist.tracks;
+  }
+
+  int _shuffledNext(List<Track> availableTracks, int excluding) {
+    var result = random.nextInt(availableTracks.length);
     while (result == excluding) {
-      result = random.nextInt(currentPlaylist.tracks.length);
+      result = random.nextInt(availableTracks.length);
     }
     return result;
   }

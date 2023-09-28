@@ -22,17 +22,6 @@ class Track extends Equatable {
   @override
   List<Object> get props => [id];
 
-  factory Track.fromJson(Map<String, dynamic> json) {
-    return Track(
-      id: json['Id'] as String,
-      url: json['Url'] as String,
-      title: json['Title'] as String,
-      artist: json['Artist'] as String,
-      duration: json['Duration'] as int,
-      // cover: json['Cover'] as String,
-    );
-  }
-
   factory Track.empty() => const Track(
         artist: '',
         title: 'No current track',
@@ -53,6 +42,49 @@ class Track extends Equatable {
       artist: artist ?? this.artist,
       duration: duration,
       cover: cover ?? this.cover,
+    );
+  }
+
+  bool matchesQuery(String query) {
+    final lcaseQuery = query.toLowerCase();
+    final lcaseTitle = title.toLowerCase();
+    final lcaseArtist = artist.toLowerCase();
+
+    return lcaseTitle.contains(lcaseQuery) ||
+        lcaseArtist.contains(lcaseQuery) ||
+        '$lcaseArtist - $lcaseTitle'.contains(lcaseQuery);
+  }
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'id': id,
+      'url': url,
+      'title': title,
+      'artist': artist,
+      'duration': duration,
+      'cover': cover,
+    };
+  }
+
+  factory Track.fromMap(Map<String, dynamic> map) {
+    return Track(
+      id: map['id'] as String,
+      url: map['url'] as String,
+      title: map['title'] as String,
+      artist: map['artist'] as String,
+      duration: map['duration'] as int,
+      cover: map['cover'] as String,
+    );
+  }
+
+  factory Track.fromJson(Map<String, dynamic> json) {
+    return Track(
+      id: json['Id'] as String,
+      url: json['Url'] as String,
+      title: json['Title'] as String,
+      artist: json['Artist'] as String,
+      duration: json['Duration'] as int,
+      // cover: json['Cover'] as String,
     );
   }
 }

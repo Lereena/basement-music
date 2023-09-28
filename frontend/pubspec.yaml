@@ -21,10 +21,12 @@ environment:
   sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
+  another_flushbar: ^1.12.30
   audio_service: ^0.18.9
   audioplayers: ^5.1.0
   auto_size_text: ^3.0.0
   bloc: ^8.1.2
+  connectivity_plus: ^4.0.2
   cupertino_icons: ^1.0.2
   dotted_border: ^2.0.0
   equatable: ^2.0.3
@@ -46,7 +48,7 @@ dependencies:
   lint: ^2.1.2
   logger: ^2.0.2
   marquee_text: ^2.5.0+1
-  path_provider: ^2.0.11
+  path_provider: ^2.1.1
   shared_preferences: ^2.0.7
   sizer: ^2.0.15
   url_strategy: ^0.2.0

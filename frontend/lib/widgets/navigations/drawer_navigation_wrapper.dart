@@ -17,12 +17,14 @@ class DrawerNavigationWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
         toolbarHeight: 70,
-        scrolledUnderElevation: Theme.of(context).brightness == Brightness.dark ? 0 : 1,
-        iconTheme: Theme.of(context).iconTheme,
+        scrolledUnderElevation: theme.brightness == Brightness.dark ? 0 : 1,
+        iconTheme: theme.iconTheme,
         title: PageTitle(text: pageTitle),
         leading: drawerNavigation
             ? Builder(
@@ -33,7 +35,7 @@ class DrawerNavigationWrapper extends StatelessWidget {
                 ),
               )
             : null,
-        backgroundColor: Theme.of(context).colorScheme.background,
+        backgroundColor: theme.colorScheme.background,
       ),
       drawer: drawerNavigation ? const SideNavigationDrawer() : null,
       body: child,

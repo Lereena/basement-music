@@ -6,16 +6,24 @@ import '../../logger.dart';
 import '../../models/playlist.dart';
 import '../../models/track.dart';
 import '../../repositories/tracks_repository.dart';
+import '../cacher_bloc/cacher_bloc.dart';
+import '../connectivity_status_bloc/connectivity_status_cubit.dart';
 import '../playlists_bloc/playlists_bloc.dart';
 
 part 'tracks_search_state.dart';
 
 class TracksSearchCubit extends Cubit<TracksSearchState> {
-  final TracksRepository _tracksRepository;
-  final PlaylistsBloc _playlistsBloc;
+  final TracksRepository tracksRepository;
+  final PlaylistsBloc playlistsBloc;
+  final CacherBloc cacherBloc;
+  final ConnectivityStatusCubit connectivityStatusCubit;
 
-  TracksSearchCubit(this._tracksRepository, this._playlistsBloc)
-      : super(TracksSearchInitial());
+  TracksSearchCubit({
+    required this.tracksRepository,
+    required this.playlistsBloc,
+    required this.cacherBloc,
+    required this.connectivityStatusCubit,
+  }) : super(TracksSearchInitial());
 
   Playlist searchResultsPlaylist = Playlist.empty();
 
@@ -34,15 +42,20 @@ class TracksSearchCubit extends Cubit<TracksSearchState> {
     emit(TracksSearchLoadingState(query));
 
     try {
-      await _tracksRepository.searchTracks(query);
-      if (_tracksRepository.searchItems.isEmpty) {
+      if (connectivityStatusCubit.state is NoConnectionState) {
+        tracksRepository.searchTracksOffline(query);
+      } else {
+        await tracksRepository.searchTracksOnline(query);
+      }
+
+      if (tracksRepository.searchItems.isEmpty) {
         emit(TracksSearchEmptyState(query));
       } else {
         searchResultsPlaylist =
-            Playlist.anonymous(_tracksRepository.searchItems);
-        _playlistsBloc.openedPlaylist = searchResultsPlaylist;
+            Playlist.anonymous(tracksRepository.searchItems);
+        playlistsBloc.openedPlaylist = searchResultsPlaylist;
 
-        emit(TracksSearchLoadedState(query, _tracksRepository.searchItems));
+        emit(TracksSearchLoadedState(query, tracksRepository.searchItems));
       }
     } catch (e) {
       emit(TracksSearchErrorState());
