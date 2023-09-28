@@ -36,4 +36,24 @@ class Playlist extends Equatable {
       ),
     );
   }
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'id': id,
+      'title': title,
+      'tracks': tracks.map((e) => e.toMap()).toList(),
+    };
+  }
+
+  factory Playlist.fromMap(Map<String, dynamic> map) {
+    return Playlist(
+      id: map['id'] as String,
+      title: map['title'] as String,
+      tracks: (map['tracks'] as List<dynamic>)
+          .map<Track>(
+            (x) => Track.fromMap(x as Map<String, dynamic>),
+          )
+          .toList(),
+    );
+  }
 }

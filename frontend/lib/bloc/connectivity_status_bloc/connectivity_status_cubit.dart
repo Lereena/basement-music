@@ -18,18 +18,10 @@ class ConnectivityStatusCubit extends Cubit<ConnectivityStatusState> {
     required this.tracksBloc,
     required this.playlistsBloc,
   }) : super(ConnectivityStatusInitial()) {
-    _checkInitialStatus().then(
-      (_) => _connectivity.onConnectivityChanged.listen(_emitState),
-    );
+    _connectivity.onConnectivityChanged.listen(_emitStatus);
   }
 
-  Future<void> _checkInitialStatus() async {
-    final connectivityResult = await _connectivity.checkConnectivity();
-
-    _emitState(connectivityResult);
-  }
-
-  void _emitState(ConnectivityResult connectivityResult) {
+  void _emitStatus(ConnectivityResult connectivityResult) {
     if (connectivityResult == ConnectivityResult.none) {
       emit(NoConnectionState());
     } else {

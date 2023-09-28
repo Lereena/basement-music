@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
 
 import '../../logger.dart';
 import '../../models/playlist.dart';
@@ -8,7 +8,9 @@ import '../../repositories/playlists_repository.dart';
 import 'playlists_event.dart';
 import 'playlists_state.dart';
 
-class PlaylistsBloc extends Bloc<PlaylistsEvent, PlaylistsState> {
+const _playlistsInfoKey = 'playlistsInfo';
+
+class PlaylistsBloc extends HydratedBloc<PlaylistsEvent, PlaylistsState> {
   final PlaylistsRepository _playlistsRepository;
 
   PlaylistsBloc(this._playlistsRepository) : super(PlaylistsLoadingState()) {
@@ -22,6 +24,7 @@ class PlaylistsBloc extends Bloc<PlaylistsEvent, PlaylistsState> {
     PlaylistsLoadEvent event,
     Emitter<PlaylistsState> emit,
   ) async {
+    final oldState = state;
     emit(PlaylistsLoadingState());
 
     try {
@@ -33,7 +36,11 @@ class PlaylistsBloc extends Bloc<PlaylistsEvent, PlaylistsState> {
         emit(PlaylistsLoadedState(_playlistsRepository.items));
       }
     } catch (e) {
-      emit(PlaylistsErrorState());
+      if (oldState.playlists.isNotEmpty) {
+        emit(PlaylistsLoadedState(oldState.playlists));
+      } else {
+        emit(PlaylistsErrorState());
+      }
       logger.e('Error loading playlists: $e');
     }
   }
@@ -44,4 +51,17 @@ class PlaylistsBloc extends Bloc<PlaylistsEvent, PlaylistsState> {
   ) {
     emit(PlaylistsLoadedState(_playlistsRepository.items));
   }
+
+  @override
+  PlaylistsState? fromJson(Map<String, dynamic> json) {
+    final state = PlaylistsState.fromJson(json[_playlistsInfoKey] as String);
+    if (state.playlists.isNotEmpty) {
+      return PlaylistsLoadedState(state.playlists);
+    }
+    return null;
+  }
+
+  @override
+  Map<String, dynamic>? toJson(PlaylistsState state) =>
+      {_playlistsInfoKey: state.toJson()};
 }

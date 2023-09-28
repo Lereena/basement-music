@@ -12,13 +12,11 @@ import 'bloc/navigation_cubit/navigation_cubit.dart';
 import 'bloc/player_bloc/player_bloc.dart';
 import 'bloc/playlist_creation_bloc/playlist_creation_bloc.dart';
 import 'bloc/playlists_bloc/playlists_bloc.dart';
-import 'bloc/playlists_bloc/playlists_event.dart';
 import 'bloc/remove_from_playlist_bloc/remove_from_playlist_cubit.dart';
 import 'bloc/settings_bloc/settings_bloc.dart';
 import 'bloc/track_progress_cubit/track_progress_cubit.dart';
 import 'bloc/track_uploading_bloc/track_uploading_bloc.dart';
 import 'bloc/tracks_bloc/tracks_bloc.dart';
-import 'bloc/tracks_bloc/tracks_event.dart';
 import 'bloc/trackst_search_cubit/tracks_search_cubit.dart';
 import 'repositories/playlists_repository.dart';
 import 'repositories/tracks_repository.dart';
@@ -56,14 +54,6 @@ class _BlocProviderWrapperState extends State<BlocProviderWrapper> {
     cacherBloc: _cacherBloc,
     connectivityStatusCubit: _connectivityStatusCubit,
   );
-
-  @override
-  void initState() {
-    super.initState();
-
-    _tracksBloc.add(TracksLoadEvent());
-    _playlistsBloc.add(PlaylistsLoadEvent());
-  }
 
   @override
   Widget build(BuildContext context) {

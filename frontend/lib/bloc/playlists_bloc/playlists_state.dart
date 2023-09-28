@@ -1,15 +1,46 @@
+import 'dart:convert';
+
 import '../../models/playlist.dart';
 
-abstract class PlaylistsState {}
-
-class PlaylistsEmptyState extends PlaylistsState {}
-
-class PlaylistsLoadingState extends PlaylistsState {}
-
-class PlaylistsLoadedState extends PlaylistsState {
+class PlaylistsState {
   final List<Playlist> playlists;
 
-  PlaylistsLoadedState(this.playlists);
+  PlaylistsState(this.playlists);
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'playlists': json.encode(playlists.map((e) => e.toMap()).toList()),
+    };
+  }
+
+  factory PlaylistsState.fromMap(Map<String, dynamic> map) {
+    return PlaylistsState(
+      (json.decode(map['playlists'] as String) as List<dynamic>)
+          .map<Playlist>(
+            (e) => Playlist.fromMap(e as Map<String, dynamic>),
+          )
+          .toList(),
+    );
+  }
+
+  String toJson() => json.encode(toMap());
+
+  factory PlaylistsState.fromJson(String source) =>
+      PlaylistsState.fromMap(json.decode(source) as Map<String, dynamic>);
 }
 
-class PlaylistsErrorState extends PlaylistsState {}
+class PlaylistsEmptyState extends PlaylistsState {
+  PlaylistsEmptyState() : super([]);
+}
+
+class PlaylistsLoadingState extends PlaylistsState {
+  PlaylistsLoadingState() : super([]);
+}
+
+class PlaylistsLoadedState extends PlaylistsState {
+  PlaylistsLoadedState(super.playlists);
+}
+
+class PlaylistsErrorState extends PlaylistsState {
+  PlaylistsErrorState() : super([]);
+}
