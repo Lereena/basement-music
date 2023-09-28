@@ -13,6 +13,8 @@ import '../../../api_service.dart';
 part 'cacher_event.dart';
 part 'cacher_state.dart';
 
+const _cacherInfoKey = 'cacher';
+
 class CacherBloc extends HydratedBloc<CacherEvent, CacherState> {
   final ApiService _apiService;
 
@@ -102,8 +104,9 @@ class CacherBloc extends HydratedBloc<CacherEvent, CacherState> {
 
   @override
   CacherState? fromJson(Map<String, dynamic> json) =>
-      CacherState.fromJson(json['cacher'] as String);
+      CacherState.fromJson(json[_cacherInfoKey] as String);
 
   @override
-  Map<String, dynamic>? toJson(CacherState state) => {'cacher': state.toJson()};
+  Map<String, dynamic>? toJson(CacherState state) =>
+      {_cacherInfoKey: state.toJson()};
 }
