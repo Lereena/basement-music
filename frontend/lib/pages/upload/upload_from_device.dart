@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../bloc/local_track_uploading_bloc/local_track_uploading_bloc.dart';
+import '../../bloc/navigation_cubit/navigation_cubit.dart';
 import '../../utils/track_data.dart';
 import '../../widgets/dialogs/track_edit_dialog.dart';
 import 'files_input_page.dart';
@@ -11,16 +12,14 @@ import 'youtube/error_page.dart';
 import 'youtube/result_page.dart';
 
 class UploadFromDevice extends StatelessWidget {
-  final Function onCancelPressed;
-  final LocalTrackUploadingBloc trackUploadingBloc;
-
-  const UploadFromDevice({
-    required this.onCancelPressed,
-    required this.trackUploadingBloc,
-  }) : super();
+  const UploadFromDevice() : super();
 
   @override
   Widget build(BuildContext context) {
+    final navigationCubit = BlocProvider.of<NavigationCubit>(context);
+    final trackUploadingBloc =
+        BlocProvider.of<LocalTrackUploadingBloc>(context);
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -32,14 +31,19 @@ class UploadFromDevice extends StatelessWidget {
 
             if (state is NoFileSelectedState) {
               return FilesInputPage(
-                onSelectFiles: () => _onSelectFiles(),
+                onSelectFiles: () =>
+                    _onSelectFiles(trackUploadingBloc: trackUploadingBloc),
+                onCancel: () => navigationCubit.navigateUploadTrack(),
               );
             }
 
             if (state is FilesSelectedState) {
               return FilesInputPage(
                 selectedFiles: state.files,
-                onSelectFiles: () => _onSelectFiles(currentFiles: state.files),
+                onSelectFiles: () => _onSelectFiles(
+                  currentFiles: state.files,
+                  trackUploadingBloc: trackUploadingBloc,
+                ),
                 onMoveNext: () =>
                     trackUploadingBloc.add(FilesApproved(files: state.files)),
                 onRemoveFile: (file) {
@@ -70,24 +74,26 @@ class UploadFromDevice extends StatelessWidget {
                     },
                   );
                 },
+                onCancel: () => navigationCubit.navigateUploadTrack(),
               );
             }
 
             if (state is UploadingStartedState) {
               return UploadIsInProgressPage(
-                onUploadOtherTrack: () => trackUploadingBloc.add(Start()),
+                onUploadOtherTrack: () => navigationCubit.navigateUploadTrack(),
               );
             }
 
             if (state is SuccessfulUploadState) {
               return ResultPage(
                 result: true,
-                onUploadOtherTrackPress: () => trackUploadingBloc.add(Start()),
+                onUploadOtherTrackPress: () =>
+                    navigationCubit.navigateUploadTrack(),
               );
             }
 
             return ErrorPage(
-              onTryAgainPress: () => trackUploadingBloc.add(Start()),
+              onTryAgainPress: () => navigationCubit.navigateUploadTrack(),
             );
           },
         ),
@@ -97,6 +103,7 @@ class UploadFromDevice extends StatelessWidget {
 
   Future<void> _onSelectFiles({
     List<({String name, PlatformFile file})>? currentFiles,
+    required LocalTrackUploadingBloc trackUploadingBloc,
   }) async {
     final FilePickerResult? result = await FilePicker.platform.pickFiles(
       allowMultiple: true,

@@ -7,11 +7,13 @@ import '../../../widgets/buttons/styled_button.dart';
 
 class LinkInputPage extends StatelessWidget {
   final void Function(String) onFetchPress;
+  final void Function() onCancel;
   final String? url;
 
   LinkInputPage({
     super.key,
     required this.onFetchPress,
+    required this.onCancel,
     this.url,
   });
 
@@ -20,6 +22,7 @@ class LinkInputPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     focusNode.requestFocus();
 
     return Column(
@@ -28,10 +31,11 @@ class LinkInputPage extends StatelessWidget {
         Align(
           child: Text(
             'Insert YouTube link to extract audio',
-            style: Theme.of(context).textTheme.headlineSmall,
+            textAlign: TextAlign.center,
+            style: theme.textTheme.titleLarge,
           ),
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 16),
         Container(
           alignment: Alignment.center,
           width: min(70.w, 400),
@@ -39,15 +43,17 @@ class LinkInputPage extends StatelessWidget {
             focusNode: focusNode,
             controller: linkController,
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.titleLarge,
+            style: theme.textTheme.titleLarge,
             onSubmitted: (_) => onFetchPress(linkController.text),
           ),
         ),
-        const SizedBox(height: 40),
+        const SizedBox(height: 16),
         StyledButton(
           title: 'Extract',
           onPressed: () => onFetchPress(linkController.text),
         ),
+        const SizedBox(height: 16),
+        TextButton(onPressed: onCancel, child: const Text('Cancel')),
       ],
     );
   }

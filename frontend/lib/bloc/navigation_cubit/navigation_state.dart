@@ -31,4 +31,8 @@ class NavigationPlaylist extends NavigationState {
   NavigationPlaylist(this.playlist);
 }
 
-class NavigationUploadTrack extends NavigationState {}
+class NavigationUploadSource extends NavigationState {}
+
+class NavigationUploadTrackFromDevice extends NavigationState {}
+
+class NavigationUploadTrackFromYoutube extends NavigationState {}

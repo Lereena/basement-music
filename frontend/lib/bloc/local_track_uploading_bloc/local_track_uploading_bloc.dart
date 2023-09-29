@@ -15,16 +15,8 @@ class LocalTrackUploadingBloc
 
   LocalTrackUploadingBloc(this._tracksRepository)
       : super(NoFileSelectedState()) {
-    on<Start>(_onStart);
     on<FilesSelected>(_onFilesSelected);
     on<FilesApproved>(_onFilesApproved);
-  }
-
-  FutureOr<void> _onStart(
-    Start event,
-    Emitter<LocalTrackUploadingState> emit,
-  ) {
-    emit(NoFileSelectedState());
   }
 
   FutureOr<void> _onFilesSelected(

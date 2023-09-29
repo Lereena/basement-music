@@ -12,7 +12,9 @@ import '../pages/playlist_page.dart';
 import '../pages/search_page.dart';
 import '../pages/settings_page.dart';
 import '../pages/tracks_page.dart';
+import '../pages/upload/upload_from_device.dart';
 import '../pages/upload/upload_page.dart';
+import '../pages/upload/youtube/extract_from_youtube.dart';
 import 'navigations/drawer_navigation_wrapper.dart';
 
 class MainBodyContent extends StatefulWidget {
@@ -101,7 +103,13 @@ class _MainBodyContentState extends State<MainBodyContent> {
     if (state is NavigationPlaylist) {
       return PlaylistPage(playlist: state.playlist);
     }
-    if (state is NavigationUploadTrack) return const UploadPage();
+    if (state is NavigationUploadSource) return const UploadPage();
+    if (state is NavigationUploadTrackFromDevice) {
+      return const UploadFromDevice();
+    }
+    if (state is NavigationUploadTrackFromYoutube) {
+      return const ExtractFromYoutube();
+    }
 
     return _unimplemented(state);
   }
@@ -115,7 +123,9 @@ class _MainBodyContentState extends State<MainBodyContent> {
     if (state is NavigationArtist) return '';
     if (state is NavigationAlbum) return '';
     if (state is NavigationPlaylist) return state.playlist.title;
-    if (state is NavigationUploadTrack) return 'Upload track';
+    if (state is NavigationUploadSource ||
+        state is NavigationUploadTrackFromDevice ||
+        state is NavigationUploadTrackFromYoutube) return 'Upload track';
 
     return '';
   }

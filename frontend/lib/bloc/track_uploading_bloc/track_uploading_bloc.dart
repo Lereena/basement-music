@@ -81,6 +81,7 @@ class TrackUploadingBloc
     }
 
     if (result) {
+      await _tracksRepository.getAllTracks();
       emit(SuccessfulUploadState());
     } else {
       emit(ErrorState());
