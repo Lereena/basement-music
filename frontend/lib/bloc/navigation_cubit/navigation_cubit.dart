@@ -22,7 +22,14 @@ class NavigationCubit extends Cubit<NavigationState> {
 
   void navigateAlbum(String albumId) => emit(NavigationAlbum(albumId));
 
-  void navigatePlaylist(Playlist playlist) => emit(NavigationPlaylist(playlist));
+  void navigatePlaylist(Playlist playlist) =>
+      emit(NavigationPlaylist(playlist));
 
-  void navigateUploadTrack() => emit(NavigationUploadTrack());
+  void navigateUploadTrack() => emit(NavigationUploadSource());
+
+  void navigateUploadTrackFromDevice() =>
+      emit(NavigationUploadTrackFromDevice());
+
+  void navigateUploadTrackFromYoutube() =>
+      emit(NavigationUploadTrackFromYoutube());
 }

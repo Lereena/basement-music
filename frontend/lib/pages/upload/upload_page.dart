@@ -1,41 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../bloc/connectivity_status_bloc/connectivity_status_cubit.dart';
-import '../../bloc/local_track_uploading_bloc/local_track_uploading_bloc.dart';
-import 'upload_from_device.dart';
+import '../../bloc/navigation_cubit/navigation_cubit.dart';
 
 class UploadPage extends StatelessWidget {
   const UploadPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final localTrackUploadingBloc =
-        BlocProvider.of<LocalTrackUploadingBloc>(context);
+    final navigationCubit = BlocProvider.of<NavigationCubit>(context);
 
-    return BlocBuilder<ConnectivityStatusCubit, ConnectivityStatusState>(
-      builder: (context, state) {
-        if (state is NoConnectionState) {
-          return const Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.wifi_off, size: 40),
-                SizedBox(height: 16),
-                Text('Tracks uploading is not available in offline mode'),
-              ],
-            ),
-          );
-        }
-
-        return UploadFromDevice(
-          trackUploadingBloc: localTrackUploadingBloc,
-          onCancelPressed: () {},
-        );
-      },
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          ElevatedButton.icon(
+            onPressed: () => navigationCubit.navigateUploadTrackFromDevice(),
+            icon: const Icon(Icons.upload_file_outlined),
+            label: const Text('Upload from device'),
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton.icon(
+            onPressed: () => navigationCubit.navigateUploadTrackFromYoutube(),
+            icon: const Icon(Icons.smart_display_rounded),
+            label: const Text('Extract from YouTube video'),
+          ),
+        ],
+      ),
     );
-
-    // final trackUploadingBloc = BlocProvider.of<TrackUploadingBloc>(context);
-    // return ExtractFromYoutube(trackUploadingBloc: trackUploadingBloc);
   }
 }

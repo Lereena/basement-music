@@ -10,6 +10,7 @@ class FilesInputPage extends StatelessWidget {
   final Future<void> Function() onSelectFiles;
   final void Function(PlatformFile)? onRemoveFile;
   final void Function(({String name, PlatformFile file}))? onEditFileInfo;
+  final void Function() onCancel;
 
   const FilesInputPage({
     super.key,
@@ -18,6 +19,7 @@ class FilesInputPage extends StatelessWidget {
     required this.onSelectFiles,
     this.onRemoveFile,
     this.onEditFileInfo,
+    required this.onCancel,
   });
 
   @override
@@ -66,6 +68,8 @@ class FilesInputPage extends StatelessWidget {
           const SizedBox(height: 16),
           StyledButton(title: 'Next', onPressed: onMoveNext!),
         ],
+        const SizedBox(height: 16),
+        TextButton(onPressed: onCancel, child: const Text('Cancel')),
       ],
     );
   }

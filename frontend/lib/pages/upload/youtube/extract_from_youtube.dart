@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../bloc/navigation_cubit/navigation_cubit.dart';
 import '../../../bloc/track_uploading_bloc/track_uploading_bloc.dart';
 import '../upload_is_in_progress_page.dart';
 import 'error_page.dart';
@@ -9,12 +10,13 @@ import 'result_page.dart';
 import 'track_info_page.dart';
 
 class ExtractFromYoutube extends StatelessWidget {
-  final TrackUploadingBloc trackUploadingBloc;
-
-  const ExtractFromYoutube({super.key, required this.trackUploadingBloc});
+  const ExtractFromYoutube({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final navigationCubit = BlocProvider.of<NavigationCubit>(context);
+    final trackUploadingBloc = BlocProvider.of<TrackUploadingBloc>(context);
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -29,6 +31,7 @@ class ExtractFromYoutube extends StatelessWidget {
                 onFetchPress: (link) =>
                     trackUploadingBloc.add(LinkEntered(link)),
                 url: state.url,
+                onCancel: () => navigationCubit.navigateUploadTrack(),
               );
             }
 

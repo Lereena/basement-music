@@ -56,7 +56,7 @@ class _SideNavigationDrawerState extends State<SideNavigationDrawer> {
           ListTile(
             leading: const Icon(Icons.upload),
             title: const Text('Upload'),
-            selected: _navigationCubit.state is NavigationUploadTrack,
+            selected: _navigationCubit.state is NavigationUploadSource,
             onTap: () {
               Scaffold.of(context).closeDrawer();
               _navigationCubit.navigateUploadTrack();
