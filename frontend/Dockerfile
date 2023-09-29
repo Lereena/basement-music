@@ -18,7 +18,7 @@ RUN flutter pub get
 COPY ./ ./
 RUN flutter build web -t lib/main_prod.dart --release --web-renderer canvaskit
 
-FROM nginxinc/nginx-unprivileged:1.19-alpine
+FROM nginx:1.25.2-alpine
 
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /app/build/web /app
