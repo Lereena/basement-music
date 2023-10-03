@@ -70,9 +70,9 @@ func (ldw *LocalDirectoryWorker) UploadFile(w http.ResponseWriter, r *http.Reque
 }
 
 func (ldw *LocalDirectoryWorker) saveTrack(filename string) {
-	splitSymbols := regexp.MustCompile("[−‐‑-ー一-]")
+	splitSymbolsRegexp := regexp.MustCompile(splitSymbols)
 
-	titleSplit := splitSymbols.Split(filename, -1)
+	titleSplit := splitSymbolsRegexp.Split(filename, -1)
 
 	if len(titleSplit) == 1 {
 		log.Printf("Title '%s' has no split symbols, skipping", filename)

@@ -47,6 +47,7 @@ func main() {
 	router.HandleFunc("/track/{id}", musicRepo.EditTrack).Methods("PATCH")
 	router.HandleFunc("/track/upload", localDirectoryWorker.UploadFile).Methods("POST")
 
+	router.HandleFunc("/yt/fetchVideoInfo", youtubeWorker.FetchVideoInfo).Methods("GET")
 	router.HandleFunc("/yt/download", youtubeWorker.FetchFromYoutube).Methods("GET")
 
 	router.HandleFunc("/playlists", playlistsRepo.GetAllPlaylists).Methods("GET")

@@ -33,6 +33,10 @@ class TracksRepository {
     _searchItems.addAll(result);
   }
 
+  Future<({String artist, String title})?> fetchYtVideoInfo(String url) {
+    return _tracksApiProvider.fetchYtVideoInfo(url);
+  }
+
   Future<bool> uploadYtTrack(String url, String artist, String title) {
     return _tracksApiProvider.uploadYtTrack(url, artist, title);
   }
