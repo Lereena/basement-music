@@ -62,8 +62,7 @@ class BasementMusic extends StatelessWidget {
               title: 'Basement',
               theme: CustomTheme.lightTheme,
               darkTheme: CustomTheme.darkTheme,
-              themeMode:
-                  settingsState.darkTheme ? ThemeMode.dark : ThemeMode.light,
+              themeMode: settingsState.themeMode,
               initialRoute: NavigationRoute.initial.name,
               onGenerateRoute: onGenerateRoute,
               home: const Material(child: HomePage()),

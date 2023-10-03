@@ -4,6 +4,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../bloc/settings_bloc/settings_bloc.dart';
 import 'settings_line_decoration.dart';
 
+extension ThemeModeTitle on ThemeMode {
+  String get title => switch (this) {
+        ThemeMode.system => 'Device settings',
+        ThemeMode.light => 'Light',
+        ThemeMode.dark => 'Dark',
+      };
+}
+
 class ThemeSettingLine extends StatefulWidget {
   const ThemeSettingLine({super.key});
 
@@ -12,6 +20,14 @@ class ThemeSettingLine extends StatefulWidget {
 }
 
 class _ThemeSettingLineState extends State<ThemeSettingLine> {
+  final FocusNode _themeFocusNode = FocusNode();
+
+  @override
+  void dispose() {
+    _themeFocusNode.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final settingsBloc = BlocProvider.of<SettingsBloc>(context);
@@ -19,13 +35,28 @@ class _ThemeSettingLineState extends State<ThemeSettingLine> {
     return SettingsLineDecoration(
       child: Row(
         children: [
-          const Text('Night theme'),
+          const Text('Theme mode'),
           const Spacer(),
           BlocBuilder<SettingsBloc, SettingsState>(
             builder: (context, state) {
-              return Switch(
-                value: state.darkTheme,
-                onChanged: (value) => settingsBloc.add(SetDarkTheme(value)),
+              return DropdownButton<ThemeMode>(
+                value: state.themeMode,
+                items: ThemeMode.values
+                    .map(
+                      (mode) => DropdownMenuItem(
+                        value: mode,
+                        child: Text(mode.title),
+                      ),
+                    )
+                    .toList(),
+                focusNode: _themeFocusNode,
+                focusColor: Colors.transparent,
+                onChanged: (value) {
+                  if (value != null) {
+                    settingsBloc.add(SetThemeMode(value));
+                  }
+                  _themeFocusNode.unfocus();
+                },
               );
             },
           ),
