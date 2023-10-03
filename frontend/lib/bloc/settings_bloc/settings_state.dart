@@ -3,22 +3,22 @@ part of 'settings_bloc.dart';
 class SettingsState extends Equatable {
   final bool repeat;
   final bool shuffle;
-  final bool darkTheme;
+  final ThemeMode themeMode;
 
   const SettingsState({
     this.repeat = false,
     this.shuffle = false,
-    this.darkTheme = false,
+    this.themeMode = ThemeMode.system,
   });
 
   @override
-  List<Object> get props => [repeat, shuffle, darkTheme];
+  List<Object> get props => [repeat, shuffle, themeMode];
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'repeat': repeat,
       'shuffle': shuffle,
-      'darkTheme': darkTheme,
+      'darkTheme': themeMode.name,
     };
   }
 
@@ -26,7 +26,7 @@ class SettingsState extends Equatable {
     return SettingsState(
       repeat: map['repeat'] as bool,
       shuffle: map['shuffle'] as bool,
-      darkTheme: map['darkTheme'] as bool,
+      themeMode: map['darkTheme'] as ThemeMode,
     );
   }
 
@@ -38,13 +38,13 @@ class SettingsState extends Equatable {
   SettingsState copyWith({
     bool? repeat,
     bool? shuffle,
-    bool? darkTheme,
+    ThemeMode? themeMode,
     String? serverAddress,
   }) {
     return SettingsState(
       repeat: repeat ?? this.repeat,
       shuffle: shuffle ?? this.shuffle,
-      darkTheme: darkTheme ?? this.darkTheme,
+      themeMode: themeMode ?? this.themeMode,
     );
   }
 }

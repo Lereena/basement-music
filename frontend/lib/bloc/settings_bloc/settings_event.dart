@@ -19,8 +19,8 @@ class SetRepeat extends SettingsEvent {
   const SetRepeat(this.repeatValue);
 }
 
-class SetDarkTheme extends SettingsEvent {
-  final bool darkThemeValue;
+class SetThemeMode extends SettingsEvent {
+  final ThemeMode themeModeValue;
 
-  const SetDarkTheme(this.darkThemeValue);
+  const SetThemeMode(this.themeModeValue);
 }

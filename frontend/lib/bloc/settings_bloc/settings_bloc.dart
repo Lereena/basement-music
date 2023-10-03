@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 
 import '../../api_service.dart';
@@ -15,7 +16,7 @@ class SettingsBloc extends HydratedBloc<SettingsEvent, SettingsState> {
   SettingsBloc(this.apiService) : super(const SettingsState()) {
     on<SetShuffle>(_onSetShuffle);
     on<SetRepeat>(_onSetRepeat);
-    on<SetDarkTheme>(_onSetDarkTheme);
+    on<SetThemeMode>(_onSetThemeMode);
   }
 
   FutureOr<void> _onSetShuffle(SetShuffle event, Emitter<SettingsState> emit) {
@@ -26,11 +27,11 @@ class SettingsBloc extends HydratedBloc<SettingsEvent, SettingsState> {
     emit(state.copyWith(repeat: event.repeatValue));
   }
 
-  FutureOr<void> _onSetDarkTheme(
-    SetDarkTheme event,
+  FutureOr<void> _onSetThemeMode(
+    SetThemeMode event,
     Emitter<SettingsState> emit,
   ) {
-    emit(state.copyWith(darkTheme: event.darkThemeValue));
+    emit(state.copyWith(themeMode: event.themeModeValue));
   }
 
   @override
