@@ -2,10 +2,8 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:youtube_metadata/youtube_metadata.dart';
 
 import '../../repositories/tracks_repository.dart';
-import '../../utils/track_data.dart';
 
 part 'track_uploading_event.dart';
 part 'track_uploading_state.dart';
@@ -40,19 +38,17 @@ class TrackUploadingBloc
 
     currentUploadingLink = event.link;
 
-    late MetaDataModel metadata;
+    late ({String artist, String title})? videoInfo;
     try {
-      metadata = await YoutubeMetaData.getData(event.link);
+      videoInfo = await _tracksRepository.fetchYtVideoInfo(event.link);
     } catch (e) {
       emit(LinkInputErrorState());
       return;
     }
 
-    var (artist, title) = getArtistAndTitle(metadata.title);
-
-    artist ??= metadata.authorName?.trim() ?? '';
-
-    emit(InfoState(event.link, artist, title));
+    emit(
+      InfoState(event.link, videoInfo?.artist ?? '', videoInfo?.title ?? ''),
+    );
   }
 
   FutureOr<void> _onInfoChecked(

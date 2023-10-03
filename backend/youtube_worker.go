@@ -3,11 +3,15 @@ package main
 import (
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
+	"regexp"
+	"strings"
 
 	"github.com/Lereena/server_basement_music/config"
 	"github.com/Lereena/server_basement_music/repositories"
+	"github.com/Lereena/server_basement_music/respond"
 	"github.com/TheKinrar/goydl"
 	"github.com/google/uuid"
 )
@@ -15,6 +19,43 @@ import (
 type YoutubeWorker struct {
 	musicRepo *repositories.TracksRepository
 	Cfg       *config.Config
+}
+
+type VideoInfo struct {
+	Artist string `json:"artist"`
+	Title  string `json:"title"`
+}
+
+func (yw *YoutubeWorker) FetchVideoInfo(w http.ResponseWriter, r *http.Request) {
+	uri := r.FormValue("url")
+
+	youtubeDl := goydl.NewYoutubeDl()
+	youtubeDl.VideoURL = uri
+
+	fetchedInfo, err := youtubeDl.GetInfo()
+	log.Println(fetchedInfo.Fulltitle)
+	if err != nil {
+		respond.RespondError(w, http.StatusNotFound, "Couldn't fetch video info: url = "+uri)
+	}
+
+	splitSymbolsRegexp := regexp.MustCompile(splitSymbols)
+	titleSplit := splitSymbolsRegexp.Split(fetchedInfo.Fulltitle, -1)
+	log.Println(titleSplit)
+
+	var title, artist string
+
+	if len(titleSplit) == 1 {
+		title = titleSplit[0]
+		artist = fetchedInfo.Uploader
+	}
+	if len(titleSplit) >= 2 {
+		artist = titleSplit[0]
+		title = titleSplit[1]
+	}
+
+	videoInfo := VideoInfo{Artist: url.QueryEscape(strings.Trim(artist, " ")), Title: url.QueryEscape(strings.Trim(title, " "))}
+
+	respond.RespondJSON(w, http.StatusOK, videoInfo)
 }
 
 func (yw *YoutubeWorker) FetchFromYoutube(w http.ResponseWriter, r *http.Request) {

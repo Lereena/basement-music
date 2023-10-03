@@ -41,11 +41,28 @@ class TracksApiProvider {
     throw Exception('Failed to search tracks: ${response.body}');
   }
 
+  Future<({String artist, String title})?> fetchYtVideoInfo(String url) async {
+    if (url == '') return null;
+
+    final uri = Uri.parse(_apiService.reqYtVideoInfo(url));
+    final response = await getAsync(uri);
+
+    if (response.statusCode == 200) {
+      final body = jsonDecode(response.body);
+      return (
+        artist: Uri.decodeQueryComponent(body['artist'] as String).trim(),
+        title: Uri.decodeQueryComponent(body['title'] as String).trim()
+      );
+    }
+
+    throw Exception('Failed to upload YouTube track: ${response.body}');
+  }
+
   Future<bool> uploadYtTrack(String url, String artist, String title) async {
     if (url == '') return false;
 
-    final uri2 = Uri.parse(_apiService.reqYtDownload(url, artist, title));
-    final response = await getAsync(uri2);
+    final uri = Uri.parse(_apiService.reqYtDownload(url, artist, title));
+    final response = await getAsync(uri);
 
     if (response.statusCode == 200) {
       return true;

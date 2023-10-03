@@ -893,14 +893,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.2"
-  youtube_metadata:
-    dependency: "direct main"
-    description:
-      name: youtube_metadata
-      sha256: f2ad59fb586ecddc8524692ca3f31ad7890ecbe064560adbfc2c9c2d071a5c93
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.1"
 sdks:
   dart: ">=3.1.0-185.0.dev <4.0.0"
   flutter: ">=3.13.0"
