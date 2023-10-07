@@ -33,11 +33,6 @@ class PlaylistCreationBloc
   ) async {
     emit(WaitingCreationState());
 
-    if (event.title.isEmpty) {
-      emit(const InputErrorState('Title must not be empty'));
-      return;
-    }
-
     try {
       final result = await _playlistsRepository.createPlaylist(event.title);
 
