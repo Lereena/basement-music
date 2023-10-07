@@ -29,7 +29,7 @@ func (repo *TracksRepository) Init() {
 
 func (repo *TracksRepository) GetTracks(w http.ResponseWriter, r *http.Request) {
 	var tracks []models.Track
-	repo.DB.Model(&models.Track{}).Find(&tracks)
+	repo.DB.Model(&models.Track{}).Order("created_at DESC").Find(&tracks)
 	json.NewEncoder(w).Encode(&tracks)
 }
 

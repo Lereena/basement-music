@@ -48,7 +48,7 @@ class _AddToPlaylistDialogState extends State<AddToPlaylistDialog> {
                   indent: 10,
                   endIndent: 10,
                 ),
-                SingleChildScrollView(
+                Expanded(
                   child: ListView.separated(
                     shrinkWrap: true,
                     itemCount: state.playlists.length,
@@ -57,20 +57,22 @@ class _AddToPlaylistDialogState extends State<AddToPlaylistDialog> {
                       indent: 10,
                       endIndent: 10,
                     ),
-                    itemBuilder: (context, index) {
-                      return SimpleDialogOption(
-                        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                        child: Text(state.playlists[index].title),
-                        onPressed: () => _addToPlaylistBloc.add(
-                          PlaylistChoosen(
-                            widget.trackId,
-                            state.playlists[index].id,
-                          ),
+                    itemBuilder: (context, index) => SimpleDialogOption(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 10,
+                        horizontal: 15,
+                      ),
+                      child: Text(state.playlists[index].title),
+                      onPressed: () => _addToPlaylistBloc.add(
+                        PlaylistChoosen(
+                          widget.trackId,
+                          state.playlists[index].id,
                         ),
-                      );
-                    },
+                      ),
+                    ),
                   ),
                 ),
+                const SizedBox(height: 16),
               ],
             );
           }

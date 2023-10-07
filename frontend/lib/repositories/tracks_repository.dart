@@ -16,7 +16,7 @@ class TracksRepository {
   Future<void> getAllTracks() async {
     final result = await _tracksApiProvider.fetchAllTracks();
     _items.clear();
-    _items.addAll(result.reversed);
+    _items.addAll(result);
   }
 
   void searchTracksOffline(String searchQuery) {

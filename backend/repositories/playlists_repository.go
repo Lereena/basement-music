@@ -21,7 +21,7 @@ func (repo *PlaylistsRepository) Init() {
 
 func (repo *PlaylistsRepository) GetAllPlaylists(w http.ResponseWriter, r *http.Request) {
 	var playlists []models.Playlist
-	repo.DB.Model(&models.Playlist{}).Preload("Tracks").Find(&playlists)
+	repo.DB.Model(&models.Playlist{}).Preload("Tracks").Order("created_at").Find(&playlists)
 	json.NewEncoder(w).Encode(&playlists)
 }
 
