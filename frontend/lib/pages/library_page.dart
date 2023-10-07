@@ -45,12 +45,17 @@ class _LibraryPageState extends State<LibraryPage> {
                   Expanded(
                     child: ListView.builder(
                       shrinkWrap: true,
-                      itemBuilder: (context, index) => PlaylistCard(
-                        playlist: state.playlists[index],
-                        onTap: () => navigationCubit
-                            .navigatePlaylist(state.playlists[index]),
-                      ),
-                      itemCount: state.playlists.length,
+                      itemBuilder: (context, index) {
+                        if (index == state.playlists.length) {
+                          return const SizedBox(height: 64);
+                        }
+                        return PlaylistCard(
+                          playlist: state.playlists[index],
+                          onTap: () => navigationCubit
+                              .navigatePlaylist(state.playlists[index]),
+                        );
+                      },
+                      itemCount: state.playlists.length + 1,
                     ),
                   ),
                 ],
