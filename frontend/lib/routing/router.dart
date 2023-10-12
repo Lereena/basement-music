@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
 import '../pages/library_page.dart';
+import '../pages/playlist_page.dart';
 import '../pages/search_page.dart';
 import '../pages/settings_page.dart';
 import '../pages/tracks_page.dart';
@@ -23,7 +24,7 @@ class AppRouter {
         redirect: (_, __) => NavigationRoute.tracks.name,
       ),
       StatefulShellRoute.indexedStack(
-        builder: (context, state, navigationShell) => AppScaffoldShell(
+        builder: (_, __, navigationShell) => AppScaffoldShell(
           navigationShell: navigationShell,
         ),
         branches: <StatefulShellBranch>[
@@ -33,7 +34,7 @@ class AppRouter {
               GoRoute(
                 name: NavigationRoute.tracks.title,
                 path: NavigationRoute.tracks.name,
-                pageBuilder: (context, state) => NoTransitionPage(
+                pageBuilder: (_, __) => NoTransitionPage(
                   child: AppScaffold(child: TracksPage()),
                 ),
               ),
@@ -45,15 +46,17 @@ class AppRouter {
               GoRoute(
                 name: NavigationRoute.library.title,
                 path: NavigationRoute.library.name,
-                pageBuilder: (context, state) => const NoTransitionPage(
+                pageBuilder: (_, __) => const NoTransitionPage(
                   child: AppScaffold(child: LibraryPage()),
                 ),
                 routes: [
                   GoRoute(
-                    name: NavigationRoute.libraryDetails.name,
+                    name: NavigationRoute.playlist.name,
                     path: ":id",
-                    pageBuilder: (context, state) => const NoTransitionPage(
-                      child: AppScaffold(child: LibraryPage()),
+                    pageBuilder: (_, state) => NoTransitionPage(
+                      child: PlaylistPage(
+                        playlistId: state.pathParameters['id']!,
+                      ),
                     ),
                   ),
                 ],
@@ -66,7 +69,7 @@ class AppRouter {
               GoRoute(
                 name: NavigationRoute.search.title,
                 path: NavigationRoute.search.name,
-                pageBuilder: (context, state) => const NoTransitionPage(
+                pageBuilder: (_, __) => const NoTransitionPage(
                   child: AppScaffold(child: SearchPage()),
                 ),
               ),
@@ -78,7 +81,7 @@ class AppRouter {
               GoRoute(
                 name: NavigationRoute.upload.title,
                 path: NavigationRoute.upload.name,
-                pageBuilder: (context, state) => const NoTransitionPage(
+                pageBuilder: (_, __) => const NoTransitionPage(
                   child: AppScaffold(child: UploadPage()),
                 ),
               ),
@@ -90,7 +93,7 @@ class AppRouter {
               GoRoute(
                 name: NavigationRoute.settings.title,
                 path: NavigationRoute.settings.name,
-                pageBuilder: (context, state) => const NoTransitionPage(
+                pageBuilder: (_, __) => const NoTransitionPage(
                   child: AppScaffold(child: SettingsPage()),
                 ),
               ),
