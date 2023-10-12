@@ -5,12 +5,14 @@ class CustomTheme {
   static ThemeData get lightTheme {
     return FlexThemeData.light(
       scheme: FlexScheme.damask,
+      appBarStyle: FlexAppBarStyle.scaffoldBackground,
     );
   }
 
   static ThemeData get darkTheme {
     return FlexThemeData.dark(
       scheme: FlexScheme.damask,
+      appBarStyle: FlexAppBarStyle.scaffoldBackground,
     );
   }
 }
