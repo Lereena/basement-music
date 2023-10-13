@@ -12,11 +12,11 @@ final class PlaylistEditingStartEvent extends PlaylistEditEvent {
 final class PlaylistSaveEvent extends PlaylistEditEvent {
   final String playlistId;
   final String title;
-  final List<String> tracks;
+  final List<String> tracksIds;
 
   PlaylistSaveEvent({
     required this.playlistId,
     required this.title,
-    required this.tracks,
+    required this.tracksIds,
   });
 }

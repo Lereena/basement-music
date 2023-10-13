@@ -11,6 +11,7 @@ import 'bloc/local_track_uploading_bloc/local_track_uploading_bloc.dart';
 import 'bloc/player_bloc/player_bloc.dart';
 import 'bloc/playlist_bloc/playlist_bloc.dart';
 import 'bloc/playlist_creation_bloc/playlist_creation_bloc.dart';
+import 'bloc/playlist_edit_bloc/playlist_edit_bloc.dart';
 import 'bloc/playlists_bloc/playlists_bloc.dart';
 import 'bloc/remove_from_playlist_bloc/remove_from_playlist_cubit.dart';
 import 'bloc/settings_bloc/settings_bloc.dart';
@@ -84,6 +85,11 @@ class _BlocProviderWrapperState extends State<BlocProviderWrapper> {
           create: (_) => PlaylistCreationBloc(
             _playlistsRepository,
             _playlistsBloc,
+          ),
+        ),
+        BlocProvider<PlaylistEditBloc>(
+          create: (_) => PlaylistEditBloc(
+            _playlistsRepository,
           ),
         ),
         BlocProvider<TracksSearchCubit>(

@@ -1,8 +1,9 @@
-class RouteName {
+abstract class RouteName {
   static String get initial => '/';
   static String get tracks => '/tracks';
   static String get library => '/library';
   static String playlist(String id) => '/library/$id';
+  static String playlistEdit(String id) => '/library/$id/edit';
   static String get search => '/search';
   static String get settings => '/settings';
   static String get upload => '/upload';

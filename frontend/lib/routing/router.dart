@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
+import '../pages/edit_playlist/playlist_edit_page.dart';
 import '../pages/library_page.dart';
 import '../pages/playlist_page.dart';
 import '../pages/search_page.dart';
@@ -56,6 +57,16 @@ class AppRouter {
                         playlistId: state.pathParameters['id']!,
                       ),
                     ),
+                    routes: [
+                      GoRoute(
+                        path: "edit",
+                        pageBuilder: (_, state) => NoTransitionPage(
+                          child: PlaylistEditPage(
+                            playlistId: state.pathParameters['id']!,
+                          ),
+                        ),
+                      )
+                    ],
                   ),
                 ],
               ),
