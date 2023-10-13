@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bloc/playlist_bloc/playlist_bloc.dart';
+import '../bloc/playlists_bloc/playlists_bloc.dart';
+import '../models/playlist.dart';
 import '../widgets/app_bar.dart';
 import '../widgets/track_card.dart';
 
 class PlaylistPage extends StatefulWidget {
   final String playlistId;
-  // TODO
-  // final Playlist playlist;
 
   const PlaylistPage({super.key, required this.playlistId});
 
@@ -18,29 +18,29 @@ class PlaylistPage extends StatefulWidget {
 
 class _PlaylistPageState extends State<PlaylistPage> {
   late final PlaylistBloc _playlistBloc;
+  late final PlaylistsBloc _playlistsBloc;
 
   @override
   void initState() {
     super.initState();
-    _playlistBloc = BlocProvider.of<PlaylistBloc>(context);
+    _playlistBloc = context.read<PlaylistBloc>();
     _playlistBloc.add(PlaylistLoadEvent(widget.playlistId));
-    // _playlistsBloc.openedPlaylist = widget.playlist;
   }
 
   @override
   void dispose() {
     super.dispose();
-    // _playlistsBloc.openedPlaylist = Playlist.empty();
+    _playlistsBloc.openedPlaylist = Playlist.empty();
   }
 
-  final _appBarActions = [
-    IconButton(
-      onPressed: () {},
-      icon: const Icon(
-        Icons.edit_outlined,
-      ),
-    )
-  ];
+  // final _appBarActions = [
+  //   IconButton(
+  //     onPressed: () {},
+  //     icon: const Icon(
+  //       Icons.edit_outlined,
+  //     ),
+  //   )
+  // ];
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +69,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
           return Scaffold(
             appBar: BasementAppBar(
               title: state.playlist.title,
-              actions: _appBarActions,
+              // actions: _appBarActions,
             ),
             body: Column(
               children: [
