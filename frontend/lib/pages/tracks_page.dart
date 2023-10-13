@@ -6,6 +6,7 @@ import '../bloc/tracks_bloc/tracks_bloc.dart';
 import '../bloc/tracks_bloc/tracks_event.dart';
 import '../bloc/tracks_bloc/tracks_state.dart';
 import '../models/track.dart';
+import '../widgets/app_bar.dart';
 import '../widgets/track_card.dart';
 
 class TracksPage extends StatelessWidget {
@@ -15,60 +16,63 @@ class TracksPage extends StatelessWidget {
       onRefresh: () => _onRefresh(context),
       child: BlocBuilder<ConnectivityStatusCubit, ConnectivityStatusState>(
         builder: (context, connectivityStatus) {
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              BlocBuilder<TracksBloc, TracksState>(
-                builder: (context, state) {
-                  if (state is TracksLoadingState) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
+          return Scaffold(
+            appBar: BasementAppBar(title: 'All tracks'),
+            body: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                BlocBuilder<TracksBloc, TracksState>(
+                  builder: (context, state) {
+                    if (state is TracksLoadingState) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
 
-                  if (state is TracksEmptyState) {
-                    return const Center(
-                      child: Text('No tracks'),
-                    );
-                  }
+                    if (state is TracksEmptyState) {
+                      return const Center(
+                        child: Text('No tracks'),
+                      );
+                    }
 
-                  if (state is TracksLoadedState) {
-                    return Expanded(
-                      child: ListView.builder(
-                        itemCount: state.tracks.length + 1,
-                        itemBuilder: (context, index) {
-                          if (index == state.tracks.length) {
-                            return const SizedBox(height: 40);
-                          }
-                          return Column(
+                    if (state is TracksLoadedState) {
+                      return Expanded(
+                        child: ListView.builder(
+                          itemCount: state.tracks.length + 1,
+                          itemBuilder: (context, index) {
+                            if (index == state.tracks.length) {
+                              return const SizedBox(height: 40);
+                            }
+                            return Column(
+                              children: [
+                                TrackCard(
+                                  track: state.tracks[index],
+                                  active:
+                                      connectivityStatus is HasConnectionState,
+                                ),
+                                const Divider(height: 1),
+                              ],
+                            );
+                          },
+                          prototypeItem: Column(
                             children: [
-                              TrackCard(
-                                track: state.tracks[index],
-                                active:
-                                    connectivityStatus is HasConnectionState,
-                              ),
+                              TrackCard(track: Track.empty()),
                               const Divider(height: 1),
                             ],
-                          );
-                        },
-                        prototypeItem: Column(
-                          children: [
-                            TrackCard(track: Track.empty()),
-                            const Divider(height: 1),
-                          ],
+                          ),
                         ),
-                      ),
-                    );
-                  }
+                      );
+                    }
 
-                  if (state is TracksErrorState) {
-                    return const Center(
-                      child: Text('Error loading tracks'),
-                    );
-                  }
+                    if (state is TracksErrorState) {
+                      return const Center(
+                        child: Text('Error loading tracks'),
+                      );
+                    }
 
-                  return Container();
-                },
-              ),
-            ],
+                    return Container();
+                  },
+                ),
+              ],
+            ),
           );
         },
       ),

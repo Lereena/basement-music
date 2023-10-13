@@ -6,6 +6,7 @@ import '../bloc/playlists_bloc/playlists_bloc.dart';
 import '../bloc/playlists_bloc/playlists_event.dart';
 import '../bloc/playlists_bloc/playlists_state.dart';
 import '../routing/routes.dart';
+import '../widgets/app_bar.dart';
 import '../widgets/create_playlist.dart';
 import '../widgets/playlist_card.dart';
 
@@ -22,7 +23,7 @@ class _LibraryPageState extends State<LibraryPage> {
     return RefreshIndicator(
       onRefresh: () => _onRefresh(context),
       child: Scaffold(
-        appBar: AppBar(title: const Text('Library')),
+        appBar: BasementAppBar(title: 'Library'),
         body: BlocBuilder<PlaylistsBloc, PlaylistsState>(
           builder: (context, state) {
             if (state is PlaylistsLoadingState) {

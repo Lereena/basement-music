@@ -54,8 +54,10 @@ class AppRouter {
                     name: NavigationRoute.playlist.name,
                     path: ":id",
                     pageBuilder: (_, state) => NoTransitionPage(
-                      child: PlaylistPage(
-                        playlistId: state.pathParameters['id']!,
+                      child: AppScaffold(
+                        child: PlaylistPage(
+                          playlistId: state.pathParameters['id']!,
+                        ),
                       ),
                     ),
                   ),

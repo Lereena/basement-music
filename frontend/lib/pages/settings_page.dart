@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../widgets/app_bar.dart';
 import '../widgets/settings/theme_setting_line.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -12,11 +13,14 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
-    return const Column(
-      children: [
-        Divider(),
-        ThemeSettingLine(),
-      ],
+    return Scaffold(
+      appBar: BasementAppBar(title: 'Settings'),
+      body: const Column(
+        children: [
+          Divider(),
+          ThemeSettingLine(),
+        ],
+      ),
     );
   }
 }
