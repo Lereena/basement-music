@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../bloc/local_track_uploading_bloc/local_track_uploading_bloc.dart';
 import '../../routing/routes.dart';
 import '../../utils/track_data.dart';
+import '../../widgets/app_bar.dart';
 import '../../widgets/dialogs/track_edit_dialog.dart';
 import 'files_input_page.dart';
 import 'upload_is_in_progress_page.dart';
@@ -19,82 +20,86 @@ class UploadFromDevice extends StatelessWidget {
   Widget build(BuildContext context) {
     final trackUploadingBloc = context.read<LocalTrackUploadingBloc>();
 
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        BlocBuilder<LocalTrackUploadingBloc, LocalTrackUploadingState>(
-          builder: (context, state) {
-            if (state is LoadingState) {
-              return const Center(child: CircularProgressIndicator());
-            }
+    return Scaffold(
+      appBar: BasementAppBar(title: 'Upload from device'),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          BlocBuilder<LocalTrackUploadingBloc, LocalTrackUploadingState>(
+            builder: (context, state) {
+              if (state is LoadingState) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
-            if (state is NoFileSelectedState) {
-              return FilesInputPage(
-                onSelectFiles: () => _onSelectFiles(context),
-                onCancel: () => context.pop(),
+              if (state is NoFileSelectedState) {
+                return FilesInputPage(
+                  onSelectFiles: () => _onSelectFiles(context),
+                  onCancel: () => context.pop(),
+                );
+              }
+
+              if (state is FilesSelectedState) {
+                return FilesInputPage(
+                  selectedFiles: state.files,
+                  onSelectFiles: () => _onSelectFiles(
+                    context,
+                    currentFiles: state.files,
+                  ),
+                  onMoveNext: () =>
+                      trackUploadingBloc.add(FilesApproved(files: state.files)),
+                  onRemoveFile: (file) {
+                    state.files.removeWhere((element) => element.file == file);
+                    trackUploadingBloc.add(FilesSelected(files: state.files));
+                  },
+                  onEditFileInfo: (fileInfo) {
+                    final (artist, title) = getArtistAndTitle(fileInfo.name);
+
+                    TrackEditDialog.show(
+                      context: context,
+                      artist: artist,
+                      title: title,
+                      onSubmit: (result) {
+                        final fileIndex = state.files.indexWhere(
+                          (element) => element.file == fileInfo.file,
+                        );
+                        state.files.removeAt(fileIndex);
+                        state.files.insert(
+                          fileIndex,
+                          (
+                            file: fileInfo.file,
+                            name: constructFilename(result.artist, result.title)
+                          ),
+                        );
+
+                        trackUploadingBloc
+                            .add(FilesSelected(files: state.files));
+                      },
+                    );
+                  },
+                  onCancel: () => context.pop(),
+                );
+              }
+
+              if (state is UploadingStartedState) {
+                return UploadIsInProgressPage(
+                  onUploadOtherTrack: () => _onUploadOtherTrack(context),
+                );
+              }
+
+              if (state is SuccessfulUploadState) {
+                return ResultPage(
+                  result: true,
+                  onUploadOtherTrackPress: () => _onUploadOtherTrack(context),
+                );
+              }
+
+              return ErrorPage(
+                onTryAgainPress: () => _onUploadOtherTrack(context),
               );
-            }
-
-            if (state is FilesSelectedState) {
-              return FilesInputPage(
-                selectedFiles: state.files,
-                onSelectFiles: () => _onSelectFiles(
-                  context,
-                  currentFiles: state.files,
-                ),
-                onMoveNext: () =>
-                    trackUploadingBloc.add(FilesApproved(files: state.files)),
-                onRemoveFile: (file) {
-                  state.files.removeWhere((element) => element.file == file);
-                  trackUploadingBloc.add(FilesSelected(files: state.files));
-                },
-                onEditFileInfo: (fileInfo) {
-                  final (artist, title) = getArtistAndTitle(fileInfo.name);
-
-                  TrackEditDialog.show(
-                    context: context,
-                    artist: artist,
-                    title: title,
-                    onSubmit: (result) {
-                      final fileIndex = state.files.indexWhere(
-                        (element) => element.file == fileInfo.file,
-                      );
-                      state.files.removeAt(fileIndex);
-                      state.files.insert(
-                        fileIndex,
-                        (
-                          file: fileInfo.file,
-                          name: constructFilename(result.artist, result.title)
-                        ),
-                      );
-
-                      trackUploadingBloc.add(FilesSelected(files: state.files));
-                    },
-                  );
-                },
-                onCancel: () => context.pop(),
-              );
-            }
-
-            if (state is UploadingStartedState) {
-              return UploadIsInProgressPage(
-                onUploadOtherTrack: () => _onUploadOtherTrack(context),
-              );
-            }
-
-            if (state is SuccessfulUploadState) {
-              return ResultPage(
-                result: true,
-                onUploadOtherTrackPress: () => _onUploadOtherTrack(context),
-              );
-            }
-
-            return ErrorPage(
-              onTryAgainPress: () => _onUploadOtherTrack(context),
-            );
-          },
-        ),
-      ],
+            },
+          ),
+        ],
+      ),
     );
   }
 
