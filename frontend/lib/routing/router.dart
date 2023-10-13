@@ -7,7 +7,6 @@ import '../pages/search_page.dart';
 import '../pages/settings_page.dart';
 import '../pages/tracks_page.dart';
 import '../pages/upload/upload_page.dart';
-import 'app_scaffold.dart';
 import 'app_scaffold_shell.dart';
 import 'routes.dart';
 
@@ -35,7 +34,7 @@ class AppRouter {
                 name: NavigationRoute.tracks.title,
                 path: NavigationRoute.tracks.name,
                 pageBuilder: (_, __) => NoTransitionPage(
-                  child: AppScaffold(child: TracksPage()),
+                  child: TracksPage(),
                 ),
               ),
             ],
@@ -47,17 +46,15 @@ class AppRouter {
                 name: NavigationRoute.library.title,
                 path: NavigationRoute.library.name,
                 pageBuilder: (_, __) => const NoTransitionPage(
-                  child: AppScaffold(child: LibraryPage()),
+                  child: LibraryPage(),
                 ),
                 routes: [
                   GoRoute(
                     name: NavigationRoute.playlist.name,
                     path: ":id",
                     pageBuilder: (_, state) => NoTransitionPage(
-                      child: AppScaffold(
-                        child: PlaylistPage(
-                          playlistId: state.pathParameters['id']!,
-                        ),
+                      child: PlaylistPage(
+                        playlistId: state.pathParameters['id']!,
                       ),
                     ),
                   ),
@@ -72,7 +69,7 @@ class AppRouter {
                 name: NavigationRoute.search.title,
                 path: NavigationRoute.search.name,
                 pageBuilder: (_, __) => const NoTransitionPage(
-                  child: AppScaffold(child: SearchPage()),
+                  child: SearchPage(),
                 ),
               ),
             ],
@@ -84,7 +81,7 @@ class AppRouter {
                 name: NavigationRoute.upload.title,
                 path: NavigationRoute.upload.name,
                 pageBuilder: (_, __) => const NoTransitionPage(
-                  child: AppScaffold(child: UploadPage()),
+                  child: UploadPage(),
                 ),
               ),
             ],
@@ -96,7 +93,7 @@ class AppRouter {
                 name: NavigationRoute.settings.title,
                 path: NavigationRoute.settings.name,
                 pageBuilder: (_, __) => const NoTransitionPage(
-                  child: AppScaffold(child: SettingsPage()),
+                  child: SettingsPage(),
                 ),
               ),
             ],

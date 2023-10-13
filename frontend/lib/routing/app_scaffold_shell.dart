@@ -3,6 +3,7 @@ import 'package:flutter_adaptive_scaffold/flutter_adaptive_scaffold.dart';
 import 'package:go_router/go_router.dart';
 
 import '../widgets/leading_rail_widget.dart';
+import 'app_scaffold.dart';
 import 'routes.dart';
 
 class AppScaffoldShell extends StatelessWidget {
@@ -36,7 +37,7 @@ class AppScaffoldShell extends StatelessWidget {
             ),
           )
           .toList(),
-      body: (_) => navigationShell,
+      body: (_) => AppScaffold(child: navigationShell),
     );
   }
 
