@@ -4,7 +4,30 @@ import 'package:go_router/go_router.dart';
 
 import '../widgets/leading_rail_widget.dart';
 import 'app_scaffold.dart';
-import 'routes.dart';
+
+enum _Destination {
+  tracks,
+  library,
+  search,
+  upload,
+  settings;
+
+  String get title => switch (this) {
+        tracks => 'All tracks',
+        library => 'Library',
+        search => 'Search',
+        settings => 'Settings',
+        upload => 'Upload',
+      };
+
+  Widget get icon => switch (this) {
+        tracks => const Icon(Icons.home),
+        library => const Icon(Icons.library_music),
+        search => const Icon(Icons.search),
+        settings => const Icon(Icons.settings),
+        upload => const Icon(Icons.upload),
+      };
+}
 
 class AppScaffoldShell extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
@@ -23,13 +46,7 @@ class AppScaffoldShell extends StatelessWidget {
       leadingUnextendedNavRail: const LeadingRailWidget(extended: false),
       selectedIndex: navigationShell.currentIndex,
       onSelectedIndexChange: (index) => onNavigationEvent(context, index),
-      destinations: [
-        NavigationRoute.tracks,
-        NavigationRoute.library,
-        NavigationRoute.search,
-        NavigationRoute.upload,
-        NavigationRoute.settings,
-      ]
+      destinations: _Destination.values
           .map(
             (e) => NavigationDestination(
               icon: e.icon,

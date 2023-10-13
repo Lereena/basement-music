@@ -53,7 +53,7 @@ class _LibraryPageState extends State<LibraryPage> {
                         return PlaylistCard(
                           playlist: state.playlists[index],
                           onTap: () => context.go(
-                            Routes.playlist(state.playlists[index].id),
+                            RouteName.playlist(state.playlists[index].id),
                           ),
                         );
                       },

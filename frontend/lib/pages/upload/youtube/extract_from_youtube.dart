@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
-import '../../../bloc/navigation_cubit/navigation_cubit.dart';
 import '../../../bloc/track_uploading_bloc/track_uploading_bloc.dart';
+import '../../../routing/routes.dart';
 import '../upload_is_in_progress_page.dart';
 import 'error_page.dart';
 import 'link_input_page.dart';
@@ -14,7 +15,6 @@ class ExtractFromYoutube extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final navigationCubit = BlocProvider.of<NavigationCubit>(context);
     final trackUploadingBloc = BlocProvider.of<TrackUploadingBloc>(context);
 
     return Column(
@@ -31,7 +31,7 @@ class ExtractFromYoutube extends StatelessWidget {
                 onFetchPress: (link) =>
                     trackUploadingBloc.add(LinkEntered(link)),
                 url: state.url,
-                onCancel: () => navigationCubit.navigateUploadTrack(),
+                onCancel: () => context.pop(),
               );
             }
 
@@ -48,24 +48,28 @@ class ExtractFromYoutube extends StatelessWidget {
 
             if (state is UploadingStartedState) {
               return UploadIsInProgressPage(
-                onUploadOtherTrack: () => trackUploadingBloc.add(const Start()),
+                onUploadOtherTrack: () => _onUploadOtherTrack(context),
               );
             }
 
             if (state is SuccessfulUploadState) {
               return ResultPage(
                 result: true,
-                onUploadOtherTrackPress: () =>
-                    trackUploadingBloc.add(const Start()),
+                onUploadOtherTrackPress: () => _onUploadOtherTrack(context),
               );
             }
 
             return ErrorPage(
-              onTryAgainPress: () => trackUploadingBloc.add(const Start()),
+              onTryAgainPress: () => _onUploadOtherTrack(context),
             );
           },
         ),
       ],
     );
+  }
+
+  void _onUploadOtherTrack(BuildContext context) {
+    context.go(RouteName.upload);
+    context.read<TrackUploadingBloc>().add(const Start());
   }
 }

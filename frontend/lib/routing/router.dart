@@ -6,7 +6,9 @@ import '../pages/playlist_page.dart';
 import '../pages/search_page.dart';
 import '../pages/settings_page.dart';
 import '../pages/tracks_page.dart';
+import '../pages/upload/upload_from_device.dart';
 import '../pages/upload/upload_page.dart';
+import '../pages/upload/youtube/extract_from_youtube.dart';
 import 'app_scaffold_shell.dart';
 import 'routes.dart';
 
@@ -15,12 +17,12 @@ final _rootNavigatorKey = GlobalKey<NavigatorState>();
 class AppRouter {
   static final router = GoRouter(
     navigatorKey: _rootNavigatorKey,
-    initialLocation: NavigationRoute.initial.name,
+    initialLocation: RouteName.initial,
     debugLogDiagnostics: true,
     routes: <RouteBase>[
       GoRoute(
-        path: NavigationRoute.initial.name,
-        redirect: (_, __) => NavigationRoute.tracks.name,
+        path: RouteName.initial,
+        redirect: (_, __) => RouteName.tracks,
       ),
       StatefulShellRoute.indexedStack(
         builder: (_, __, navigationShell) => AppScaffoldShell(
@@ -28,11 +30,10 @@ class AppRouter {
         ),
         branches: <StatefulShellBranch>[
           StatefulShellBranch(
-            initialLocation: NavigationRoute.tracks.name,
+            initialLocation: RouteName.tracks,
             routes: [
               GoRoute(
-                name: NavigationRoute.tracks.title,
-                path: NavigationRoute.tracks.name,
+                path: RouteName.tracks,
                 pageBuilder: (_, __) => NoTransitionPage(
                   child: TracksPage(),
                 ),
@@ -40,17 +41,15 @@ class AppRouter {
             ],
           ),
           StatefulShellBranch(
-            initialLocation: NavigationRoute.library.name,
+            initialLocation: RouteName.library,
             routes: [
               GoRoute(
-                name: NavigationRoute.library.title,
-                path: NavigationRoute.library.name,
+                path: RouteName.library,
                 pageBuilder: (_, __) => const NoTransitionPage(
                   child: LibraryPage(),
                 ),
                 routes: [
                   GoRoute(
-                    name: NavigationRoute.playlist.name,
                     path: ":id",
                     pageBuilder: (_, state) => NoTransitionPage(
                       child: PlaylistPage(
@@ -63,11 +62,10 @@ class AppRouter {
             ],
           ),
           StatefulShellBranch(
-            initialLocation: NavigationRoute.search.name,
+            initialLocation: RouteName.search,
             routes: [
               GoRoute(
-                name: NavigationRoute.search.title,
-                path: NavigationRoute.search.name,
+                path: RouteName.search,
                 pageBuilder: (_, __) => const NoTransitionPage(
                   child: SearchPage(),
                 ),
@@ -75,23 +73,35 @@ class AppRouter {
             ],
           ),
           StatefulShellBranch(
-            initialLocation: NavigationRoute.upload.name,
+            initialLocation: RouteName.upload,
             routes: [
               GoRoute(
-                name: NavigationRoute.upload.title,
-                path: NavigationRoute.upload.name,
+                path: RouteName.upload,
                 pageBuilder: (_, __) => const NoTransitionPage(
                   child: UploadPage(),
                 ),
+                routes: [
+                  GoRoute(
+                    path: 'fromDevice',
+                    pageBuilder: (_, __) => const NoTransitionPage(
+                      child: UploadFromDevice(),
+                    ),
+                  ),
+                  GoRoute(
+                    path: 'fromYoutube',
+                    pageBuilder: (_, __) => const NoTransitionPage(
+                      child: ExtractFromYoutube(),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
           StatefulShellBranch(
-            initialLocation: NavigationRoute.settings.name,
+            initialLocation: RouteName.settings,
             routes: [
               GoRoute(
-                name: NavigationRoute.settings.title,
-                path: NavigationRoute.settings.name,
+                path: RouteName.settings,
                 pageBuilder: (_, __) => const NoTransitionPage(
                   child: SettingsPage(),
                 ),

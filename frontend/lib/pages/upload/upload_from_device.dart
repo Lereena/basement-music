@@ -1,9 +1,10 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../bloc/local_track_uploading_bloc/local_track_uploading_bloc.dart';
-import '../../bloc/navigation_cubit/navigation_cubit.dart';
+import '../../routing/routes.dart';
 import '../../utils/track_data.dart';
 import '../../widgets/dialogs/track_edit_dialog.dart';
 import 'files_input_page.dart';
@@ -12,13 +13,11 @@ import 'youtube/error_page.dart';
 import 'youtube/result_page.dart';
 
 class UploadFromDevice extends StatelessWidget {
-  const UploadFromDevice() : super();
+  const UploadFromDevice({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final navigationCubit = BlocProvider.of<NavigationCubit>(context);
-    final trackUploadingBloc =
-        BlocProvider.of<LocalTrackUploadingBloc>(context);
+    final trackUploadingBloc = context.read<LocalTrackUploadingBloc>();
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -31,9 +30,8 @@ class UploadFromDevice extends StatelessWidget {
 
             if (state is NoFileSelectedState) {
               return FilesInputPage(
-                onSelectFiles: () =>
-                    _onSelectFiles(trackUploadingBloc: trackUploadingBloc),
-                onCancel: () => navigationCubit.navigateUploadTrack(),
+                onSelectFiles: () => _onSelectFiles(context),
+                onCancel: () => context.pop(),
               );
             }
 
@@ -41,8 +39,8 @@ class UploadFromDevice extends StatelessWidget {
               return FilesInputPage(
                 selectedFiles: state.files,
                 onSelectFiles: () => _onSelectFiles(
+                  context,
                   currentFiles: state.files,
-                  trackUploadingBloc: trackUploadingBloc,
                 ),
                 onMoveNext: () =>
                     trackUploadingBloc.add(FilesApproved(files: state.files)),
@@ -74,26 +72,25 @@ class UploadFromDevice extends StatelessWidget {
                     },
                   );
                 },
-                onCancel: () => navigationCubit.navigateUploadTrack(),
+                onCancel: () => context.pop(),
               );
             }
 
             if (state is UploadingStartedState) {
               return UploadIsInProgressPage(
-                onUploadOtherTrack: () => navigationCubit.navigateUploadTrack(),
+                onUploadOtherTrack: () => _onUploadOtherTrack(context),
               );
             }
 
             if (state is SuccessfulUploadState) {
               return ResultPage(
                 result: true,
-                onUploadOtherTrackPress: () =>
-                    navigationCubit.navigateUploadTrack(),
+                onUploadOtherTrackPress: () => _onUploadOtherTrack(context),
               );
             }
 
             return ErrorPage(
-              onTryAgainPress: () => navigationCubit.navigateUploadTrack(),
+              onTryAgainPress: () => _onUploadOtherTrack(context),
             );
           },
         ),
@@ -101,9 +98,9 @@ class UploadFromDevice extends StatelessWidget {
     );
   }
 
-  Future<void> _onSelectFiles({
+  Future<void> _onSelectFiles(
+    BuildContext context, {
     List<({String name, PlatformFile file})>? currentFiles,
-    required LocalTrackUploadingBloc trackUploadingBloc,
   }) async {
     final FilePickerResult? result = await FilePicker.platform.pickFiles(
       allowMultiple: true,
@@ -121,6 +118,15 @@ class UploadFromDevice extends StatelessWidget {
     final selectedFiles = currentFiles ?? [];
     selectedFiles.addAll(newFiles.map((file) => (name: file.name, file: file)));
 
-    trackUploadingBloc.add(FilesSelected(files: selectedFiles));
+    if (context.mounted) {
+      context
+          .read<LocalTrackUploadingBloc>()
+          .add(FilesSelected(files: selectedFiles));
+    }
+  }
+
+  void _onUploadOtherTrack(BuildContext context) {
+    context.go(RouteName.upload);
+    context.read<LocalTrackUploadingBloc>().add(Start());
   }
 }
