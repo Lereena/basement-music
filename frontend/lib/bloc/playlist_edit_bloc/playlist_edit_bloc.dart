@@ -6,27 +6,27 @@ import 'package:meta/meta.dart';
 import '../../logger.dart';
 import '../../repositories/playlists_repository.dart';
 
-part 'playilst_edit_event.dart';
-part 'playilst_edit_state.dart';
+part 'playlist_edit_event.dart';
+part 'playlist_edit_state.dart';
 
-class PlayilstEditBloc extends Bloc<PlayilstEditEvent, PlayilstEditState> {
+class PlaylistEditBloc extends Bloc<PlaylistEditEvent, PlaylistEditState> {
   final PlaylistsRepository _playilstsRepository;
 
-  PlayilstEditBloc(this._playilstsRepository) : super(PlayilstEditInitial()) {
+  PlaylistEditBloc(this._playilstsRepository) : super(PlayilstEditInitial()) {
     on<PlaylistEditingStartEvent>(_onPlaylistEditEvent);
     on<PlaylistSaveEvent>(_onPlaylistSaveEvent);
   }
 
   FutureOr<void> _onPlaylistEditEvent(
     PlaylistEditingStartEvent event,
-    Emitter<PlayilstEditState> emit,
+    Emitter<PlaylistEditState> emit,
   ) {
     emit(PlayilstEditing(event.playlistId));
   }
 
   FutureOr<void> _onPlaylistSaveEvent(
     PlaylistSaveEvent event,
-    Emitter<PlayilstEditState> emit,
+    Emitter<PlaylistEditState> emit,
   ) async {
     emit(PlayilstSaving());
 
