@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
-import '../bloc/navigation_cubit/navigation_cubit.dart';
 import '../bloc/playlists_bloc/playlists_bloc.dart';
 import '../bloc/playlists_bloc/playlists_event.dart';
 import '../bloc/playlists_bloc/playlists_state.dart';
+import '../routing/routes.dart';
+import '../widgets/app_bar.dart';
 import '../widgets/create_playlist.dart';
 import '../widgets/playlist_card.dart';
 
@@ -18,11 +20,10 @@ class LibraryPage extends StatefulWidget {
 class _LibraryPageState extends State<LibraryPage> {
   @override
   Widget build(BuildContext context) {
-    final navigationCubit = BlocProvider.of<NavigationCubit>(context);
-
     return RefreshIndicator(
       onRefresh: () => _onRefresh(context),
       child: Scaffold(
+        appBar: BasementAppBar(title: 'Library'),
         body: BlocBuilder<PlaylistsBloc, PlaylistsState>(
           builder: (context, state) {
             if (state is PlaylistsLoadingState) {
@@ -30,10 +31,10 @@ class _LibraryPageState extends State<LibraryPage> {
             }
 
             if (state is PlaylistsEmptyState) {
-              return const Center(
+              return Center(
                 child: Text(
                   'No playlists',
-                  style: TextStyle(fontSize: 24),
+                  style: Theme.of(context).textTheme.bodyLarge,
                 ),
               );
             }
@@ -51,8 +52,9 @@ class _LibraryPageState extends State<LibraryPage> {
                         }
                         return PlaylistCard(
                           playlist: state.playlists[index],
-                          onTap: () => navigationCubit
-                              .navigatePlaylist(state.playlists[index]),
+                          onTap: () => context.go(
+                            RouteName.playlist(state.playlists[index].id),
+                          ),
                         );
                       },
                       itemCount: state.playlists.length + 1,

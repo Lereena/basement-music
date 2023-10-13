@@ -3,16 +3,17 @@ import 'package:flutter/material.dart';
 class PageTitle extends StatelessWidget {
   final String text;
 
-  const PageTitle({super.key, required this.text});
+  const PageTitle(this.text, {super.key});
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return DecoratedBox(
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
             width: 2,
-            color: Theme.of(context).primaryColor,
+            color: theme.primaryColor,
           ),
         ),
       ),
@@ -21,7 +22,7 @@ class PageTitle extends StatelessWidget {
         child: Text(
           text,
           style: TextStyle(
-            color: Theme.of(context).primaryColor,
+            color: theme.primaryColor,
             fontSize: 18,
             letterSpacing: 1.1,
           ),

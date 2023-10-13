@@ -8,8 +8,8 @@ import 'bloc/connectivity_status_bloc/connectivity_status_cubit.dart';
 import 'bloc/edit_track_bloc/edit_track_bloc.dart';
 import 'bloc/home_content_cubit/home_content_cubit.dart';
 import 'bloc/local_track_uploading_bloc/local_track_uploading_bloc.dart';
-import 'bloc/navigation_cubit/navigation_cubit.dart';
 import 'bloc/player_bloc/player_bloc.dart';
+import 'bloc/playlist_bloc/playlist_bloc.dart';
 import 'bloc/playlist_creation_bloc/playlist_creation_bloc.dart';
 import 'bloc/playlists_bloc/playlists_bloc.dart';
 import 'bloc/remove_from_playlist_bloc/remove_from_playlist_cubit.dart';
@@ -77,6 +77,9 @@ class _BlocProviderWrapperState extends State<BlocProviderWrapper> {
         BlocProvider<PlaylistsBloc>.value(
           value: _playlistsBloc,
         ),
+        BlocProvider<PlaylistBloc>(
+          create: (_) => PlaylistBloc(_playlistsRepository),
+        ),
         BlocProvider<PlaylistCreationBloc>(
           create: (_) => PlaylistCreationBloc(
             _playlistsRepository,
@@ -115,14 +118,8 @@ class _BlocProviderWrapperState extends State<BlocProviderWrapper> {
         BlocProvider<EditTrackBloc>(
           create: (_) => EditTrackBloc(_tracksRepository),
         ),
-        BlocProvider<EditTrackBloc>(
-          create: (_) => EditTrackBloc(_tracksRepository),
-        ),
         BlocProvider<HomeContentCubit>(
           create: (_) => HomeContentCubit(),
-        ),
-        BlocProvider<NavigationCubit>(
-          create: (_) => NavigationCubit(),
         ),
       ],
       child: ShortcutsWrapper(

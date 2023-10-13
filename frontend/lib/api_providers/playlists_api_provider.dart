@@ -25,6 +25,19 @@ class PlaylistsApiProvider {
     }
   }
 
+  Future<Playlist> getPlaylist(String playlistId) async {
+    final uri = Uri.parse(_apiService.reqPlaylist(playlistId));
+    final response = await getAsync(uri);
+
+    if (response.statusCode == 200) {
+      return Playlist.fromJson(
+        jsonDecode(response.body) as Map<String, dynamic>,
+      );
+    } else {
+      throw Exception('Failed to load playlist: ${response.body}');
+    }
+  }
+
   Future<Playlist> createPlaylist(String title) async {
     final uri = Uri.parse(_apiService.reqCreatePlaylist(title));
     final response = await postAsync(uri);

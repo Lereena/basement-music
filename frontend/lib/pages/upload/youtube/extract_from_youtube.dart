@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
-import '../../../bloc/navigation_cubit/navigation_cubit.dart';
 import '../../../bloc/track_uploading_bloc/track_uploading_bloc.dart';
+import '../../../routing/routes.dart';
+import '../../../widgets/app_bar.dart';
 import '../upload_is_in_progress_page.dart';
 import 'error_page.dart';
 import 'link_input_page.dart';
@@ -14,58 +16,64 @@ class ExtractFromYoutube extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final navigationCubit = BlocProvider.of<NavigationCubit>(context);
     final trackUploadingBloc = BlocProvider.of<TrackUploadingBloc>(context);
 
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        BlocBuilder<TrackUploadingBloc, TrackUploadingState>(
-          builder: (context, state) {
-            if (state is LoadingState) {
-              return const Center(child: CircularProgressIndicator());
-            }
+    return Scaffold(
+      appBar: BasementAppBar(title: 'Extract from YouTube'),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          BlocBuilder<TrackUploadingBloc, TrackUploadingState>(
+            builder: (context, state) {
+              if (state is LoadingState) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
-            if (state is LinkInputState) {
-              return LinkInputPage(
-                onFetchPress: (link) =>
-                    trackUploadingBloc.add(LinkEntered(link)),
-                url: state.url,
-                onCancel: () => navigationCubit.navigateUploadTrack(),
+              if (state is LinkInputState) {
+                return LinkInputPage(
+                  onFetchPress: (link) =>
+                      trackUploadingBloc.add(LinkEntered(link)),
+                  url: state.url,
+                  onCancel: () => context.pop(),
+                );
+              }
+
+              if (state is InfoState) {
+                return TrackInfoPage(
+                  artist: state.artist,
+                  title: state.title,
+                  onUploadPress: (artist, title) => trackUploadingBloc
+                      .add(InfoChecked(state.url, artist, title)),
+                  onCancel: () => trackUploadingBloc
+                      .add(Start(url: trackUploadingBloc.currentUploadingLink)),
+                );
+              }
+
+              if (state is UploadingStartedState) {
+                return UploadIsInProgressPage(
+                  onUploadOtherTrack: () => _onUploadOtherTrack(context),
+                );
+              }
+
+              if (state is SuccessfulUploadState) {
+                return ResultPage(
+                  result: true,
+                  onUploadOtherTrackPress: () => _onUploadOtherTrack(context),
+                );
+              }
+
+              return ErrorPage(
+                onTryAgainPress: () => _onUploadOtherTrack(context),
               );
-            }
-
-            if (state is InfoState) {
-              return TrackInfoPage(
-                artist: state.artist,
-                title: state.title,
-                onUploadPress: (artist, title) => trackUploadingBloc
-                    .add(InfoChecked(state.url, artist, title)),
-                onCancel: () => trackUploadingBloc
-                    .add(Start(url: trackUploadingBloc.currentUploadingLink)),
-              );
-            }
-
-            if (state is UploadingStartedState) {
-              return UploadIsInProgressPage(
-                onUploadOtherTrack: () => trackUploadingBloc.add(const Start()),
-              );
-            }
-
-            if (state is SuccessfulUploadState) {
-              return ResultPage(
-                result: true,
-                onUploadOtherTrackPress: () =>
-                    trackUploadingBloc.add(const Start()),
-              );
-            }
-
-            return ErrorPage(
-              onTryAgainPress: () => trackUploadingBloc.add(const Start()),
-            );
-          },
-        ),
-      ],
+            },
+          ),
+        ],
+      ),
     );
+  }
+
+  void _onUploadOtherTrack(BuildContext context) {
+    context.go(RouteName.upload);
+    context.read<TrackUploadingBloc>().add(const Start());
   }
 }

@@ -25,7 +25,7 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
   final AudioPlayerHandler _audioHandler = audioHandler;
   late final onPositionChanged = _audioHandler.onPositionChanged;
 
-  Playlist currentPlaylist = Playlist.empty();
+  Playlist _currentPlaylist = Playlist.empty();
   Track currentTrack = Track.empty();
 
   PlayerBloc({
@@ -49,9 +49,8 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
     PlayEvent event,
     Emitter<AudioPlayerState> emit,
   ) async {
-    if (currentPlaylist == Playlist.empty()) {
-      currentPlaylist = Playlist.anonymous(tracksRepository.items);
-    }
+    _currentPlaylist =
+        event.playlist ?? Playlist.anonymous(tracksRepository.items);
 
     currentTrack = event.track;
     _audioHandler.addMediaItem(currentTrack);
@@ -149,10 +148,10 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
     final isOffline = connectivityStatusCubit.state is NoConnectionState;
 
     return isOffline
-        ? currentPlaylist.tracks
+        ? _currentPlaylist.tracks
             .where((track) => cacherBloc.state.cached.contains(track.id))
             .toList()
-        : currentPlaylist.tracks;
+        : _currentPlaylist.tracks;
   }
 
   int _shuffledNext(List<Track> availableTracks, int excluding) {

@@ -1,3 +1,5 @@
+import 'package:collection/collection.dart';
+
 import '../api_providers/playlists_api_provider.dart';
 import '../api_service.dart';
 import '../models/playlist.dart';
@@ -13,10 +15,20 @@ class PlaylistsRepository {
 
   Future<bool> getAllPlaylists() async {
     final result = await _playlistsApiProvider.fetchAllPlaylists();
-    _items.clear();
     _items.addAll(result);
 
     return true;
+  }
+
+  Future<Playlist> getPlaylist(String playlistId) async {
+    final localPlaylist =
+        items.firstWhereOrNull((item) => item.id == playlistId);
+
+    if (localPlaylist == null) {
+      return _playlistsApiProvider.getPlaylist(playlistId);
+    }
+
+    return localPlaylist;
   }
 
   Future<bool> createPlaylist(String title) async {

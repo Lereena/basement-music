@@ -14,8 +14,7 @@ import 'audio_player_handler.dart';
 import 'bloc/settings_bloc/settings_bloc.dart';
 import 'bloc_provider_wrapper.dart';
 import 'firebase_options.dart';
-import 'pages/home_page.dart';
-import 'routes.dart';
+import 'routing/router.dart';
 import 'theme/custom_theme.dart';
 
 late final AudioPlayerHandler audioHandler;
@@ -46,6 +45,8 @@ Future<void> runBasement(AppConfig config) async {
   runApp(BasementMusic(apiService: apiService));
 }
 
+final _router = AppRouter.router;
+
 class BasementMusic extends StatelessWidget {
   final ApiService apiService;
 
@@ -58,14 +59,14 @@ class BasementMusic extends StatelessWidget {
       child: BlocBuilder<SettingsBloc, SettingsState>(
         builder: (context, settingsState) {
           return Sizer(
-            builder: (context, orientation, deviceType) => MaterialApp(
+            builder: (context, orientation, deviceType) => MaterialApp.router(
               title: 'Basement',
               theme: CustomTheme.lightTheme,
               darkTheme: CustomTheme.darkTheme,
               themeMode: settingsState.themeMode,
-              initialRoute: NavigationRoute.initial.name,
-              onGenerateRoute: onGenerateRoute,
-              home: const Material(child: HomePage()),
+              routeInformationProvider: _router.routeInformationProvider,
+              routeInformationParser: _router.routeInformationParser,
+              routerDelegate: _router.routerDelegate,
             ),
           );
         },

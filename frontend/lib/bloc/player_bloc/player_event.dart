@@ -1,11 +1,13 @@
+import '../../models/playlist.dart';
 import '../../models/track.dart';
 
 abstract class PlayerEvent {}
 
 class PlayEvent extends PlayerEvent {
   final Track track;
+  final Playlist? playlist;
 
-  PlayEvent(this.track);
+  PlayEvent({required this.track, this.playlist});
 }
 
 class PauseEvent extends PlayerEvent {}

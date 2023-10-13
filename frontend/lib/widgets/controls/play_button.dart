@@ -31,8 +31,9 @@ class PlayButton extends StatelessWidget {
         if (state is PausedPlayerState && playerBloc.currentTrack == track) {
           playerBloc.add(ResumeEvent());
         } else {
-          playerBloc.add(PlayEvent(track));
-          playerBloc.currentPlaylist = openedPlaylist ?? Playlist.empty();
+          playerBloc.add(
+            PlayEvent(track: track, playlist: openedPlaylist),
+          );
         }
       },
       child: const Icon(Icons.play_arrow_rounded, size: 30),
