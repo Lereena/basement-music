@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bloc/playlist_bloc/playlist_bloc.dart';
-import '../bloc/playlists_bloc/playlists_bloc.dart';
-import '../models/playlist.dart';
 import '../widgets/app_bar.dart';
 import '../widgets/track_card.dart';
 
@@ -18,19 +16,12 @@ class PlaylistPage extends StatefulWidget {
 
 class _PlaylistPageState extends State<PlaylistPage> {
   late final PlaylistBloc _playlistBloc;
-  late final PlaylistsBloc _playlistsBloc;
 
   @override
   void initState() {
     super.initState();
     _playlistBloc = context.read<PlaylistBloc>();
     _playlistBloc.add(PlaylistLoadEvent(widget.playlistId));
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _playlistsBloc.openedPlaylist = Playlist.empty();
   }
 
   // final _appBarActions = [
