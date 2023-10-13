@@ -6,6 +6,7 @@ import '../bloc/player_bloc/player_bloc.dart';
 import '../models/track.dart';
 import '../widgets/bottom_player.dart';
 import '../widgets/secondary_body_content.dart';
+import '../widgets/wrappers/connectivity_status_wrapper.dart';
 
 const _largeBreakpoint = WidthPlatformBreakpoint(begin: 1000);
 const _mediumBreakpoint = WidthPlatformBreakpoint(begin: 600, end: 1000);
@@ -14,9 +15,9 @@ class AppScaffold extends StatelessWidget {
   final Widget child;
 
   const AppScaffold({
-    super.key,
+    Key? key,
     required this.child,
-  });
+  }) : super(key: key ?? const Key('AppScaffold'));
 
   @override
   Widget build(BuildContext context) {
@@ -60,14 +61,16 @@ class AppScaffold extends StatelessWidget {
         key: const Key('body'),
         builder: (context) {
           final horizontalPadding = narrow ? 100.0 : 10.0;
-          return SelectionArea(
-            child: Padding(
-              padding: EdgeInsets.only(
-                left: horizontalPadding,
-                right: horizontalPadding,
-                top: 10,
+          return ConnectivityStatusWrapper(
+            child: SelectionArea(
+              child: Padding(
+                padding: EdgeInsets.only(
+                  left: horizontalPadding,
+                  right: horizontalPadding,
+                  top: 10,
+                ),
+                child: child,
               ),
-              child: child,
             ),
           );
         },
