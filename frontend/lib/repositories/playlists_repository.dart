@@ -37,6 +37,20 @@ class PlaylistsRepository {
     return true;
   }
 
+  Future<bool> editPlaylist({
+    required String id,
+    required String title,
+    required List<String> tracksIds,
+  }) async {
+    final result = await _playlistsApiProvider.editPlaylist(
+      id: id,
+      title: title,
+      tracksIds: tracksIds,
+    );
+
+    return result;
+  }
+
   Future<bool> deletePlaylist(String playlistId) async {
     final result = await _playlistsApiProvider.deletePlaylist(playlistId);
     if (result) {
