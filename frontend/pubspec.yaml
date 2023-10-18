@@ -3,7 +3,7 @@ description: Music player with the ability to download tracks from YouTube
 
 publish_to: 'none'
 
-version: 1.0.0+3
+version: 1.0.0+5
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
