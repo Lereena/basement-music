@@ -15,6 +15,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
 
   PlaylistBloc(this._playlistsRepository) : super(PlaylistInitial()) {
     on<PlaylistLoadEvent>(_onLoadingEvent);
+    on<PlaylistsUpdatedEvent>(_onUpdatedEvent);
   }
 
   FutureOr<void> _onLoadingEvent(
@@ -35,5 +36,14 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
       emit(PlaylistErrorState());
       logger.e('Error loading playlist: $e');
     }
+  }
+
+  FutureOr<void> _onUpdatedEvent(
+    PlaylistsUpdatedEvent event,
+    Emitter<PlaylistState> emit,
+  ) async {
+    if (state is! PlaylistLoadedState) return;
+
+    add(PlaylistLoadEvent((state as PlaylistLoadedState).playlist.id));
   }
 }

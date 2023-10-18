@@ -21,15 +21,8 @@ class PlaylistsRepository {
     return true;
   }
 
-  Future<Playlist> getPlaylist(
-    String playlistId, {
-    bool useCache = true,
-  }) async {
-    Playlist? playlist;
-
-    if (useCache) {
-      playlist = items.firstWhereOrNull((item) => item.id == playlistId);
-    }
+  Future<Playlist> getPlaylist(String playlistId) async {
+    final playlist = items.firstWhereOrNull((item) => item.id == playlistId);
 
     if (playlist == null) {
       return _playlistsApiProvider.getPlaylist(playlistId);

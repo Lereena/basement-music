@@ -63,7 +63,7 @@ class _PlaylistEditPageState extends State<PlaylistEditPage> {
           );
         }
 
-        if (state is PlaylistSaving) {
+        if (state is PlaylistLoading) {
           return const Center(child: CircularProgressIndicator());
         }
 

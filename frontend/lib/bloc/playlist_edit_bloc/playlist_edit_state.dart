@@ -17,7 +17,7 @@ final class PlaylistEditing extends PlaylistEditState {
   });
 }
 
-final class PlaylistSaving extends PlaylistEditState {}
+final class PlaylistLoading extends PlaylistEditState {}
 
 final class PlaylistSavingSuccess extends PlaylistEditState {}
 

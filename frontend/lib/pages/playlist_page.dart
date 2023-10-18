@@ -32,7 +32,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
       icon: const Icon(
         Icons.edit_outlined,
       ),
-    )
+    ),
   ];
 
   @override

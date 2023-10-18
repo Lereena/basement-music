@@ -5,6 +5,7 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 import '../../logger.dart';
 import '../../models/playlist.dart';
 import '../../repositories/playlists_repository.dart';
+import '../playlist_bloc/playlist_bloc.dart';
 import 'playlists_event.dart';
 import 'playlists_state.dart';
 
@@ -12,8 +13,10 @@ const _playlistsInfoKey = 'playlistsInfo';
 
 class PlaylistsBloc extends HydratedBloc<PlaylistsEvent, PlaylistsState> {
   final PlaylistsRepository _playlistsRepository;
+  final PlaylistBloc _playlistBloc;
 
-  PlaylistsBloc(this._playlistsRepository) : super(PlaylistsLoadingState()) {
+  PlaylistsBloc(this._playlistsRepository, this._playlistBloc)
+      : super(PlaylistsLoadingState()) {
     on<PlaylistsLoadEvent>(_onLoadingEvent);
     on<PlaylistAddedEvent>(_onPlaylistAddedEvent);
   }
@@ -33,6 +36,7 @@ class PlaylistsBloc extends HydratedBloc<PlaylistsEvent, PlaylistsState> {
       if (_playlistsRepository.items.isEmpty) {
         emit(PlaylistsEmptyState());
       } else {
+        _playlistBloc.add(PlaylistsUpdatedEvent());
         emit(PlaylistsLoadedState(_playlistsRepository.items));
       }
     } catch (e) {
