@@ -20,9 +20,9 @@ class PlaylistsApiProvider {
             .map((e) => Playlist.fromJson(e as Map<String, dynamic>))
             .toList() as List<dynamic>,
       );
-    } else {
-      throw Exception('Failed to load playlists: ${response.body}');
     }
+
+    throw Exception('Failed to load playlists: ${response.body}');
   }
 
   Future<Playlist> getPlaylist(String playlistId) async {
@@ -33,9 +33,9 @@ class PlaylistsApiProvider {
       return Playlist.fromJson(
         jsonDecode(response.body) as Map<String, dynamic>,
       );
-    } else {
-      throw Exception('Failed to load playlist: ${response.body}');
     }
+
+    throw Exception('Failed to load playlist: ${response.body}');
   }
 
   Future<Playlist> createPlaylist(String title) async {
@@ -51,15 +51,35 @@ class PlaylistsApiProvider {
     throw Exception('Failed to create playlist: ${response.body}');
   }
 
+  Future<bool> editPlaylist({
+    required String id,
+    required String title,
+    required List<String> tracksIds,
+  }) async {
+    final response = await patchAsync(
+      Uri.parse(_apiService.reqPlaylist(id)),
+      body: {
+        'title': title.trim(),
+        'tracks': jsonEncode(tracksIds),
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    }
+
+    throw Exception('Failed to edit playlist: ${response.body}');
+  }
+
   Future<bool> deletePlaylist(String playlistId) async {
     final uri = Uri.parse(_apiService.reqPlaylist(playlistId));
     final response = await deleteAsync(uri);
 
     if (response.statusCode == 200) {
       return true;
-    } else {
-      throw Exception('Failed to delete playlist: ${response.body}');
     }
+
+    throw Exception('Failed to delete playlist: ${response.body}');
   }
 
   Future<bool> addTrackToPlaylist(String playlistId, String trackId) async {
@@ -68,9 +88,9 @@ class PlaylistsApiProvider {
 
     if (response.statusCode == 200) {
       return true;
-    } else {
-      throw Exception('Failed to add track to playlist: ${response.body}');
     }
+
+    throw Exception('Failed to add track to playlist: ${response.body}');
   }
 
   Future<bool> removeTrackFromPlaylist(
@@ -82,8 +102,8 @@ class PlaylistsApiProvider {
 
     if (response.statusCode == 200) {
       return true;
-    } else {
-      throw Exception('Failed to remove track from playlist: ${response.body}');
     }
+
+    throw Exception('Failed to remove track from playlist: ${response.body}');
   }
 }

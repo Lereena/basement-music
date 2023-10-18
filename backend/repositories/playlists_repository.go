@@ -3,6 +3,7 @@ package repositories
 import (
 	"encoding/json"
 	"net/http"
+	"strings"
 
 	"github.com/Lereena/server_basement_music/models"
 	"github.com/Lereena/server_basement_music/respond"
@@ -22,7 +23,7 @@ func (repo *PlaylistsRepository) Init() {
 func (repo *PlaylistsRepository) GetAllPlaylists(w http.ResponseWriter, r *http.Request) {
 	var playlists []models.Playlist
 	repo.DB.Model(&models.Playlist{}).Preload("Tracks").Order("created_at").Find(&playlists)
-	json.NewEncoder(w).Encode(&playlists)
+	json.NewEncoder(w).Encode(playlists)
 }
 
 func (repo *PlaylistsRepository) CreatePlaylist(w http.ResponseWriter, r *http.Request) {
@@ -38,6 +39,27 @@ func (repo *PlaylistsRepository) CreatePlaylist(w http.ResponseWriter, r *http.R
 	repo.DB.Create(newPlaylist)
 
 	json.NewEncoder(w).Encode(newPlaylist)
+}
+
+func (repo *PlaylistsRepository) EditPlaylist(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	id := params["id"]
+	title := strings.TrimSpace(r.FormValue("title"))
+
+	if id == "" {
+		respond.RespondError(w, http.StatusBadRequest, "Playlist id is empty")
+		return
+	}
+
+	if title == "" {
+		respond.RespondError(w, http.StatusBadRequest, "Playlist title is empty")
+		return
+	}
+
+	var playlist models.Playlist
+	repo.DB.Where(&models.Playlist{Id: id}).First(&playlist)
+
+	repo.DB.Model(&playlist).Update("title", title)
 }
 
 func (repo *PlaylistsRepository) DeletePlaylist(w http.ResponseWriter, r *http.Request) {

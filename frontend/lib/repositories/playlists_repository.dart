@@ -15,26 +15,40 @@ class PlaylistsRepository {
 
   Future<bool> getAllPlaylists() async {
     final result = await _playlistsApiProvider.fetchAllPlaylists();
+    _items.clear();
     _items.addAll(result);
 
     return true;
   }
 
   Future<Playlist> getPlaylist(String playlistId) async {
-    final localPlaylist =
-        items.firstWhereOrNull((item) => item.id == playlistId);
+    final playlist = items.firstWhereOrNull((item) => item.id == playlistId);
 
-    if (localPlaylist == null) {
+    if (playlist == null) {
       return _playlistsApiProvider.getPlaylist(playlistId);
     }
 
-    return localPlaylist;
+    return playlist;
   }
 
   Future<bool> createPlaylist(String title) async {
     final result = await _playlistsApiProvider.createPlaylist(title);
     _items.add(result);
     return true;
+  }
+
+  Future<bool> editPlaylist({
+    required String id,
+    required String title,
+    required List<String> tracksIds,
+  }) async {
+    final result = await _playlistsApiProvider.editPlaylist(
+      id: id,
+      title: title,
+      tracksIds: tracksIds,
+    );
+
+    return result;
   }
 
   Future<bool> deletePlaylist(String playlistId) async {

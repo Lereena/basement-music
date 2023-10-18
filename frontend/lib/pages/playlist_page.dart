@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../bloc/playlist_bloc/playlist_bloc.dart';
+import '../routing/routes.dart';
 import '../widgets/app_bar.dart';
 import '../widgets/track_card.dart';
 
@@ -24,14 +26,14 @@ class _PlaylistPageState extends State<PlaylistPage> {
     _playlistBloc.add(PlaylistLoadEvent(widget.playlistId));
   }
 
-  // final _appBarActions = [
-  //   IconButton(
-  //     onPressed: () {},
-  //     icon: const Icon(
-  //       Icons.edit_outlined,
-  //     ),
-  //   )
-  // ];
+  late final _appBarActions = [
+    IconButton(
+      onPressed: () => context.go(RouteName.playlistEdit(widget.playlistId)),
+      icon: const Icon(
+        Icons.edit_outlined,
+      ),
+    ),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +47,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
           return Scaffold(
             appBar: BasementAppBar(
               title: state.title,
-              // actions: _appBarActions,
+              actions: _appBarActions,
             ),
             body: Center(
               child: Text(
@@ -60,7 +62,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
           return Scaffold(
             appBar: BasementAppBar(
               title: state.playlist.title,
-              // actions: _appBarActions,
+              actions: _appBarActions,
             ),
             body: Column(
               children: [

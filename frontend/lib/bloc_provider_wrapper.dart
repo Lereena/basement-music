@@ -11,6 +11,7 @@ import 'bloc/local_track_uploading_bloc/local_track_uploading_bloc.dart';
 import 'bloc/player_bloc/player_bloc.dart';
 import 'bloc/playlist_bloc/playlist_bloc.dart';
 import 'bloc/playlist_creation_bloc/playlist_creation_bloc.dart';
+import 'bloc/playlist_edit_bloc/playlist_edit_bloc.dart';
 import 'bloc/playlists_bloc/playlists_bloc.dart';
 import 'bloc/remove_from_playlist_bloc/remove_from_playlist_cubit.dart';
 import 'bloc/settings_bloc/settings_bloc.dart';
@@ -42,7 +43,9 @@ class _BlocProviderWrapperState extends State<BlocProviderWrapper> {
 
   late final _settingsBloc = SettingsBloc(widget.apiService);
   late final _tracksBloc = TracksBloc(_tracksRepository);
-  late final _playlistsBloc = PlaylistsBloc(_playlistsRepository);
+  late final _playlistBloc = PlaylistBloc(_playlistsRepository);
+  late final _playlistsBloc =
+      PlaylistsBloc(_playlistsRepository, _playlistBloc);
   late final _cacherBloc = CacherBloc(widget.apiService);
   late final _connectivityStatusCubit = ConnectivityStatusCubit(
     tracksBloc: _tracksBloc,
@@ -77,11 +80,17 @@ class _BlocProviderWrapperState extends State<BlocProviderWrapper> {
         BlocProvider<PlaylistsBloc>.value(
           value: _playlistsBloc,
         ),
-        BlocProvider<PlaylistBloc>(
-          create: (_) => PlaylistBloc(_playlistsRepository),
+        BlocProvider<PlaylistBloc>.value(
+          value: _playlistBloc,
         ),
         BlocProvider<PlaylistCreationBloc>(
           create: (_) => PlaylistCreationBloc(
+            _playlistsRepository,
+            _playlistsBloc,
+          ),
+        ),
+        BlocProvider<PlaylistEditBloc>(
+          create: (_) => PlaylistEditBloc(
             _playlistsRepository,
             _playlistsBloc,
           ),

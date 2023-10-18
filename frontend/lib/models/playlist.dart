@@ -17,6 +17,17 @@ class Playlist extends Equatable {
   @override
   List<Object> get props => [id];
 
+  Playlist copyWith({
+    String? title,
+    List<Track>? tracks,
+  }) {
+    return Playlist(
+      id: id,
+      title: title ?? this.title,
+      tracks: tracks ?? this.tracks,
+    );
+  }
+
   factory Playlist.empty() {
     return const Playlist(id: '', title: '', tracks: []);
   }

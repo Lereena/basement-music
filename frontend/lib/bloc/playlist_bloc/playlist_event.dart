@@ -8,3 +8,5 @@ class PlaylistLoadEvent extends PlaylistEvent {
 
   PlaylistLoadEvent(this.playlistId);
 }
+
+class PlaylistsUpdatedEvent extends PlaylistEvent {}
