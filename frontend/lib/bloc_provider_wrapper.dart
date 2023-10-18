@@ -44,6 +44,7 @@ class _BlocProviderWrapperState extends State<BlocProviderWrapper> {
   late final _settingsBloc = SettingsBloc(widget.apiService);
   late final _tracksBloc = TracksBloc(_tracksRepository);
   late final _playlistsBloc = PlaylistsBloc(_playlistsRepository);
+  late final _playlistBloc = PlaylistBloc(_playlistsRepository);
   late final _cacherBloc = CacherBloc(widget.apiService);
   late final _connectivityStatusCubit = ConnectivityStatusCubit(
     tracksBloc: _tracksBloc,
@@ -78,8 +79,8 @@ class _BlocProviderWrapperState extends State<BlocProviderWrapper> {
         BlocProvider<PlaylistsBloc>.value(
           value: _playlistsBloc,
         ),
-        BlocProvider<PlaylistBloc>(
-          create: (_) => PlaylistBloc(_playlistsRepository),
+        BlocProvider<PlaylistBloc>.value(
+          value: _playlistBloc,
         ),
         BlocProvider<PlaylistCreationBloc>(
           create: (_) => PlaylistCreationBloc(
@@ -90,6 +91,8 @@ class _BlocProviderWrapperState extends State<BlocProviderWrapper> {
         BlocProvider<PlaylistEditBloc>(
           create: (_) => PlaylistEditBloc(
             _playlistsRepository,
+            _playlistsBloc,
+            _playlistBloc,
           ),
         ),
         BlocProvider<TracksSearchCubit>(

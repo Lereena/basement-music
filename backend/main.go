@@ -53,6 +53,7 @@ func main() {
 	router.HandleFunc("/playlists", playlistsRepo.GetAllPlaylists).Methods("GET")
 	router.HandleFunc("/playlist/{id}", playlistsRepo.GetPlaylist).Methods("GET")
 	router.HandleFunc("/playlist/create/{title}", playlistsRepo.CreatePlaylist).Methods("POST")
+	router.HandleFunc("/playlist/{id}", playlistsRepo.EditPlaylist).Methods("PATCH")
 	router.HandleFunc("/playlist/{id}", playlistsRepo.DeletePlaylist).Methods("DELETE")
 	router.HandleFunc("/playlist/{playlistId}/track/{trackId}", playlistsRepo.AddTrackToPlaylist).Methods("POST")
 	router.HandleFunc("/playlist/{playlistId}/track/{trackId}", playlistsRepo.DeleteTrackFromPlaylist).Methods("DELETE")

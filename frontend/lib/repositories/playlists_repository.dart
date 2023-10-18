@@ -15,20 +15,27 @@ class PlaylistsRepository {
 
   Future<bool> getAllPlaylists() async {
     final result = await _playlistsApiProvider.fetchAllPlaylists();
+    _items.clear();
     _items.addAll(result);
 
     return true;
   }
 
-  Future<Playlist> getPlaylist(String playlistId) async {
-    final localPlaylist =
-        items.firstWhereOrNull((item) => item.id == playlistId);
+  Future<Playlist> getPlaylist(
+    String playlistId, {
+    bool useCache = true,
+  }) async {
+    Playlist? playlist;
 
-    if (localPlaylist == null) {
+    if (useCache) {
+      playlist = items.firstWhereOrNull((item) => item.id == playlistId);
+    }
+
+    if (playlist == null) {
       return _playlistsApiProvider.getPlaylist(playlistId);
     }
 
-    return localPlaylist;
+    return playlist;
   }
 
   Future<bool> createPlaylist(String title) async {

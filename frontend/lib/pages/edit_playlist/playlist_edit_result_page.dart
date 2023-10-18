@@ -8,12 +8,12 @@ enum EditingResult { success, fail }
 
 class PlaylistEditResultPage extends StatelessWidget {
   final EditingResult result;
-  final Function() onTryAgain;
+  final Function() onClose;
 
   const PlaylistEditResultPage({
     super.key,
     required this.result,
-    required this.onTryAgain,
+    required this.onClose,
   });
 
   @override
@@ -27,18 +27,18 @@ class PlaylistEditResultPage extends StatelessWidget {
         const SizedBox(height: 20),
         if (result == EditingResult.success)
           Text(
-            'Track was successfully uploaded',
+            'Playlist was successfully edited',
             style: theme.textTheme.titleLarge,
           )
         else
           Text(
-            'Track uploading is failed, please try again later',
+            'Playlist editing is failed, please try again later',
             style: theme.textTheme.titleLarge,
           ),
         const SizedBox(height: 20),
         StyledButton(
-          title: 'Try again',
-          onPressed: onTryAgain,
+          title: 'Return to playlist',
+          onPressed: onClose,
           autofocus: true,
         ),
       ],

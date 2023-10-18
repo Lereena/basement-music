@@ -65,7 +65,7 @@ class AppRouter {
                             playlistId: state.pathParameters['id']!,
                           ),
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ],

@@ -12,8 +12,6 @@ class ApiService {
   String reqPlaylist(String playlistId) => '$baseUrl/api/playlist/$playlistId';
   String reqCreatePlaylist(String title) =>
       '$baseUrl/api/playlist/create/$title';
-  String reqEditPlayilst(String playlistId) =>
-      '$baseUrl/api/playilst/edit/$playlistId';
   String reqTrackPlaylist(String playlistId, String trackId) =>
       '$baseUrl/api/playlist/$playlistId/track/$trackId';
   String reqYtVideoInfo(String link) =>

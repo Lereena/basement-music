@@ -57,7 +57,7 @@ class PlaylistsApiProvider {
     required List<String> tracksIds,
   }) async {
     final response = await patchAsync(
-      Uri.parse(_apiService.reqEditPlayilst(id)),
+      Uri.parse(_apiService.reqPlaylist(id)),
       body: {
         'title': title.trim(),
         'tracks': jsonEncode(tracksIds),
