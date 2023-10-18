@@ -1,6 +1,9 @@
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../bloc/player_bloc/player_bloc.dart';
+import '../bloc/player_bloc/player_event.dart';
 import '../pages/edit_playlist/playlist_edit_page.dart';
 import '../pages/library_page.dart';
 import '../pages/playlist_page.dart';
@@ -20,6 +23,19 @@ class AppRouter {
     navigatorKey: _rootNavigatorKey,
     initialLocation: RouteName.initial,
     debugLogDiagnostics: true,
+    redirect: (context, state) {
+      if (state.matchedLocation.startsWith(RouteName.tracks) == true) {
+        if (state.uri.pathSegments.length < 2) return RouteName.tracks;
+
+        final trackId = state.uri.pathSegments[1];
+
+        final playerBloc = context.read<PlayerBloc>();
+        playerBloc.add(SetTrackEvent(trackId: trackId));
+
+        return RouteName.tracks;
+      }
+      return null;
+    },
     routes: <RouteBase>[
       GoRoute(
         path: RouteName.initial,

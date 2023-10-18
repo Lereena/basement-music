@@ -23,7 +23,7 @@ class PlayButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final playerBloc = BlocProvider.of<PlayerBloc>(context);
+    final playerBloc = context.read<PlayerBloc>();
 
     return InkWell(
       onTap: () {
@@ -32,7 +32,7 @@ class PlayButton extends StatelessWidget {
           playerBloc.add(ResumeEvent());
         } else {
           playerBloc.add(
-            PlayEvent(track: track, playlist: openedPlaylist),
+            PlayEvent(trackId: track.id, playlist: openedPlaylist),
           );
         }
       },

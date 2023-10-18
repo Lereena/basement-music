@@ -8,6 +8,7 @@ class ApiService {
   String get upload => '$baseUrl/api/track/upload';
   String get reqAllPlaylists => '$baseUrl/api/playlists';
 
+  String reqTrack(String trackId) => '$baseUrl/api/tracks/$trackId';
   String trackPlayback(String trackId) => '$trackInfo/$trackId';
   String reqPlaylist(String playlistId) => '$baseUrl/api/playlist/$playlistId';
   String reqCreatePlaylist(String title) =>

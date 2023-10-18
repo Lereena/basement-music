@@ -1,3 +1,5 @@
+import 'package:collection/collection.dart';
+
 import '../api_providers/tracks_api_provider.dart';
 import '../api_service.dart';
 import '../models/track.dart';
@@ -17,6 +19,16 @@ class TracksRepository {
     final result = await _tracksApiProvider.fetchAllTracks();
     _items.clear();
     _items.addAll(result);
+  }
+
+  Future<Track> getTrack(String trackId) async {
+    final track = items.firstWhereOrNull((item) => item.id == trackId);
+
+    if (track == null) {
+      return _tracksApiProvider.getTrack(trackId);
+    }
+
+    return track;
   }
 
   void searchTracksOffline(String searchQuery) {

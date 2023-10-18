@@ -41,6 +41,7 @@ func main() {
 
 	router := mux.NewRouter().PathPrefix("/api").Subrouter()
 	router.HandleFunc("/tracks", musicRepo.GetTracks).Methods("GET")
+	router.HandleFunc("/tracks/{id}", musicRepo.GetTrackInfo).Methods("GET")
 	router.HandleFunc("/tracks/search", musicRepo.SearchTracks).Methods("GET")
 
 	router.HandleFunc("/track/{id}", musicRepo.GetTrack).Methods("GET")

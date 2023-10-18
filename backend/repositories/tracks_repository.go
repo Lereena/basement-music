@@ -60,6 +60,16 @@ func similarity(s1, s2 string) int {
 	return levenshtein.ComputeDistance(s1, s2)
 }
 
+func (repo *TracksRepository) GetTrackInfo(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+
+	var track models.Track
+	repo.DB.Where(&models.Track{Id: params["id"]}).First(&track)
+	fmt.Printf("%v", track)
+
+	json.NewEncoder(w).Encode(&track)
+}
+
 func (repo *TracksRepository) GetTrack(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 

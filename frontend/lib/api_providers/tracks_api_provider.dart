@@ -26,6 +26,18 @@ class TracksApiProvider {
     throw Exception('Failed to load tracks: ${response.body}');
   }
 
+  Future<Track> getTrack(String trackId) async {
+    final uri = Uri.parse(_apiService.reqTrack(trackId));
+    final response = await getAsync(uri);
+
+    if (response.statusCode == 200) {
+      final jsonList = jsonDecode(response.body) as Map<String, dynamic>;
+      return Track.fromJson(jsonList);
+    }
+
+    throw Exception('Failed to load track: ${response.body}');
+  }
+
   Future<List<Track>> searchTracks(String searchQuery) async {
     final uri =
         Uri.parse(_apiService.reqSearch(Uri.encodeComponent(searchQuery)));

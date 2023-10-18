@@ -34,6 +34,7 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
     required this.cacherBloc,
     required this.connectivityStatusCubit,
   }) : super(InitialPlayerState(Track.empty())) {
+    on<SetTrackEvent>(_onSetTrackEvent);
     on<PlayEvent>(_onPlayEvent);
     on<PauseEvent>(_onPauseEvent);
     on<ResumeEvent>(_onResumeEvent);
@@ -45,6 +46,18 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
     });
   }
 
+  FutureOr<void> _onSetTrackEvent(
+    SetTrackEvent event,
+    Emitter<AudioPlayerState> emit,
+  ) async {
+    final track = await tracksRepository.getTrack(event.trackId);
+
+    currentTrack = track;
+    _audioHandler.addMediaItem(currentTrack);
+
+    emit(PausedPlayerState(currentTrack));
+  }
+
   FutureOr<void> _onPlayEvent(
     PlayEvent event,
     Emitter<AudioPlayerState> emit,
@@ -52,10 +65,13 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
     _currentPlaylist =
         event.playlist ?? Playlist.anonymous(tracksRepository.items);
 
-    currentTrack = event.track;
+    final track = await tracksRepository.getTrack(event.trackId);
+
+    currentTrack = track;
     _audioHandler.addMediaItem(currentTrack);
     _audioHandler.play();
-    emit(PlayingPlayerState(event.track));
+
+    emit(PlayingPlayerState(track));
   }
 
   FutureOr<void> _onPauseEvent(
@@ -70,7 +86,11 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
     ResumeEvent event,
     Emitter<AudioPlayerState> emit,
   ) {
-    _audioHandler.resume();
+    if (_audioHandler.playbackState.value.playing) {
+      _audioHandler.resume();
+    } else {
+      _audioHandler.play();
+    }
     emit(ResumedPlayerState(currentTrack));
   }
 
