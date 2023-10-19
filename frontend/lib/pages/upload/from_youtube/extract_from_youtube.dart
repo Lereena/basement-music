@@ -5,10 +5,10 @@ import 'package:go_router/go_router.dart';
 import '../../../bloc/track_uploading_bloc/track_uploading_bloc.dart';
 import '../../../routing/routes.dart';
 import '../../../widgets/app_bar.dart';
+import '../error_page.dart';
+import '../result_page.dart';
 import '../upload_is_in_progress_page.dart';
-import 'error_page.dart';
 import 'link_input_page.dart';
-import 'result_page.dart';
 import 'track_info_page.dart';
 
 class ExtractFromYoutube extends StatelessWidget {
@@ -63,7 +63,9 @@ class ExtractFromYoutube extends StatelessWidget {
               }
 
               return ErrorPage(
-                onTryAgainPress: () => _onUploadOtherTrack(context),
+                errorText:
+                    "Couldn't fetch YouTube video. Please check the link and try again.",
+                onTryAgain: () => _onUploadOtherTrack(context),
               );
             },
           ),

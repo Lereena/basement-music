@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 
-import '../../../widgets/icons/error_icon.dart';
+import '../../widgets/icons/error_icon.dart';
 
 class ErrorPage extends StatelessWidget {
-  final Function() onTryAgainPress;
+  final String errorText;
+  final Function() onTryAgain;
 
-  const ErrorPage({super.key, required this.onTryAgainPress});
+  const ErrorPage({
+    super.key,
+    required this.errorText,
+    required this.onTryAgain,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -16,14 +21,14 @@ class ErrorPage extends StatelessWidget {
           ErrorIcon(),
           const SizedBox(height: 40),
           Text(
-            "Couldn't fetch YouTube video. Please check the link and try again.",
+            errorText,
             style: Theme.of(context).textTheme.titleLarge,
             maxLines: 2,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 40),
           ElevatedButton(
-            onPressed: onTryAgainPress,
+            onPressed: onTryAgain,
             autofocus: true,
             child: const Text('Try again'),
           ),

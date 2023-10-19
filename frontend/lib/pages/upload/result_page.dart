@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../widgets/icons/error_icon.dart';
-import '../../../widgets/icons/success_icon.dart';
+import '../../widgets/icons/error_icon.dart';
+import '../../widgets/icons/success_icon.dart';
 
 class ResultPage extends StatelessWidget {
   final bool result;

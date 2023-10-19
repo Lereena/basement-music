@@ -17,19 +17,19 @@ class TrackInfoPage extends StatelessWidget {
     required this.onCancel,
   });
 
-  late final titleController = TextEditingController(text: title);
-  late final artistController = TextEditingController(text: artist);
+  late final _titleController = TextEditingController(text: title);
+  late final _artistController = TextEditingController(text: artist);
 
-  final artistFocusNode = FocusNode();
-  final titleFocusNode = FocusNode();
-  final uploadFocusNode = FocusNode();
+  final _artistFocusNode = FocusNode();
+  final _titleFocusNode = FocusNode();
+  final _uploadFocusNode = FocusNode();
 
   final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     final inputFieldWidth = min(70.w, 400).toDouble();
-    artistFocusNode.requestFocus();
+    _artistFocusNode.requestFocus();
 
     return Form(
       key: _formKey,
@@ -47,11 +47,11 @@ class TrackInfoPage extends StatelessWidget {
               width: inputFieldWidth,
               child: TextFormField(
                 decoration: const InputDecoration(label: Text('Artist')),
-                controller: artistController,
-                focusNode: artistFocusNode,
+                controller: _artistController,
+                focusNode: _artistFocusNode,
                 validator: (value) =>
                     value?.isNotEmpty != true ? 'Field is required' : null,
-                onFieldSubmitted: (_) => titleFocusNode.requestFocus(),
+                onFieldSubmitted: (_) => _titleFocusNode.requestFocus(),
               ),
             ),
             const SizedBox(height: 20),
@@ -59,17 +59,17 @@ class TrackInfoPage extends StatelessWidget {
               width: inputFieldWidth,
               child: TextFormField(
                 decoration: const InputDecoration(label: Text('Title')),
-                controller: titleController,
-                focusNode: titleFocusNode,
+                controller: _titleController,
+                focusNode: _titleFocusNode,
                 validator: (value) =>
                     value?.isNotEmpty != true ? 'Field is required' : null,
-                onFieldSubmitted: (_) => uploadFocusNode.requestFocus(),
+                onFieldSubmitted: (_) => _uploadFocusNode.requestFocus(),
               ),
             ),
             const SizedBox(height: 40),
             FilledButton(
               onPressed: _onUpload,
-              focusNode: uploadFocusNode,
+              focusNode: _uploadFocusNode,
               child: const Text('Upload'),
             ),
             const SizedBox(height: 20),
@@ -87,7 +87,7 @@ class TrackInfoPage extends StatelessWidget {
     final isValid = _formKey.currentState?.validate() == true;
 
     if (isValid) {
-      onUpload(artistController.text, titleController.text);
+      onUpload(_artistController.text, _titleController.text);
     }
   }
 }

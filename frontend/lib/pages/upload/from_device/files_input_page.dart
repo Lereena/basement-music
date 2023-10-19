@@ -1,7 +1,7 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
-import '../../utils/track_data.dart';
+import '../../../utils/track_data.dart';
 
 class FilesInputPage extends StatelessWidget {
   final List<({String name, PlatformFile file})>? selectedFiles;
