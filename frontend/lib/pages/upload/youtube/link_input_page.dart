@@ -50,6 +50,7 @@ class LinkInputPage extends StatelessWidget {
           child: const Text('Extract'),
           onPressed: () => onFetchPress(linkController.text),
         ),
+        const SizedBox(height: 8),
         TextButton(onPressed: onCancel, child: const Text('Cancel')),
       ],
     );

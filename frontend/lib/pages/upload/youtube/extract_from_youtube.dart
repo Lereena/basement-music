@@ -42,7 +42,7 @@ class ExtractFromYoutube extends StatelessWidget {
                 return TrackInfoPage(
                   artist: state.artist,
                   title: state.title,
-                  onUploadPress: (artist, title) => trackUploadingBloc
+                  onUpload: (artist, title) => trackUploadingBloc
                       .add(InfoChecked(state.url, artist, title)),
                   onCancel: () => trackUploadingBloc
                       .add(Start(url: trackUploadingBloc.currentUploadingLink)),
