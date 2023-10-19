@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 
-import '../buttons/styled_button.dart';
 import 'dialog.dart';
 
 class TrackEditDialog extends StatefulWidget {
@@ -67,7 +66,7 @@ class _TrackEditDialogState extends State<TrackEditDialog> {
               validator: (value) =>
                   value?.isNotEmpty != true ? 'Field is required' : null,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 8),
             TextFormField(
               decoration: const InputDecoration(label: Text('Title')),
               controller: _titleController,
@@ -75,9 +74,9 @@ class _TrackEditDialogState extends State<TrackEditDialog> {
                   value?.isNotEmpty != true ? 'Field is required' : null,
             ),
             const SizedBox(height: 16),
-            StyledButton(
-              title: 'Submit',
+            FilledButton(
               onPressed: _onSave,
+              child: const Text('Submit'),
             ),
           ],
         ),

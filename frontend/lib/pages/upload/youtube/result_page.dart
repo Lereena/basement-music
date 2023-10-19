@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../widgets/buttons/styled_button.dart';
 import '../../../widgets/icons/error_icon.dart';
 import '../../../widgets/icons/success_icon.dart';
 
@@ -16,28 +15,32 @@ class ResultPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        if (result) SuccessIcon() else ErrorIcon(),
-        const SizedBox(height: 20),
-        if (result)
-          Text(
-            'Track was successfully uploaded',
-            style: Theme.of(context).textTheme.titleLarge,
-          )
-        else
-          Text(
-            'Track uploading is failed, please try again later',
-            style: Theme.of(context).textTheme.titleLarge,
+    final theme = Theme.of(context);
+
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          if (result) SuccessIcon() else ErrorIcon(),
+          const SizedBox(height: 20),
+          if (result)
+            Text(
+              'Track was successfully uploaded',
+              style: theme.textTheme.titleLarge,
+            )
+          else
+            Text(
+              'Track uploading is failed, please try again later',
+              style: theme.textTheme.titleLarge,
+            ),
+          const SizedBox(height: 20),
+          FilledButton(
+            onPressed: onUploadOtherTrackPress,
+            autofocus: true,
+            child: const Text('Upload other track'),
           ),
-        const SizedBox(height: 20),
-        StyledButton(
-          title: 'Upload other track',
-          onPressed: onUploadOtherTrackPress,
-          autofocus: true,
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

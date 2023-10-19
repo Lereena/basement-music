@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../widgets/buttons/styled_button.dart';
 import '../../../widgets/icons/error_icon.dart';
 import '../../../widgets/icons/success_icon.dart';
 
@@ -36,10 +35,10 @@ class PlaylistEditResultPage extends StatelessWidget {
             style: theme.textTheme.titleLarge,
           ),
         const SizedBox(height: 20),
-        StyledButton(
-          title: 'Return to playlist',
+        FilledButton(
           onPressed: onClose,
           autofocus: true,
+          child: const Text('Return to playlist'),
         ),
       ],
     );

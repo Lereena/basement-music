@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../widgets/buttons/styled_button.dart';
 import '../../../widgets/icons/error_icon.dart';
 
 class ErrorPage extends StatelessWidget {
@@ -10,19 +9,26 @@ class ErrorPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        ErrorIcon(),
-        const SizedBox(height: 40),
-        const Text("Couldn't fetch YouTube video. Please check the link and try again."),
-        const SizedBox(height: 40),
-        StyledButton(
-          title: 'Try again',
-          onPressed: onTryAgainPress,
-          autofocus: true,
-        ),
-      ],
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          ErrorIcon(),
+          const SizedBox(height: 40),
+          Text(
+            "Couldn't fetch YouTube video. Please check the link and try again.",
+            style: Theme.of(context).textTheme.titleLarge,
+            maxLines: 2,
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 40),
+          ElevatedButton(
+            onPressed: onTryAgainPress,
+            autofocus: true,
+            child: const Text('Try again'),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../../widgets/buttons/styled_button.dart';
 import '../../../widgets/titled_field.dart';
 
 class TrackInfoPage extends StatelessWidget {
@@ -41,6 +40,7 @@ class TrackInfoPage extends StatelessWidget {
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 20),
+        // TODO: change fields
         TitledField(
           title: 'Artist',
           controller: artistController,
@@ -57,10 +57,11 @@ class TrackInfoPage extends StatelessWidget {
           onSubmitted: (_) => uploadFocusNode.requestFocus(),
         ),
         const SizedBox(height: 40),
-        StyledButton(
-          title: 'Upload',
-          onPressed: () => onUploadPress(artistController.text, titleController.text),
+        FilledButton(
+          onPressed: () =>
+              onUploadPress(artistController.text, titleController.text),
           focusNode: uploadFocusNode,
+          child: const Text('Upload'),
         ),
         const SizedBox(height: 20),
         TextButton(
