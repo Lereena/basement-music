@@ -16,7 +16,7 @@ class ExtractFromYoutube extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final trackUploadingBloc = BlocProvider.of<TrackUploadingBloc>(context);
+    final trackUploadingBloc = context.read<TrackUploadingBloc>();
 
     return Scaffold(
       appBar: BasementAppBar(title: 'Extract from YouTube'),

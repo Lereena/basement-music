@@ -9,12 +9,10 @@ class PauseButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final playerBloc = BlocProvider.of<PlayerBloc>(context);
+    final playerBloc = context.read<PlayerBloc>();
 
     return InkWell(
-      onTap: () {
-        playerBloc.add(PauseEvent());
-      },
+      onTap: () => playerBloc.add(PauseEvent()),
       child: const Icon(
         Icons.pause,
         size: 30,

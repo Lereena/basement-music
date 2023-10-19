@@ -20,16 +20,14 @@ class _SearchPageState extends State<SearchPage> {
   final _controller = TextEditingController();
   final _focusNode = FocusNode();
 
-  late final TracksSearchCubit _searchCubit;
-  late final PlaylistsBloc _playlistsBloc;
+  late final _searchCubit = context.read<TracksSearchCubit>();
+  late final _playlistsBloc = context.read<PlaylistsBloc>();
 
   @override
   void initState() {
     super.initState();
 
     _focusNode.requestFocus();
-    _searchCubit = BlocProvider.of<TracksSearchCubit>(context);
-    _playlistsBloc = BlocProvider.of<PlaylistsBloc>(context);
     _controller.text = _searchCubit.state.searchQuery;
     _playlistsBloc.openedPlaylist = _searchCubit.searchResultsPlaylist;
   }

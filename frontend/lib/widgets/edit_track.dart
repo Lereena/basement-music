@@ -21,7 +21,7 @@ class EditTrack extends StatefulWidget {
 }
 
 class _EditTrackState extends State<EditTrack> {
-  late final EditTrackBloc editTrackBloc;
+  late final editTrackBloc = context.read<EditTrackBloc>();
 
   final titleController = TextEditingController();
   final artistController = TextEditingController();
@@ -31,7 +31,6 @@ class _EditTrackState extends State<EditTrack> {
   @override
   void initState() {
     super.initState();
-    editTrackBloc = BlocProvider.of<EditTrackBloc>(context);
     editTrackBloc.add(GetInputEvent());
 
     titleController.text = widget.track.title;

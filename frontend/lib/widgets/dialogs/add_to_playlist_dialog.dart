@@ -17,12 +17,11 @@ class AddToPlaylistDialog extends StatefulWidget {
 }
 
 class _AddToPlaylistDialogState extends State<AddToPlaylistDialog> {
-  late final AddToPlaylistBloc _addToPlaylistBloc;
+  late final _addToPlaylistBloc = context.read<AddToPlaylistBloc>();
 
   @override
   void initState() {
     super.initState();
-    _addToPlaylistBloc = BlocProvider.of<AddToPlaylistBloc>(context);
     _addToPlaylistBloc.add(TrackChoosen(widget.trackId));
   }
 
