@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import '../../../bloc/track_uploading_bloc/track_uploading_bloc.dart';
 import '../../../routing/routes.dart';
 import '../../../widgets/app_bar.dart';
-import '../error_page.dart';
 import '../result_page.dart';
 import '../upload_is_in_progress_page.dart';
 import 'link_input_page.dart';
@@ -55,18 +54,20 @@ class ExtractFromYoutube extends StatelessWidget {
                 );
               }
 
-              if (state is SuccessfulUploadState) {
+              if (state is SuccessfulUploadState || state is ErrorState) {
                 return ResultPage(
-                  result: true,
-                  onUploadOtherTrackPress: () => _onUploadOtherTrack(context),
+                  result: state is SuccessfulUploadState
+                      ? Result.success
+                      : Result.fail,
+                  successMessage: 'Track was successfully uploaded',
+                  failMessage:
+                      'Track uploading is failed, please try again later',
+                  buttonText: 'OK',
+                  onLeavePage: () => _onUploadOtherTrack(context),
                 );
               }
 
-              return ErrorPage(
-                errorText:
-                    "Couldn't fetch YouTube video. Please check the link and try again.",
-                onTryAgain: () => _onUploadOtherTrack(context),
-              );
+              return const SizedBox.shrink();
             },
           ),
         ],
@@ -75,7 +76,7 @@ class ExtractFromYoutube extends StatelessWidget {
   }
 
   void _onUploadOtherTrack(BuildContext context) {
-    context.go(RouteName.upload);
     context.read<TrackUploadingBloc>().add(const Start());
+    context.go(RouteName.upload);
   }
 }

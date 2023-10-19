@@ -3,14 +3,22 @@ import 'package:flutter/material.dart';
 import '../../widgets/icons/error_icon.dart';
 import '../../widgets/icons/success_icon.dart';
 
+enum Result { success, fail }
+
 class ResultPage extends StatelessWidget {
-  final bool result;
-  final Function() onUploadOtherTrackPress;
+  final Result result;
+  final String successMessage;
+  final String failMessage;
+  final String buttonText;
+  final void Function() onLeavePage;
 
   const ResultPage({
     super.key,
     required this.result,
-    required this.onUploadOtherTrackPress,
+    required this.successMessage,
+    required this.failMessage,
+    required this.buttonText,
+    required this.onLeavePage,
   });
 
   @override
@@ -21,23 +29,23 @@ class ResultPage extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          if (result) SuccessIcon() else ErrorIcon(),
+          if (result == Result.success) SuccessIcon() else ErrorIcon(),
           const SizedBox(height: 20),
-          if (result)
+          if (result == Result.success)
             Text(
-              'Track was successfully uploaded',
+              successMessage,
               style: theme.textTheme.titleLarge,
             )
           else
             Text(
-              'Track uploading is failed, please try again later',
+              failMessage,
               style: theme.textTheme.titleLarge,
             ),
           const SizedBox(height: 20),
           FilledButton(
-            onPressed: onUploadOtherTrackPress,
+            onPressed: onLeavePage,
             autofocus: true,
-            child: const Text('Upload other track'),
+            child: Text(buttonText),
           ),
         ],
       ),

@@ -8,7 +8,6 @@ import '../../../routing/routes.dart';
 import '../../../utils/track_data.dart';
 import '../../../widgets/app_bar.dart';
 import '../../../widgets/dialogs/track_edit_dialog.dart';
-import '../error_page.dart';
 import '../result_page.dart';
 import '../upload_is_in_progress_page.dart';
 import 'files_input_page.dart';
@@ -86,17 +85,20 @@ class UploadFromDevice extends StatelessWidget {
                 );
               }
 
-              if (state is SuccessfulUploadState) {
+              if (state is SuccessfulUploadState || state is ErrorState) {
                 return ResultPage(
-                  result: true,
-                  onUploadOtherTrackPress: () => _onUploadOtherTrack(context),
+                  result: state is SuccessfulUploadState
+                      ? Result.success
+                      : Result.fail,
+                  successMessage: 'Track was successfully uploaded',
+                  failMessage:
+                      'Track uploading is failed, please try again later',
+                  buttonText: 'OK',
+                  onLeavePage: () => _onUploadOtherTrack(context),
                 );
               }
 
-              return ErrorPage(
-                errorText: "Couldn't upload track. Please try again later.",
-                onTryAgain: () => _onUploadOtherTrack(context),
-              );
+              return const SizedBox.shrink();
             },
           ),
         ],
