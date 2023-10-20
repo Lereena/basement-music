@@ -3,8 +3,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../../widgets/buttons/styled_button.dart';
-
 class LinkInputPage extends StatelessWidget {
   final void Function(String) onFetchPress;
   final void Function() onCancel;
@@ -48,11 +46,11 @@ class LinkInputPage extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16),
-        StyledButton(
-          title: 'Extract',
+        FilledButton(
+          child: const Text('Extract'),
           onPressed: () => onFetchPress(linkController.text),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 8),
         TextButton(onPressed: onCancel, child: const Text('Cancel')),
       ],
     );

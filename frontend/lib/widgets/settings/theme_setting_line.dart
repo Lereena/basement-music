@@ -20,7 +20,7 @@ class ThemeSettingLine extends StatefulWidget {
 }
 
 class _ThemeSettingLineState extends State<ThemeSettingLine> {
-  final FocusNode _themeFocusNode = FocusNode();
+  final _themeFocusNode = FocusNode();
 
   @override
   void dispose() {
@@ -30,7 +30,7 @@ class _ThemeSettingLineState extends State<ThemeSettingLine> {
 
   @override
   Widget build(BuildContext context) {
-    final settingsBloc = BlocProvider.of<SettingsBloc>(context);
+    final settingsBloc = context.read<SettingsBloc>();
 
     return SettingsLineDecoration(
       child: Row(

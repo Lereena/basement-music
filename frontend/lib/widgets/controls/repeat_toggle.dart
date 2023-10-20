@@ -8,7 +8,7 @@ class RepeatToggle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final settingsBloc = BlocProvider.of<SettingsBloc>(context);
+    final settingsBloc = context.read<SettingsBloc>();
 
     return InkWell(
       onTap: () => settingsBloc.add(SetRepeat(!settingsBloc.state.repeat)),

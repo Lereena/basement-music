@@ -55,15 +55,6 @@ class TrackUploadingBloc
     InfoChecked event,
     Emitter<TrackUploadingState> emit,
   ) async {
-    if (event.artist.isEmpty) {
-      emit(InfoInputErrorState()); // TODO: propagate error text
-      return;
-    }
-    if (event.title.isEmpty) {
-      emit(InfoInputErrorState()); // TODO: propagate error text
-      return;
-    }
-
     emit(UploadingStartedState());
 
     final result = await _tracksRepository.uploadYtTrack(
@@ -73,7 +64,7 @@ class TrackUploadingBloc
     );
 
     if (currentUploadingLink != event.url) {
-      return; // when we are already uploading other track
+      return; // when we are already uploading this track
     }
 
     if (result) {

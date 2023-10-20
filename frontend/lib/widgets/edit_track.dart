@@ -6,7 +6,6 @@ import 'package:sizer/sizer.dart';
 
 import '../bloc/edit_track_bloc/edit_track_bloc.dart';
 import '../models/track.dart';
-import 'buttons/styled_button.dart';
 
 class EditTrack extends StatefulWidget {
   final Track track;
@@ -21,7 +20,7 @@ class EditTrack extends StatefulWidget {
 }
 
 class _EditTrackState extends State<EditTrack> {
-  late final EditTrackBloc editTrackBloc;
+  late final editTrackBloc = context.read<EditTrackBloc>();
 
   final titleController = TextEditingController();
   final artistController = TextEditingController();
@@ -31,7 +30,6 @@ class _EditTrackState extends State<EditTrack> {
   @override
   void initState() {
     super.initState();
-    editTrackBloc = BlocProvider.of<EditTrackBloc>(context);
     editTrackBloc.add(GetInputEvent());
 
     titleController.text = widget.track.title;
@@ -88,6 +86,7 @@ class _EditTrackState extends State<EditTrack> {
                   controller: artistController,
                   onSubmitted: (_) => titleFocusNode.requestFocus(),
                 ),
+                const SizedBox(height: 8),
                 TextField(
                   decoration: const InputDecoration(label: Text('Title')),
                   focusNode: titleFocusNode,
@@ -109,8 +108,8 @@ class _EditTrackState extends State<EditTrack> {
                 else
                   const SizedBox(height: 20),
                 const SizedBox(height: 20),
-                StyledButton(
-                  title: 'Submit',
+                FilledButton(
+                  child: const Text('Submit'),
                   onPressed: () => editTrackBloc.add(
                     LoadingEvent(
                       widget.track.id,

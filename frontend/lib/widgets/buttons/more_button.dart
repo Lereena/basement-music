@@ -21,7 +21,7 @@ class MoreButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cacherBloc = BlocProvider.of<CacherBloc>(context);
+    final cacherBloc = context.read<CacherBloc>();
 
     return InkWell(
       child: const Icon(Icons.more_vert),

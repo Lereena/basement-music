@@ -13,7 +13,7 @@ class PlaylistCacheAction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cacherBloc = BlocProvider.of<CacherBloc>(context);
+    final cacherBloc = context.read<CacherBloc>();
 
     return BlocBuilder<CacherBloc, CacherState>(
       builder: (context, state) {

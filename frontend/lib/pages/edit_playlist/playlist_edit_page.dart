@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../bloc/playlist_edit_bloc/playlist_edit_bloc.dart';
 import '../../models/track.dart';
 import '../../widgets/app_bar.dart';
-import 'playlist_edit_result_page.dart';
+import '../upload/result_page.dart';
 
 class _PlaylistData {
   String? title;
@@ -67,17 +67,14 @@ class _PlaylistEditPageState extends State<PlaylistEditPage> {
           return const Center(child: CircularProgressIndicator());
         }
 
-        if (state is PlaylistSavingSuccess) {
-          return PlaylistEditResultPage(
-            result: EditingResult.success,
-            onClose: () => context.pop(),
-          );
-        }
-
-        if (state is PlaylistSavingFail) {
-          return PlaylistEditResultPage(
-            result: EditingResult.fail,
-            onClose: () => context.pop(),
+        if (state is PlaylistSavingSuccess || state is PlaylistSavingFail) {
+          return ResultPage(
+            result:
+                state is PlaylistSavingSuccess ? Result.success : Result.fail,
+            successMessage: 'Playlist was successfully edited',
+            failMessage: 'Playlist editing is failed, please try again later',
+            buttonText: 'OK',
+            onLeavePage: () => context.pop(),
           );
         }
 

@@ -7,9 +7,9 @@ import '../pages/playlist_page.dart';
 import '../pages/search_page.dart';
 import '../pages/settings_page.dart';
 import '../pages/tracks_page.dart';
-import '../pages/upload/upload_from_device.dart';
+import '../pages/upload/from_device/upload_from_device.dart';
+import '../pages/upload/from_youtube/extract_from_youtube.dart';
 import '../pages/upload/upload_page.dart';
-import '../pages/upload/youtube/extract_from_youtube.dart';
 import 'app_scaffold_shell.dart';
 import 'routes.dart';
 

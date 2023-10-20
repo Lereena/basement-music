@@ -5,10 +5,9 @@ import 'package:go_router/go_router.dart';
 import '../../../bloc/track_uploading_bloc/track_uploading_bloc.dart';
 import '../../../routing/routes.dart';
 import '../../../widgets/app_bar.dart';
+import '../result_page.dart';
 import '../upload_is_in_progress_page.dart';
-import 'error_page.dart';
 import 'link_input_page.dart';
-import 'result_page.dart';
 import 'track_info_page.dart';
 
 class ExtractFromYoutube extends StatelessWidget {
@@ -16,7 +15,7 @@ class ExtractFromYoutube extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final trackUploadingBloc = BlocProvider.of<TrackUploadingBloc>(context);
+    final trackUploadingBloc = context.read<TrackUploadingBloc>();
 
     return Scaffold(
       appBar: BasementAppBar(title: 'Extract from YouTube'),
@@ -42,7 +41,7 @@ class ExtractFromYoutube extends StatelessWidget {
                 return TrackInfoPage(
                   artist: state.artist,
                   title: state.title,
-                  onUploadPress: (artist, title) => trackUploadingBloc
+                  onUpload: (artist, title) => trackUploadingBloc
                       .add(InfoChecked(state.url, artist, title)),
                   onCancel: () => trackUploadingBloc
                       .add(Start(url: trackUploadingBloc.currentUploadingLink)),
@@ -55,16 +54,20 @@ class ExtractFromYoutube extends StatelessWidget {
                 );
               }
 
-              if (state is SuccessfulUploadState) {
+              if (state is SuccessfulUploadState || state is ErrorState) {
                 return ResultPage(
-                  result: true,
-                  onUploadOtherTrackPress: () => _onUploadOtherTrack(context),
+                  result: state is SuccessfulUploadState
+                      ? Result.success
+                      : Result.fail,
+                  successMessage: 'Track was successfully uploaded',
+                  failMessage:
+                      'Track uploading is failed, please try again later',
+                  buttonText: 'OK',
+                  onLeavePage: () => _onUploadOtherTrack(context),
                 );
               }
 
-              return ErrorPage(
-                onTryAgainPress: () => _onUploadOtherTrack(context),
-              );
+              return const SizedBox.shrink();
             },
           ),
         ],
@@ -73,7 +76,7 @@ class ExtractFromYoutube extends StatelessWidget {
   }
 
   void _onUploadOtherTrack(BuildContext context) {
-    context.go(RouteName.upload);
     context.read<TrackUploadingBloc>().add(const Start());
+    context.go(RouteName.upload);
   }
 }

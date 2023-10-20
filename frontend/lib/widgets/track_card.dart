@@ -29,7 +29,7 @@ class TrackCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final playerBloc = BlocProvider.of<PlayerBloc>(context);
+    final playerBloc = context.read<PlayerBloc>();
 
     return BlocBuilder<CacherBloc, CacherState>(
       builder: (context, cacherState) {

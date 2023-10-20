@@ -10,7 +10,7 @@ class PreviousButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final playerBloc = BlocProvider.of<PlayerBloc>(context);
+    final playerBloc = context.read<PlayerBloc>();
 
     return InkWell(
       onTap: () {

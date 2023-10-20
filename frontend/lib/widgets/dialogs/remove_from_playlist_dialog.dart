@@ -20,17 +20,18 @@ class RemoveFromPlaylistDialog extends StatefulWidget {
   });
 
   @override
-  State<RemoveFromPlaylistDialog> createState() => _RemoveFromPlaylistDialogState();
+  State<RemoveFromPlaylistDialog> createState() =>
+      _RemoveFromPlaylistDialogState();
 }
 
 class _RemoveFromPlaylistDialogState extends State<RemoveFromPlaylistDialog> {
-  late final RemoveFromPlaylistBloc _removeFromPlaylistBloc;
+  late final _removeFromPlaylistBloc = context.read<RemoveFromPlaylistBloc>();
 
   @override
   void initState() {
     super.initState();
-    _removeFromPlaylistBloc = BlocProvider.of<RemoveFromPlaylistBloc>(context);
-    _removeFromPlaylistBloc.add(TrackChoosen(widget.track.id, widget.playlist?.id));
+    _removeFromPlaylistBloc
+        .add(TrackChoosen(widget.track.id, widget.playlist?.id));
   }
 
   @override
@@ -64,12 +65,19 @@ class _RemoveFromPlaylistDialogState extends State<RemoveFromPlaylistDialog> {
                 ),
                 const SizedBox(height: 15),
                 ElevatedButton(
-                  onPressed: () =>
-                      _removeFromPlaylistBloc.add(ConfirmationReceived(widget.track.id, widget.playlist?.id)),
+                  onPressed: () => _removeFromPlaylistBloc.add(
+                    ConfirmationReceived(
+                      widget.track.id,
+                      widget.playlist?.id,
+                    ),
+                  ),
                   child: const Text('Remove'),
                 ),
                 const SizedBox(height: 15),
-                TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel'),
+                ),
               ],
             );
           }
