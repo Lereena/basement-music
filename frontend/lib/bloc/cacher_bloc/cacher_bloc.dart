@@ -22,9 +22,12 @@ class CacherBloc extends HydratedBloc<CacherEvent, CacherState> {
     on<CacheValidateEvent>(_onCacheValidateEvent);
     on<CacheTrackEvent>(_onCacheTrackEvent);
     on<CacheTracksEvent>(_onCacheTracksEvent);
+    on<RemoveTracksFromCacheEvent>(_onRemoveTracksFromCacheEvent);
 
     add(CacheValidateEvent());
   }
+
+  final _cacheManager = DefaultCacheManager();
 
   FutureOr<void> _onCacheValidateEvent(
     CacheValidateEvent event,
@@ -40,7 +43,7 @@ class CacherBloc extends HydratedBloc<CacherEvent, CacherState> {
     // cache is broken
     if (cachedFilesCount != state.cached.length) {
       emit(state.copyWith(cached: {}));
-      await DefaultCacheManager().emptyCache();
+      await _cacheManager.emptyCache();
     }
   }
 
@@ -87,8 +90,10 @@ class CacherBloc extends HydratedBloc<CacherEvent, CacherState> {
 
   Future<CacherState> _cacheOneTrack(String trackId) async {
     try {
-      await DefaultCacheManager()
-          .downloadFile(_apiService.trackPlayback(trackId), key: trackId);
+      await _cacheManager.downloadFile(
+        _apiService.trackPlayback(trackId),
+        key: trackId,
+      );
 
       return state.copyWith(
         caching: state.caching.where((id) => id != trackId).toSet(),
@@ -100,6 +105,25 @@ class CacherBloc extends HydratedBloc<CacherEvent, CacherState> {
         unsuccessful: {...state.unsuccessful, trackId},
       );
     }
+  }
+
+  FutureOr<void> _onRemoveTracksFromCacheEvent(
+    RemoveTracksFromCacheEvent event,
+    Emitter<CacherState> emit,
+  ) async {
+    for (final trackId in event.trackIds) {
+      emit(await _removeOneTrackFromCache(trackId));
+    }
+  }
+
+  Future<CacherState> _removeOneTrackFromCache(String trackId) async {
+    await _cacheManager.removeFile(trackId);
+
+    return state.copyWith(
+      cached: state.cached.where((id) => id != trackId).toSet(),
+      caching: state.caching.where((id) => id != trackId).toSet(),
+      unsuccessful: state.unsuccessful.where((id) => id != trackId).toSet(),
+    );
   }
 
   @override

@@ -24,6 +24,8 @@ class ConnectivityStatusCubit extends Cubit<ConnectivityStatusState> {
       _updateAll();
     }
 
+    _connectivity.checkConnectivity().then((result) => _emitStatus(result));
+
     _connectivity.onConnectivityChanged.listen(_emitStatus);
   }
 

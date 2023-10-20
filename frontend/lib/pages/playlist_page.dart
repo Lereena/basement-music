@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -5,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import '../bloc/playlist_bloc/playlist_bloc.dart';
 import '../routing/routes.dart';
 import '../widgets/app_bar.dart';
+import '../widgets/playlist_cache_action.dart';
 import '../widgets/track_card.dart';
 
 class PlaylistPage extends StatefulWidget {
@@ -26,28 +30,21 @@ class _PlaylistPageState extends State<PlaylistPage> {
     _playlistBloc.add(PlaylistLoadEvent(widget.playlistId));
   }
 
-  late final _appBarActions = [
-    IconButton(
-      onPressed: () => context.go(RouteName.playlistEdit(widget.playlistId)),
-      icon: const Icon(
-        Icons.edit_outlined,
-      ),
-    ),
-  ];
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<PlaylistBloc, PlaylistState>(
       builder: (context, state) {
         if (state is PlaylistLoadingState) {
-          return const Center(child: CircularProgressIndicator());
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
         }
 
         if (state is PlaylistEmptyState) {
           return Scaffold(
             appBar: BasementAppBar(
               title: state.title,
-              actions: _appBarActions,
+              actions: _getAppBarActions(),
             ),
             body: Center(
               child: Text(
@@ -62,7 +59,9 @@ class _PlaylistPageState extends State<PlaylistPage> {
           return Scaffold(
             appBar: BasementAppBar(
               title: state.playlist.title,
-              actions: _appBarActions,
+              actions: _getAppBarActions(
+                tracksIds: state.playlist.tracks.map((e) => e.id).toList(),
+              ),
             ),
             body: Column(
               children: [
@@ -82,8 +81,29 @@ class _PlaylistPageState extends State<PlaylistPage> {
           );
         }
 
+        if (state is PlaylistErrorState) {
+          return Scaffold(
+            appBar: BasementAppBar(
+              title: '',
+            ),
+            body: const Center(child: Text('Error loading playlist')),
+          );
+        }
+
         return const SizedBox.shrink();
       },
     );
   }
+
+  List<Widget> _getAppBarActions({List<String>? tracksIds}) => [
+        if (!kIsWeb && Platform.isAndroid && tracksIds != null)
+          PlaylistCacheAction(trackIds: tracksIds),
+        IconButton(
+          onPressed: () =>
+              context.go(RouteName.playlistEdit(widget.playlistId)),
+          icon: const Icon(
+            Icons.edit_outlined,
+          ),
+        ),
+      ];
 }

@@ -21,8 +21,8 @@ class CacheTracksEvent extends CacherEvent {
   const CacheTracksEvent(this.trackIds);
 }
 
-class UncacheTracksEvent extends CacherEvent {
+class RemoveTracksFromCacheEvent extends CacherEvent {
   final List<String> trackIds;
 
-  const UncacheTracksEvent(this.trackIds);
+  const RemoveTracksFromCacheEvent(this.trackIds);
 }

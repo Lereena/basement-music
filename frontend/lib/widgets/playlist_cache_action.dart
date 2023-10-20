@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/cacher_bloc/cacher_bloc.dart';
 import 'buttons/cache_button.dart';
 import 'buttons/uncache_button.dart';
-import 'dialogs/yes_or_cancel_dialog.dart';
+import 'dialogs/confirm_action_dialog.dart';
 
 class PlaylistCacheAction extends StatelessWidget {
   final List<String> trackIds;
@@ -39,7 +39,7 @@ class PlaylistCacheAction extends StatelessWidget {
           return UncacheButton(
             onUncache: () async {
               if (await _showUncacheDialog(context)) {
-                cacherBloc.add(UncacheTracksEvent(trackIds));
+                cacherBloc.add(RemoveTracksFromCacheEvent(trackIds));
               }
             },
           );
@@ -56,23 +56,15 @@ class PlaylistCacheAction extends StatelessWidget {
     );
   }
 
-  Future<bool> _showCacheDialog(BuildContext context) async {
-    const title = 'Do you want to cache all playlist tracks?';
+  Future<bool> _showCacheDialog(BuildContext context) =>
+      ConfirmActionDialog.show(
+        context: context,
+        title: 'Do you want to cache all playlist tracks?',
+      );
 
-    return await showDialog(
-          context: context,
-          builder: (context) => const YesOrCancelDialog(title: title),
-        ) as bool? ??
-        false;
-  }
-
-  Future<bool> _showUncacheDialog(BuildContext context) async {
-    const title = 'Do you want to remove all playlist tracks from cache?';
-
-    return await showDialog(
-          context: context,
-          builder: (context) => const YesOrCancelDialog(title: title),
-        ) as bool? ??
-        false;
-  }
+  Future<bool> _showUncacheDialog(BuildContext context) =>
+      ConfirmActionDialog.show(
+        context: context,
+        title: 'Do you want to remove all playlist tracks from cache?',
+      );
 }
