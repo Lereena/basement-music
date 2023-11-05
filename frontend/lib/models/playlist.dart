@@ -52,7 +52,7 @@ class Playlist extends Equatable {
     return <String, dynamic>{
       'id': id,
       'title': title,
-      'tracks': tracks.map((e) => e.toMap()).toList(),
+      'tracks': tracks.map((e) => e.toJson()).toList(),
     };
   }
 
@@ -62,7 +62,7 @@ class Playlist extends Equatable {
       title: map['title'] as String,
       tracks: (map['tracks'] as List<dynamic>)
           .map<Track>(
-            (x) => Track.fromMap(x as Map<String, dynamic>),
+            (x) => Track.fromJson(x as Map<String, dynamic>),
           )
           .toList(),
     );

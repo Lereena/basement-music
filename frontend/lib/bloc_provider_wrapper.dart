@@ -21,16 +21,19 @@ import 'bloc/tracks_bloc/tracks_bloc.dart';
 import 'bloc/trackst_search_cubit/tracks_search_cubit.dart';
 import 'repositories/playlists_repository.dart';
 import 'repositories/tracks_repository.dart';
+import 'rest_client.dart';
 import 'shortcuts_wrapper.dart';
 
 class BlocProviderWrapper extends StatefulWidget {
   final Widget child;
   final ApiService apiService;
+  final RestClient restClient;
 
   const BlocProviderWrapper({
     super.key,
     required this.apiService,
     required this.child,
+    required this.restClient,
   });
 
   @override
@@ -38,7 +41,8 @@ class BlocProviderWrapper extends StatefulWidget {
 }
 
 class _BlocProviderWrapperState extends State<BlocProviderWrapper> {
-  late final _tracksRepository = TracksRepository(widget.apiService);
+  late final _tracksRepository =
+      TracksRepository(widget.apiService, widget.restClient);
   late final _playlistsRepository = PlaylistsRepository(widget.apiService);
 
   late final _settingsBloc = SettingsBloc(widget.apiService);

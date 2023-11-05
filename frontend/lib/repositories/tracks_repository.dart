@@ -1,20 +1,22 @@
 import '../api_providers/tracks_api_provider.dart';
 import '../api_service.dart';
 import '../models/track.dart';
+import '../rest_client.dart';
 
 class TracksRepository {
   final _items = <Track>[];
   final _searchItems = <Track>[];
   final ApiService _apiService;
+  final RestClient _restClient;
   late final _tracksApiProvider = TracksApiProvider(_apiService);
 
-  TracksRepository(this._apiService);
+  TracksRepository(this._apiService, this._restClient);
 
   List<Track> get items => _items;
   List<Track> get searchItems => _searchItems;
 
   Future<void> getAllTracks() async {
-    final result = await _tracksApiProvider.fetchAllTracks();
+    final result = await _restClient.getAllTracks();
     _items.clear();
     _items.addAll(result);
   }
