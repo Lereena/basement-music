@@ -1,8 +1,12 @@
 import 'package:equatable/equatable.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'package:uuid/uuid.dart';
 
 import 'track.dart';
 
+part 'playlist.g.dart';
+
+@JsonSerializable(fieldRename: FieldRename.pascal)
 class Playlist extends Equatable {
   final String id;
   final String title;
@@ -13,6 +17,11 @@ class Playlist extends Equatable {
     required this.title,
     required this.tracks,
   });
+
+  factory Playlist.fromJson(Map<String, dynamic> json) =>
+      _$PlaylistFromJson(json);
+
+  Map<String, dynamic> toJson() => _$PlaylistToJson(this);
 
   @override
   List<Object> get props => [id];
@@ -34,37 +43,5 @@ class Playlist extends Equatable {
 
   factory Playlist.anonymous(List<Track> tracks) {
     return Playlist(id: const Uuid().v1(), title: '', tracks: tracks);
-  }
-
-  factory Playlist.fromJson(Map<String, dynamic> json) {
-    return Playlist(
-      id: json['Id'] as String,
-      title: json['Title'] as String,
-      tracks: List.castFrom<dynamic, Track>(
-        json['Tracks']
-            .map((e) => Track.fromJson(e as Map<String, dynamic>))
-            .toList() as List<dynamic>,
-      ),
-    );
-  }
-
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'id': id,
-      'title': title,
-      'tracks': tracks.map((e) => e.toJson()).toList(),
-    };
-  }
-
-  factory Playlist.fromMap(Map<String, dynamic> map) {
-    return Playlist(
-      id: map['id'] as String,
-      title: map['title'] as String,
-      tracks: (map['tracks'] as List<dynamic>)
-          .map<Track>(
-            (x) => Track.fromJson(x as Map<String, dynamic>),
-          )
-          .toList(),
-    );
   }
 }

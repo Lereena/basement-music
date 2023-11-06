@@ -34,14 +34,10 @@ class PlaylistCreationBloc
     emit(WaitingCreationState());
 
     try {
-      final result = await _playlistsRepository.createPlaylist(event.title);
+      await _playlistsRepository.createPlaylist(event.title);
 
-      if (result) {
-        emit(CreatedState());
-        _playlistsBloc.add(PlaylistAddedEvent());
-      } else {
-        emit(CreationErrorState());
-      }
+      emit(CreatedState());
+      _playlistsBloc.add(PlaylistAddedEvent());
     } catch (e) {
       emit(CreationErrorState());
       logger.e('Error creating playlist: $e');

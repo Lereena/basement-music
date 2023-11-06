@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart' hide Headers;
 import 'package:retrofit/retrofit.dart';
 
+import 'models/playlist.dart';
 import 'models/track.dart';
 import 'models/video_info.dart';
 
@@ -41,4 +42,36 @@ abstract class RestClient {
     @Query('artist') String artist,
     @Query('title') String title,
   );
+
+  @GET('/playlists')
+  Future<List<Playlist>> getAllPlaylists();
+
+  @GET('/playlist/{id}')
+  Future<Playlist> getPlaylist(@Path('id') String id);
+
+  @POST('/playlist/create/{name}')
+  Future<Playlist> createPlaylist(@Path('name') String name);
+
+  @PATCH('/playlist/{id}')
+  @FormUrlEncoded()
+  Future<void> editPlaylist({
+    @Path('id') required String id,
+    @Field('title') required String title,
+    @Field('tracks') required List<String> tracks,
+  });
+
+  @DELETE('/playlist/{id}')
+  Future<void> deletePlaylist(@Path('id') String id);
+
+  @POST('/playlist/{playlistId}/track/{trackId}')
+  Future<void> addTrackToPlaylist({
+    @Path('playlistId') required String playlistId,
+    @Path('trackId') required String trackId,
+  });
+
+  @DELETE('/playlist/{playlistId}/track/{trackId}')
+  Future<void> removeTrackFromPlaylist({
+    @Path('playlistId') required String playlistId,
+    @Path('trackId') required String trackId,
+  });
 }
