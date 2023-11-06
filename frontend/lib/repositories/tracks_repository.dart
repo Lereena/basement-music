@@ -1,16 +1,17 @@
-import '../api_providers/tracks_api_provider.dart';
-import '../api_service.dart';
+import 'package:dio/dio.dart';
+import 'package:http_parser/http_parser.dart';
+
 import '../models/track.dart';
+import '../models/video_info.dart';
 import '../rest_client.dart';
 
 class TracksRepository {
   final _items = <Track>[];
   final _searchItems = <Track>[];
-  final ApiService _apiService;
-  final RestClient _restClient;
-  late final _tracksApiProvider = TracksApiProvider(_apiService);
 
-  TracksRepository(this._apiService, this._restClient);
+  final RestClient _restClient;
+
+  TracksRepository(this._restClient);
 
   List<Track> get items => _items;
   List<Track> get searchItems => _searchItems;
@@ -31,46 +32,52 @@ class TracksRepository {
   Future<void> searchTracksOnline(String searchQuery) async {
     _searchItems.clear();
 
-    final result = await _tracksApiProvider.searchTracks(searchQuery);
+    final result = await _restClient.searchTracks(searchQuery);
     _searchItems.addAll(result);
   }
 
-  Future<({String artist, String title})?> fetchYtVideoInfo(String url) {
-    return _tracksApiProvider.fetchYtVideoInfo(url);
+  Future<VideoInfo?> fetchYtVideoInfo(String url) {
+    return _restClient.fetchYtVideoInfo(url);
   }
 
-  Future<bool> uploadYtTrack(String url, String artist, String title) {
-    return _tracksApiProvider.uploadYtTrack(url, artist, title);
+  Future<void> uploadYtTrack(String url, String artist, String title) {
+    return _restClient.uploadYtTrack(url, artist, title);
   }
 
-  Future<bool> uploadLocalTracks(
+  Future<void> uploadLocalTracks(
     List<({List<int> bytes, String filename})> files,
   ) {
-    return _tracksApiProvider.uploadLocalTracks(files);
+    final multipartFiles = <MultipartFile>[];
+
+    for (final file in files) {
+      MultipartFile.fromBytes(
+        file.bytes,
+        filename: file.filename,
+        contentType: MediaType('audio', ''),
+      );
+    }
+
+    return _restClient.uploadLocalTracks(multipartFiles);
   }
 
-  Future<bool> editTrack({
+  Future<void> editTrack({
     required String id,
     String? artist,
     String? title,
     String? cover,
   }) async {
-    final result = await _tracksApiProvider.editTrack(
-      id,
+    await _restClient.editTrack(
+      id: id,
+      artist: artist?.trim() ?? '',
+      title: title?.trim() ?? '',
+      cover: cover?.trim() ?? '',
+    );
+
+    final trackIndex = _items.indexWhere((track) => track.id == id);
+    _items[trackIndex] = _items[trackIndex].copyWith(
       artist: artist,
       title: title,
       cover: cover,
     );
-
-    if (result) {
-      final trackIndex = _items.indexWhere((track) => track.id == id);
-      _items[trackIndex] = _items[trackIndex].copyWith(
-        artist: artist,
-        title: title,
-        cover: cover,
-      );
-    }
-
-    return result;
   }
 }

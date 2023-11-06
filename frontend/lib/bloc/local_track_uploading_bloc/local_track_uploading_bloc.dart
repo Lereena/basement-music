@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 
+import '../../logger.dart';
 import '../../repositories/tracks_repository.dart';
 
 part 'local_track_uploading_event.dart';
@@ -43,13 +44,14 @@ class LocalTrackUploadingBloc
 
     emit(UploadingStartedState());
 
-    final result = await _tracksRepository.uploadLocalTracks(files);
+    try {
+      await _tracksRepository.uploadLocalTracks(files);
 
-    if (result) {
-      await _tracksRepository.getAllTracks();
       emit(SuccessfulUploadState());
-    } else {
+      await _tracksRepository.getAllTracks();
+    } catch (e) {
       emit(ErrorState());
+      logger.e('Error uploading files: $e');
     }
   }
 }

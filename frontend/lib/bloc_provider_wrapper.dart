@@ -41,8 +41,7 @@ class BlocProviderWrapper extends StatefulWidget {
 }
 
 class _BlocProviderWrapperState extends State<BlocProviderWrapper> {
-  late final _tracksRepository =
-      TracksRepository(widget.apiService, widget.restClient);
+  late final _tracksRepository = TracksRepository(widget.restClient);
   late final _playlistsRepository = PlaylistsRepository(widget.apiService);
 
   late final _settingsBloc = SettingsBloc(widget.apiService);
