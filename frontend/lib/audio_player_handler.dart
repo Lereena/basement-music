@@ -2,13 +2,13 @@ import 'package:audio_service/audio_service.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
-import 'api_service.dart';
 import 'app.dart';
+import 'app_config.dart';
 import 'models/track.dart';
 
-Future<void> initAudioHandler(ApiService apiService) async {
+Future<void> initAudioHandler(AppConfig appConfig) async {
   audioHandler = await AudioService.init(
-    builder: () => AudioPlayerHandler(apiService),
+    builder: () => AudioPlayerHandler(appConfig),
     config: const AudioServiceConfig(
       androidNotificationChannelId: 'com.lereena.basement-music.channel.audio',
       androidNotificationChannelName: 'Basement music',
@@ -18,9 +18,9 @@ Future<void> initAudioHandler(ApiService apiService) async {
 }
 
 class AudioPlayerHandler extends BaseAudioHandler {
-  final ApiService apiService;
+  final AppConfig _appConfig;
 
-  AudioPlayerHandler(this.apiService);
+  AudioPlayerHandler(this._appConfig);
 
   final _audioPlayer = AudioPlayer();
   var _currentTrack = Track.empty();
@@ -46,7 +46,8 @@ class AudioPlayerHandler extends BaseAudioHandler {
     final cachedFile = await DefaultCacheManager().getFileFromCache(trackId);
 
     if (cachedFile == null) {
-      await _audioPlayer.play(UrlSource(apiService.trackPlayback(trackId)));
+      await _audioPlayer
+          .play(UrlSource('${_appConfig.baseUrl}/api/track/$trackId'));
       return;
     }
 

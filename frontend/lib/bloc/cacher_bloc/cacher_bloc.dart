@@ -8,7 +8,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 
-import '../../../api_service.dart';
+import '../../app_config.dart';
 
 part 'cacher_event.dart';
 part 'cacher_state.dart';
@@ -16,9 +16,9 @@ part 'cacher_state.dart';
 const _cacherInfoKey = 'cacher';
 
 class CacherBloc extends HydratedBloc<CacherEvent, CacherState> {
-  final ApiService _apiService;
+  final AppConfig _appConfig;
 
-  CacherBloc(this._apiService) : super(const CacherInitial()) {
+  CacherBloc(this._appConfig) : super(const CacherInitial()) {
     on<CacheValidateEvent>(_onCacheValidateEvent);
     on<CacheTrackEvent>(_onCacheTrackEvent);
     on<CacheTracksEvent>(_onCacheTracksEvent);
@@ -87,8 +87,10 @@ class CacherBloc extends HydratedBloc<CacherEvent, CacherState> {
 
   Future<CacherState> _cacheOneTrack(String trackId) async {
     try {
-      await DefaultCacheManager()
-          .downloadFile(_apiService.trackPlayback(trackId), key: trackId);
+      await DefaultCacheManager().downloadFile(
+        '${_appConfig.baseUrl}/api/track/$trackId',
+        key: trackId,
+      );
 
       return state.copyWith(
         caching: state.caching.where((id) => id != trackId).toSet(),

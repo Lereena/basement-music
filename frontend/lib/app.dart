@@ -10,7 +10,6 @@ import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:sizer/sizer.dart';
 import 'package:url_strategy/url_strategy.dart';
 
-import 'api_service.dart';
 import 'app_config.dart';
 import 'audio_player_handler.dart';
 import 'bloc/settings_bloc/settings_bloc.dart';
@@ -43,8 +42,7 @@ Future<void> runBasement(AppConfig config) async {
 
   setPathUrlStrategy();
 
-  final apiService = ApiService(config.baseUrl);
-  await initAudioHandler(apiService);
+  await initAudioHandler(config);
 
   final dio = Dio(BaseOptions(baseUrl: config.baseUrl))
     ..interceptors.addAll([
@@ -54,25 +52,25 @@ Future<void> runBasement(AppConfig config) async {
 
   final restClient = RestClient(dio);
 
-  runApp(BasementMusic(apiService: apiService, restClient: restClient));
+  runApp(BasementMusic(config: config, restClient: restClient));
 }
 
 final _router = AppRouter.router;
 
 class BasementMusic extends StatelessWidget {
-  final ApiService apiService;
+  final AppConfig config;
   final RestClient restClient;
 
   const BasementMusic({
     super.key,
-    required this.apiService,
+    required this.config,
     required this.restClient,
   });
 
   @override
   Widget build(BuildContext context) {
     return BlocProviderWrapper(
-      apiService: apiService,
+      appConfig: config,
       restClient: restClient,
       child: BlocBuilder<SettingsBloc, SettingsState>(
         builder: (context, settingsState) {
