@@ -118,7 +118,7 @@ class _RestClient implements RestClient {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = FormData();
-    _data.files.addAll(files.map((i) => MapEntry('file', i)));
+    _data.files.addAll(files.map((i) => MapEntry('files', i)));
     await _dio.fetch<void>(_setStreamType<void>(Options(
       method: 'POST',
       headers: _headers,

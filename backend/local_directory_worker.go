@@ -40,33 +40,40 @@ func (ldw *LocalDirectoryWorker) ScanMusicDirectory() {
 }
 
 func (ldw *LocalDirectoryWorker) UploadFile(w http.ResponseWriter, r *http.Request) {
-	r.ParseMultipartForm(32 << 20)
-
-	file, header, err := r.FormFile("file")
+	err := r.ParseMultipartForm(32 << 20)
 	if err != nil {
-		fmt.Println("Error uploading file", err)
+		http.Error(w, "Error parsing form: "+err.Error(), http.StatusBadRequest)
 		return
 	}
-	defer file.Close()
 
-	name := "music/" + header.Filename
-	fmt.Printf("File name %s\n", name)
+	files := r.MultipartForm.File["files"]
 
-	out, err := os.Create(name)
-	if err != nil {
-		fmt.Print("Unable to create file for writing", err)
-		return
+	for _, file := range files {
+		src, err := file.Open()
+		if err != nil {
+			http.Error(w, "Error opening file: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+		defer src.Close()
+
+		name := "music/" + file.Filename
+		fmt.Printf("File name %s\n", name)
+
+		out, err := os.Create(name)
+		if err != nil {
+			http.Error(w, "Error creating destination file: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+		defer out.Close()
+
+		_, err = io.Copy(out, src)
+		if err != nil {
+			http.Error(w, "Error copying file: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		ldw.saveTrack(file.Filename)
 	}
-	defer out.Close()
-
-	_, err = io.Copy(out, file)
-	if err != nil {
-		fmt.Println("Error writing to file", err)
-		return
-	}
-	fmt.Println("file uploaded successfully")
-
-	ldw.saveTrack(header.Filename)
 }
 
 func (ldw *LocalDirectoryWorker) saveTrack(filename string) {

@@ -26,11 +26,10 @@ abstract class RestClient {
     @Field('cover') required String cover,
   });
 
-  // TODO: fix
   @POST('/track/upload')
   @MultiPart()
   Future<void> uploadLocalTracks(
-    @Part(name: "file") List<MultipartFile> files,
+    @Part(name: "files") List<MultipartFile> files,
   );
 
   @GET('/yt/fetchVideoInfo')

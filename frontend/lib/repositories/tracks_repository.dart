@@ -50,10 +50,12 @@ class TracksRepository {
     final multipartFiles = <MultipartFile>[];
 
     for (final file in files) {
-      MultipartFile.fromBytes(
-        file.bytes,
-        filename: file.filename,
-        contentType: MediaType('audio', ''),
+      multipartFiles.add(
+        MultipartFile.fromBytes(
+          file.bytes,
+          filename: file.filename,
+          contentType: MediaType('audio', ''),
+        ),
       );
     }
 
