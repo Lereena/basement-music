@@ -1,15 +1,16 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../app.dart';
 import '../../audio_player_handler.dart';
 import '../../models/playlist.dart';
 import '../../models/track.dart';
+import '../../repositories/connectivity_status_repository.dart';
 import '../../repositories/tracks_repository.dart';
 import '../cacher_bloc/cacher_bloc.dart';
-import '../connectivity_status_bloc/connectivity_status_cubit.dart';
 import '../settings_bloc/settings_bloc.dart';
 import 'player_event.dart';
 import 'player_state.dart';
@@ -20,7 +21,7 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
   final TracksRepository tracksRepository;
   final SettingsBloc settingsBloc;
   final CacherBloc cacherBloc;
-  final ConnectivityStatusCubit connectivityStatusCubit;
+  final ConnectivityStatusRepository connectivityStatusRepository;
 
   final AudioPlayerHandler _audioHandler = audioHandler;
   late final onPositionChanged = _audioHandler.onPositionChanged;
@@ -32,7 +33,7 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
     required this.tracksRepository,
     required this.settingsBloc,
     required this.cacherBloc,
-    required this.connectivityStatusCubit,
+    required this.connectivityStatusRepository,
   }) : super(InitialPlayerState(Track.empty())) {
     on<PlayEvent>(_onPlayEvent);
     on<PauseEvent>(_onPauseEvent);
@@ -145,7 +146,8 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
   }
 
   List<Track> _getAvailableTracks() {
-    final isOffline = connectivityStatusCubit.state is NoConnectionState;
+    final isOffline = connectivityStatusRepository.statusSubject.value ==
+        ConnectivityResult.none;
 
     return isOffline
         ? _currentPlaylist.tracks

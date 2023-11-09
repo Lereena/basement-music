@@ -11,9 +11,9 @@ part 'playlist_event.dart';
 part 'playlist_state.dart';
 
 class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
-  final PlaylistsRepository _playlistsRepository;
+  final PlaylistsRepository playlistsRepository;
 
-  PlaylistBloc(this._playlistsRepository) : super(PlaylistInitial()) {
+  PlaylistBloc({required this.playlistsRepository}) : super(PlaylistInitial()) {
     on<PlaylistLoadEvent>(_onLoadingEvent);
     on<PlaylistsUpdatedEvent>(_onUpdatedEvent);
   }
@@ -25,7 +25,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
     emit(PlaylistLoadingState());
 
     try {
-      final playlist = await _playlistsRepository.getPlaylist(event.playlistId);
+      final playlist = await playlistsRepository.getPlaylist(event.playlistId);
 
       if (playlist.tracks.isEmpty) {
         emit(PlaylistEmptyState(title: playlist.title));

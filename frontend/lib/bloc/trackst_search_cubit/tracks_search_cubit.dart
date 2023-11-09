@@ -1,13 +1,14 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 import '../../logger.dart';
 import '../../models/playlist.dart';
 import '../../models/track.dart';
+import '../../repositories/connectivity_status_repository.dart';
 import '../../repositories/tracks_repository.dart';
 import '../cacher_bloc/cacher_bloc.dart';
-import '../connectivity_status_bloc/connectivity_status_cubit.dart';
 import '../playlists_bloc/playlists_bloc.dart';
 
 part 'tracks_search_state.dart';
@@ -16,13 +17,13 @@ class TracksSearchCubit extends Cubit<TracksSearchState> {
   final TracksRepository tracksRepository;
   final PlaylistsBloc playlistsBloc;
   final CacherBloc cacherBloc;
-  final ConnectivityStatusCubit connectivityStatusCubit;
+  final ConnectivityStatusRepository connectivityStatusRepository;
 
   TracksSearchCubit({
     required this.tracksRepository,
     required this.playlistsBloc,
     required this.cacherBloc,
-    required this.connectivityStatusCubit,
+    required this.connectivityStatusRepository,
   }) : super(TracksSearchInitial());
 
   Playlist searchResultsPlaylist = Playlist.empty();
@@ -42,7 +43,8 @@ class TracksSearchCubit extends Cubit<TracksSearchState> {
     emit(TracksSearchLoadingState(query));
 
     try {
-      if (connectivityStatusCubit.state is NoConnectionState) {
+      if (connectivityStatusRepository.statusSubject.value ==
+          ConnectivityResult.none) {
         tracksRepository.searchTracksOffline(query);
       } else {
         await tracksRepository.searchTracksOnline(query);

@@ -12,9 +12,11 @@ import 'package:url_strategy/url_strategy.dart';
 
 import 'app_config.dart';
 import 'audio_player_handler.dart';
+import 'bloc/connectivity_status_bloc/connectivity_status_cubit.dart';
 import 'bloc/settings_bloc/settings_bloc.dart';
 import 'bloc_provider_wrapper.dart';
 import 'firebase_options.dart';
+import 'repositories/connectivity_status_repository.dart';
 import 'repositories/playlists_repository.dart';
 import 'repositories/tracks_repository.dart';
 import 'rest_client.dart';
@@ -86,23 +88,35 @@ class BasementMusic extends StatelessWidget {
       providers: [
         RepositoryProvider.value(value: tracksRepository),
         RepositoryProvider.value(value: playlistsRepository),
+        RepositoryProvider(create: (_) => ConnectivityStatusRepository()),
       ],
-      child: BlocProviderWrapper(
-        appConfig: config,
-        child: BlocBuilder<SettingsBloc, SettingsState>(
-          builder: (context, settingsState) {
-            return Sizer(
-              builder: (context, orientation, deviceType) => MaterialApp.router(
-                title: 'Basement',
-                theme: CustomTheme.lightTheme,
-                darkTheme: CustomTheme.darkTheme,
-                themeMode: settingsState.themeMode,
-                routeInformationProvider: _router.routeInformationProvider,
-                routeInformationParser: _router.routeInformationParser,
-                routerDelegate: _router.routerDelegate,
-              ),
-            );
-          },
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) => ConnectivityStatusCubit(
+              connectivityStatusRepository:
+                  context.read<ConnectivityStatusRepository>(),
+            ),
+          ),
+        ],
+        child: BlocProviderWrapper(
+          appConfig: config,
+          child: BlocBuilder<SettingsBloc, SettingsState>(
+            builder: (context, settingsState) {
+              return Sizer(
+                builder: (context, orientation, deviceType) =>
+                    MaterialApp.router(
+                  title: 'Basement',
+                  theme: CustomTheme.lightTheme,
+                  darkTheme: CustomTheme.darkTheme,
+                  themeMode: settingsState.themeMode,
+                  routeInformationProvider: _router.routeInformationProvider,
+                  routeInformationParser: _router.routeInformationParser,
+                  routerDelegate: _router.routerDelegate,
+                ),
+              );
+            },
+          ),
         ),
       ),
     );

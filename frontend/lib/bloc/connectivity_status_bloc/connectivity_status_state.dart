@@ -4,6 +4,6 @@ sealed class ConnectivityStatusState {}
 
 final class ConnectivityStatusInitial extends ConnectivityStatusState {}
 
-final class HasConnectionState extends ConnectivityStatusState {}
+final class ConnectivityStatusHasConnection extends ConnectivityStatusState {}
 
-final class NoConnectionState extends ConnectivityStatusState {}
+final class ConnectivityStatusNoConnection extends ConnectivityStatusState {}

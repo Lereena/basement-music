@@ -45,8 +45,8 @@ class TracksPage extends StatelessWidget {
                               children: [
                                 TrackCard(
                                   track: state.tracks[index],
-                                  active:
-                                      connectivityStatus is HasConnectionState,
+                                  active: connectivityStatus
+                                      is ConnectivityStatusHasConnection,
                                 ),
                                 const Divider(height: 1),
                               ],

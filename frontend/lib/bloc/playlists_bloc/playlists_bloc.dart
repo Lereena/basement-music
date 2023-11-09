@@ -4,7 +4,9 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 
 import '../../logger.dart';
 import '../../models/playlist.dart';
+import '../../repositories/connectivity_status_repository.dart';
 import '../../repositories/playlists_repository.dart';
+import '../connectivity_status_bloc/connectivity_status_cubit.dart';
 import '../playlist_bloc/playlist_bloc.dart';
 import 'playlists_event.dart';
 import 'playlists_state.dart';
@@ -12,13 +14,21 @@ import 'playlists_state.dart';
 const _playlistsInfoKey = 'playlistsInfo';
 
 class PlaylistsBloc extends HydratedBloc<PlaylistsEvent, PlaylistsState> {
-  final PlaylistsRepository _playlistsRepository;
-  final PlaylistBloc _playlistBloc;
+  final PlaylistsRepository playlistsRepository;
+  final PlaylistBloc playlistBloc;
+  final ConnectivityStatusRepository connectivityStatusRepository;
 
-  PlaylistsBloc(this._playlistsRepository, this._playlistBloc)
-      : super(PlaylistsLoadingState()) {
+  PlaylistsBloc({
+    required this.playlistsRepository,
+    required this.playlistBloc,
+    required this.connectivityStatusRepository,
+  }) : super(PlaylistsLoadingState()) {
     on<PlaylistsLoadEvent>(_onLoadingEvent);
     on<PlaylistAddedEvent>(_onPlaylistAddedEvent);
+
+    connectivityStatusRepository.statusSubject.listen((status) {
+      if (status is ConnectivityStatusHasConnection) add(PlaylistsLoadEvent());
+    });
   }
 
   Playlist openedPlaylist = Playlist.empty();
@@ -31,13 +41,13 @@ class PlaylistsBloc extends HydratedBloc<PlaylistsEvent, PlaylistsState> {
     emit(PlaylistsLoadingState());
 
     try {
-      await _playlistsRepository.getAllPlaylists();
+      await playlistsRepository.getAllPlaylists();
 
-      if (_playlistsRepository.items.isEmpty) {
+      if (playlistsRepository.items.isEmpty) {
         emit(PlaylistsEmptyState());
       } else {
-        _playlistBloc.add(PlaylistsUpdatedEvent());
-        emit(PlaylistsLoadedState(_playlistsRepository.items));
+        playlistBloc.add(PlaylistsUpdatedEvent());
+        emit(PlaylistsLoadedState(playlistsRepository.items));
       }
     } catch (e) {
       if (oldState.playlists.isNotEmpty) {
@@ -53,7 +63,7 @@ class PlaylistsBloc extends HydratedBloc<PlaylistsEvent, PlaylistsState> {
     PlaylistAddedEvent event,
     Emitter<PlaylistsState> emit,
   ) {
-    emit(PlaylistsLoadedState(_playlistsRepository.items));
+    emit(PlaylistsLoadedState(playlistsRepository.items));
   }
 
   @override

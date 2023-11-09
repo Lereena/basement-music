@@ -56,7 +56,7 @@ class _ConnectivityStatusWrapperState extends State<ConnectivityStatusWrapper> {
   }
 
   void _handleFlushbar(ConnectivityStatusState status) {
-    if (status is NoConnectionState) {
+    if (status is ConnectivityStatusNoConnection) {
       if (!_flushbar.isShowing()) {
         _flushbar.show(context);
       }

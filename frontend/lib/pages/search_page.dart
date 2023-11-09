@@ -72,7 +72,8 @@ class _SearchPageState extends State<SearchPage> {
                         itemBuilder: (_, index) => TrackCard(
                           track: state.tracks[index],
                           openedPlaylist: _playlistsBloc.openedPlaylist,
-                          active: connectivityState is HasConnectionState,
+                          active: connectivityState
+                              is ConnectivityStatusHasConnection,
                         ),
                       );
                     },
