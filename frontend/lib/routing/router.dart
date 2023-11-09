@@ -95,7 +95,7 @@ class AppRouter {
                   GoRoute(
                     path: 'fromDevice',
                     pageBuilder: (_, __) => const NoTransitionPage(
-                      child: UploadFromDevice(),
+                      child: UploadFromDevicePage(),
                     ),
                   ),
                   GoRoute(
