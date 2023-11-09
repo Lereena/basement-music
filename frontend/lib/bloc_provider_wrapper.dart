@@ -16,7 +16,6 @@ import 'bloc/playlists_bloc/playlists_bloc.dart';
 import 'bloc/remove_from_playlist_bloc/remove_from_playlist_cubit.dart';
 import 'bloc/settings_bloc/settings_bloc.dart';
 import 'bloc/track_progress_cubit/track_progress_cubit.dart';
-import 'bloc/track_uploading_bloc/track_uploading_bloc.dart';
 import 'bloc/tracks_bloc/tracks_bloc.dart';
 import 'bloc/trackst_search_cubit/tracks_search_cubit.dart';
 import 'repositories/playlists_repository.dart';
@@ -67,9 +66,6 @@ class _BlocProviderWrapperState extends State<BlocProviderWrapper> {
         ),
         BlocProvider<TracksBloc>.value(
           value: _tracksBloc,
-        ),
-        BlocProvider<TrackUploadingBloc>(
-          create: (_) => TrackUploadingBloc(context.read<TracksRepository>()),
         ),
         BlocProvider<LocalTrackUploadingBloc>(
           create: (_) =>

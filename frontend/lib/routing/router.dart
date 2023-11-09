@@ -101,7 +101,7 @@ class AppRouter {
                   GoRoute(
                     path: 'fromYoutube',
                     pageBuilder: (_, __) => const NoTransitionPage(
-                      child: ExtractFromYoutube(),
+                      child: ExtractFromYoutubePage(),
                     ),
                   ),
                 ],
