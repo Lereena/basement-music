@@ -6,20 +6,18 @@ import 'package:meta/meta.dart';
 import '../../logger.dart';
 import '../../models/track.dart';
 import '../../repositories/playlists_repository.dart';
-import '../playlists_bloc/playlists_bloc.dart';
-import '../playlists_bloc/playlists_event.dart';
 
 part 'playlist_edit_event.dart';
 part 'playlist_edit_state.dart';
 
 class PlaylistEditBloc extends Bloc<PlaylistEditEvent, PlaylistEditState> {
-  final PlaylistsBloc _playlistsBloc;
-  final PlaylistsRepository _playilstsRepository;
+  final PlaylistsRepository playilstsRepository;
+  final String playlistId;
 
-  PlaylistEditBloc(
-    this._playilstsRepository,
-    this._playlistsBloc,
-  ) : super(PlayilstEditInitial()) {
+  PlaylistEditBloc({
+    required this.playilstsRepository,
+    required this.playlistId,
+  }) : super(PlayilstEditInitial()) {
     on<PlaylistEditingStartEvent>(_onPlaylistEditEvent);
     on<PlaylistSaveEvent>(_onPlaylistSaveEvent);
   }
@@ -29,8 +27,9 @@ class PlaylistEditBloc extends Bloc<PlaylistEditEvent, PlaylistEditState> {
     Emitter<PlaylistEditState> emit,
   ) async {
     emit(PlaylistLoading());
-    final playlist = await _playilstsRepository.getPlaylist(
-      event.playlistId,
+
+    final playlist = await playilstsRepository.getPlaylist(
+      playlistId,
     );
 
     emit(
@@ -49,14 +48,13 @@ class PlaylistEditBloc extends Bloc<PlaylistEditEvent, PlaylistEditState> {
     emit(PlaylistLoading());
 
     try {
-      await _playilstsRepository.editPlaylist(
-        id: event.playlistId,
+      await playilstsRepository.editPlaylist(
+        id: playlistId,
         title: event.title,
         tracksIds: event.tracksIds,
       );
 
       emit(PlaylistSavingSuccess());
-      _playlistsBloc.add(PlaylistsLoadEvent());
     } catch (e) {
       emit(PlaylistSavingFail());
       logger.e('Error editing track: $e');

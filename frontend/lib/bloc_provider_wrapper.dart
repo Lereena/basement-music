@@ -4,9 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'app_config.dart';
 import 'bloc/cacher_bloc/cacher_bloc.dart';
 import 'bloc/player_bloc/player_bloc.dart';
-import 'bloc/playlist_bloc/playlist_bloc.dart';
 import 'bloc/playlist_creation_bloc/playlist_creation_bloc.dart';
-import 'bloc/playlist_edit_bloc/playlist_edit_bloc.dart';
 import 'bloc/playlists_bloc/playlists_bloc.dart';
 import 'bloc/playlists_bloc/playlists_event.dart';
 import 'bloc/settings_bloc/settings_bloc.dart';
@@ -34,14 +32,11 @@ class BlocProviderWrapper extends StatefulWidget {
 class _BlocProviderWrapperState extends State<BlocProviderWrapper> {
   late final _settingsBloc = SettingsBloc();
 
-  late final _playlistBloc = PlaylistBloc(
-    playlistsRepository: context.read<PlaylistsRepository>(),
-  );
   late final _playlistsBloc = PlaylistsBloc(
     playlistsRepository: context.read<PlaylistsRepository>(),
-    playlistBloc: _playlistBloc,
     connectivityStatusRepository: context.read<ConnectivityStatusRepository>(),
   )..add(PlaylistsLoadEvent());
+
   late final _cacherBloc = CacherBloc(widget.appConfig);
 
   late final _playerBloc = PlayerBloc(
@@ -61,19 +56,9 @@ class _BlocProviderWrapperState extends State<BlocProviderWrapper> {
         BlocProvider<PlaylistsBloc>.value(
           value: _playlistsBloc,
         ),
-        BlocProvider<PlaylistBloc>.value(
-          value: _playlistBloc,
-        ),
         BlocProvider<PlaylistCreationBloc>(
           create: (_) => PlaylistCreationBloc(
             context.read<PlaylistsRepository>(),
-            _playlistsBloc,
-          ),
-        ),
-        BlocProvider<PlaylistEditBloc>(
-          create: (_) => PlaylistEditBloc(
-            context.read<PlaylistsRepository>(),
-            _playlistsBloc,
           ),
         ),
         BlocProvider<TracksSearchCubit>(

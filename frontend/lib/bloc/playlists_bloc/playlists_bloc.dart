@@ -7,7 +7,6 @@ import '../../models/playlist.dart';
 import '../../repositories/connectivity_status_repository.dart';
 import '../../repositories/playlists_repository.dart';
 import '../connectivity_status_bloc/connectivity_status_cubit.dart';
-import '../playlist_bloc/playlist_bloc.dart';
 import 'playlists_event.dart';
 import 'playlists_state.dart';
 
@@ -15,20 +14,20 @@ const _playlistsInfoKey = 'playlistsInfo';
 
 class PlaylistsBloc extends HydratedBloc<PlaylistsEvent, PlaylistsState> {
   final PlaylistsRepository playlistsRepository;
-  final PlaylistBloc playlistBloc;
   final ConnectivityStatusRepository connectivityStatusRepository;
 
   PlaylistsBloc({
     required this.playlistsRepository,
-    required this.playlistBloc,
     required this.connectivityStatusRepository,
   }) : super(PlaylistsLoadingState()) {
     on<PlaylistsLoadEvent>(_onLoadingEvent);
-    on<PlaylistAddedEvent>(_onPlaylistAddedEvent);
 
     connectivityStatusRepository.statusSubject.listen((status) {
       if (status is ConnectivityStatusHasConnection) add(PlaylistsLoadEvent());
     });
+
+    playlistsRepository.playlistsSubject
+        .listen((value) => PlaylistsLoadedState(value));
   }
 
   Playlist openedPlaylist = Playlist.empty();
@@ -46,7 +45,6 @@ class PlaylistsBloc extends HydratedBloc<PlaylistsEvent, PlaylistsState> {
       if (playlistsRepository.items.isEmpty) {
         emit(PlaylistsEmptyState());
       } else {
-        playlistBloc.add(PlaylistsUpdatedEvent());
         emit(PlaylistsLoadedState(playlistsRepository.items));
       }
     } catch (e) {
@@ -57,13 +55,6 @@ class PlaylistsBloc extends HydratedBloc<PlaylistsEvent, PlaylistsState> {
       }
       logger.e('Error loading playlists: $e');
     }
-  }
-
-  FutureOr<void> _onPlaylistAddedEvent(
-    PlaylistAddedEvent event,
-    Emitter<PlaylistsState> emit,
-  ) {
-    emit(PlaylistsLoadedState(playlistsRepository.items));
   }
 
   @override

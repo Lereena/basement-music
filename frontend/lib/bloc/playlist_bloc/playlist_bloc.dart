@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
 import '../../logger.dart';
@@ -12,10 +13,17 @@ part 'playlist_state.dart';
 
 class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
   final PlaylistsRepository playlistsRepository;
+  final String playlistId;
 
-  PlaylistBloc({required this.playlistsRepository}) : super(PlaylistInitial()) {
+  PlaylistBloc({required this.playlistsRepository, required this.playlistId})
+      : super(PlaylistInitial()) {
     on<PlaylistLoadEvent>(_onLoadingEvent);
-    on<PlaylistsUpdatedEvent>(_onUpdatedEvent);
+
+    playlistsRepository.playlistsSubject.listen(
+      (value) => PlaylistLoadedState(
+        value.firstWhere((element) => element.id == playlistId),
+      ),
+    );
   }
 
   FutureOr<void> _onLoadingEvent(
@@ -25,7 +33,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
     emit(PlaylistLoadingState());
 
     try {
-      final playlist = await playlistsRepository.getPlaylist(event.playlistId);
+      final playlist = await playlistsRepository.getPlaylist(playlistId);
 
       if (playlist.tracks.isEmpty) {
         emit(PlaylistEmptyState(title: playlist.title));
@@ -36,14 +44,5 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
       emit(PlaylistErrorState());
       logger.e('Error loading playlist: $e');
     }
-  }
-
-  FutureOr<void> _onUpdatedEvent(
-    PlaylistsUpdatedEvent event,
-    Emitter<PlaylistState> emit,
-  ) async {
-    if (state is! PlaylistLoadedState) return;
-
-    add(PlaylistLoadEvent((state as PlaylistLoadedState).playlist.id));
   }
 }
