@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'app_config.dart';
-import 'bloc/add_to_playlist_bloc/add_to_playlist_bloc.dart';
 import 'bloc/cacher_bloc/cacher_bloc.dart';
 import 'bloc/connectivity_status_bloc/connectivity_status_cubit.dart';
 import 'bloc/edit_track_bloc/edit_track_bloc.dart';
@@ -94,12 +93,6 @@ class _BlocProviderWrapperState extends State<BlocProviderWrapper> {
         ),
         BlocProvider<SettingsBloc>.value(
           value: _settingsBloc,
-        ),
-        BlocProvider<AddToPlaylistBloc>(
-          create: (_) => AddToPlaylistBloc(
-            context.read<TracksRepository>(),
-            context.read<PlaylistsRepository>(),
-          ),
         ),
         BlocProvider<RemoveFromPlaylistBloc>(
           create: (_) => RemoveFromPlaylistBloc(

@@ -46,13 +46,10 @@ class MoreButton extends StatelessWidget {
               const Divider(),
               SimpleDialogOption(
                 child: const Text('Add to playlist'),
-                onPressed: () async {
+                onPressed: () {
                   Navigator.pop(context);
-                  await showDialog(
-                    context: context,
-                    builder: (context) =>
-                        AddToPlaylistDialog(trackId: track.id),
-                  );
+
+                  AddToPlaylistDialog.show(context: context, trackId: track.id);
                 },
               ),
               if (playlist != null) ...[
