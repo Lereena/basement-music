@@ -5,7 +5,6 @@ import 'app_config.dart';
 import 'bloc/cacher_bloc/cacher_bloc.dart';
 import 'bloc/connectivity_status_bloc/connectivity_status_cubit.dart';
 import 'bloc/edit_track_bloc/edit_track_bloc.dart';
-import 'bloc/home_content_cubit/home_content_cubit.dart';
 import 'bloc/player_bloc/player_bloc.dart';
 import 'bloc/playlist_bloc/playlist_bloc.dart';
 import 'bloc/playlist_creation_bloc/playlist_creation_bloc.dart';
@@ -108,9 +107,6 @@ class _BlocProviderWrapperState extends State<BlocProviderWrapper> {
         ),
         BlocProvider<EditTrackBloc>(
           create: (_) => EditTrackBloc(context.read<TracksRepository>()),
-        ),
-        BlocProvider<HomeContentCubit>(
-          create: (_) => HomeContentCubit(),
         ),
       ],
       child: ShortcutsWrapper(
