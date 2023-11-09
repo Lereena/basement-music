@@ -56,14 +56,12 @@ class MoreButton extends StatelessWidget {
                 const Divider(),
                 SimpleDialogOption(
                   child: const Text('Remove from playlist'),
-                  onPressed: () async {
+                  onPressed: () {
                     Navigator.pop(context);
-                    await showDialog(
+                    RemoveFromPlaylistDialog.show(
                       context: context,
-                      builder: (context) => RemoveFromPlaylistDialog(
-                        track: track,
-                        playlist: playlist,
-                      ),
+                      track: track,
+                      playlist: playlist!,
                     );
                   },
                 ),

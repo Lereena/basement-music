@@ -10,7 +10,6 @@ import 'bloc/playlist_bloc/playlist_bloc.dart';
 import 'bloc/playlist_creation_bloc/playlist_creation_bloc.dart';
 import 'bloc/playlist_edit_bloc/playlist_edit_bloc.dart';
 import 'bloc/playlists_bloc/playlists_bloc.dart';
-import 'bloc/remove_from_playlist_bloc/remove_from_playlist_cubit.dart';
 import 'bloc/settings_bloc/settings_bloc.dart';
 import 'bloc/track_progress_cubit/track_progress_cubit.dart';
 import 'bloc/tracks_bloc/tracks_bloc.dart';
@@ -92,12 +91,6 @@ class _BlocProviderWrapperState extends State<BlocProviderWrapper> {
         ),
         BlocProvider<SettingsBloc>.value(
           value: _settingsBloc,
-        ),
-        BlocProvider<RemoveFromPlaylistBloc>(
-          create: (_) => RemoveFromPlaylistBloc(
-            context.read<TracksRepository>(),
-            context.read<PlaylistsRepository>(),
-          ),
         ),
         BlocProvider<CacherBloc>.value(
           value: _cacherBloc,
