@@ -21,19 +21,16 @@ import 'bloc/tracks_bloc/tracks_bloc.dart';
 import 'bloc/trackst_search_cubit/tracks_search_cubit.dart';
 import 'repositories/playlists_repository.dart';
 import 'repositories/tracks_repository.dart';
-import 'rest_client.dart';
 import 'shortcuts_wrapper.dart';
 
 class BlocProviderWrapper extends StatefulWidget {
   final Widget child;
   final AppConfig appConfig;
-  final RestClient restClient;
 
   const BlocProviderWrapper({
     super.key,
     required this.appConfig,
     required this.child,
-    required this.restClient,
   });
 
   @override
@@ -41,21 +38,18 @@ class BlocProviderWrapper extends StatefulWidget {
 }
 
 class _BlocProviderWrapperState extends State<BlocProviderWrapper> {
-  late final _tracksRepository = TracksRepository(widget.restClient);
-  late final _playlistsRepository = PlaylistsRepository(widget.restClient);
-
   late final _settingsBloc = SettingsBloc();
-  late final _tracksBloc = TracksBloc(_tracksRepository);
-  late final _playlistBloc = PlaylistBloc(_playlistsRepository);
+  late final _tracksBloc = TracksBloc(context.read<TracksRepository>());
+  late final _playlistBloc = PlaylistBloc(context.read<PlaylistsRepository>());
   late final _playlistsBloc =
-      PlaylistsBloc(_playlistsRepository, _playlistBloc);
+      PlaylistsBloc(context.read<PlaylistsRepository>(), _playlistBloc);
   late final _cacherBloc = CacherBloc(widget.appConfig);
   late final _connectivityStatusCubit = ConnectivityStatusCubit(
     tracksBloc: _tracksBloc,
     playlistsBloc: _playlistsBloc,
   );
   late final _playerBloc = PlayerBloc(
-    tracksRepository: _tracksRepository,
+    tracksRepository: context.read<TracksRepository>(),
     settingsBloc: _settingsBloc,
     cacherBloc: _cacherBloc,
     connectivityStatusCubit: _connectivityStatusCubit,
@@ -75,10 +69,11 @@ class _BlocProviderWrapperState extends State<BlocProviderWrapper> {
           value: _tracksBloc,
         ),
         BlocProvider<TrackUploadingBloc>(
-          create: (_) => TrackUploadingBloc(_tracksRepository),
+          create: (_) => TrackUploadingBloc(context.read<TracksRepository>()),
         ),
         BlocProvider<LocalTrackUploadingBloc>(
-          create: (_) => LocalTrackUploadingBloc(_tracksRepository),
+          create: (_) =>
+              LocalTrackUploadingBloc(context.read<TracksRepository>()),
         ),
         BlocProvider<PlaylistsBloc>.value(
           value: _playlistsBloc,
@@ -88,19 +83,19 @@ class _BlocProviderWrapperState extends State<BlocProviderWrapper> {
         ),
         BlocProvider<PlaylistCreationBloc>(
           create: (_) => PlaylistCreationBloc(
-            _playlistsRepository,
+            context.read<PlaylistsRepository>(),
             _playlistsBloc,
           ),
         ),
         BlocProvider<PlaylistEditBloc>(
           create: (_) => PlaylistEditBloc(
-            _playlistsRepository,
+            context.read<PlaylistsRepository>(),
             _playlistsBloc,
           ),
         ),
         BlocProvider<TracksSearchCubit>(
           create: (_) => TracksSearchCubit(
-            tracksRepository: _tracksRepository,
+            tracksRepository: context.read<TracksRepository>(),
             playlistsBloc: _playlistsBloc,
             cacherBloc: _cacherBloc,
             connectivityStatusCubit: _connectivityStatusCubit,
@@ -111,14 +106,14 @@ class _BlocProviderWrapperState extends State<BlocProviderWrapper> {
         ),
         BlocProvider<AddToPlaylistBloc>(
           create: (_) => AddToPlaylistBloc(
-            _tracksRepository,
-            _playlistsRepository,
+            context.read<TracksRepository>(),
+            context.read<PlaylistsRepository>(),
           ),
         ),
         BlocProvider<RemoveFromPlaylistBloc>(
           create: (_) => RemoveFromPlaylistBloc(
-            _tracksRepository,
-            _playlistsRepository,
+            context.read<TracksRepository>(),
+            context.read<PlaylistsRepository>(),
           ),
         ),
         BlocProvider<CacherBloc>.value(
@@ -128,7 +123,7 @@ class _BlocProviderWrapperState extends State<BlocProviderWrapper> {
           create: (_) => TrackProgressCubit(_playerBloc),
         ),
         BlocProvider<EditTrackBloc>(
-          create: (_) => EditTrackBloc(_tracksRepository),
+          create: (_) => EditTrackBloc(context.read<TracksRepository>()),
         ),
         BlocProvider<HomeContentCubit>(
           create: (_) => HomeContentCubit(),

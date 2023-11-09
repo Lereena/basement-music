@@ -15,6 +15,8 @@ import 'audio_player_handler.dart';
 import 'bloc/settings_bloc/settings_bloc.dart';
 import 'bloc_provider_wrapper.dart';
 import 'firebase_options.dart';
+import 'repositories/playlists_repository.dart';
+import 'repositories/tracks_repository.dart';
 import 'rest_client.dart';
 import 'routing/router.dart';
 import 'theme/custom_theme.dart';
@@ -52,40 +54,56 @@ Future<void> runBasement(AppConfig config) async {
 
   final restClient = RestClient(dio);
 
-  runApp(BasementMusic(config: config, restClient: restClient));
+  final tracksRepository = TracksRepository(restClient);
+  final playlistsRepository = PlaylistsRepository(restClient);
+
+  runApp(
+    BasementMusic(
+      config: config,
+      tracksRepository: tracksRepository,
+      playlistsRepository: playlistsRepository,
+    ),
+  );
 }
 
 final _router = AppRouter.router;
 
 class BasementMusic extends StatelessWidget {
   final AppConfig config;
-  final RestClient restClient;
+  final TracksRepository tracksRepository;
+  final PlaylistsRepository playlistsRepository;
 
   const BasementMusic({
     super.key,
     required this.config,
-    required this.restClient,
+    required this.tracksRepository,
+    required this.playlistsRepository,
   });
 
   @override
   Widget build(BuildContext context) {
-    return BlocProviderWrapper(
-      appConfig: config,
-      restClient: restClient,
-      child: BlocBuilder<SettingsBloc, SettingsState>(
-        builder: (context, settingsState) {
-          return Sizer(
-            builder: (context, orientation, deviceType) => MaterialApp.router(
-              title: 'Basement',
-              theme: CustomTheme.lightTheme,
-              darkTheme: CustomTheme.darkTheme,
-              themeMode: settingsState.themeMode,
-              routeInformationProvider: _router.routeInformationProvider,
-              routeInformationParser: _router.routeInformationParser,
-              routerDelegate: _router.routerDelegate,
-            ),
-          );
-        },
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider.value(value: tracksRepository),
+        RepositoryProvider.value(value: playlistsRepository),
+      ],
+      child: BlocProviderWrapper(
+        appConfig: config,
+        child: BlocBuilder<SettingsBloc, SettingsState>(
+          builder: (context, settingsState) {
+            return Sizer(
+              builder: (context, orientation, deviceType) => MaterialApp.router(
+                title: 'Basement',
+                theme: CustomTheme.lightTheme,
+                darkTheme: CustomTheme.darkTheme,
+                themeMode: settingsState.themeMode,
+                routeInformationProvider: _router.routeInformationProvider,
+                routeInformationParser: _router.routeInformationParser,
+                routerDelegate: _router.routerDelegate,
+              ),
+            );
+          },
+        ),
       ),
     );
   }
