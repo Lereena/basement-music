@@ -11,8 +11,6 @@ import 'bloc/playlists_bloc/playlists_bloc.dart';
 import 'bloc/playlists_bloc/playlists_event.dart';
 import 'bloc/settings_bloc/settings_bloc.dart';
 import 'bloc/track_progress_cubit/track_progress_cubit.dart';
-import 'bloc/tracks_bloc/tracks_bloc.dart';
-import 'bloc/tracks_bloc/tracks_event.dart';
 import 'bloc/trackst_search_cubit/tracks_search_cubit.dart';
 import 'repositories/connectivity_status_repository.dart';
 import 'repositories/playlists_repository.dart';
@@ -35,10 +33,7 @@ class BlocProviderWrapper extends StatefulWidget {
 
 class _BlocProviderWrapperState extends State<BlocProviderWrapper> {
   late final _settingsBloc = SettingsBloc();
-  late final _tracksBloc = TracksBloc(
-    tracksRepository: context.read<TracksRepository>(),
-    connectivityStatusRepository: context.read<ConnectivityStatusRepository>(),
-  )..add(TracksLoadEvent());
+
   late final _playlistBloc = PlaylistBloc(
     playlistsRepository: context.read<PlaylistsRepository>(),
   );
@@ -62,9 +57,6 @@ class _BlocProviderWrapperState extends State<BlocProviderWrapper> {
       providers: [
         BlocProvider<PlayerBloc>(
           create: (_) => _playerBloc,
-        ),
-        BlocProvider<TracksBloc>.value(
-          value: _tracksBloc,
         ),
         BlocProvider<PlaylistsBloc>.value(
           value: _playlistsBloc,

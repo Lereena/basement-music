@@ -33,14 +33,14 @@ class TracksEmptyState extends TracksState {
   TracksEmptyState() : super([]);
 }
 
-class TracksLoadingState extends TracksState {
-  TracksLoadingState() : super([]);
+class TracksLoadInProgress extends TracksState {
+  TracksLoadInProgress() : super([]);
 }
 
-class TracksLoadedState extends TracksState {
-  TracksLoadedState(super.tracks);
+class TracksLoadSuccess extends TracksState {
+  TracksLoadSuccess(super.tracks);
 }
 
-class TracksErrorState extends TracksState {
-  TracksErrorState() : super([]);
+class TracksError extends TracksState {
+  TracksError() : super([]);
 }

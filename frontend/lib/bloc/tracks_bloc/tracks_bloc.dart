@@ -18,20 +18,22 @@ class TracksBloc extends HydratedBloc<TracksEvent, TracksState> {
   TracksBloc({
     required this.tracksRepository,
     required this.connectivityStatusRepository,
-  }) : super(TracksLoadingState()) {
-    on<TracksLoadEvent>(_onLoadingEvent);
+  }) : super(TracksLoadInProgress()) {
+    on<TracksLoadStarted>(_onLoadingEvent);
 
     connectivityStatusRepository.statusSubject.listen((status) {
-      if (status is ConnectivityStatusHasConnection) add(TracksLoadEvent());
+      if (status is ConnectivityStatusHasConnection) {
+        add(TracksLoadStarted());
+      }
     });
   }
 
   FutureOr<void> _onLoadingEvent(
-    TracksLoadEvent event,
+    TracksLoadStarted event,
     Emitter<TracksState> emit,
   ) async {
     final oldState = state;
-    emit(TracksLoadingState());
+    emit(TracksLoadInProgress());
 
     try {
       await tracksRepository.getAllTracks();
@@ -39,13 +41,13 @@ class TracksBloc extends HydratedBloc<TracksEvent, TracksState> {
       if (tracksRepository.items.isEmpty) {
         emit(TracksEmptyState());
       } else {
-        emit(TracksLoadedState(tracksRepository.items));
+        emit(TracksLoadSuccess(tracksRepository.items));
       }
     } catch (e) {
       if (oldState.tracks.isNotEmpty) {
-        emit(TracksLoadedState(oldState.tracks));
+        emit(TracksLoadSuccess(oldState.tracks));
       } else {
-        emit(TracksErrorState());
+        emit(TracksError());
       }
       logger.e('Error loading tracks: $e');
     }
@@ -55,7 +57,7 @@ class TracksBloc extends HydratedBloc<TracksEvent, TracksState> {
   TracksState? fromJson(Map<String, dynamic> json) {
     final state = TracksState.fromJson(json[_tracksInfoKey] as String);
     if (state.tracks.isNotEmpty) {
-      return TracksLoadedState(state.tracks);
+      return TracksLoadSuccess(state.tracks);
     }
     return null;
   }

@@ -1,3 +1,3 @@
 abstract class TracksEvent {}
 
-class TracksLoadEvent extends TracksEvent {}
+class TracksLoadStarted extends TracksEvent {}

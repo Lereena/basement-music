@@ -35,7 +35,7 @@ class AppRouter {
             routes: [
               GoRoute(
                 path: RouteName.tracks,
-                pageBuilder: (_, __) => NoTransitionPage(
+                pageBuilder: (_, __) => const NoTransitionPage(
                   child: TracksPage(),
                 ),
               ),
