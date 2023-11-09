@@ -9,7 +9,7 @@ class TracksState {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'tracks': json.encode(tracks.map((e) => e.toMap()).toList()),
+      'tracks': json.encode(tracks.map((e) => e.toJson()).toList()),
     };
   }
 
@@ -17,7 +17,7 @@ class TracksState {
     return TracksState(
       (json.decode(map['tracks'] as String) as List<dynamic>)
           .map<Track>(
-            (e) => Track.fromMap(e as Map<String, dynamic>),
+            (e) => Track.fromJson(e as Map<String, dynamic>),
           )
           .toList(),
     );

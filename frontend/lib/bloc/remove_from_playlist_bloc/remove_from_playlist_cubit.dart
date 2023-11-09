@@ -38,24 +38,20 @@ class RemoveFromPlaylistBloc
     Emitter<RemoveFromPlaylistState> emit,
   ) async {
     try {
-      final result = await _playlistsRepository.removeTrackFromPlaylist(
+      await _playlistsRepository.removeTrackFromPlaylist(
         event.playlistId!,
         event.trackId,
       );
       emit(RemoveFromPlaylistLoading());
 
-      if (result) {
-        _playlistsRepository.items
-            .firstWhere((element) => element.id == event.playlistId)
-            .tracks
-            .remove(
-              _tracksRepository.items
-                  .firstWhere((element) => element.id == event.trackId),
-            );
-        emit(RemoveFromPlaylistRemoved());
-      } else {
-        emit(RemoveFromPlaylistError());
-      }
+      _playlistsRepository.items
+          .firstWhere((element) => element.id == event.playlistId)
+          .tracks
+          .remove(
+            _tracksRepository.items
+                .firstWhere((element) => element.id == event.trackId),
+          );
+      emit(RemoveFromPlaylistRemoved());
     } catch (e) {
       emit(RemoveFromPlaylistError());
       logger.e('Error removing track from playlist: $e');

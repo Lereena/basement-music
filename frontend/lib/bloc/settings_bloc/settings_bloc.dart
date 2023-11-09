@@ -5,15 +5,11 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 
-import '../../api_service.dart';
-
 part 'settings_event.dart';
 part 'settings_state.dart';
 
 class SettingsBloc extends HydratedBloc<SettingsEvent, SettingsState> {
-  final ApiService apiService;
-
-  SettingsBloc(this.apiService) : super(const SettingsState()) {
+  SettingsBloc() : super(const SettingsState()) {
     on<SetShuffle>(_onSetShuffle);
     on<SetRepeat>(_onSetRepeat);
     on<SetThemeMode>(_onSetThemeMode);

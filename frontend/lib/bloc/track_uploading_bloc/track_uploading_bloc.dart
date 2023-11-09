@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
+import '../../logger.dart';
+import '../../models/video_info.dart';
 import '../../repositories/tracks_repository.dart';
 
 part 'track_uploading_event.dart';
@@ -38,7 +40,7 @@ class TrackUploadingBloc
 
     currentUploadingLink = event.link;
 
-    late ({String artist, String title})? videoInfo;
+    late VideoInfo? videoInfo;
     try {
       videoInfo = await _tracksRepository.fetchYtVideoInfo(event.link);
     } catch (e) {
@@ -57,21 +59,23 @@ class TrackUploadingBloc
   ) async {
     emit(UploadingStartedState());
 
-    final result = await _tracksRepository.uploadYtTrack(
-      event.url,
-      event.artist,
-      event.title,
-    );
+    try {
+      await _tracksRepository.uploadYtTrack(
+        event.url,
+        event.artist,
+        event.title,
+      );
 
-    if (currentUploadingLink != event.url) {
-      return; // when we are already uploading this track
-    }
+      if (currentUploadingLink != event.url) {
+        return; // when we are already uploading this track
+      }
 
-    if (result) {
-      await _tracksRepository.getAllTracks();
       emit(SuccessfulUploadState());
-    } else {
+
+      await _tracksRepository.getAllTracks();
+    } catch (e) {
       emit(ErrorState());
+      logger.e('Error uploading track: $e');
     }
   }
 }

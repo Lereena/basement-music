@@ -49,19 +49,14 @@ class PlaylistEditBloc extends Bloc<PlaylistEditEvent, PlaylistEditState> {
     emit(PlaylistLoading());
 
     try {
-      final result = await _playilstsRepository.editPlaylist(
+      await _playilstsRepository.editPlaylist(
         id: event.playlistId,
         title: event.title,
         tracksIds: event.tracksIds,
       );
 
-      if (result) {
-        _playlistsBloc.add(PlaylistsLoadEvent());
-
-        emit(PlaylistSavingSuccess());
-      } else {
-        emit(PlaylistSavingFail());
-      }
+      emit(PlaylistSavingSuccess());
+      _playlistsBloc.add(PlaylistsLoadEvent());
     } catch (e) {
       emit(PlaylistSavingFail());
       logger.e('Error editing track: $e');

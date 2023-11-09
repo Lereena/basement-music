@@ -41,18 +41,14 @@ class EditTrackBloc extends Bloc<EditTrackEvent, EditTrackState> {
     }
 
     try {
-      final result = await _tracksRepository.editTrack(
+      await _tracksRepository.editTrack(
         id: event.trackId,
         artist: event.artist,
         title: event.title,
         cover: event.cover,
       );
 
-      if (result) {
-        emit(EditedState());
-      } else {
-        emit(EditingErrorState());
-      }
+      emit(EditedState());
     } catch (e) {
       emit(EditingErrorState());
       logger.e('Error editing track: $e');

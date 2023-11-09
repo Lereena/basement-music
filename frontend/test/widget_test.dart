@@ -5,15 +5,22 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
-import 'package:basement_music/api_service.dart';
 import 'package:basement_music/app.dart';
+import 'package:basement_music/app_config.dart';
+import 'package:basement_music/rest_client.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(BasementMusic(apiService: ApiService('')));
+    await tester.pumpWidget(
+      BasementMusic(
+        config: const AppConfig(baseUrl: ''),
+        restClient: RestClient(Dio()),
+      ),
+    );
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);

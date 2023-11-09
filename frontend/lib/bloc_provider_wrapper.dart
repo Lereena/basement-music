@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'api_service.dart';
+import 'app_config.dart';
 import 'bloc/add_to_playlist_bloc/add_to_playlist_bloc.dart';
 import 'bloc/cacher_bloc/cacher_bloc.dart';
 import 'bloc/connectivity_status_bloc/connectivity_status_cubit.dart';
@@ -21,16 +21,19 @@ import 'bloc/tracks_bloc/tracks_bloc.dart';
 import 'bloc/trackst_search_cubit/tracks_search_cubit.dart';
 import 'repositories/playlists_repository.dart';
 import 'repositories/tracks_repository.dart';
+import 'rest_client.dart';
 import 'shortcuts_wrapper.dart';
 
 class BlocProviderWrapper extends StatefulWidget {
   final Widget child;
-  final ApiService apiService;
+  final AppConfig appConfig;
+  final RestClient restClient;
 
   const BlocProviderWrapper({
     super.key,
-    required this.apiService,
+    required this.appConfig,
     required this.child,
+    required this.restClient,
   });
 
   @override
@@ -38,15 +41,15 @@ class BlocProviderWrapper extends StatefulWidget {
 }
 
 class _BlocProviderWrapperState extends State<BlocProviderWrapper> {
-  late final _tracksRepository = TracksRepository(widget.apiService);
-  late final _playlistsRepository = PlaylistsRepository(widget.apiService);
+  late final _tracksRepository = TracksRepository(widget.restClient);
+  late final _playlistsRepository = PlaylistsRepository(widget.restClient);
 
-  late final _settingsBloc = SettingsBloc(widget.apiService);
+  late final _settingsBloc = SettingsBloc();
   late final _tracksBloc = TracksBloc(_tracksRepository);
   late final _playlistBloc = PlaylistBloc(_playlistsRepository);
   late final _playlistsBloc =
       PlaylistsBloc(_playlistsRepository, _playlistBloc);
-  late final _cacherBloc = CacherBloc(widget.apiService);
+  late final _cacherBloc = CacherBloc(widget.appConfig);
   late final _connectivityStatusCubit = ConnectivityStatusCubit(
     tracksBloc: _tracksBloc,
     playlistsBloc: _playlistsBloc,

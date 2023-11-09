@@ -1,20 +1,19 @@
 import 'package:collection/collection.dart';
 
-import '../api_providers/playlists_api_provider.dart';
-import '../api_service.dart';
 import '../models/playlist.dart';
+import '../rest_client.dart';
 
 class PlaylistsRepository {
-  final ApiService _apiService;
   final _items = <Playlist>[];
-  late final _playlistsApiProvider = PlaylistsApiProvider(_apiService);
 
-  PlaylistsRepository(this._apiService);
+  final RestClient _restClient;
+
+  PlaylistsRepository(this._restClient);
 
   List<Playlist> get items => _items;
 
   Future<bool> getAllPlaylists() async {
-    final result = await _playlistsApiProvider.fetchAllPlaylists();
+    final result = await _restClient.getAllPlaylists();
     _items.clear();
     _items.addAll(result);
 
@@ -25,48 +24,49 @@ class PlaylistsRepository {
     final playlist = items.firstWhereOrNull((item) => item.id == playlistId);
 
     if (playlist == null) {
-      return _playlistsApiProvider.getPlaylist(playlistId);
+      return _restClient.getPlaylist(playlistId);
     }
 
     return playlist;
   }
 
-  Future<bool> createPlaylist(String title) async {
-    final result = await _playlistsApiProvider.createPlaylist(title);
+  Future<void> createPlaylist(String title) async {
+    final result = await _restClient.createPlaylist(title);
     _items.add(result);
-    return true;
   }
 
-  Future<bool> editPlaylist({
+  Future<void> editPlaylist({
     required String id,
     required String title,
     required List<String> tracksIds,
-  }) async {
-    final result = await _playlistsApiProvider.editPlaylist(
+  }) {
+    return _restClient.editPlaylist(
       id: id,
       title: title,
-      tracksIds: tracksIds,
+      tracks: tracksIds,
     );
-
-    return result;
   }
 
-  Future<bool> deletePlaylist(String playlistId) async {
-    final result = await _playlistsApiProvider.deletePlaylist(playlistId);
-    if (result) {
-      _items.removeWhere((element) => element.id == playlistId);
-    }
-    return result;
+  Future<void> deletePlaylist(String playlistId) async {
+    await _restClient.deletePlaylist(playlistId);
+
+    _items.removeWhere((element) => element.id == playlistId);
   }
 
-  Future<bool> addTrackToPlaylist(String playlistId, String trackId) async {
-    return _playlistsApiProvider.addTrackToPlaylist(playlistId, trackId);
+  Future<void> addTrackToPlaylist(String playlistId, String trackId) {
+    return _restClient.addTrackToPlaylist(
+      playlistId: playlistId,
+      trackId: trackId,
+    );
   }
 
-  Future<bool> removeTrackFromPlaylist(
+  Future<void> removeTrackFromPlaylist(
     String playlistId,
     String trackId,
-  ) async {
-    return _playlistsApiProvider.removeTrackFromPlaylist(playlistId, trackId);
+  ) {
+    return _restClient.removeTrackFromPlaylist(
+      playlistId: playlistId,
+      trackId: trackId,
+    );
   }
 }
