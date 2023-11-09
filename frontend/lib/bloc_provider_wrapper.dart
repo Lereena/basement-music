@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'app_config.dart';
 import 'bloc/cacher_bloc/cacher_bloc.dart';
 import 'bloc/connectivity_status_bloc/connectivity_status_cubit.dart';
-import 'bloc/edit_track_bloc/edit_track_bloc.dart';
 import 'bloc/player_bloc/player_bloc.dart';
 import 'bloc/playlist_bloc/playlist_bloc.dart';
 import 'bloc/playlist_creation_bloc/playlist_creation_bloc.dart';
@@ -97,9 +96,6 @@ class _BlocProviderWrapperState extends State<BlocProviderWrapper> {
         ),
         BlocProvider<TrackProgressCubit>(
           create: (_) => TrackProgressCubit(_playerBloc),
-        ),
-        BlocProvider<EditTrackBloc>(
-          create: (_) => EditTrackBloc(context.read<TracksRepository>()),
         ),
       ],
       child: ShortcutsWrapper(
