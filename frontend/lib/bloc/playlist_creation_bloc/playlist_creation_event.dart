@@ -1,9 +1,9 @@
-abstract class PlaylistCreationEvent {}
+part of 'playlist_creation_bloc.dart';
 
-class GetInputEvent extends PlaylistCreationEvent {}
+sealed class PlaylistCreationEvent {}
 
-class LoadingEvent extends PlaylistCreationEvent {
+final class PlaylistCreationLoadingStarted extends PlaylistCreationEvent {
   final String title;
 
-  LoadingEvent(this.title);
+  PlaylistCreationLoadingStarted(this.title);
 }

@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'app_config.dart';
 import 'bloc/cacher_bloc/cacher_bloc.dart';
 import 'bloc/player_bloc/player_bloc.dart';
-import 'bloc/playlist_creation_bloc/playlist_creation_bloc.dart';
 import 'bloc/playlists_bloc/playlists_bloc.dart';
 import 'bloc/playlists_bloc/playlists_event.dart';
 import 'bloc/settings_bloc/settings_bloc.dart';
@@ -55,11 +54,6 @@ class _BlocProviderWrapperState extends State<BlocProviderWrapper> {
         ),
         BlocProvider<PlaylistsBloc>.value(
           value: _playlistsBloc,
-        ),
-        BlocProvider<PlaylistCreationBloc>(
-          create: (_) => PlaylistCreationBloc(
-            context.read<PlaylistsRepository>(),
-          ),
         ),
         BlocProvider<TracksSearchCubit>(
           create: (_) => TracksSearchCubit(
