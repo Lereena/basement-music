@@ -5,19 +5,32 @@ import 'package:go_router/go_router.dart';
 import '../bloc/playlists_bloc/playlists_bloc.dart';
 import '../bloc/playlists_bloc/playlists_event.dart';
 import '../bloc/playlists_bloc/playlists_state.dart';
+import '../repositories/connectivity_status_repository.dart';
+import '../repositories/playlists_repository.dart';
 import '../routing/routes.dart';
 import '../widgets/app_bar.dart';
 import '../widgets/create_playlist.dart';
 import '../widgets/playlist_card.dart';
 
-class LibraryPage extends StatefulWidget {
+class LibraryPage extends StatelessWidget {
   const LibraryPage({super.key});
 
   @override
-  State<LibraryPage> createState() => _LibraryPageState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => PlaylistsBloc(
+        playlistsRepository: context.read<PlaylistsRepository>(),
+        connectivityStatusRepository:
+            context.read<ConnectivityStatusRepository>(),
+      )..add(PlaylistsLoadEvent()),
+      child: const _LibraryPage(),
+    );
+  }
 }
 
-class _LibraryPageState extends State<LibraryPage> {
+class _LibraryPage extends StatelessWidget {
+  const _LibraryPage();
+
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bloc/connectivity_status_bloc/connectivity_status_cubit.dart';
-import '../bloc/playlists_bloc/playlists_bloc.dart';
 import '../bloc/trackst_search_cubit/tracks_search_cubit.dart';
 import '../widgets/app_bar.dart';
 import '../widgets/search_field.dart';
@@ -20,7 +19,6 @@ class _SearchPageState extends State<SearchPage> {
   final _focusNode = FocusNode();
 
   late final _searchCubit = context.read<TracksSearchCubit>();
-  late final _playlistsBloc = context.read<PlaylistsBloc>();
 
   @override
   void initState() {
@@ -63,7 +61,7 @@ class _SearchPageState extends State<SearchPage> {
                         itemCount: state.tracks.length,
                         itemBuilder: (_, index) => TrackCard(
                           track: state.tracks[index],
-                          openedPlaylist: _playlistsBloc.openedPlaylist,
+                          openedPlaylist: _searchCubit.openedPlaylist,
                           active: connectivityState
                               is ConnectivityStatusHasConnection,
                         ),

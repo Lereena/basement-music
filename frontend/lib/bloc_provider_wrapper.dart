@@ -5,8 +5,6 @@ import 'app_config.dart';
 import 'audio_player_handler.dart';
 import 'bloc/cacher_bloc/cacher_bloc.dart';
 import 'bloc/player_bloc/player_bloc.dart';
-import 'bloc/playlists_bloc/playlists_bloc.dart';
-import 'bloc/playlists_bloc/playlists_event.dart';
 import 'bloc/settings_bloc/settings_bloc.dart';
 import 'bloc/trackst_search_cubit/tracks_search_cubit.dart';
 import 'repositories/connectivity_status_repository.dart';
@@ -31,11 +29,6 @@ class BlocProviderWrapper extends StatefulWidget {
 class _BlocProviderWrapperState extends State<BlocProviderWrapper> {
   late final _settingsBloc = SettingsBloc();
 
-  late final _playlistsBloc = PlaylistsBloc(
-    playlistsRepository: context.read<PlaylistsRepository>(),
-    connectivityStatusRepository: context.read<ConnectivityStatusRepository>(),
-  )..add(PlaylistsLoadEvent());
-
   late final _cacherBloc = CacherBloc(widget.appConfig);
 
   late final _playerBloc = PlayerBloc(
@@ -52,9 +45,6 @@ class _BlocProviderWrapperState extends State<BlocProviderWrapper> {
       providers: [
         BlocProvider<PlayerBloc>(
           create: (_) => _playerBloc,
-        ),
-        BlocProvider<PlaylistsBloc>.value(
-          value: _playlistsBloc,
         ),
         BlocProvider<TracksSearchCubit>(
           create: (_) => TracksSearchCubit(

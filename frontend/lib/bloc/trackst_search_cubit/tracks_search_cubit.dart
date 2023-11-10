@@ -26,7 +26,7 @@ class TracksSearchCubit extends Cubit<TracksSearchState> {
     required this.connectivityStatusRepository,
   }) : super(TracksSearchInitial());
 
-  Playlist searchResultsPlaylist = Playlist.empty();
+  Playlist get openedPlaylist => playlistsRepository.openedPlaylist;
 
   String lastSearch = '';
 
@@ -53,9 +53,8 @@ class TracksSearchCubit extends Cubit<TracksSearchState> {
       if (tracksRepository.searchItems.isEmpty) {
         emit(TracksSearchEmptyState(query));
       } else {
-        searchResultsPlaylist =
+        playlistsRepository.openedPlaylist =
             Playlist.anonymous(tracksRepository.searchItems);
-        playlistsRepository.openedPlaylist = searchResultsPlaylist;
 
         emit(TracksSearchLoadedState(query, tracksRepository.searchItems));
       }
