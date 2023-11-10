@@ -9,8 +9,8 @@ import '../../models/playlist.dart';
 import '../../models/track.dart';
 import '../../repositories/cache_repository.dart';
 import '../../repositories/connectivity_status_repository.dart';
+import '../../repositories/settings_repository.dart';
 import '../../repositories/tracks_repository.dart';
-import '../settings_bloc/settings_bloc.dart';
 import 'player_event.dart';
 import 'player_state.dart';
 
@@ -20,7 +20,7 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
   final ConnectivityStatusRepository connectivityStatusRepository;
   final TracksRepository tracksRepository;
   final AudioPlayerHandler audioHandler;
-  final SettingsBloc settingsBloc;
+  final SettingsRepository settingsRepository;
   final CacheRepository cacheRepository;
 
   Playlist _currentPlaylist = Playlist.empty();
@@ -30,7 +30,7 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
     required this.connectivityStatusRepository,
     required this.tracksRepository,
     required this.audioHandler,
-    required this.settingsBloc,
+    required this.settingsRepository,
     required this.cacheRepository,
   }) : super(InitialPlayerState(Track.empty())) {
     on<PlayEvent>(_onPlayEvent);
@@ -86,8 +86,8 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
       return;
     }
 
-    if (!settingsBloc.state.repeat) {
-      if (settingsBloc.state.shuffle) {
+    if (!settingsRepository.repeat) {
+      if (settingsRepository.shuffle) {
         final nextTrackPosition = _shuffledNext(
           availableTracks,
           availableTracks.indexOf(currentTrack),
@@ -121,8 +121,8 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
       return;
     }
 
-    if (!settingsBloc.state.repeat) {
-      if (settingsBloc.state.shuffle) {
+    if (!settingsRepository.repeat) {
+      if (settingsRepository.shuffle) {
         final nextTrackPosition = _shuffledNext(
           availableTracks,
           availableTracks.indexOf(currentTrack),

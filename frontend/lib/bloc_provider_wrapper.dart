@@ -4,9 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'app_config.dart';
 import 'audio_player_handler.dart';
 import 'bloc/player_bloc/player_bloc.dart';
-import 'bloc/settings_bloc/settings_bloc.dart';
 import 'repositories/cache_repository.dart';
 import 'repositories/connectivity_status_repository.dart';
+import 'repositories/settings_repository.dart';
 import 'repositories/tracks_repository.dart';
 import 'shortcuts_wrapper.dart';
 
@@ -25,12 +25,10 @@ class BlocProviderWrapper extends StatefulWidget {
 }
 
 class _BlocProviderWrapperState extends State<BlocProviderWrapper> {
-  late final _settingsBloc = SettingsBloc();
-
   late final _playerBloc = PlayerBloc(
     audioHandler: context.read<AudioPlayerHandler>(),
     tracksRepository: context.read<TracksRepository>(),
-    settingsBloc: _settingsBloc,
+    settingsRepository: context.read<SettingsRepository>(),
     cacheRepository: context.read<CacheRepository>(),
     connectivityStatusRepository: context.read<ConnectivityStatusRepository>(),
   );
@@ -41,9 +39,6 @@ class _BlocProviderWrapperState extends State<BlocProviderWrapper> {
       providers: [
         BlocProvider<PlayerBloc>(
           create: (_) => _playerBloc,
-        ),
-        BlocProvider<SettingsBloc>.value(
-          value: _settingsBloc,
         ),
       ],
       child: ShortcutsWrapper(

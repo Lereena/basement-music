@@ -7,6 +7,8 @@ abstract class SettingsEvent extends Equatable {
   List<Object> get props => [];
 }
 
+class RetrieveSettings extends SettingsEvent {}
+
 class SetShuffle extends SettingsEvent {
   final bool shuffleValue;
 
