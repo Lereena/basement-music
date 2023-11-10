@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/connectivity_status_bloc/connectivity_status_cubit.dart';
 import '../bloc/playlists_bloc/playlists_bloc.dart';
 import '../bloc/trackst_search_cubit/tracks_search_cubit.dart';
-import '../models/playlist.dart';
 import '../widgets/app_bar.dart';
 import '../widgets/search_field.dart';
 import '../widgets/track_card.dart';
@@ -29,13 +28,6 @@ class _SearchPageState extends State<SearchPage> {
 
     _focusNode.requestFocus();
     _controller.text = _searchCubit.state.searchQuery;
-    _playlistsBloc.openedPlaylist = _searchCubit.searchResultsPlaylist;
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _playlistsBloc.openedPlaylist = Playlist.empty();
   }
 
   @override

@@ -7,21 +7,21 @@ import '../../logger.dart';
 import '../../models/playlist.dart';
 import '../../models/track.dart';
 import '../../repositories/connectivity_status_repository.dart';
+import '../../repositories/playlists_repository.dart';
 import '../../repositories/tracks_repository.dart';
 import '../cacher_bloc/cacher_bloc.dart';
-import '../playlists_bloc/playlists_bloc.dart';
 
 part 'tracks_search_state.dart';
 
 class TracksSearchCubit extends Cubit<TracksSearchState> {
   final TracksRepository tracksRepository;
-  final PlaylistsBloc playlistsBloc;
+  final PlaylistsRepository playlistsRepository;
   final CacherBloc cacherBloc;
   final ConnectivityStatusRepository connectivityStatusRepository;
 
   TracksSearchCubit({
     required this.tracksRepository,
-    required this.playlistsBloc,
+    required this.playlistsRepository,
     required this.cacherBloc,
     required this.connectivityStatusRepository,
   }) : super(TracksSearchInitial());
@@ -55,7 +55,7 @@ class TracksSearchCubit extends Cubit<TracksSearchState> {
       } else {
         searchResultsPlaylist =
             Playlist.anonymous(tracksRepository.searchItems);
-        playlistsBloc.openedPlaylist = searchResultsPlaylist;
+        playlistsRepository.openedPlaylist = searchResultsPlaylist;
 
         emit(TracksSearchLoadedState(query, tracksRepository.searchItems));
       }

@@ -15,6 +15,8 @@ class PlaylistsRepository {
 
   BehaviorSubject<List<Playlist>> playlistsSubject = BehaviorSubject.seeded([]);
 
+  Playlist openedPlaylist = Playlist.empty();
+
   Future<bool> getAllPlaylists() async {
     final result = await _restClient.getAllPlaylists();
     _items.clear();

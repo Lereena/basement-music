@@ -30,7 +30,7 @@ class PlaylistsBloc extends HydratedBloc<PlaylistsEvent, PlaylistsState> {
         .listen((value) => PlaylistsLoadedState(value));
   }
 
-  Playlist openedPlaylist = Playlist.empty();
+  Playlist get openedPlaylist => playlistsRepository.openedPlaylist;
 
   FutureOr<void> _onLoadingEvent(
     PlaylistsLoadEvent event,
