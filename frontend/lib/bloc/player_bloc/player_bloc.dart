@@ -7,9 +7,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../audio_player_handler.dart';
 import '../../models/playlist.dart';
 import '../../models/track.dart';
+import '../../repositories/cache_repository.dart';
 import '../../repositories/connectivity_status_repository.dart';
 import '../../repositories/tracks_repository.dart';
-import '../cacher_bloc/cacher_bloc.dart';
 import '../settings_bloc/settings_bloc.dart';
 import 'player_event.dart';
 import 'player_state.dart';
@@ -21,7 +21,7 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
   final TracksRepository tracksRepository;
   final AudioPlayerHandler audioHandler;
   final SettingsBloc settingsBloc;
-  final CacherBloc cacherBloc;
+  final CacheRepository cacheRepository;
 
   Playlist _currentPlaylist = Playlist.empty();
   Track currentTrack = Track.empty();
@@ -31,7 +31,7 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
     required this.tracksRepository,
     required this.audioHandler,
     required this.settingsBloc,
-    required this.cacherBloc,
+    required this.cacheRepository,
   }) : super(InitialPlayerState(Track.empty())) {
     on<PlayEvent>(_onPlayEvent);
     on<PauseEvent>(_onPauseEvent);
@@ -149,7 +149,7 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
 
     return isOffline
         ? _currentPlaylist.tracks
-            .where((track) => cacherBloc.state.cached.contains(track.id))
+            .where((track) => cacheRepository.items.contains(track.id))
             .toList()
         : _currentPlaylist.tracks;
   }

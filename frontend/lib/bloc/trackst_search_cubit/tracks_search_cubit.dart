@@ -9,20 +9,17 @@ import '../../models/track.dart';
 import '../../repositories/connectivity_status_repository.dart';
 import '../../repositories/playlists_repository.dart';
 import '../../repositories/tracks_repository.dart';
-import '../cacher_bloc/cacher_bloc.dart';
 
 part 'tracks_search_state.dart';
 
 class TracksSearchCubit extends Cubit<TracksSearchState> {
   final TracksRepository tracksRepository;
   final PlaylistsRepository playlistsRepository;
-  final CacherBloc cacherBloc;
   final ConnectivityStatusRepository connectivityStatusRepository;
 
   TracksSearchCubit({
     required this.tracksRepository,
     required this.playlistsRepository,
-    required this.cacherBloc,
     required this.connectivityStatusRepository,
   }) : super(TracksSearchInitial());
 

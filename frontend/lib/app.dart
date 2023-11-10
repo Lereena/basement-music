@@ -5,6 +5,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
@@ -13,11 +14,13 @@ import 'package:url_strategy/url_strategy.dart';
 
 import 'app_config.dart';
 import 'audio_player_handler.dart';
+import 'bloc/cacher_bloc/cacher_bloc.dart';
 import 'bloc/connectivity_status_bloc/connectivity_status_cubit.dart';
 import 'bloc/settings_bloc/settings_bloc.dart';
 import 'bloc/track_progress_cubit/track_progress_cubit.dart';
 import 'bloc_provider_wrapper.dart';
 import 'firebase_options.dart';
+import 'repositories/cache_repository.dart';
 import 'repositories/connectivity_status_repository.dart';
 import 'repositories/playlists_repository.dart';
 import 'repositories/tracks_repository.dart';
@@ -67,6 +70,10 @@ Future<void> runBasement(AppConfig config) async {
   final playlistsRepository = PlaylistsRepository(restClient);
   final connectivityStatusRepository = ConnectivityStatusRepository();
 
+  await Hive.initFlutter();
+  final cacheBox = await Hive.openBox<String>('tracks_cache');
+  final cacheRepository = CacheRepository(config, cacheBox);
+
   runApp(
     BasementMusic(
       config: config,
@@ -74,6 +81,7 @@ Future<void> runBasement(AppConfig config) async {
       tracksRepository: tracksRepository,
       playlistsRepository: playlistsRepository,
       connectivityStatusRepository: connectivityStatusRepository,
+      cacheRepository: cacheRepository,
     ),
   );
 }
@@ -86,6 +94,7 @@ class BasementMusic extends StatelessWidget {
   final TracksRepository tracksRepository;
   final PlaylistsRepository playlistsRepository;
   final ConnectivityStatusRepository connectivityStatusRepository;
+  final CacheRepository cacheRepository;
 
   const BasementMusic({
     super.key,
@@ -94,6 +103,7 @@ class BasementMusic extends StatelessWidget {
     required this.tracksRepository,
     required this.playlistsRepository,
     required this.connectivityStatusRepository,
+    required this.cacheRepository,
   });
 
   @override
@@ -104,17 +114,16 @@ class BasementMusic extends StatelessWidget {
         RepositoryProvider.value(value: playlistsRepository),
         RepositoryProvider.value(value: connectivityStatusRepository),
         RepositoryProvider.value(value: audioHandler),
+        RepositoryProvider.value(value: cacheRepository),
       ],
       child: MultiBlocProvider(
         providers: [
           BlocProvider(
-            create: (_) => ConnectivityStatusCubit(
-              connectivityStatusRepository: connectivityStatusRepository,
-            ),
+            create: (_) =>
+                ConnectivityStatusCubit(connectivityStatusRepository),
           ),
-          BlocProvider(
-            create: (_) => TrackProgressCubit(audioHandler),
-          ),
+          BlocProvider(create: (_) => TrackProgressCubit(audioHandler)),
+          BlocProvider(create: (_) => CacherBloc(cacheRepository)),
         ],
         child: BlocProviderWrapper(
           appConfig: config,

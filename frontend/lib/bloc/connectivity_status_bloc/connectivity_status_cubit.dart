@@ -9,9 +9,8 @@ part 'connectivity_status_state.dart';
 class ConnectivityStatusCubit extends Cubit<ConnectivityStatusState> {
   final ConnectivityStatusRepository connectivityStatusRepository;
 
-  ConnectivityStatusCubit({
-    required this.connectivityStatusRepository,
-  }) : super(ConnectivityStatusInitial()) {
+  ConnectivityStatusCubit(this.connectivityStatusRepository)
+      : super(ConnectivityStatusInitial()) {
     if (kIsWeb) {
       emit(ConnectivityStatusHasConnection());
     }

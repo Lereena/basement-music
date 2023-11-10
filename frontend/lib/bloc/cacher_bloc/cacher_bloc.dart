@@ -1,24 +1,18 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
-import 'package:path_provider/path_provider.dart';
 
-import '../../app_config.dart';
+import '../../repositories/cache_repository.dart';
 
 part 'cacher_event.dart';
 part 'cacher_state.dart';
 
-const _cacherInfoKey = 'cacher';
+class CacherBloc extends Bloc<CacherEvent, CacherState> {
+  final CacheRepository cacheRepository;
 
-class CacherBloc extends HydratedBloc<CacherEvent, CacherState> {
-  final AppConfig _appConfig;
-
-  CacherBloc(this._appConfig) : super(const CacherInitial()) {
+  CacherBloc(this.cacheRepository) : super(const CacherInitial()) {
     on<CacheValidateEvent>(_onCacheValidateEvent);
     on<CacheTrackEvent>(_onCacheTrackEvent);
     on<CacheTracksEvent>(_onCacheTracksEvent);
@@ -35,30 +29,13 @@ class CacherBloc extends HydratedBloc<CacherEvent, CacherState> {
       return;
     }
 
-    final cachedFilesCount = await _getCachedFilesCount();
+    final isCacheValid = await cacheRepository.validateCache();
 
-    // cache is broken
-    if (cachedFilesCount != state.cached.length) {
+    if (!isCacheValid) {
       emit(state.copyWith(cached: {}));
-      await DefaultCacheManager().emptyCache();
+    } else {
+      emit(CacherState(cached: cacheRepository.items));
     }
-  }
-
-  Future<int> _getCachedFilesCount() async {
-    final cacheDir = await getTemporaryDirectory();
-
-    final cacheExists = await cacheDir.exists();
-
-    if (!cacheExists) return 0;
-
-    final cachedFilesCount = cacheDir
-        .listSync(recursive: true)
-        .where(
-          (element) => element.statSync().type == FileSystemEntityType.file,
-        )
-        .length;
-
-    return cachedFilesCount;
   }
 
   FutureOr<void> _onCacheTrackEvent(
@@ -87,10 +64,7 @@ class CacherBloc extends HydratedBloc<CacherEvent, CacherState> {
 
   Future<CacherState> _cacheOneTrack(String trackId) async {
     try {
-      await DefaultCacheManager().downloadFile(
-        '${_appConfig.baseUrl}/api/track/$trackId',
-        key: trackId,
-      );
+      await cacheRepository.cacheTrack(trackId);
 
       return state.copyWith(
         caching: state.caching.where((id) => id != trackId).toSet(),
@@ -103,12 +77,4 @@ class CacherBloc extends HydratedBloc<CacherEvent, CacherState> {
       );
     }
   }
-
-  @override
-  CacherState? fromJson(Map<String, dynamic> json) =>
-      CacherState.fromJson(json[_cacherInfoKey] as String);
-
-  @override
-  Map<String, dynamic>? toJson(CacherState state) =>
-      {_cacherInfoKey: state.toJson()};
 }

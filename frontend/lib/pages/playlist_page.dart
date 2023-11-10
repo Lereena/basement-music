@@ -6,6 +6,7 @@ import '../bloc/playlist_bloc/playlist_bloc.dart';
 import '../repositories/playlists_repository.dart';
 import '../routing/routes.dart';
 import '../widgets/app_bar.dart';
+import '../widgets/playlist_cache_action.dart';
 import '../widgets/track_card.dart';
 
 class PlaylistPage extends StatelessWidget {
@@ -28,18 +29,19 @@ class PlaylistPage extends StatelessWidget {
 class _PlaylistPage extends StatelessWidget {
   final String playlistId;
 
-  _PlaylistPage({required this.playlistId});
+  const _PlaylistPage({required this.playlistId});
 
-  late final _appBarActions = [
-    Builder(
-      builder: (context) {
-        return IconButton(
-          onPressed: () => context.go(RouteName.playlistEdit(playlistId)),
-          icon: const Icon(Icons.edit_outlined),
-        );
-      },
-    ),
-  ];
+  List<Widget> _appBarActions({List<String>? tracksIds}) => [
+        if (tracksIds != null) PlaylistCacheAction(trackIds: tracksIds),
+        Builder(
+          builder: (context) {
+            return IconButton(
+              onPressed: () => context.go(RouteName.playlistEdit(playlistId)),
+              icon: const Icon(Icons.edit_outlined),
+            );
+          },
+        ),
+      ];
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +55,7 @@ class _PlaylistPage extends StatelessWidget {
           return Scaffold(
             appBar: BasementAppBar(
               title: state.title,
-              actions: _appBarActions,
+              actions: _appBarActions(),
             ),
             body: Center(
               child: Text(
@@ -68,7 +70,9 @@ class _PlaylistPage extends StatelessWidget {
           return Scaffold(
             appBar: BasementAppBar(
               title: state.playlist.title,
-              actions: _appBarActions,
+              actions: _appBarActions(
+                tracksIds: state.playlist.tracks.map((e) => e.id).toList(),
+              ),
             ),
             body: Column(
               children: [
