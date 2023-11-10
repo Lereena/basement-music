@@ -5,10 +5,8 @@ import 'app_config.dart';
 import 'audio_player_handler.dart';
 import 'bloc/player_bloc/player_bloc.dart';
 import 'bloc/settings_bloc/settings_bloc.dart';
-import 'bloc/trackst_search_cubit/tracks_search_cubit.dart';
 import 'repositories/cache_repository.dart';
 import 'repositories/connectivity_status_repository.dart';
-import 'repositories/playlists_repository.dart';
 import 'repositories/tracks_repository.dart';
 import 'shortcuts_wrapper.dart';
 
@@ -43,14 +41,6 @@ class _BlocProviderWrapperState extends State<BlocProviderWrapper> {
       providers: [
         BlocProvider<PlayerBloc>(
           create: (_) => _playerBloc,
-        ),
-        BlocProvider<TracksSearchCubit>(
-          create: (_) => TracksSearchCubit(
-            tracksRepository: context.read<TracksRepository>(),
-            playlistsRepository: context.read<PlaylistsRepository>(),
-            connectivityStatusRepository:
-                context.read<ConnectivityStatusRepository>(),
-          ),
         ),
         BlocProvider<SettingsBloc>.value(
           value: _settingsBloc,

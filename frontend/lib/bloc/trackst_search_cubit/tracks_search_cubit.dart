@@ -37,7 +37,7 @@ class TracksSearchCubit extends Cubit<TracksSearchState> {
       return;
     }
 
-    emit(TracksSearchLoadingState(query));
+    emit(TracksSearchLoadInProgress(query));
 
     try {
       if (connectivityStatusRepository.statusSubject.value ==
@@ -48,15 +48,15 @@ class TracksSearchCubit extends Cubit<TracksSearchState> {
       }
 
       if (tracksRepository.searchItems.isEmpty) {
-        emit(TracksSearchEmptyState(query));
+        emit(TracksSearchSuccessEmpty(query));
       } else {
         playlistsRepository.openedPlaylist =
             Playlist.anonymous(tracksRepository.searchItems);
 
-        emit(TracksSearchLoadedState(query, tracksRepository.searchItems));
+        emit(TracksSearchSuccess(query, tracksRepository.searchItems));
       }
     } catch (e) {
-      emit(TracksSearchErrorState());
+      emit(TracksSearchError());
       logger.e('Error searching tracks: $e');
     }
   }
