@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'app_config.dart';
+import 'audio_player_handler.dart';
 import 'bloc/cacher_bloc/cacher_bloc.dart';
 import 'bloc/player_bloc/player_bloc.dart';
 import 'bloc/playlists_bloc/playlists_bloc.dart';
 import 'bloc/playlists_bloc/playlists_event.dart';
 import 'bloc/settings_bloc/settings_bloc.dart';
-import 'bloc/track_progress_cubit/track_progress_cubit.dart';
 import 'bloc/trackst_search_cubit/tracks_search_cubit.dart';
 import 'repositories/connectivity_status_repository.dart';
 import 'repositories/playlists_repository.dart';
@@ -39,6 +39,7 @@ class _BlocProviderWrapperState extends State<BlocProviderWrapper> {
   late final _cacherBloc = CacherBloc(widget.appConfig);
 
   late final _playerBloc = PlayerBloc(
+    audioHandler: context.read<AudioPlayerHandler>(),
     tracksRepository: context.read<TracksRepository>(),
     settingsBloc: _settingsBloc,
     cacherBloc: _cacherBloc,
@@ -69,9 +70,6 @@ class _BlocProviderWrapperState extends State<BlocProviderWrapper> {
         ),
         BlocProvider<CacherBloc>.value(
           value: _cacherBloc,
-        ),
-        BlocProvider<TrackProgressCubit>(
-          create: (_) => TrackProgressCubit(_playerBloc),
         ),
       ],
       child: ShortcutsWrapper(

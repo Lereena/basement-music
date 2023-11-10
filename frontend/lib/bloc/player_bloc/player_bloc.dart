@@ -4,7 +4,6 @@ import 'dart:math';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../app.dart';
 import '../../audio_player_handler.dart';
 import '../../models/playlist.dart';
 import '../../models/track.dart';
@@ -18,22 +17,21 @@ import 'player_state.dart';
 final random = Random();
 
 class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
+  final ConnectivityStatusRepository connectivityStatusRepository;
   final TracksRepository tracksRepository;
+  final AudioPlayerHandler audioHandler;
   final SettingsBloc settingsBloc;
   final CacherBloc cacherBloc;
-  final ConnectivityStatusRepository connectivityStatusRepository;
-
-  final AudioPlayerHandler _audioHandler = audioHandler;
-  late final onPositionChanged = _audioHandler.onPositionChanged;
 
   Playlist _currentPlaylist = Playlist.empty();
   Track currentTrack = Track.empty();
 
   PlayerBloc({
+    required this.connectivityStatusRepository,
     required this.tracksRepository,
+    required this.audioHandler,
     required this.settingsBloc,
     required this.cacherBloc,
-    required this.connectivityStatusRepository,
   }) : super(InitialPlayerState(Track.empty())) {
     on<PlayEvent>(_onPlayEvent);
     on<PauseEvent>(_onPauseEvent);
@@ -41,7 +39,7 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
     on<NextEvent>(_onNextEvent);
     on<PreviousEvent>(_onPreviousEvent);
 
-    _audioHandler.onPlayerComplete.listen((event) {
+    audioHandler.onPlayerComplete.listen((event) {
       add(NextEvent());
     });
   }
@@ -54,8 +52,8 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
         event.playlist ?? Playlist.anonymous(tracksRepository.items);
 
     currentTrack = event.track;
-    _audioHandler.addMediaItem(currentTrack);
-    _audioHandler.play();
+    audioHandler.addMediaItem(currentTrack);
+    audioHandler.play();
     emit(PlayingPlayerState(event.track));
   }
 
@@ -63,7 +61,7 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
     PauseEvent event,
     Emitter<AudioPlayerState> emit,
   ) {
-    _audioHandler.pause();
+    audioHandler.pause();
     emit(PausedPlayerState(currentTrack));
   }
 
@@ -71,7 +69,7 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
     ResumeEvent event,
     Emitter<AudioPlayerState> emit,
   ) {
-    _audioHandler.resume();
+    audioHandler.resume();
     emit(ResumedPlayerState(currentTrack));
   }
 
@@ -79,7 +77,7 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
     NextEvent event,
     Emitter<AudioPlayerState> emit,
   ) async {
-    _audioHandler.pause();
+    audioHandler.pause();
 
     final availableTracks = _getAvailableTracks();
 
@@ -104,8 +102,8 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
       }
     }
 
-    _audioHandler.addMediaItem(currentTrack);
-    _audioHandler.play();
+    audioHandler.addMediaItem(currentTrack);
+    audioHandler.play();
 
     emit(PlayingPlayerState(currentTrack));
   }
@@ -114,7 +112,7 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
     PreviousEvent event,
     Emitter<AudioPlayerState> emit,
   ) async {
-    _audioHandler.pause();
+    audioHandler.pause();
 
     final availableTracks = _getAvailableTracks();
 
@@ -139,8 +137,8 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
       }
     }
 
-    _audioHandler.addMediaItem(currentTrack);
-    _audioHandler.play();
+    audioHandler.addMediaItem(currentTrack);
+    audioHandler.play();
 
     emit(PlayingPlayerState(currentTrack));
   }

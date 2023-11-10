@@ -1,22 +1,23 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
+import '../../audio_player_handler.dart';
 import '../../utils/time.dart';
-import '../player_bloc/player_bloc.dart';
 
 part 'track_progress_state.dart';
 
 class TrackProgressCubit extends Cubit<TrackProgressState> {
-  final PlayerBloc playerBloc;
+  final AudioPlayerHandler audioHandler;
 
-  TrackProgressCubit(this.playerBloc) : super(const TrackProgressInitial()) {
-    playerBloc.onPositionChanged.listen((progress) {
+  TrackProgressCubit(this.audioHandler) : super(const TrackProgressInitial()) {
+    audioHandler.onPositionChanged.listen((progress) {
       updateProgress(progress);
     });
   }
 
   void updateProgress(Duration progress) {
-    final percentProgress = progress.inSeconds.toDouble() / playerBloc.state.currentTrack.duration;
+    final percentProgress = progress.inSeconds.toDouble() /
+        (audioHandler.mediaItem.value?.duration?.inSeconds ?? 1);
     final stringProgress = durationString(progress.inSeconds);
 
     emit(TrackProgressState(percentProgress, stringProgress));

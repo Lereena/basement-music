@@ -7,6 +7,8 @@
 
 import 'package:basement_music/app.dart';
 import 'package:basement_music/app_config.dart';
+import 'package:basement_music/audio_player_handler.dart';
+import 'package:basement_music/repositories/connectivity_status_repository.dart';
 import 'package:basement_music/repositories/playlists_repository.dart';
 import 'package:basement_music/repositories/tracks_repository.dart';
 import 'package:basement_music/rest_client.dart';
@@ -17,12 +19,15 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     final restClient = RestClient(Dio());
+    const config = AppConfig(baseUrl: '');
     // Build our app and trigger a frame.
     await tester.pumpWidget(
       BasementMusic(
-        config: const AppConfig(baseUrl: ''),
+        config: config,
+        audioHandler: AudioPlayerHandler(config),
         tracksRepository: TracksRepository(restClient),
         playlistsRepository: PlaylistsRepository(restClient),
+        connectivityStatusRepository: ConnectivityStatusRepository(),
       ),
     );
 

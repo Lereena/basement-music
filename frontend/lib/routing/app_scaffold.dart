@@ -79,6 +79,6 @@ class AppScaffold extends StatelessWidget {
   SlotLayoutConfig get _bottomBar => SlotLayout.from(
         inAnimation: AdaptiveScaffold.bottomToTop,
         key: const Key('bottom'),
-        builder: (_) => SelectionArea(child: BottomPlayer()),
+        builder: (_) => const SelectionArea(child: BottomPlayer()),
       );
 }

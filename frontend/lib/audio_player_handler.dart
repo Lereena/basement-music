@@ -2,20 +2,8 @@ import 'package:audio_service/audio_service.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
-import 'app.dart';
 import 'app_config.dart';
 import 'models/track.dart';
-
-Future<void> initAudioHandler(AppConfig appConfig) async {
-  audioHandler = await AudioService.init(
-    builder: () => AudioPlayerHandler(appConfig),
-    config: const AudioServiceConfig(
-      androidNotificationChannelId: 'com.lereena.basement-music.channel.audio',
-      androidNotificationChannelName: 'Basement music',
-      androidNotificationOngoing: true,
-    ),
-  );
-}
 
 class AudioPlayerHandler extends BaseAudioHandler {
   final AppConfig _appConfig;
@@ -30,8 +18,14 @@ class AudioPlayerHandler extends BaseAudioHandler {
 
   void addMediaItem(Track track) {
     _currentTrack = track;
-    mediaItem
-        .add(MediaItem(id: track.id, title: track.title, artist: track.artist));
+    mediaItem.add(
+      MediaItem(
+        id: track.id,
+        title: track.title,
+        artist: track.artist,
+        duration: Duration(seconds: track.duration),
+      ),
+    );
   }
 
   @override

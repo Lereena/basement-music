@@ -1,3 +1,4 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -14,6 +15,7 @@ import 'app_config.dart';
 import 'audio_player_handler.dart';
 import 'bloc/connectivity_status_bloc/connectivity_status_cubit.dart';
 import 'bloc/settings_bloc/settings_bloc.dart';
+import 'bloc/track_progress_cubit/track_progress_cubit.dart';
 import 'bloc_provider_wrapper.dart';
 import 'firebase_options.dart';
 import 'repositories/connectivity_status_repository.dart';
@@ -23,8 +25,6 @@ import 'rest_client.dart';
 import 'routing/router.dart';
 import 'theme/custom_theme.dart';
 import 'utils/json_response_converter.dart';
-
-late final AudioPlayerHandler audioHandler;
 
 Future<void> runBasement(AppConfig config) async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -46,7 +46,14 @@ Future<void> runBasement(AppConfig config) async {
 
   setPathUrlStrategy();
 
-  await initAudioHandler(config);
+  final audioHandler = await AudioService.init(
+    builder: () => AudioPlayerHandler(config),
+    config: const AudioServiceConfig(
+      androidNotificationChannelId: 'com.lereena.basement-music.channel.audio',
+      androidNotificationChannelName: 'Basement music',
+      androidNotificationOngoing: true,
+    ),
+  );
 
   final dio = Dio(BaseOptions(baseUrl: config.baseUrl))
     ..interceptors.addAll([
@@ -58,12 +65,15 @@ Future<void> runBasement(AppConfig config) async {
 
   final tracksRepository = TracksRepository(restClient);
   final playlistsRepository = PlaylistsRepository(restClient);
+  final connectivityStatusRepository = ConnectivityStatusRepository();
 
   runApp(
     BasementMusic(
       config: config,
+      audioHandler: audioHandler,
       tracksRepository: tracksRepository,
       playlistsRepository: playlistsRepository,
+      connectivityStatusRepository: connectivityStatusRepository,
     ),
   );
 }
@@ -72,14 +82,18 @@ final _router = AppRouter.router;
 
 class BasementMusic extends StatelessWidget {
   final AppConfig config;
+  final AudioPlayerHandler audioHandler;
   final TracksRepository tracksRepository;
   final PlaylistsRepository playlistsRepository;
+  final ConnectivityStatusRepository connectivityStatusRepository;
 
   const BasementMusic({
     super.key,
     required this.config,
+    required this.audioHandler,
     required this.tracksRepository,
     required this.playlistsRepository,
+    required this.connectivityStatusRepository,
   });
 
   @override
@@ -88,15 +102,18 @@ class BasementMusic extends StatelessWidget {
       providers: [
         RepositoryProvider.value(value: tracksRepository),
         RepositoryProvider.value(value: playlistsRepository),
-        RepositoryProvider(create: (_) => ConnectivityStatusRepository()),
+        RepositoryProvider.value(value: connectivityStatusRepository),
+        RepositoryProvider.value(value: audioHandler),
       ],
       child: MultiBlocProvider(
         providers: [
           BlocProvider(
-            create: (context) => ConnectivityStatusCubit(
-              connectivityStatusRepository:
-                  context.read<ConnectivityStatusRepository>(),
+            create: (_) => ConnectivityStatusCubit(
+              connectivityStatusRepository: connectivityStatusRepository,
             ),
+          ),
+          BlocProvider(
+            create: (_) => TrackProgressCubit(audioHandler),
           ),
         ],
         child: BlocProviderWrapper(

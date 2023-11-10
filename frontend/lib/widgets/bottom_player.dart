@@ -15,6 +15,8 @@ import 'track_name.dart';
 import 'track_progress_indicator.dart';
 
 class BottomPlayer extends StatelessWidget {
+  const BottomPlayer({super.key});
+
   @override
   Widget build(BuildContext context) {
     final progress = context.watch<TrackProgressCubit>().state;
