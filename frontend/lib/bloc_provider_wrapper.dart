@@ -1,13 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'app_config.dart';
-import 'audio_player_handler.dart';
-import 'bloc/player_bloc/player_bloc.dart';
-import 'repositories/cache_repository.dart';
-import 'repositories/connectivity_status_repository.dart';
-import 'repositories/settings_repository.dart';
-import 'repositories/tracks_repository.dart';
 import 'shortcuts_wrapper.dart';
 
 class BlocProviderWrapper extends StatefulWidget {
@@ -25,26 +18,10 @@ class BlocProviderWrapper extends StatefulWidget {
 }
 
 class _BlocProviderWrapperState extends State<BlocProviderWrapper> {
-  late final _playerBloc = PlayerBloc(
-    audioHandler: context.read<AudioPlayerHandler>(),
-    tracksRepository: context.read<TracksRepository>(),
-    settingsRepository: context.read<SettingsRepository>(),
-    cacheRepository: context.read<CacheRepository>(),
-    connectivityStatusRepository: context.read<ConnectivityStatusRepository>(),
-  );
-
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider<PlayerBloc>(
-          create: (_) => _playerBloc,
-        ),
-      ],
-      child: ShortcutsWrapper(
-        playerBloc: _playerBloc,
-        child: widget.child,
-      ),
+    return ShortcutsWrapper(
+      child: widget.child,
     );
   }
 }

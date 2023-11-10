@@ -1,25 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'bloc/player_bloc/player_bloc.dart';
 import 'bloc/player_bloc/player_event.dart';
 import 'bloc/player_bloc/player_state.dart';
 
 class ShortcutsWrapper extends StatelessWidget {
-  final PlayerBloc playerBloc;
   final Widget child;
 
-  const ShortcutsWrapper({
-    super.key,
-    required this.playerBloc,
-    required this.child,
-  });
+  const ShortcutsWrapper({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {
+    final playerBloc = context.read<PlayerBloc>();
+
     return CallbackShortcuts(
       bindings: {
-        const SingleActivator(LogicalKeyboardKey.space): () => _spaceAction(playerBloc),
+        const SingleActivator(LogicalKeyboardKey.space): () =>
+            _spaceAction(playerBloc),
       },
       child: Focus(autofocus: true, child: child),
     );
@@ -30,7 +29,8 @@ class ShortcutsWrapper extends StatelessWidget {
 
     if (playerBloc.state is PausedPlayerState) {
       playerBloc.add(ResumeEvent());
-    } else if (playerBloc.state is PlayingPlayerState || playerBloc.state is ResumedPlayerState) {
+    } else if (playerBloc.state is PlayingPlayerState ||
+        playerBloc.state is ResumedPlayerState) {
       playerBloc.add(PauseEvent());
     }
   }

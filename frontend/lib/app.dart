@@ -17,6 +17,7 @@ import 'app_config.dart';
 import 'audio_player_handler.dart';
 import 'bloc/cacher_bloc/cacher_bloc.dart';
 import 'bloc/connectivity_status_bloc/connectivity_status_cubit.dart';
+import 'bloc/player_bloc/player_bloc.dart';
 import 'bloc/settings_bloc/settings_bloc.dart';
 import 'bloc/track_progress_cubit/track_progress_cubit.dart';
 import 'bloc_provider_wrapper.dart';
@@ -138,6 +139,15 @@ class BasementMusic extends StatelessWidget {
           BlocProvider(
             create: (_) =>
                 SettingsBloc(settingsRepository)..add(RetrieveSettings()),
+          ),
+          BlocProvider(
+            create: (_) => PlayerBloc(
+              audioHandler: audioHandler,
+              cacheRepository: cacheRepository,
+              tracksRepository: tracksRepository,
+              settingsRepository: settingsRepository,
+              connectivityStatusRepository: connectivityStatusRepository,
+            ),
           ),
         ],
         child: BlocProviderWrapper(
