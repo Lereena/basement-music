@@ -3,8 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 
 import '../../logger.dart';
-import '../../repositories/playlists_repository.dart';
-import '../../repositories/tracks_repository.dart';
+import '../../repositories/repositories.dart';
 
 part 'track_from_playlist_remover_event.dart';
 part 'track_from_playlist_remover_state.dart';

@@ -6,9 +6,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import '../../logger.dart';
 import '../../models/playlist.dart';
 import '../../models/track.dart';
-import '../../repositories/connectivity_status_repository.dart';
-import '../../repositories/playlists_repository.dart';
-import '../../repositories/tracks_repository.dart';
+import '../../repositories/repositories.dart';
 
 part 'tracks_search_state.dart';
 

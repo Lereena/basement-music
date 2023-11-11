@@ -7,10 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../audio_player_handler.dart';
 import '../../models/playlist.dart';
 import '../../models/track.dart';
-import '../../repositories/cache_repository.dart';
-import '../../repositories/connectivity_status_repository.dart';
-import '../../repositories/settings_repository.dart';
-import '../../repositories/tracks_repository.dart';
+import '../../repositories/repositories.dart';
 
 part 'player_event.dart';
 part 'player_state.dart';

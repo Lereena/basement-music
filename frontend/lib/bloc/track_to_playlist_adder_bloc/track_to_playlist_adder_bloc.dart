@@ -4,9 +4,8 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../../models/playlist.dart';
-import '../../../repositories/playlists_repository.dart';
 import '../../logger.dart';
-import '../../repositories/tracks_repository.dart';
+import '../../repositories/repositories.dart';
 
 part 'track_to_playlist_adder_event.dart';
 part 'track_to_playlist_adder_state.dart';

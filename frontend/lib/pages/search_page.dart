@@ -3,9 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bloc/connectivity_status_bloc/connectivity_status_cubit.dart';
 import '../bloc/trackst_search_cubit/tracks_search_cubit.dart';
-import '../repositories/connectivity_status_repository.dart';
-import '../repositories/playlists_repository.dart';
-import '../repositories/tracks_repository.dart';
+import '../repositories/repositories.dart';
 import '../widgets/app_bar.dart';
 import '../widgets/search_field.dart';
 import '../widgets/track_card.dart';

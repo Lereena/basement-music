@@ -3,8 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../bloc/track_to_playlist_adder_bloc/track_to_playlist_adder_bloc.dart';
-import '../../repositories/playlists_repository.dart';
-import '../../repositories/tracks_repository.dart';
+import '../../repositories/repositories.dart';
 import '../icons/error_icon.dart';
 import '../icons/success_icon.dart';
 import 'dialog.dart';

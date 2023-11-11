@@ -4,8 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/connectivity_status_bloc/connectivity_status_cubit.dart';
 import '../bloc/tracks_bloc/tracks_bloc.dart';
 import '../models/track.dart';
-import '../repositories/connectivity_status_repository.dart';
-import '../repositories/tracks_repository.dart';
+import '../repositories/repositories.dart';
 import '../widgets/app_bar.dart';
 import '../widgets/track_card.dart';
 

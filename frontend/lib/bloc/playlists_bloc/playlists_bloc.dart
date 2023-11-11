@@ -5,8 +5,7 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 
 import '../../logger.dart';
 import '../../models/playlist.dart';
-import '../../repositories/connectivity_status_repository.dart';
-import '../../repositories/playlists_repository.dart';
+import '../../repositories/repositories.dart';
 import '../connectivity_status_bloc/connectivity_status_cubit.dart';
 
 part 'playlists_event.dart';
