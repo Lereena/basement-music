@@ -1,12 +1,15 @@
 part of 'track_from_playlist_remover_bloc.dart';
 
-abstract class TrackFromPlaylistRemoverState {}
+@immutable
+sealed class TrackFromPlaylistRemoverState {}
 
-class RemoveFromPlaylistInitial extends TrackFromPlaylistRemoverState {}
+final class RemoveFromPlaylistInitial extends TrackFromPlaylistRemoverState {}
 
-class TrackFromPlaylistRemoverLoadingInProgress
+final class TrackFromPlaylistRemoverLoadingInProgress
     extends TrackFromPlaylistRemoverState {}
 
-class TrackFromPlaylistRemoverSuccess extends TrackFromPlaylistRemoverState {}
+final class TrackFromPlaylistRemoverSuccess
+    extends TrackFromPlaylistRemoverState {}
 
-class TrackFromPlaylistRemoverError extends TrackFromPlaylistRemoverState {}
+final class TrackFromPlaylistRemoverError
+    extends TrackFromPlaylistRemoverState {}

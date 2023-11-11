@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/foundation.dart';
 
 import '../../logger.dart';
 import '../../models/playlist.dart';
@@ -19,7 +20,7 @@ class TracksSearchCubit extends Cubit<TracksSearchState> {
     required this.tracksRepository,
     required this.playlistsRepository,
     required this.connectivityStatusRepository,
-  }) : super(TracksSearchInitial());
+  }) : super(const TracksSearchInitial());
 
   Playlist get openedPlaylist => playlistsRepository.openedPlaylist;
 
@@ -31,7 +32,7 @@ class TracksSearchCubit extends Cubit<TracksSearchState> {
     lastSearch = query;
 
     if (query.isEmpty) {
-      emit(TracksSearchInitial());
+      emit(const TracksSearchInitial());
       return;
     }
 
@@ -54,7 +55,7 @@ class TracksSearchCubit extends Cubit<TracksSearchState> {
         emit(TracksSearchSuccess(query, tracksRepository.searchItems));
       }
     } catch (e) {
-      emit(TracksSearchError());
+      emit(const TracksSearchError());
       logger.e('Error searching tracks: $e');
     }
   }

@@ -18,11 +18,11 @@ class PlaylistEditorBloc extends Bloc<PlaylistEditorEvent, PlaylistEditState> {
     required this.playilstsRepository,
     required this.playlistId,
   }) : super(PlayilstEditInitial()) {
-    on<PlaylistEditorStarted>(_onPlaylistEditEvent);
-    on<PlaylistEditorSaved>(_onPlaylistSaveEvent);
+    on<PlaylistEditorStarted>(_onPlaylistEditorStarted);
+    on<PlaylistEditorSaved>(_onPlaylistEditorSaved);
   }
 
-  FutureOr<void> _onPlaylistEditEvent(
+  FutureOr<void> _onPlaylistEditorStarted(
     PlaylistEditorStarted event,
     Emitter<PlaylistEditState> emit,
   ) async {
@@ -41,7 +41,7 @@ class PlaylistEditorBloc extends Bloc<PlaylistEditorEvent, PlaylistEditState> {
     );
   }
 
-  FutureOr<void> _onPlaylistSaveEvent(
+  FutureOr<void> _onPlaylistEditorSaved(
     PlaylistEditorSaved event,
     Emitter<PlaylistEditState> emit,
   ) async {

@@ -1,9 +1,10 @@
 part of 'tracks_bloc.dart';
 
+@immutable
 class TracksState {
   final List<Track> tracks;
 
-  TracksState(this.tracks);
+  const TracksState(this.tracks);
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -27,18 +28,18 @@ class TracksState {
       TracksState.fromMap(json.decode(source) as Map<String, dynamic>);
 }
 
-class TracksEmptyState extends TracksState {
+final class TracksEmptyState extends TracksState {
   TracksEmptyState() : super([]);
 }
 
-class TracksLoadInProgress extends TracksState {
+final class TracksLoadInProgress extends TracksState {
   TracksLoadInProgress() : super([]);
 }
 
-class TracksLoadSuccess extends TracksState {
-  TracksLoadSuccess(super.tracks);
+final class TracksLoadSuccess extends TracksState {
+  const TracksLoadSuccess(super.tracks);
 }
 
-class TracksError extends TracksState {
+final class TracksError extends TracksState {
   TracksError() : super([]);
 }

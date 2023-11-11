@@ -1,23 +1,24 @@
 part of 'player_bloc.dart';
 
+@immutable
 sealed class PlayerState {
   final Track currentTrack;
 
-  PlayerState(this.currentTrack);
+  const PlayerState(this.currentTrack);
 }
 
 final class PlayerInitial extends PlayerState {
-  PlayerInitial(super.currentTrack);
+  const PlayerInitial(super.currentTrack);
 }
 
 final class PlayerPlay extends PlayerState {
-  PlayerPlay(super.currentTrack);
+  const PlayerPlay(super.currentTrack);
 }
 
 final class PlayerPause extends PlayerState {
-  PlayerPause(super.currentTrack);
+  const PlayerPause(super.currentTrack);
 }
 
 final class PlayerResume extends PlayerState {
-  PlayerResume(super.currentTrack);
+  const PlayerResume(super.currentTrack);
 }

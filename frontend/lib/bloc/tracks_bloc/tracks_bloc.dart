@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 
 import '../../logger.dart';
@@ -21,7 +22,7 @@ class TracksBloc extends HydratedBloc<TracksEvent, TracksState> {
     required this.tracksRepository,
     required this.connectivityStatusRepository,
   }) : super(TracksLoadInProgress()) {
-    on<TracksLoadStarted>(_onLoadingEvent);
+    on<TracksLoadStarted>(_onTracksLoadStarted);
     on<TracksUpdated>(_onTracksUpdated);
 
     connectivityStatusRepository.statusSubject.listen((status) {
@@ -33,7 +34,7 @@ class TracksBloc extends HydratedBloc<TracksEvent, TracksState> {
     tracksRepository.tracksSubject.listen((value) => add(TracksUpdated(value)));
   }
 
-  FutureOr<void> _onLoadingEvent(
+  FutureOr<void> _onTracksLoadStarted(
     TracksLoadStarted event,
     Emitter<TracksState> emit,
   ) async {

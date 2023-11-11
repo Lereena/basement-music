@@ -13,15 +13,13 @@ class CacherBloc extends Bloc<CacherEvent, CacherState> {
   final CacheRepository cacheRepository;
 
   CacherBloc(this.cacheRepository) : super(const CacherInitial()) {
-    on<CacheValidateEvent>(_onCacheValidateEvent);
-    on<CacheTrackEvent>(_onCacheTrackEvent);
-    on<CacheTracksEvent>(_onCacheTracksEvent);
-
-    add(CacheValidateEvent());
+    on<CacherValidateStarted>(_onValidateStarted);
+    on<CacherTrackCachingStarted>(_onTrackCachingStarted);
+    on<CacherTracksCachingStarted>(_onTracksCachingStarted);
   }
 
-  FutureOr<void> _onCacheValidateEvent(
-    CacheValidateEvent event,
+  FutureOr<void> _onValidateStarted(
+    CacherValidateStarted event,
     Emitter<CacherState> emit,
   ) async {
     if (kIsWeb) {
@@ -38,8 +36,8 @@ class CacherBloc extends Bloc<CacherEvent, CacherState> {
     }
   }
 
-  FutureOr<void> _onCacheTrackEvent(
-    CacheTrackEvent event,
+  FutureOr<void> _onTrackCachingStarted(
+    CacherTrackCachingStarted event,
     Emitter<CacherState> emit,
   ) async {
     emit(
@@ -49,8 +47,8 @@ class CacherBloc extends Bloc<CacherEvent, CacherState> {
     emit(await _cacheOneTrack(event.trackId));
   }
 
-  FutureOr<void> _onCacheTracksEvent(
-    CacheTracksEvent event,
+  FutureOr<void> _onTracksCachingStarted(
+    CacherTracksCachingStarted event,
     Emitter<CacherState> emit,
   ) async {
     emit(

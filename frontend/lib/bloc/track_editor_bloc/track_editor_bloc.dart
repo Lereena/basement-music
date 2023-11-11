@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 
 import '../../logger.dart';
 import '../../repositories/tracks_repository.dart';
@@ -13,10 +14,10 @@ class TrackEditorBloc extends Bloc<TrackEditorEvent, TrackEditorState> {
   final TracksRepository _tracksRepository;
 
   TrackEditorBloc(this._tracksRepository) : super(TrackEditorInitial()) {
-    on<TrackEditorEdited>(_onLoadingEvent);
+    on<TrackEditorEdited>(_onTrackEditorEdited);
   }
 
-  FutureOr<void> _onLoadingEvent(
+  FutureOr<void> _onTrackEditorEdited(
     TrackEditorEdited event,
     Emitter<TrackEditorState> emit,
   ) async {

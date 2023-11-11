@@ -1,29 +1,30 @@
 part of 'tracks_search_cubit.dart';
 
+@immutable
 sealed class TracksSearchState {
   final String searchQuery;
 
-  TracksSearchState(this.searchQuery);
+  const TracksSearchState(this.searchQuery);
 }
 
 final class TracksSearchInitial extends TracksSearchState {
-  TracksSearchInitial() : super('');
+  const TracksSearchInitial() : super('');
 }
 
 final class TracksSearchLoadInProgress extends TracksSearchState {
-  TracksSearchLoadInProgress(super.searchQuery);
+  const TracksSearchLoadInProgress(super.searchQuery);
 }
 
 final class TracksSearchSuccess extends TracksSearchState {
   final List<Track> tracks;
 
-  TracksSearchSuccess(super.searchQuery, this.tracks);
+  const TracksSearchSuccess(super.searchQuery, this.tracks);
 }
 
 final class TracksSearchSuccessEmpty extends TracksSearchState {
-  TracksSearchSuccessEmpty(super.searchQuery);
+  const TracksSearchSuccessEmpty(super.searchQuery);
 }
 
 final class TracksSearchError extends TracksSearchState {
-  TracksSearchError() : super('');
+  const TracksSearchError() : super('');
 }

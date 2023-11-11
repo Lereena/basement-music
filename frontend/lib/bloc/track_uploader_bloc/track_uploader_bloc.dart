@@ -16,26 +16,26 @@ class TracksUploaderBloc
 
   TracksUploaderBloc(this._tracksRepository)
       : super(TracksUploaderFilesSelectStart()) {
-    on<TracksUploaderStarted>(_onStarted);
-    on<TracksUploaderFilesSelected>(_onFilesSelected);
-    on<TracksUploaderFilesApproved>(_onFilesApproved);
+    on<TracksUploaderStarted>(_onTracksUploaderStarted);
+    on<TracksUploaderFilesSelected>(_onTracksUploaderFilesSelected);
+    on<TracksUploaderFilesApproved>(_onTracksUploaderFilesApproved);
   }
 
-  FutureOr<void> _onStarted(
+  FutureOr<void> _onTracksUploaderStarted(
     TracksUploaderStarted event,
     Emitter<TracksUploaderState> emit,
   ) {
     emit(TracksUploaderFilesSelectStart());
   }
 
-  FutureOr<void> _onFilesSelected(
+  FutureOr<void> _onTracksUploaderFilesSelected(
     TracksUploaderFilesSelected event,
     Emitter<TracksUploaderState> emit,
   ) {
     emit(TracksUploaderFilesSelectSuccess(files: event.files));
   }
 
-  FutureOr<void> _onFilesApproved(
+  FutureOr<void> _onTracksUploaderFilesApproved(
     TracksUploaderFilesApproved event,
     Emitter<TracksUploaderState> emit,
   ) async {

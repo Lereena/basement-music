@@ -1,28 +1,29 @@
 part of 'cacher_bloc.dart';
 
-abstract class CacherEvent extends Equatable {
+@immutable
+sealed class CacherEvent extends Equatable {
   const CacherEvent();
 
   @override
   List<Object> get props => [];
 }
 
-class CacheValidateEvent extends CacherEvent {}
+final class CacherValidateStarted extends CacherEvent {}
 
-class CacheTrackEvent extends CacherEvent {
+final class CacherTrackCachingStarted extends CacherEvent {
   final String trackId;
 
-  const CacheTrackEvent(this.trackId);
+  const CacherTrackCachingStarted(this.trackId);
 }
 
-class CacheTracksEvent extends CacherEvent {
+final class CacherTracksCachingStarted extends CacherEvent {
   final List<String> trackIds;
 
-  const CacheTracksEvent(this.trackIds);
+  const CacherTracksCachingStarted(this.trackIds);
 }
 
-class UncacheTracksEvent extends CacherEvent {
+final class CacherUncacheTracksStarted extends CacherEvent {
   final List<String> trackIds;
 
-  const UncacheTracksEvent(this.trackIds);
+  const CacherUncacheTracksStarted(this.trackIds);
 }

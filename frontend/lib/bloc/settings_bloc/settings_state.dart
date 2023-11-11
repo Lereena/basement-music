@@ -1,5 +1,6 @@
 part of 'settings_bloc.dart';
 
+@immutable
 class SettingsState extends Equatable {
   final bool repeat;
   final bool shuffle;

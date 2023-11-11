@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 
 import '../../logger.dart';
@@ -21,11 +22,13 @@ class PlaylistsBloc extends HydratedBloc<PlaylistsEvent, PlaylistsState> {
     required this.playlistsRepository,
     required this.connectivityStatusRepository,
   }) : super(PlaylistsLoadingState()) {
-    on<PlaylistsLoadEvent>(_onLoadingEvent);
+    on<PlaylistsLoadStarted>(_onPlaylistsLoadStarted);
     on<PlaylistsUpdated>(_onPlaylistsUpdated);
 
     connectivityStatusRepository.statusSubject.listen((status) {
-      if (status is ConnectivityStatusHasConnection) add(PlaylistsLoadEvent());
+      if (status is ConnectivityStatusHasConnection) {
+        add(PlaylistsLoadStarted());
+      }
     });
 
     playlistsRepository.playlistsSubject
@@ -34,8 +37,8 @@ class PlaylistsBloc extends HydratedBloc<PlaylistsEvent, PlaylistsState> {
 
   Playlist get openedPlaylist => playlistsRepository.openedPlaylist;
 
-  FutureOr<void> _onLoadingEvent(
-    PlaylistsLoadEvent event,
+  FutureOr<void> _onPlaylistsLoadStarted(
+    PlaylistsLoadStarted event,
     Emitter<PlaylistsState> emit,
   ) async {
     final oldState = state;

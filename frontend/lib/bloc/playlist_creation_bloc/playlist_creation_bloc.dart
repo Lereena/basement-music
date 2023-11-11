@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:meta/meta.dart';
 
 import '../../logger.dart';
 import '../../repositories/playlists_repository.dart';
@@ -14,10 +15,10 @@ class PlaylistCreationBloc
 
   PlaylistCreationBloc(this._playlistsRepository)
       : super(PlaylistCreationInitial()) {
-    on<PlaylistCreationLoadingStarted>(_onLoadingCreatePlaylistEvent);
+    on<PlaylistCreationLoadingStarted>(_onPlaylistCreationLoadingStarted);
   }
 
-  FutureOr<void> _onLoadingCreatePlaylistEvent(
+  FutureOr<void> _onPlaylistCreationLoadingStarted(
     PlaylistCreationLoadingStarted event,
     Emitter<PlaylistCreationState> emit,
   ) async {

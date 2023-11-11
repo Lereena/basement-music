@@ -24,7 +24,7 @@ class PlaylistCacheAction extends StatelessWidget {
               CacheButton(
                 onCache: () async {
                   if (await _showCacheDialog(context)) {
-                    cacherBloc.add(CacheTracksEvent(trackIds));
+                    cacherBloc.add(CacherTracksCachingStarted(trackIds));
                   }
                 },
               ),
@@ -39,7 +39,7 @@ class PlaylistCacheAction extends StatelessWidget {
           return UncacheButton(
             onUncache: () async {
               if (await _showUncacheDialog(context)) {
-                cacherBloc.add(UncacheTracksEvent(trackIds));
+                cacherBloc.add(CacherUncacheTracksStarted(trackIds));
               }
             },
           );
@@ -48,7 +48,7 @@ class PlaylistCacheAction extends StatelessWidget {
         return CacheButton(
           onCache: () async {
             if (await _showCacheDialog(context)) {
-              cacherBloc.add(CacheTracksEvent(trackIds));
+              cacherBloc.add(CacherTracksCachingStarted(trackIds));
             }
           },
         );

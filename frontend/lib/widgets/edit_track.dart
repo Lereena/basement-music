@@ -98,10 +98,10 @@ class _EditTrackState extends State<EditTrack> {
                     onEditingComplete: () =>
                         context.read<TrackEditorBloc>().add(
                               TrackEditorEdited(
-                                widget.track.id,
-                                _titleController.text,
-                                _artistController.text,
-                                widget.track.cover,
+                                trackId: widget.track.id,
+                                title: _titleController.text,
+                                artist: _artistController.text,
+                                cover: widget.track.cover,
                               ),
                             ),
                   ),
@@ -125,10 +125,10 @@ class _EditTrackState extends State<EditTrack> {
     if (isValid == true) {
       context.read<TrackEditorBloc>().add(
             TrackEditorEdited(
-              widget.track.id,
-              _titleController.text,
-              _artistController.text,
-              widget.track.cover,
+              trackId: widget.track.id,
+              title: _titleController.text,
+              artist: _artistController.text,
+              cover: widget.track.cover,
             ),
           );
     }

@@ -17,7 +17,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
 
   PlaylistBloc({required this.playlistsRepository, required this.playlistId})
       : super(PlaylistInitial()) {
-    on<PlaylistLoadStarted>(_onLoadingEvent);
+    on<PlaylistLoadStarted>(_onLoadingStarted);
     on<PlaylistUpdated>(_onPlaylistUpdated);
 
     playlistsRepository.playlistsSubject.listen(
@@ -29,7 +29,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
     );
   }
 
-  FutureOr<void> _onLoadingEvent(
+  FutureOr<void> _onLoadingStarted(
     PlaylistLoadStarted event,
     Emitter<PlaylistState> emit,
   ) async {

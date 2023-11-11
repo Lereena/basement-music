@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 
 import '../../../models/playlist.dart';
 import '../../logger.dart';
@@ -25,10 +26,12 @@ class TrackToPlaylistAdderBloc
             playlistsRepository.items,
           ),
         ) {
-    on<TrackToPlaylistAdderPlaylistSelected>(_onPlaylistChoosen);
+    on<TrackToPlaylistAdderPlaylistSelected>(
+      _onTrackToPlaylistAdderPlaylistSelected,
+    );
   }
 
-  FutureOr<void> _onPlaylistChoosen(
+  FutureOr<void> _onTrackToPlaylistAdderPlaylistSelected(
     TrackToPlaylistAdderPlaylistSelected event,
     Emitter<TrackToPlaylistAdderState> emit,
   ) async {

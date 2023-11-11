@@ -19,7 +19,7 @@ class LibraryPage extends StatelessWidget {
         playlistsRepository: context.read<PlaylistsRepository>(),
         connectivityStatusRepository:
             context.read<ConnectivityStatusRepository>(),
-      )..add(PlaylistsLoadEvent()),
+      )..add(PlaylistsLoadStarted()),
       child: const _LibraryPage(),
     );
   }
@@ -95,7 +95,7 @@ class _LibraryPage extends StatelessWidget {
     final playilstsBloc = context.read<PlaylistsBloc>();
 
     final newState = playilstsBloc.stream.first;
-    playilstsBloc.add(PlaylistsLoadEvent());
+    playilstsBloc.add(PlaylistsLoadStarted());
     await newState;
   }
 }

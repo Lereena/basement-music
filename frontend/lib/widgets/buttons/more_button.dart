@@ -60,7 +60,7 @@ class MoreButton extends StatelessWidget {
                 SimpleDialogOption(
                   child: const Text('Cache track'),
                   onPressed: () {
-                    cacherBloc.add(CacheTrackEvent(track.id));
+                    cacherBloc.add(CacherTrackCachingStarted(track.id));
                     Navigator.pop(context);
                   },
                 ),

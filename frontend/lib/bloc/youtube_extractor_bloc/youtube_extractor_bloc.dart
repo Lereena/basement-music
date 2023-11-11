@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 
 import '../../logger.dart';
 import '../../models/video_info.dart';
@@ -18,12 +19,12 @@ class YoutubeExtractorBloc
 
   YoutubeExtractorBloc(this._tracksRepository)
       : super(const YoutubeExtractorLinkInputInProgress()) {
-    on<YoutubeExtractorStarted>(_onStarted);
-    on<YoutubeExtractorLinkEntered>(_onLinkEntered);
-    on<YoutubeExtractorInfoChecked>(_onInfoChecked);
+    on<YoutubeExtractorStarted>(_onYoutubeExtractorStarted);
+    on<YoutubeExtractorLinkEntered>(_onYoutubeExtractorLinkEntered);
+    on<YoutubeExtractorInfoChecked>(_onYoutubeExtractorInfoChecked);
   }
 
-  FutureOr<void> _onStarted(
+  FutureOr<void> _onYoutubeExtractorStarted(
     YoutubeExtractorStarted event,
     Emitter<YoutubeExtractorState> emit,
   ) {
@@ -31,7 +32,7 @@ class YoutubeExtractorBloc
     currentUploadingLink = event.url ?? '';
   }
 
-  FutureOr<void> _onLinkEntered(
+  FutureOr<void> _onYoutubeExtractorLinkEntered(
     YoutubeExtractorLinkEntered event,
     Emitter<YoutubeExtractorState> emit,
   ) async {
@@ -61,7 +62,7 @@ class YoutubeExtractorBloc
     );
   }
 
-  FutureOr<void> _onInfoChecked(
+  FutureOr<void> _onYoutubeExtractorInfoChecked(
     YoutubeExtractorInfoChecked event,
     Emitter<YoutubeExtractorState> emit,
   ) async {

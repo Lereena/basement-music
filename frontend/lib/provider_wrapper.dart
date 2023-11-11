@@ -48,7 +48,10 @@ class ProviderWrapper extends StatelessWidget {
                 ConnectivityStatusCubit(connectivityStatusRepository),
           ),
           BlocProvider(create: (_) => TrackProgressCubit(audioHandler)),
-          BlocProvider(create: (_) => CacherBloc(cacheRepository)),
+          BlocProvider(
+            create: (_) =>
+                CacherBloc(cacheRepository)..add(CacherValidateStarted()),
+          ),
           BlocProvider(
             create: (_) =>
                 SettingsBloc(settingsRepository)..add(RetrieveSettings()),

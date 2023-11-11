@@ -1,22 +1,23 @@
 part of 'track_editor_bloc.dart';
 
-abstract class TrackEditorEvent extends Equatable {
+@immutable
+sealed class TrackEditorEvent extends Equatable {
   const TrackEditorEvent();
 
   @override
   List<Object> get props => [];
 }
 
-class TrackEditorEdited extends TrackEditorEvent {
+final class TrackEditorEdited extends TrackEditorEvent {
   final String trackId;
   final String title;
   final String artist;
   final String cover;
 
-  const TrackEditorEdited(
-    this.trackId,
-    this.title,
-    this.artist,
-    this.cover,
-  );
+  const TrackEditorEdited({
+    required this.trackId,
+    required this.title,
+    required this.artist,
+    required this.cover,
+  });
 }

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:flutter/foundation.dart';
 
 import '../../logger.dart';
 import '../../repositories/repositories.dart';
@@ -21,10 +22,10 @@ class TrackFromPlaylistRemoverBloc
     required this.trackId,
     required this.playlistId,
   }) : super(RemoveFromPlaylistInitial()) {
-    on<TrackFromPlaylistRemoverConfirmed>(_onConfirmationReceived);
+    on<TrackFromPlaylistRemoverConfirmed>(_onTrackFromPlaylistRemoverConfirmed);
   }
 
-  FutureOr<void> _onConfirmationReceived(
+  FutureOr<void> _onTrackFromPlaylistRemoverConfirmed(
     TrackFromPlaylistRemoverConfirmed event,
     Emitter<TrackFromPlaylistRemoverState> emit,
   ) async {

@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:meta/meta.dart';
 
 import '../../audio_player_handler.dart';
 import '../../models/playlist.dart';
@@ -31,12 +32,12 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
     required this.settingsRepository,
     required this.cacheRepository,
   }) : super(PlayerInitial(Track.empty())) {
-    on<PlayerPlayStarted>(_onPlayEvent);
-    on<PlayerPaused>(_onPauseEvent);
-    on<PlayerResumed>(_onResumeEvent);
-    on<PlayerNextStarted>(_onNextEvent);
-    on<PlayerPreviousStarted>(_onPreviousEvent);
-    on<PlayerTracksUpdated>(_onPlayerTracksUpdated);
+    on<PlayerPlayStarted>(_onPlayStarted);
+    on<PlayerPaused>(_onPaused);
+    on<PlayerResumed>(_onResumed);
+    on<PlayerNextStarted>(_onNextStarted);
+    on<PlayerPreviousStarted>(_onPreviousStarted);
+    on<PlayerTracksUpdated>(_onTracksUpdated);
 
     audioHandler.onPlayerComplete.listen((event) => add(PlayerNextStarted()));
 
@@ -53,7 +54,7 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
     );
   }
 
-  FutureOr<void> _onPlayEvent(
+  FutureOr<void> _onPlayStarted(
     PlayerPlayStarted event,
     Emitter<PlayerState> emit,
   ) async {
@@ -66,7 +67,7 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
     emit(PlayerPlay(event.track));
   }
 
-  FutureOr<void> _onPauseEvent(
+  FutureOr<void> _onPaused(
     PlayerPaused event,
     Emitter<PlayerState> emit,
   ) {
@@ -74,7 +75,7 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
     emit(PlayerPause(currentTrack));
   }
 
-  FutureOr<void> _onResumeEvent(
+  FutureOr<void> _onResumed(
     PlayerResumed event,
     Emitter<PlayerState> emit,
   ) {
@@ -82,7 +83,7 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
     emit(PlayerResume(currentTrack));
   }
 
-  FutureOr<void> _onNextEvent(
+  FutureOr<void> _onNextStarted(
     PlayerNextStarted event,
     Emitter<PlayerState> emit,
   ) async {
@@ -117,7 +118,7 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
     emit(PlayerPlay(currentTrack));
   }
 
-  FutureOr<void> _onPreviousEvent(
+  FutureOr<void> _onPreviousStarted(
     PlayerPreviousStarted event,
     Emitter<PlayerState> emit,
   ) async {
@@ -152,7 +153,7 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
     emit(PlayerPlay(currentTrack));
   }
 
-  FutureOr<void> _onPlayerTracksUpdated(
+  FutureOr<void> _onTracksUpdated(
     PlayerTracksUpdated event,
     Emitter<PlayerState> emit,
   ) {

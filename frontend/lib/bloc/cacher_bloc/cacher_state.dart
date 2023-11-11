@@ -1,5 +1,6 @@
 part of 'cacher_bloc.dart';
 
+@immutable
 class CacherState extends Equatable {
   final Set<String> caching;
   final Set<String> cached;

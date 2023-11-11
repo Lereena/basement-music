@@ -1,5 +1,6 @@
 part of 'playlist_creation_bloc.dart';
 
+@immutable
 sealed class PlaylistCreationState {}
 
 final class PlaylistCreationInitial extends PlaylistCreationState {}
