@@ -10,30 +10,30 @@ import '../../repositories/playlists_repository.dart';
 part 'playlist_edit_event.dart';
 part 'playlist_edit_state.dart';
 
-class PlaylistEditBloc extends Bloc<PlaylistEditEvent, PlaylistEditState> {
+class PlaylistEditorBloc extends Bloc<PlaylistEditorEvent, PlaylistEditState> {
   final PlaylistsRepository playilstsRepository;
   final String playlistId;
 
-  PlaylistEditBloc({
+  PlaylistEditorBloc({
     required this.playilstsRepository,
     required this.playlistId,
   }) : super(PlayilstEditInitial()) {
-    on<PlaylistEditingStartEvent>(_onPlaylistEditEvent);
-    on<PlaylistSaveEvent>(_onPlaylistSaveEvent);
+    on<PlaylistEditorStarted>(_onPlaylistEditEvent);
+    on<PlaylistEditorSaved>(_onPlaylistSaveEvent);
   }
 
   FutureOr<void> _onPlaylistEditEvent(
-    PlaylistEditingStartEvent event,
+    PlaylistEditorStarted event,
     Emitter<PlaylistEditState> emit,
   ) async {
-    emit(PlaylistLoading());
+    emit(PlaylistEditorSaveInProgress());
 
     final playlist = await playilstsRepository.getPlaylist(
       playlistId,
     );
 
     emit(
-      PlaylistEditing(
+      PlaylistEditorEditInProgress(
         playlistId: playlist.id,
         title: playlist.title,
         tracks: playlist.tracks,
@@ -42,10 +42,10 @@ class PlaylistEditBloc extends Bloc<PlaylistEditEvent, PlaylistEditState> {
   }
 
   FutureOr<void> _onPlaylistSaveEvent(
-    PlaylistSaveEvent event,
+    PlaylistEditorSaved event,
     Emitter<PlaylistEditState> emit,
   ) async {
-    emit(PlaylistLoading());
+    emit(PlaylistEditorSaveInProgress());
 
     try {
       await playilstsRepository.editPlaylist(
@@ -54,9 +54,9 @@ class PlaylistEditBloc extends Bloc<PlaylistEditEvent, PlaylistEditState> {
         tracksIds: event.tracksIds,
       );
 
-      emit(PlaylistSavingSuccess());
+      emit(PlaylistEditorSuccess());
     } catch (e) {
-      emit(PlaylistSavingFail());
+      emit(PlaylistEditorFail());
       logger.e('Error editing track: $e');
     }
   }

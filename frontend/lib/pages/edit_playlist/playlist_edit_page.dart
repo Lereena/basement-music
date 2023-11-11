@@ -23,10 +23,10 @@ class PlaylistEditPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => PlaylistEditBloc(
+      create: (_) => PlaylistEditorBloc(
         playilstsRepository: context.read<PlaylistsRepository>(),
         playlistId: playlistId,
-      )..add(PlaylistEditingStartEvent()),
+      )..add(PlaylistEditorStarted()),
       child: const _PlaylistEdit(),
     );
   }
@@ -53,9 +53,9 @@ class _PlaylistEditState extends State<_PlaylistEdit> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<PlaylistEditBloc, PlaylistEditState>(
+    return BlocBuilder<PlaylistEditorBloc, PlaylistEditState>(
       builder: (context, state) {
-        if (state is PlaylistEditing) {
+        if (state is PlaylistEditorEditInProgress) {
           _data = _PlaylistData(title: state.title, tracks: state.tracks);
 
           return Scaffold(
@@ -70,14 +70,14 @@ class _PlaylistEditState extends State<_PlaylistEdit> {
           );
         }
 
-        if (state is PlaylistLoading) {
+        if (state is PlaylistEditorSaveInProgress) {
           return const Center(child: CircularProgressIndicator());
         }
 
-        if (state is PlaylistSavingSuccess || state is PlaylistSavingFail) {
+        if (state is PlaylistEditorSuccess || state is PlaylistEditorFail) {
           return ResultPage(
             result:
-                state is PlaylistSavingSuccess ? Result.success : Result.fail,
+                state is PlaylistEditorSuccess ? Result.success : Result.fail,
             successMessage: 'Playlist was successfully edited',
             failMessage: 'Playlist editing is failed, please try again later',
             buttonText: 'OK',
@@ -95,8 +95,8 @@ class _PlaylistEditState extends State<_PlaylistEdit> {
 
     if (!isValid) return;
 
-    context.read<PlaylistEditBloc>().add(
-          PlaylistSaveEvent(
+    context.read<PlaylistEditorBloc>().add(
+          PlaylistEditorSaved(
             title: _data.title ?? '',
             tracksIds: _data.tracks?.map((e) => e.id).toList() ?? [],
           ),

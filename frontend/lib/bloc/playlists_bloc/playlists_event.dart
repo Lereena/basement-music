@@ -1,3 +1,11 @@
-abstract class PlaylistsEvent {}
+part of 'playlists_bloc.dart';
 
-class PlaylistsLoadEvent extends PlaylistsEvent {}
+sealed class PlaylistsEvent {}
+
+final class PlaylistsLoadEvent extends PlaylistsEvent {}
+
+final class PlaylistsUpdated extends PlaylistsEvent {
+  final List<Playlist> playlists;
+
+  PlaylistsUpdated(this.playlists);
+}

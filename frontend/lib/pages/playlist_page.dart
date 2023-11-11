@@ -20,7 +20,7 @@ class PlaylistPage extends StatelessWidget {
       create: (_) => PlaylistBloc(
         playlistsRepository: context.read<PlaylistsRepository>(),
         playlistId: playlistId,
-      )..add(PlaylistLoadEvent()),
+      )..add(PlaylistLoadStarted()),
       child: _PlaylistPage(playlistId: playlistId),
     );
   }
@@ -47,11 +47,11 @@ class _PlaylistPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<PlaylistBloc, PlaylistState>(
       builder: (context, state) {
-        if (state is PlaylistLoadingState) {
+        if (state is PlaylistLoadInProgress) {
           return const Center(child: CircularProgressIndicator());
         }
 
-        if (state is PlaylistEmptyState) {
+        if (state is PlaylistLoadedEmpty) {
           return Scaffold(
             appBar: BasementAppBar(
               title: state.title,
@@ -66,7 +66,7 @@ class _PlaylistPage extends StatelessWidget {
           );
         }
 
-        if (state is PlaylistLoadedState) {
+        if (state is PlaylistLoaded) {
           return Scaffold(
             appBar: BasementAppBar(
               title: state.playlist.title,

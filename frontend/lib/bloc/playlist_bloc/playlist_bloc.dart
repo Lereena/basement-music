@@ -17,32 +17,42 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
 
   PlaylistBloc({required this.playlistsRepository, required this.playlistId})
       : super(PlaylistInitial()) {
-    on<PlaylistLoadEvent>(_onLoadingEvent);
+    on<PlaylistLoadStarted>(_onLoadingEvent);
+    on<PlaylistUpdated>(_onPlaylistUpdated);
 
     playlistsRepository.playlistsSubject.listen(
-      (value) => PlaylistLoadedState(
-        value.firstWhere((element) => element.id == playlistId),
+      (value) => add(
+        PlaylistUpdated(
+          value.firstWhere((element) => element.id == playlistId),
+        ),
       ),
     );
   }
 
   FutureOr<void> _onLoadingEvent(
-    PlaylistLoadEvent event,
+    PlaylistLoadStarted event,
     Emitter<PlaylistState> emit,
   ) async {
-    emit(PlaylistLoadingState());
+    emit(PlaylistLoadInProgress());
 
     try {
       final playlist = await playlistsRepository.getPlaylist(playlistId);
 
       if (playlist.tracks.isEmpty) {
-        emit(PlaylistEmptyState(title: playlist.title));
+        emit(PlaylistLoadedEmpty(title: playlist.title));
       } else {
-        emit(PlaylistLoadedState(playlist));
+        emit(PlaylistLoaded(playlist));
       }
     } catch (e) {
-      emit(PlaylistErrorState());
+      emit(PlaylistError());
       logger.e('Error loading playlist: $e');
     }
+  }
+
+  FutureOr<void> _onPlaylistUpdated(
+    PlaylistUpdated event,
+    Emitter<PlaylistState> emit,
+  ) {
+    emit(PlaylistLoaded(event.playlist));
   }
 }

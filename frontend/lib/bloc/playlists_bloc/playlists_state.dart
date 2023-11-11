@@ -1,6 +1,4 @@
-import 'dart:convert';
-
-import '../../models/playlist.dart';
+part of 'playlists_bloc.dart';
 
 class PlaylistsState {
   final List<Playlist> playlists;
