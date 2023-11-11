@@ -1,11 +1,10 @@
-import 'dart:convert';
+part of 'tracks_bloc.dart';
 
-import '../../models/track.dart';
-
+@immutable
 class TracksState {
   final List<Track> tracks;
 
-  TracksState(this.tracks);
+  const TracksState(this.tracks);
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -29,18 +28,18 @@ class TracksState {
       TracksState.fromMap(json.decode(source) as Map<String, dynamic>);
 }
 
-class TracksEmptyState extends TracksState {
+final class TracksEmptyState extends TracksState {
   TracksEmptyState() : super([]);
 }
 
-class TracksLoadingState extends TracksState {
-  TracksLoadingState() : super([]);
+final class TracksLoadInProgress extends TracksState {
+  TracksLoadInProgress() : super([]);
 }
 
-class TracksLoadedState extends TracksState {
-  TracksLoadedState(super.tracks);
+final class TracksLoadSuccess extends TracksState {
+  const TracksLoadSuccess(super.tracks);
 }
 
-class TracksErrorState extends TracksState {
-  TracksErrorState() : super([]);
+final class TracksError extends TracksState {
+  TracksError() : super([]);
 }

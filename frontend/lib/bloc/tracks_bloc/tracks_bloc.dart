@@ -1,51 +1,76 @@
 import 'dart:async';
+import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 
 import '../../logger.dart';
-import '../../repositories/tracks_repository.dart';
-import 'tracks_event.dart';
-import 'tracks_state.dart';
+import '../../models/track.dart';
+import '../../repositories/repositories.dart';
+import '../connectivity_status_bloc/connectivity_status_cubit.dart';
+
+part 'tracks_event.dart';
+part 'tracks_state.dart';
 
 const _tracksInfoKey = 'tracksInfo';
 
 class TracksBloc extends HydratedBloc<TracksEvent, TracksState> {
-  final TracksRepository _tracksRepository;
+  final TracksRepository tracksRepository;
+  final ConnectivityStatusRepository connectivityStatusRepository;
 
-  TracksBloc(this._tracksRepository) : super(TracksLoadingState()) {
-    on<TracksLoadEvent>(_onLoadingEvent);
+  TracksBloc({
+    required this.tracksRepository,
+    required this.connectivityStatusRepository,
+  }) : super(TracksLoadInProgress()) {
+    on<TracksLoadStarted>(_onTracksLoadStarted);
+    on<TracksUpdated>(_onTracksUpdated);
+
+    connectivityStatusRepository.statusSubject.listen((status) {
+      if (status is ConnectivityStatusHasConnection) {
+        add(TracksLoadStarted());
+      }
+    });
+
+    tracksRepository.tracksSubject.listen((value) => add(TracksUpdated(value)));
   }
 
-  FutureOr<void> _onLoadingEvent(
-    TracksLoadEvent event,
+  FutureOr<void> _onTracksLoadStarted(
+    TracksLoadStarted event,
     Emitter<TracksState> emit,
   ) async {
     final oldState = state;
-    emit(TracksLoadingState());
+    emit(TracksLoadInProgress());
 
     try {
-      await _tracksRepository.getAllTracks();
+      await tracksRepository.getAllTracks();
 
-      if (_tracksRepository.items.isEmpty) {
+      if (tracksRepository.items.isEmpty) {
         emit(TracksEmptyState());
       } else {
-        emit(TracksLoadedState(_tracksRepository.items));
+        emit(TracksLoadSuccess(tracksRepository.items));
       }
     } catch (e) {
       if (oldState.tracks.isNotEmpty) {
-        emit(TracksLoadedState(oldState.tracks));
+        emit(TracksLoadSuccess(oldState.tracks));
       } else {
-        emit(TracksErrorState());
+        emit(TracksError());
       }
       logger.e('Error loading tracks: $e');
     }
+  }
+
+  FutureOr<void> _onTracksUpdated(
+    TracksUpdated event,
+    Emitter<TracksState> emit,
+  ) {
+    emit(TracksLoadSuccess(event.tracks));
   }
 
   @override
   TracksState? fromJson(Map<String, dynamic> json) {
     final state = TracksState.fromJson(json[_tracksInfoKey] as String);
     if (state.tracks.isNotEmpty) {
-      return TracksLoadedState(state.tracks);
+      return TracksLoadSuccess(state.tracks);
     }
     return null;
   }

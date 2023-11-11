@@ -4,126 +4,133 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sizer/sizer.dart';
 
-import '../bloc/edit_track_bloc/edit_track_bloc.dart';
+import '../bloc/track_editor_bloc/track_editor_bloc.dart';
 import '../models/track.dart';
+import '../repositories/tracks_repository.dart';
+import 'dialogs/dialog.dart';
 
 class EditTrack extends StatefulWidget {
   final Track track;
 
-  const EditTrack({
-    super.key,
-    required this.track,
-  });
+  const EditTrack._({required this.track});
+
+  static Future<void> show({
+    required BuildContext context,
+    required Track track,
+  }) =>
+      showDialog(
+        context: context,
+        builder: (_) => BlocProvider(
+          create: (_) => TrackEditorBloc(context.read<TracksRepository>()),
+          child: CustomDialog(
+            height: min(30.w, 400),
+            child: EditTrack._(
+              track: track,
+            ),
+          ),
+        ),
+      );
 
   @override
   State<EditTrack> createState() => _EditTrackState();
 }
 
 class _EditTrackState extends State<EditTrack> {
-  late final editTrackBloc = context.read<EditTrackBloc>();
+  final _formKey = GlobalKey<FormState>();
 
-  final titleController = TextEditingController();
-  final artistController = TextEditingController();
-  final titleFocusNode = FocusNode();
-  final artistFocusNode = FocusNode();
+  late final _titleController = TextEditingController(text: widget.track.title);
+  late final _artistController =
+      TextEditingController(text: widget.track.artist);
 
-  @override
-  void initState() {
-    super.initState();
-    editTrackBloc.add(GetInputEvent());
-
-    titleController.text = widget.track.title;
-    artistController.text = widget.track.artist;
-    artistFocusNode.requestFocus();
-
-    titleController.addListener(_removeError);
-    artistController.addListener(_removeError);
-  }
-
-  void _removeError() {
-    if (editTrackBloc.state is InputErrorState) {
-      editTrackBloc.add(GetInputEvent());
-    }
-  }
+  final _titleFocusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: BlocBuilder<EditTrackBloc, EditTrackState>(
+      child: BlocBuilder<TrackEditorBloc, TrackEditorState>(
         builder: (context, state) {
-          if (state is WaitingEditingState) {
+          if (state is TrackEditorLoadInProgress) {
             return const CircularProgressIndicator();
           }
 
-          if (state is EditedState) {
+          if (state is TrackEditorSuccess) {
             return const Padding(
               padding: EdgeInsets.all(8.0),
               child: Text('Track was successfully edited'),
             );
           }
 
-          if (state is EditingErrorState) {
+          if (state is TrackEditorError) {
             return const Padding(
               padding: EdgeInsets.all(8.0),
               child: Text('Track was not edited, please try again later'),
             );
           }
 
-          return SizedBox(
-            width: min(60.w, 400),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text(
-                  'Edit track info',
-                  style: TextStyle(fontSize: 24),
-                ),
-                const SizedBox(height: 20),
-                TextField(
-                  decoration: const InputDecoration(label: Text('Artist')),
-                  focusNode: artistFocusNode,
-                  controller: artistController,
-                  onSubmitted: (_) => titleFocusNode.requestFocus(),
-                ),
-                const SizedBox(height: 8),
-                TextField(
-                  decoration: const InputDecoration(label: Text('Title')),
-                  focusNode: titleFocusNode,
-                  controller: titleController,
-                  onSubmitted: (_) => editTrackBloc.add(
-                    LoadingEvent(
-                      widget.track.id,
-                      titleController.text,
-                      artistController.text,
-                      widget.track.cover,
-                    ),
+          return Form(
+            key: _formKey,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    'Edit track info',
+                    style: TextStyle(fontSize: 24),
                   ),
-                ),
-                if (state is InputErrorState)
-                  Text(
-                    state.errorText,
-                    style: const TextStyle(color: Colors.red),
-                  )
-                else
-                  const SizedBox(height: 20),
-                const SizedBox(height: 20),
-                FilledButton(
-                  child: const Text('Submit'),
-                  onPressed: () => editTrackBloc.add(
-                    LoadingEvent(
-                      widget.track.id,
-                      titleController.text,
-                      artistController.text,
-                      widget.track.cover,
-                    ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    decoration: const InputDecoration(label: Text('Artist')),
+                    controller: _artistController,
+                    autofocus: true,
+                    onEditingComplete: () => _titleFocusNode.requestFocus(),
+                    validator: (value) =>
+                        value?.isNotEmpty != true ? 'Field is required' : null,
                   ),
-                ),
-              ],
+                  const SizedBox(height: 8),
+                  TextFormField(
+                    decoration: const InputDecoration(label: Text('Title')),
+                    focusNode: _titleFocusNode,
+                    controller: _titleController,
+                    validator: (value) =>
+                        value?.isNotEmpty != true ? 'Field is required' : null,
+                    onEditingComplete: () =>
+                        context.read<TrackEditorBloc>().add(
+                              TrackEditorEdited(
+                                trackId: widget.track.id,
+                                title: _titleController.text,
+                                artist: _artistController.text,
+                                cover: widget.track.cover,
+                              ),
+                            ),
+                  ),
+                  const SizedBox(height: 16),
+                  FilledButton(
+                    onPressed: _onSave,
+                    child: const Text('Submit'),
+                  ),
+                ],
+              ),
             ),
           );
         },
       ),
     );
+  }
+
+  void _onSave() {
+    final isValid = _formKey.currentState?.validate();
+
+    if (isValid == true) {
+      context.read<TrackEditorBloc>().add(
+            TrackEditorEdited(
+              trackId: widget.track.id,
+              title: _titleController.text,
+              artist: _artistController.text,
+              cover: widget.track.cover,
+            ),
+          );
+    }
   }
 }

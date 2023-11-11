@@ -3,21 +3,31 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../bloc/playlists_bloc/playlists_bloc.dart';
-import '../bloc/playlists_bloc/playlists_event.dart';
-import '../bloc/playlists_bloc/playlists_state.dart';
+import '../repositories/repositories.dart';
 import '../routing/routes.dart';
 import '../widgets/app_bar.dart';
 import '../widgets/create_playlist.dart';
 import '../widgets/playlist_card.dart';
 
-class LibraryPage extends StatefulWidget {
+class LibraryPage extends StatelessWidget {
   const LibraryPage({super.key});
 
   @override
-  State<LibraryPage> createState() => _LibraryPageState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => PlaylistsBloc(
+        playlistsRepository: context.read<PlaylistsRepository>(),
+        connectivityStatusRepository:
+            context.read<ConnectivityStatusRepository>(),
+      )..add(PlaylistsLoadStarted()),
+      child: const _LibraryPage(),
+    );
+  }
 }
 
-class _LibraryPageState extends State<LibraryPage> {
+class _LibraryPage extends StatelessWidget {
+  const _LibraryPage();
+
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
@@ -85,7 +95,7 @@ class _LibraryPageState extends State<LibraryPage> {
     final playilstsBloc = context.read<PlaylistsBloc>();
 
     final newState = playilstsBloc.stream.first;
-    playilstsBloc.add(PlaylistsLoadEvent());
+    playilstsBloc.add(PlaylistsLoadStarted());
     await newState;
   }
 }

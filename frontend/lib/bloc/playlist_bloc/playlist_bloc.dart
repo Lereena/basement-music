@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
 import '../../logger.dart';
@@ -11,39 +12,47 @@ part 'playlist_event.dart';
 part 'playlist_state.dart';
 
 class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
-  final PlaylistsRepository _playlistsRepository;
+  final PlaylistsRepository playlistsRepository;
+  final String playlistId;
 
-  PlaylistBloc(this._playlistsRepository) : super(PlaylistInitial()) {
-    on<PlaylistLoadEvent>(_onLoadingEvent);
-    on<PlaylistsUpdatedEvent>(_onUpdatedEvent);
+  PlaylistBloc({required this.playlistsRepository, required this.playlistId})
+      : super(PlaylistInitial()) {
+    on<PlaylistLoadStarted>(_onLoadingStarted);
+    on<PlaylistUpdated>(_onPlaylistUpdated);
+
+    playlistsRepository.playlistsSubject.listen(
+      (value) => add(
+        PlaylistUpdated(
+          value.firstWhere((element) => element.id == playlistId),
+        ),
+      ),
+    );
   }
 
-  FutureOr<void> _onLoadingEvent(
-    PlaylistLoadEvent event,
+  FutureOr<void> _onLoadingStarted(
+    PlaylistLoadStarted event,
     Emitter<PlaylistState> emit,
   ) async {
-    emit(PlaylistLoadingState());
+    emit(PlaylistLoadInProgress());
 
     try {
-      final playlist = await _playlistsRepository.getPlaylist(event.playlistId);
+      final playlist = await playlistsRepository.getPlaylist(playlistId);
 
       if (playlist.tracks.isEmpty) {
-        emit(PlaylistEmptyState(title: playlist.title));
+        emit(PlaylistLoadedEmpty(title: playlist.title));
       } else {
-        emit(PlaylistLoadedState(playlist));
+        emit(PlaylistLoaded(playlist));
       }
     } catch (e) {
-      emit(PlaylistErrorState());
+      emit(PlaylistError());
       logger.e('Error loading playlist: $e');
     }
   }
 
-  FutureOr<void> _onUpdatedEvent(
-    PlaylistsUpdatedEvent event,
+  FutureOr<void> _onPlaylistUpdated(
+    PlaylistUpdated event,
     Emitter<PlaylistState> emit,
-  ) async {
-    if (state is! PlaylistLoadedState) return;
-
-    add(PlaylistLoadEvent((state as PlaylistLoadedState).playlist.id));
+  ) {
+    emit(PlaylistLoaded(event.playlist));
   }
 }

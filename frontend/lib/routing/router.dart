@@ -35,7 +35,7 @@ class AppRouter {
             routes: [
               GoRoute(
                 path: RouteName.tracks,
-                pageBuilder: (_, __) => NoTransitionPage(
+                pageBuilder: (_, __) => const NoTransitionPage(
                   child: TracksPage(),
                 ),
               ),
@@ -95,13 +95,13 @@ class AppRouter {
                   GoRoute(
                     path: 'fromDevice',
                     pageBuilder: (_, __) => const NoTransitionPage(
-                      child: UploadFromDevice(),
+                      child: UploadFromDevicePage(),
                     ),
                   ),
                   GoRoute(
                     path: 'fromYoutube',
                     pageBuilder: (_, __) => const NoTransitionPage(
-                      child: ExtractFromYoutube(),
+                      child: ExtractFromYoutubePage(),
                     ),
                   ),
                 ],

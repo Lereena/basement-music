@@ -1,11 +1,12 @@
-abstract class PlaylistCreationState {
-  const PlaylistCreationState();
-}
+part of 'playlist_creation_bloc.dart';
 
-class GettingInputState extends PlaylistCreationState {}
+@immutable
+sealed class PlaylistCreationState {}
 
-class WaitingCreationState extends PlaylistCreationState {}
+final class PlaylistCreationInitial extends PlaylistCreationState {}
 
-class CreatedState extends PlaylistCreationState {}
+final class PlaylistCreationInProgress extends PlaylistCreationState {}
 
-class CreationErrorState extends PlaylistCreationState {}
+final class PlaylistCreationSuccess extends PlaylistCreationState {}
+
+final class PlaylistCreationError extends PlaylistCreationState {}

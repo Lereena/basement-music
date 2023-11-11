@@ -1,94 +1,103 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:meta/meta.dart';
 
-import '../../app.dart';
 import '../../audio_player_handler.dart';
 import '../../models/playlist.dart';
 import '../../models/track.dart';
-import '../../repositories/tracks_repository.dart';
-import '../cacher_bloc/cacher_bloc.dart';
-import '../connectivity_status_bloc/connectivity_status_cubit.dart';
-import '../settings_bloc/settings_bloc.dart';
-import 'player_event.dart';
-import 'player_state.dart';
+import '../../repositories/repositories.dart';
+
+part 'player_event.dart';
+part 'player_state.dart';
 
 final random = Random();
 
-class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
+class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
+  final ConnectivityStatusRepository connectivityStatusRepository;
   final TracksRepository tracksRepository;
-  final SettingsBloc settingsBloc;
-  final CacherBloc cacherBloc;
-  final ConnectivityStatusCubit connectivityStatusCubit;
-
-  final AudioPlayerHandler _audioHandler = audioHandler;
-  late final onPositionChanged = _audioHandler.onPositionChanged;
+  final AudioPlayerHandler audioHandler;
+  final SettingsRepository settingsRepository;
+  final CacheRepository cacheRepository;
 
   Playlist _currentPlaylist = Playlist.empty();
   Track currentTrack = Track.empty();
 
   PlayerBloc({
+    required this.connectivityStatusRepository,
     required this.tracksRepository,
-    required this.settingsBloc,
-    required this.cacherBloc,
-    required this.connectivityStatusCubit,
-  }) : super(InitialPlayerState(Track.empty())) {
-    on<PlayEvent>(_onPlayEvent);
-    on<PauseEvent>(_onPauseEvent);
-    on<ResumeEvent>(_onResumeEvent);
-    on<NextEvent>(_onNextEvent);
-    on<PreviousEvent>(_onPreviousEvent);
+    required this.audioHandler,
+    required this.settingsRepository,
+    required this.cacheRepository,
+  }) : super(PlayerInitial(Track.empty())) {
+    on<PlayerPlayStarted>(_onPlayStarted);
+    on<PlayerPaused>(_onPaused);
+    on<PlayerResumed>(_onResumed);
+    on<PlayerNextStarted>(_onNextStarted);
+    on<PlayerPreviousStarted>(_onPreviousStarted);
+    on<PlayerTracksUpdated>(_onTracksUpdated);
 
-    _audioHandler.onPlayerComplete.listen((event) {
-      add(NextEvent());
-    });
+    audioHandler.onPlayerComplete.listen((event) => add(PlayerNextStarted()));
+
+    tracksRepository.tracksSubject.listen(
+      (tracks) {
+        if (currentTrack != Track.empty()) {
+          add(
+            PlayerTracksUpdated(
+              tracks.firstWhere((track) => track.id == currentTrack.id),
+            ),
+          );
+        }
+      },
+    );
   }
 
-  FutureOr<void> _onPlayEvent(
-    PlayEvent event,
-    Emitter<AudioPlayerState> emit,
+  FutureOr<void> _onPlayStarted(
+    PlayerPlayStarted event,
+    Emitter<PlayerState> emit,
   ) async {
     _currentPlaylist =
         event.playlist ?? Playlist.anonymous(tracksRepository.items);
 
     currentTrack = event.track;
-    _audioHandler.addMediaItem(currentTrack);
-    _audioHandler.play();
-    emit(PlayingPlayerState(event.track));
+    audioHandler.addMediaItem(currentTrack);
+    audioHandler.play();
+    emit(PlayerPlay(event.track));
   }
 
-  FutureOr<void> _onPauseEvent(
-    PauseEvent event,
-    Emitter<AudioPlayerState> emit,
+  FutureOr<void> _onPaused(
+    PlayerPaused event,
+    Emitter<PlayerState> emit,
   ) {
-    _audioHandler.pause();
-    emit(PausedPlayerState(currentTrack));
+    audioHandler.pause();
+    emit(PlayerPause(currentTrack));
   }
 
-  FutureOr<void> _onResumeEvent(
-    ResumeEvent event,
-    Emitter<AudioPlayerState> emit,
+  FutureOr<void> _onResumed(
+    PlayerResumed event,
+    Emitter<PlayerState> emit,
   ) {
-    _audioHandler.resume();
-    emit(ResumedPlayerState(currentTrack));
+    audioHandler.resume();
+    emit(PlayerResume(currentTrack));
   }
 
-  FutureOr<void> _onNextEvent(
-    NextEvent event,
-    Emitter<AudioPlayerState> emit,
+  FutureOr<void> _onNextStarted(
+    PlayerNextStarted event,
+    Emitter<PlayerState> emit,
   ) async {
-    _audioHandler.pause();
+    audioHandler.pause();
 
     final availableTracks = _getAvailableTracks();
 
     if (availableTracks.isEmpty) {
-      emit(PausedPlayerState(currentTrack));
+      emit(PlayerPause(currentTrack));
       return;
     }
 
-    if (!settingsBloc.state.repeat) {
-      if (settingsBloc.state.shuffle) {
+    if (!settingsRepository.repeat) {
+      if (settingsRepository.shuffle) {
         final nextTrackPosition = _shuffledNext(
           availableTracks,
           availableTracks.indexOf(currentTrack),
@@ -103,27 +112,27 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
       }
     }
 
-    _audioHandler.addMediaItem(currentTrack);
-    _audioHandler.play();
+    audioHandler.addMediaItem(currentTrack);
+    audioHandler.play();
 
-    emit(PlayingPlayerState(currentTrack));
+    emit(PlayerPlay(currentTrack));
   }
 
-  FutureOr<void> _onPreviousEvent(
-    PreviousEvent event,
-    Emitter<AudioPlayerState> emit,
+  FutureOr<void> _onPreviousStarted(
+    PlayerPreviousStarted event,
+    Emitter<PlayerState> emit,
   ) async {
-    _audioHandler.pause();
+    audioHandler.pause();
 
     final availableTracks = _getAvailableTracks();
 
     if (availableTracks.isEmpty) {
-      emit(PausedPlayerState(currentTrack));
+      emit(PlayerPause(currentTrack));
       return;
     }
 
-    if (!settingsBloc.state.repeat) {
-      if (settingsBloc.state.shuffle) {
+    if (!settingsRepository.repeat) {
+      if (settingsRepository.shuffle) {
         final nextTrackPosition = _shuffledNext(
           availableTracks,
           availableTracks.indexOf(currentTrack),
@@ -138,18 +147,33 @@ class PlayerBloc extends Bloc<PlayerEvent, AudioPlayerState> {
       }
     }
 
-    _audioHandler.addMediaItem(currentTrack);
-    _audioHandler.play();
+    audioHandler.addMediaItem(currentTrack);
+    audioHandler.play();
 
-    emit(PlayingPlayerState(currentTrack));
+    emit(PlayerPlay(currentTrack));
+  }
+
+  FutureOr<void> _onTracksUpdated(
+    PlayerTracksUpdated event,
+    Emitter<PlayerState> emit,
+  ) {
+    currentTrack = event.track;
+    audioHandler.addMediaItem(event.track);
+
+    if (state is PlayerPlay) {
+      emit(PlayerPlay(currentTrack));
+    } else {
+      emit(PlayerPause(currentTrack));
+    }
   }
 
   List<Track> _getAvailableTracks() {
-    final isOffline = connectivityStatusCubit.state is NoConnectionState;
+    final isOffline = connectivityStatusRepository.statusSubject.value ==
+        ConnectivityResult.none;
 
     return isOffline
         ? _currentPlaylist.tracks
-            .where((track) => cacherBloc.state.cached.contains(track.id))
+            .where((track) => cacheRepository.items.contains(track.id))
             .toList()
         : _currentPlaylist.tracks;
   }

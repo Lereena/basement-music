@@ -2,46 +2,50 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../bloc/remove_from_playlist_bloc/remove_from_playlist_cubit.dart';
+import '../../bloc/track_from_playlist_remover_bloc/track_from_playlist_remover_bloc.dart';
 import '../../models/playlist.dart';
 import '../../models/track.dart';
+import '../../repositories/repositories.dart';
 import '../icons/error_icon.dart';
 import '../icons/success_icon.dart';
 import 'dialog.dart';
 
-class RemoveFromPlaylistDialog extends StatefulWidget {
+class RemoveFromPlaylistDialog extends StatelessWidget {
   final Track track;
-  final Playlist? playlist;
+  final Playlist playlist;
 
-  const RemoveFromPlaylistDialog({
-    super.key,
+  const RemoveFromPlaylistDialog._({
     required this.track,
     required this.playlist,
   });
 
-  @override
-  State<RemoveFromPlaylistDialog> createState() =>
-      _RemoveFromPlaylistDialogState();
-}
-
-class _RemoveFromPlaylistDialogState extends State<RemoveFromPlaylistDialog> {
-  late final _removeFromPlaylistBloc = context.read<RemoveFromPlaylistBloc>();
-
-  @override
-  void initState() {
-    super.initState();
-    _removeFromPlaylistBloc
-        .add(TrackChoosen(widget.track.id, widget.playlist?.id));
-  }
+  static Future<void> show({
+    required BuildContext context,
+    required Track track,
+    required Playlist playlist,
+  }) =>
+      showDialog(
+        context: context,
+        builder: (_) => BlocProvider(
+          create: (_) => TrackFromPlaylistRemoverBloc(
+            tracksRepository: context.read<TracksRepository>(),
+            playlistsRepository: context.read<PlaylistsRepository>(),
+            trackId: track.id,
+            playlistId: playlist.id,
+          ),
+          child: RemoveFromPlaylistDialog._(track: track, playlist: playlist),
+        ),
+      );
 
   @override
   Widget build(BuildContext context) {
     return CustomDialog(
       width: SizerUtil.deviceType == DeviceType.mobile ? 80.w : 40.w,
       height: SizerUtil.deviceType == DeviceType.mobile ? 50.h : 30.h,
-      child: BlocBuilder<RemoveFromPlaylistBloc, RemoveFromPlaylistState>(
+      child: BlocBuilder<TrackFromPlaylistRemoverBloc,
+          TrackFromPlaylistRemoverState>(
         builder: (context, state) {
-          if (state is RemoveFromPlaylistWaitingConfirmation) {
+          if (state is RemoveFromPlaylistInitial) {
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -50,27 +54,27 @@ class _RemoveFromPlaylistDialogState extends State<RemoveFromPlaylistDialog> {
                     text: 'Do you want to remove ',
                     children: [
                       TextSpan(
-                        text: widget.track.title,
+                        text: track.title,
                         style: const TextStyle(fontStyle: FontStyle.italic),
                       ),
                       const TextSpan(text: ' from '),
-                      if (widget.playlist != null)
-                        TextSpan(
-                          text: '${widget.playlist?.title} ',
-                          style: const TextStyle(fontStyle: FontStyle.italic),
-                        ),
+                      TextSpan(
+                        text: '${playlist.title} ',
+                        style: const TextStyle(fontStyle: FontStyle.italic),
+                      ),
                       const TextSpan(text: 'playlist?'),
                     ],
                   ),
                 ),
                 const SizedBox(height: 15),
                 ElevatedButton(
-                  onPressed: () => _removeFromPlaylistBloc.add(
-                    ConfirmationReceived(
-                      widget.track.id,
-                      widget.playlist?.id,
-                    ),
-                  ),
+                  onPressed: () =>
+                      context.read<TrackFromPlaylistRemoverBloc>().add(
+                            TrackFromPlaylistRemoverConfirmed(
+                              track.id,
+                              playlist.id,
+                            ),
+                          ),
                   child: const Text('Remove'),
                 ),
                 const SizedBox(height: 15),
@@ -82,11 +86,11 @@ class _RemoveFromPlaylistDialogState extends State<RemoveFromPlaylistDialog> {
             );
           }
 
-          if (state is RemoveFromPlaylistLoading) {
+          if (state is TrackFromPlaylistRemoverLoadingInProgress) {
             return const CircularProgressIndicator();
           }
 
-          if (state is RemoveFromPlaylistRemoved) {
+          if (state is TrackFromPlaylistRemoverSuccess) {
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -97,7 +101,7 @@ class _RemoveFromPlaylistDialogState extends State<RemoveFromPlaylistDialog> {
             );
           }
 
-          if (state is RemoveFromPlaylistError) {
+          if (state is TrackFromPlaylistRemoverError) {
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

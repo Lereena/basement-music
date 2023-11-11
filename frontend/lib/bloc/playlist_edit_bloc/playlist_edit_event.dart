@@ -1,21 +1,15 @@
 part of 'playlist_edit_bloc.dart';
 
 @immutable
-sealed class PlaylistEditEvent {}
+sealed class PlaylistEditorEvent {}
 
-final class PlaylistEditingStartEvent extends PlaylistEditEvent {
-  final String playlistId;
+final class PlaylistEditorStarted extends PlaylistEditorEvent {}
 
-  PlaylistEditingStartEvent(this.playlistId);
-}
-
-final class PlaylistSaveEvent extends PlaylistEditEvent {
-  final String playlistId;
+final class PlaylistEditorSaved extends PlaylistEditorEvent {
   final String title;
   final List<String> tracksIds;
 
-  PlaylistSaveEvent({
-    required this.playlistId,
+  PlaylistEditorSaved({
     required this.title,
     required this.tracksIds,
   });

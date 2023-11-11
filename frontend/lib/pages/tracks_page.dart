@@ -3,13 +3,28 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bloc/connectivity_status_bloc/connectivity_status_cubit.dart';
 import '../bloc/tracks_bloc/tracks_bloc.dart';
-import '../bloc/tracks_bloc/tracks_event.dart';
-import '../bloc/tracks_bloc/tracks_state.dart';
 import '../models/track.dart';
+import '../repositories/repositories.dart';
 import '../widgets/app_bar.dart';
 import '../widgets/track_card.dart';
 
 class TracksPage extends StatelessWidget {
+  const TracksPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => TracksBloc(
+        tracksRepository: context.read<TracksRepository>(),
+        connectivityStatusRepository:
+            context.read<ConnectivityStatusRepository>(),
+      )..add(TracksLoadStarted()),
+      child: _TracksPage(),
+    );
+  }
+}
+
+class _TracksPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
@@ -23,7 +38,7 @@ class TracksPage extends StatelessWidget {
               children: [
                 BlocBuilder<TracksBloc, TracksState>(
                   builder: (context, state) {
-                    if (state is TracksLoadingState) {
+                    if (state is TracksLoadInProgress) {
                       return const Center(child: CircularProgressIndicator());
                     }
 
@@ -33,7 +48,7 @@ class TracksPage extends StatelessWidget {
                       );
                     }
 
-                    if (state is TracksLoadedState) {
+                    if (state is TracksLoadSuccess) {
                       return Expanded(
                         child: ListView.builder(
                           itemCount: state.tracks.length + 1,
@@ -45,8 +60,8 @@ class TracksPage extends StatelessWidget {
                               children: [
                                 TrackCard(
                                   track: state.tracks[index],
-                                  active:
-                                      connectivityStatus is HasConnectionState,
+                                  active: connectivityStatus
+                                      is ConnectivityStatusHasConnection,
                                 ),
                                 const Divider(height: 1),
                               ],
@@ -62,7 +77,7 @@ class TracksPage extends StatelessWidget {
                       );
                     }
 
-                    if (state is TracksErrorState) {
+                    if (state is TracksError) {
                       return const Center(
                         child: Text('Error loading tracks'),
                       );
@@ -83,7 +98,7 @@ class TracksPage extends StatelessWidget {
     final tracksBloc = context.read<TracksBloc>();
 
     final newState = tracksBloc.stream.first;
-    tracksBloc.add(TracksLoadEvent());
+    tracksBloc.add(TracksLoadStarted());
     await newState;
   }
 }

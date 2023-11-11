@@ -1,15 +1,11 @@
-import 'dart:math';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sizer/sizer.dart';
 
 import '../../bloc/cacher_bloc/cacher_bloc.dart';
 import '../../models/playlist.dart';
 import '../../models/track.dart';
 import '../dialogs/add_to_playlist_dialog.dart';
-import '../dialogs/dialog.dart';
 import '../dialogs/remove_from_playlist_dialog.dart';
 import '../edit_track.dart';
 
@@ -34,39 +30,27 @@ class MoreButton extends StatelessWidget {
                 child: const Text('Edit track info'),
                 onPressed: () {
                   Navigator.pop(context);
-                  showDialog(
-                    context: context,
-                    builder: (context) => CustomDialog(
-                      width: min(80.w, 600),
-                      child: EditTrack(track: track),
-                    ),
-                  );
+                  EditTrack.show(context: context, track: track);
                 },
               ),
               const Divider(),
               SimpleDialogOption(
                 child: const Text('Add to playlist'),
-                onPressed: () async {
+                onPressed: () {
                   Navigator.pop(context);
-                  await showDialog(
-                    context: context,
-                    builder: (context) =>
-                        AddToPlaylistDialog(trackId: track.id),
-                  );
+                  AddToPlaylistDialog.show(context: context, trackId: track.id);
                 },
               ),
               if (playlist != null) ...[
                 const Divider(),
                 SimpleDialogOption(
                   child: const Text('Remove from playlist'),
-                  onPressed: () async {
+                  onPressed: () {
                     Navigator.pop(context);
-                    await showDialog(
+                    RemoveFromPlaylistDialog.show(
                       context: context,
-                      builder: (context) => RemoveFromPlaylistDialog(
-                        track: track,
-                        playlist: playlist,
-                      ),
+                      track: track,
+                      playlist: playlist!,
                     );
                   },
                 ),
@@ -76,7 +60,7 @@ class MoreButton extends StatelessWidget {
                 SimpleDialogOption(
                   child: const Text('Cache track'),
                   onPressed: () {
-                    cacherBloc.add(CacheTrackEvent(track.id));
+                    cacherBloc.add(CacherTrackCachingStarted(track.id));
                     Navigator.pop(context);
                   },
                 ),

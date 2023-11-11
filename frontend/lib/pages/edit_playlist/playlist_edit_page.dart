@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../bloc/playlist_edit_bloc/playlist_edit_bloc.dart';
 import '../../models/track.dart';
+import '../../repositories/playlists_repository.dart';
 import '../../widgets/app_bar.dart';
 import '../upload/result_page.dart';
 
@@ -14,28 +15,34 @@ class _PlaylistData {
   _PlaylistData({this.title, this.tracks});
 }
 
-class PlaylistEditPage extends StatefulWidget {
+class PlaylistEditPage extends StatelessWidget {
   final String playlistId;
 
   const PlaylistEditPage({super.key, required this.playlistId});
 
   @override
-  State<PlaylistEditPage> createState() => _PlaylistEditPageState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => PlaylistEditorBloc(
+        playilstsRepository: context.read<PlaylistsRepository>(),
+        playlistId: playlistId,
+      )..add(PlaylistEditorStarted()),
+      child: const _PlaylistEdit(),
+    );
+  }
 }
 
-class _PlaylistEditPageState extends State<PlaylistEditPage> {
-  late final PlaylistEditBloc _playlistEditBloc =
-      context.read<PlaylistEditBloc>();
+class _PlaylistEdit extends StatefulWidget {
+  const _PlaylistEdit();
 
+  @override
+  State<_PlaylistEdit> createState() => _PlaylistEditState();
+}
+
+class _PlaylistEditState extends State<_PlaylistEdit> {
   _PlaylistData _data = _PlaylistData();
 
   final _formKey = GlobalKey<FormState>();
-
-  @override
-  void initState() {
-    super.initState();
-    _playlistEditBloc.add(PlaylistEditingStartEvent(widget.playlistId));
-  }
 
   late final _appBarActions = [
     IconButton(
@@ -46,9 +53,9 @@ class _PlaylistEditPageState extends State<PlaylistEditPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<PlaylistEditBloc, PlaylistEditState>(
+    return BlocBuilder<PlaylistEditorBloc, PlaylistEditState>(
       builder: (context, state) {
-        if (state is PlaylistEditing) {
+        if (state is PlaylistEditorEditInProgress) {
           _data = _PlaylistData(title: state.title, tracks: state.tracks);
 
           return Scaffold(
@@ -63,14 +70,14 @@ class _PlaylistEditPageState extends State<PlaylistEditPage> {
           );
         }
 
-        if (state is PlaylistLoading) {
+        if (state is PlaylistEditorSaveInProgress) {
           return const Center(child: CircularProgressIndicator());
         }
 
-        if (state is PlaylistSavingSuccess || state is PlaylistSavingFail) {
+        if (state is PlaylistEditorSuccess || state is PlaylistEditorFail) {
           return ResultPage(
             result:
-                state is PlaylistSavingSuccess ? Result.success : Result.fail,
+                state is PlaylistEditorSuccess ? Result.success : Result.fail,
             successMessage: 'Playlist was successfully edited',
             failMessage: 'Playlist editing is failed, please try again later',
             buttonText: 'OK',
@@ -88,13 +95,12 @@ class _PlaylistEditPageState extends State<PlaylistEditPage> {
 
     if (!isValid) return;
 
-    _playlistEditBloc.add(
-      PlaylistSaveEvent(
-        playlistId: widget.playlistId,
-        title: _data.title ?? '',
-        tracksIds: _data.tracks?.map((e) => e.id).toList() ?? [],
-      ),
-    );
+    context.read<PlaylistEditorBloc>().add(
+          PlaylistEditorSaved(
+            title: _data.title ?? '',
+            tracksIds: _data.tracks?.map((e) => e.id).toList() ?? [],
+          ),
+        );
   }
 }
 

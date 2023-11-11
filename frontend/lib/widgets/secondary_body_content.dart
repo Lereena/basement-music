@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sizer/sizer.dart';
 
 import '../bloc/player_bloc/player_bloc.dart';
-import '../bloc/player_bloc/player_state.dart';
 import '../bloc/track_progress_cubit/track_progress_cubit.dart';
 import '../models/track.dart';
 import 'controls/next_button.dart';
@@ -23,7 +22,7 @@ class SecondaryBodyContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final progress = context.watch<TrackProgressCubit>().state;
 
-    return BlocBuilder<PlayerBloc, AudioPlayerState>(
+    return BlocBuilder<PlayerBloc, PlayerState>(
       builder: (context, state) {
         if (state.currentTrack == Track.empty()) return const SizedBox.shrink();
 
@@ -73,11 +72,9 @@ class SecondaryBodyContent extends StatelessWidget {
                     ),
                     const Spacer(),
                     const PreviousButton(),
-                    if (state is PlayingPlayerState ||
-                        state is ResumedPlayerState)
+                    if (state is PlayerPlay || state is PlayerResume)
                       const PauseButton()
-                    else if (state is PausedPlayerState ||
-                        state is InitialPlayerState)
+                    else if (state is PlayerPause || state is PlayerInitial)
                       PlayButton(
                         track: track,
                         state: state,

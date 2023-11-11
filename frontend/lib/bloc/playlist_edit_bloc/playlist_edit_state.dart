@@ -5,20 +5,20 @@ sealed class PlaylistEditState {}
 
 final class PlayilstEditInitial extends PlaylistEditState {}
 
-final class PlaylistEditing extends PlaylistEditState {
+final class PlaylistEditorEditInProgress extends PlaylistEditState {
   final String playlistId;
   final String title;
   final List<Track> tracks;
 
-  PlaylistEditing({
+  PlaylistEditorEditInProgress({
     required this.playlistId,
     required this.title,
     required this.tracks,
   });
 }
 
-final class PlaylistLoading extends PlaylistEditState {}
+final class PlaylistEditorSaveInProgress extends PlaylistEditState {}
 
-final class PlaylistSavingSuccess extends PlaylistEditState {}
+final class PlaylistEditorSuccess extends PlaylistEditState {}
 
-final class PlaylistSavingFail extends PlaylistEditState {}
+final class PlaylistEditorFail extends PlaylistEditState {}

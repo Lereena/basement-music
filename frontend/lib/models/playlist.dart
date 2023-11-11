@@ -24,7 +24,7 @@ class Playlist extends Equatable {
   Map<String, dynamic> toJson() => _$PlaylistToJson(this);
 
   @override
-  List<Object> get props => [id];
+  List<Object> get props => [id, title, tracks];
 
   Playlist copyWith({
     String? title,

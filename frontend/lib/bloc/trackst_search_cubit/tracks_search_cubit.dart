@@ -1,31 +1,28 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/foundation.dart';
 
 import '../../logger.dart';
 import '../../models/playlist.dart';
 import '../../models/track.dart';
-import '../../repositories/tracks_repository.dart';
-import '../cacher_bloc/cacher_bloc.dart';
-import '../connectivity_status_bloc/connectivity_status_cubit.dart';
-import '../playlists_bloc/playlists_bloc.dart';
+import '../../repositories/repositories.dart';
 
 part 'tracks_search_state.dart';
 
 class TracksSearchCubit extends Cubit<TracksSearchState> {
   final TracksRepository tracksRepository;
-  final PlaylistsBloc playlistsBloc;
-  final CacherBloc cacherBloc;
-  final ConnectivityStatusCubit connectivityStatusCubit;
+  final PlaylistsRepository playlistsRepository;
+  final ConnectivityStatusRepository connectivityStatusRepository;
 
   TracksSearchCubit({
     required this.tracksRepository,
-    required this.playlistsBloc,
-    required this.cacherBloc,
-    required this.connectivityStatusCubit,
-  }) : super(TracksSearchInitial());
+    required this.playlistsRepository,
+    required this.connectivityStatusRepository,
+  }) : super(const TracksSearchInitial());
 
-  Playlist searchResultsPlaylist = Playlist.empty();
+  Playlist get openedPlaylist => playlistsRepository.openedPlaylist;
 
   String lastSearch = '';
 
@@ -35,30 +32,30 @@ class TracksSearchCubit extends Cubit<TracksSearchState> {
     lastSearch = query;
 
     if (query.isEmpty) {
-      emit(TracksSearchInitial());
+      emit(const TracksSearchInitial());
       return;
     }
 
-    emit(TracksSearchLoadingState(query));
+    emit(TracksSearchLoadInProgress(query));
 
     try {
-      if (connectivityStatusCubit.state is NoConnectionState) {
+      if (connectivityStatusRepository.statusSubject.value ==
+          ConnectivityResult.none) {
         tracksRepository.searchTracksOffline(query);
       } else {
         await tracksRepository.searchTracksOnline(query);
       }
 
       if (tracksRepository.searchItems.isEmpty) {
-        emit(TracksSearchEmptyState(query));
+        emit(TracksSearchSuccessEmpty(query));
       } else {
-        searchResultsPlaylist =
+        playlistsRepository.openedPlaylist =
             Playlist.anonymous(tracksRepository.searchItems);
-        playlistsBloc.openedPlaylist = searchResultsPlaylist;
 
-        emit(TracksSearchLoadedState(query, tracksRepository.searchItems));
+        emit(TracksSearchSuccess(query, tracksRepository.searchItems));
       }
     } catch (e) {
-      emit(TracksSearchErrorState());
+      emit(const TracksSearchError());
       logger.e('Error searching tracks: $e');
     }
   }

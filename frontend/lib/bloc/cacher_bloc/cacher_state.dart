@@ -1,5 +1,6 @@
 part of 'cacher_bloc.dart';
 
+@immutable
 class CacherState extends Equatable {
   final Set<String> caching;
   final Set<String> cached;
@@ -21,25 +22,6 @@ class CacherState extends Equatable {
   bool isCaching(List<String> trackIds) {
     return caching.containsAll(trackIds);
   }
-
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'cached': json.encode(cached.toList()),
-    };
-  }
-
-  factory CacherState.fromMap(Map<String, dynamic> map) {
-    return CacherState(
-      cached: (json.decode(map['cached'] as String) as List<dynamic>)
-          .map((e) => e as String)
-          .toSet(),
-    );
-  }
-
-  String toJson() => json.encode(toMap());
-
-  factory CacherState.fromJson(String source) =>
-      CacherState.fromMap(json.decode(source) as Map<String, dynamic>);
 
   CacherState copyWith({
     Set<String>? caching,

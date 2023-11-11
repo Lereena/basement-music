@@ -1,45 +1,35 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:meta/meta.dart';
 
 import '../../logger.dart';
 import '../../repositories/playlists_repository.dart';
-import '../playlists_bloc/playlists_bloc.dart';
-import '../playlists_bloc/playlists_event.dart';
-import 'playlist_creation_event.dart';
-import 'playlist_creation_state.dart';
+
+part 'playlist_creation_event.dart';
+part 'playlist_creation_state.dart';
 
 class PlaylistCreationBloc
     extends Bloc<PlaylistCreationEvent, PlaylistCreationState> {
   final PlaylistsRepository _playlistsRepository;
-  final PlaylistsBloc _playlistsBloc;
 
-  PlaylistCreationBloc(this._playlistsRepository, this._playlistsBloc)
-      : super(GettingInputState()) {
-    on<GetInputEvent>(_onGettingInputEvent);
-    on<LoadingEvent>(_onLoadingCreatePlaylistEvent);
+  PlaylistCreationBloc(this._playlistsRepository)
+      : super(PlaylistCreationInitial()) {
+    on<PlaylistCreationLoadingStarted>(_onPlaylistCreationLoadingStarted);
   }
 
-  FutureOr<void> _onGettingInputEvent(
-    GetInputEvent event,
+  FutureOr<void> _onPlaylistCreationLoadingStarted(
+    PlaylistCreationLoadingStarted event,
     Emitter<PlaylistCreationState> emit,
   ) async {
-    emit(GettingInputState());
-  }
-
-  FutureOr<void> _onLoadingCreatePlaylistEvent(
-    LoadingEvent event,
-    Emitter<PlaylistCreationState> emit,
-  ) async {
-    emit(WaitingCreationState());
+    emit(PlaylistCreationInProgress());
 
     try {
       await _playlistsRepository.createPlaylist(event.title);
 
-      emit(CreatedState());
-      _playlistsBloc.add(PlaylistAddedEvent());
+      emit(PlaylistCreationSuccess());
     } catch (e) {
-      emit(CreationErrorState());
+      emit(PlaylistCreationError());
       logger.e('Error creating playlist: $e');
     }
   }

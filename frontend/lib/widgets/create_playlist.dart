@@ -5,8 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sizer/sizer.dart';
 
 import '../bloc/playlist_creation_bloc/playlist_creation_bloc.dart';
-import '../bloc/playlist_creation_bloc/playlist_creation_event.dart';
-import '../bloc/playlist_creation_bloc/playlist_creation_state.dart';
+import '../repositories/playlists_repository.dart';
 import 'dialogs/dialog.dart';
 
 class CreatePlaylistDialog extends StatefulWidget {
@@ -17,7 +16,11 @@ class CreatePlaylistDialog extends StatefulWidget {
         builder: (_) => CustomDialog(
           height: min(30.h, 300),
           width: min(50.w, 450),
-          child: const CreatePlaylistDialog(),
+          child: BlocProvider(
+            create: (_) =>
+                PlaylistCreationBloc(context.read<PlaylistsRepository>()),
+            child: const CreatePlaylistDialog(),
+          ),
         ),
       );
 
@@ -26,17 +29,8 @@ class CreatePlaylistDialog extends StatefulWidget {
 }
 
 class _CreatePlaylistDialogState extends State<CreatePlaylistDialog> {
-  late final _createPlaylistBloc = context.read<PlaylistCreationBloc>();
-
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-
-    _createPlaylistBloc.add(GetInputEvent());
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,11 +39,11 @@ class _CreatePlaylistDialogState extends State<CreatePlaylistDialog> {
       child: Center(
         child: BlocBuilder<PlaylistCreationBloc, PlaylistCreationState>(
           builder: (context, state) {
-            if (state is WaitingCreationState) {
+            if (state is PlaylistCreationInProgress) {
               return const CircularProgressIndicator();
             }
 
-            if (state is CreatedState) {
+            if (state is PlaylistCreationSuccess) {
               Future.delayed(const Duration(seconds: 2), () {
                 if (mounted) {
                   Navigator.of(context).pop();
@@ -70,7 +64,7 @@ class _CreatePlaylistDialogState extends State<CreatePlaylistDialog> {
               );
             }
 
-            if (state is CreationErrorState) {
+            if (state is PlaylistCreationError) {
               return const Padding(
                 padding: EdgeInsets.all(8.0),
                 child: Text('Playlist was not created, please try again later'),
@@ -123,9 +117,9 @@ class _CreatePlaylistDialogState extends State<CreatePlaylistDialog> {
     final isValid = _formKey.currentState?.validate() == true;
 
     if (isValid) {
-      _createPlaylistBloc.add(
-        LoadingEvent(_titleController.text),
-      );
+      context.read<PlaylistCreationBloc>().add(
+            PlaylistCreationLoadingStarted(_titleController.text),
+          );
     }
   }
 }

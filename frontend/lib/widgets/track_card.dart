@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bloc/cacher_bloc/cacher_bloc.dart';
 import '../bloc/player_bloc/player_bloc.dart';
-import '../bloc/player_bloc/player_state.dart';
 import '../models/playlist.dart';
 import '../models/track.dart';
 import 'buttons/more_button.dart';
@@ -41,7 +40,7 @@ class TrackCard extends StatelessWidget {
           ignoring: !canBePlayed,
           child: Opacity(
             opacity: canBePlayed ? 1 : 0.5,
-            child: BlocBuilder<PlayerBloc, AudioPlayerState>(
+            child: BlocBuilder<PlayerBloc, PlayerState>(
               builder: (context, playerState) => ColoredBox(
                 color: playerBloc.currentTrack == track
                     ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
@@ -67,8 +66,8 @@ class TrackCard extends StatelessWidget {
                               ),
                             ),
                             if (playerBloc.currentTrack == track &&
-                                (playerState is PlayingPlayerState ||
-                                    playerState is ResumedPlayerState))
+                                (playerState is PlayerPlay ||
+                                    playerState is PlayerResume))
                               const PauseButton()
                             else
                               PlayButton(

@@ -1,23 +1,24 @@
-import '../../models/track.dart';
+part of 'player_bloc.dart';
 
-abstract class AudioPlayerState {
+@immutable
+sealed class PlayerState {
   final Track currentTrack;
 
-  AudioPlayerState(this.currentTrack);
+  const PlayerState(this.currentTrack);
 }
 
-class InitialPlayerState extends AudioPlayerState {
-  InitialPlayerState(super.currentTrack);
+final class PlayerInitial extends PlayerState {
+  const PlayerInitial(super.currentTrack);
 }
 
-class PlayingPlayerState extends AudioPlayerState {
-  PlayingPlayerState(super.currentTrack);
+final class PlayerPlay extends PlayerState {
+  const PlayerPlay(super.currentTrack);
 }
 
-class PausedPlayerState extends AudioPlayerState {
-  PausedPlayerState(super.currentTrack);
+final class PlayerPause extends PlayerState {
+  const PlayerPause(super.currentTrack);
 }
 
-class ResumedPlayerState extends AudioPlayerState {
-  ResumedPlayerState(super.currentTrack);
+final class PlayerResume extends PlayerState {
+  const PlayerResume(super.currentTrack);
 }

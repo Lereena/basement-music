@@ -2,41 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bloc/connectivity_status_bloc/connectivity_status_cubit.dart';
-import '../bloc/playlists_bloc/playlists_bloc.dart';
 import '../bloc/trackst_search_cubit/tracks_search_cubit.dart';
-import '../models/playlist.dart';
+import '../repositories/repositories.dart';
 import '../widgets/app_bar.dart';
 import '../widgets/search_field.dart';
 import '../widgets/track_card.dart';
 
-class SearchPage extends StatefulWidget {
+class SearchPage extends StatelessWidget {
   const SearchPage({super.key});
 
   @override
-  State<SearchPage> createState() => _SearchPageState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => TracksSearchCubit(
+        tracksRepository: context.read<TracksRepository>(),
+        playlistsRepository: context.read<PlaylistsRepository>(),
+        connectivityStatusRepository:
+            context.read<ConnectivityStatusRepository>(),
+      ),
+      child: const _SearchPage(),
+    );
+  }
 }
 
-class _SearchPageState extends State<SearchPage> {
-  final _controller = TextEditingController();
-  final _focusNode = FocusNode();
-
-  late final _searchCubit = context.read<TracksSearchCubit>();
-  late final _playlistsBloc = context.read<PlaylistsBloc>();
-
-  @override
-  void initState() {
-    super.initState();
-
-    _focusNode.requestFocus();
-    _controller.text = _searchCubit.state.searchQuery;
-    _playlistsBloc.openedPlaylist = _searchCubit.searchResultsPlaylist;
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _playlistsBloc.openedPlaylist = Playlist.empty();
-  }
+class _SearchPage extends StatelessWidget {
+  const _SearchPage();
 
   @override
   Widget build(BuildContext context) {
@@ -45,23 +35,23 @@ class _SearchPageState extends State<SearchPage> {
       body: Column(
         children: [
           SearchField(
-            controller: _controller,
-            focusNode: _focusNode,
-            onSearch: (query) => _searchCubit.onSearch(query),
+            autofocus: true,
+            onSearch: (query) =>
+                context.read<TracksSearchCubit>().onSearch(query),
           ),
           const SizedBox(height: 15),
           Expanded(
             child: BlocBuilder<TracksSearchCubit, TracksSearchState>(
               builder: (_, state) {
-                if (state is TracksSearchLoadingState) {
+                if (state is TracksSearchLoadInProgress) {
                   return const Center(child: CircularProgressIndicator());
                 }
 
-                if (state is TracksSearchEmptyState) {
+                if (state is TracksSearchSuccessEmpty) {
                   return const Center(child: Text('No tracks found'));
                 }
 
-                if (state is TracksSearchLoadedState) {
+                if (state is TracksSearchSuccess) {
                   return BlocBuilder<ConnectivityStatusCubit,
                       ConnectivityStatusState>(
                     builder: (_, connectivityState) {
@@ -71,15 +61,17 @@ class _SearchPageState extends State<SearchPage> {
                         itemCount: state.tracks.length,
                         itemBuilder: (_, index) => TrackCard(
                           track: state.tracks[index],
-                          openedPlaylist: _playlistsBloc.openedPlaylist,
-                          active: connectivityState is HasConnectionState,
+                          openedPlaylist:
+                              context.read<TracksSearchCubit>().openedPlaylist,
+                          active: connectivityState
+                              is ConnectivityStatusHasConnection,
                         ),
                       );
                     },
                   );
                 }
 
-                if (state is TracksSearchErrorState) {
+                if (state is TracksSearchError) {
                   return const Center(child: Text('Error searching tracks'));
                 }
 

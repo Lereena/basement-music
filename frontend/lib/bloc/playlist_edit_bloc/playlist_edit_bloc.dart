@@ -6,35 +6,34 @@ import 'package:meta/meta.dart';
 import '../../logger.dart';
 import '../../models/track.dart';
 import '../../repositories/playlists_repository.dart';
-import '../playlists_bloc/playlists_bloc.dart';
-import '../playlists_bloc/playlists_event.dart';
 
 part 'playlist_edit_event.dart';
 part 'playlist_edit_state.dart';
 
-class PlaylistEditBloc extends Bloc<PlaylistEditEvent, PlaylistEditState> {
-  final PlaylistsBloc _playlistsBloc;
-  final PlaylistsRepository _playilstsRepository;
+class PlaylistEditorBloc extends Bloc<PlaylistEditorEvent, PlaylistEditState> {
+  final PlaylistsRepository playilstsRepository;
+  final String playlistId;
 
-  PlaylistEditBloc(
-    this._playilstsRepository,
-    this._playlistsBloc,
-  ) : super(PlayilstEditInitial()) {
-    on<PlaylistEditingStartEvent>(_onPlaylistEditEvent);
-    on<PlaylistSaveEvent>(_onPlaylistSaveEvent);
+  PlaylistEditorBloc({
+    required this.playilstsRepository,
+    required this.playlistId,
+  }) : super(PlayilstEditInitial()) {
+    on<PlaylistEditorStarted>(_onPlaylistEditorStarted);
+    on<PlaylistEditorSaved>(_onPlaylistEditorSaved);
   }
 
-  FutureOr<void> _onPlaylistEditEvent(
-    PlaylistEditingStartEvent event,
+  FutureOr<void> _onPlaylistEditorStarted(
+    PlaylistEditorStarted event,
     Emitter<PlaylistEditState> emit,
   ) async {
-    emit(PlaylistLoading());
-    final playlist = await _playilstsRepository.getPlaylist(
-      event.playlistId,
+    emit(PlaylistEditorSaveInProgress());
+
+    final playlist = await playilstsRepository.getPlaylist(
+      playlistId,
     );
 
     emit(
-      PlaylistEditing(
+      PlaylistEditorEditInProgress(
         playlistId: playlist.id,
         title: playlist.title,
         tracks: playlist.tracks,
@@ -42,23 +41,22 @@ class PlaylistEditBloc extends Bloc<PlaylistEditEvent, PlaylistEditState> {
     );
   }
 
-  FutureOr<void> _onPlaylistSaveEvent(
-    PlaylistSaveEvent event,
+  FutureOr<void> _onPlaylistEditorSaved(
+    PlaylistEditorSaved event,
     Emitter<PlaylistEditState> emit,
   ) async {
-    emit(PlaylistLoading());
+    emit(PlaylistEditorSaveInProgress());
 
     try {
-      await _playilstsRepository.editPlaylist(
-        id: event.playlistId,
+      await playilstsRepository.editPlaylist(
+        id: playlistId,
         title: event.title,
         tracksIds: event.tracksIds,
       );
 
-      emit(PlaylistSavingSuccess());
-      _playlistsBloc.add(PlaylistsLoadEvent());
+      emit(PlaylistEditorSuccess());
     } catch (e) {
-      emit(PlaylistSavingFail());
+      emit(PlaylistEditorFail());
       logger.e('Error editing track: $e');
     }
   }

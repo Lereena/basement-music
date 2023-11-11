@@ -1,11 +1,10 @@
-import 'dart:convert';
+part of 'playlists_bloc.dart';
 
-import '../../models/playlist.dart';
-
+@immutable
 class PlaylistsState {
   final List<Playlist> playlists;
 
-  PlaylistsState(this.playlists);
+  const PlaylistsState(this.playlists);
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -29,18 +28,18 @@ class PlaylistsState {
       PlaylistsState.fromMap(json.decode(source) as Map<String, dynamic>);
 }
 
-class PlaylistsEmptyState extends PlaylistsState {
+final class PlaylistsEmptyState extends PlaylistsState {
   PlaylistsEmptyState() : super([]);
 }
 
-class PlaylistsLoadingState extends PlaylistsState {
+final class PlaylistsLoadingState extends PlaylistsState {
   PlaylistsLoadingState() : super([]);
 }
 
-class PlaylistsLoadedState extends PlaylistsState {
-  PlaylistsLoadedState(super.playlists);
+final class PlaylistsLoadedState extends PlaylistsState {
+  const PlaylistsLoadedState(super.playlists);
 }
 
-class PlaylistsErrorState extends PlaylistsState {
+final class PlaylistsErrorState extends PlaylistsState {
   PlaylistsErrorState() : super([]);
 }

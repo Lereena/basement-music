@@ -3,10 +3,10 @@ part of 'playlist_bloc.dart';
 @immutable
 sealed class PlaylistEvent {}
 
-class PlaylistLoadEvent extends PlaylistEvent {
-  final String playlistId;
+final class PlaylistLoadStarted extends PlaylistEvent {}
 
-  PlaylistLoadEvent(this.playlistId);
+final class PlaylistUpdated extends PlaylistEvent {
+  final Playlist playlist;
+
+  PlaylistUpdated(this.playlist);
 }
-
-class PlaylistsUpdatedEvent extends PlaylistEvent {}

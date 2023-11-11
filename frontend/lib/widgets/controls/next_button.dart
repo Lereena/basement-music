@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../bloc/player_bloc/player_bloc.dart';
-import '../../bloc/player_bloc/player_event.dart';
-import '../../bloc/player_bloc/player_state.dart';
 
 class NextButton extends StatelessWidget {
   const NextButton({super.key});
@@ -14,8 +12,8 @@ class NextButton extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        if (playerBloc.state is InitialPlayerState) return;
-        playerBloc.add(NextEvent());
+        if (playerBloc.state is PlayerInitial) return;
+        playerBloc.add(PlayerNextStarted());
       },
       child: const Icon(
         Icons.fast_forward,
