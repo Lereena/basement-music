@@ -1,13 +1,16 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 
 import '../../logger.dart';
+import '../../models/track.dart';
 import '../../repositories/connectivity_status_repository.dart';
 import '../../repositories/tracks_repository.dart';
 import '../connectivity_status_bloc/connectivity_status_cubit.dart';
-import 'tracks_event.dart';
-import 'tracks_state.dart';
+
+part 'tracks_event.dart';
+part 'tracks_state.dart';
 
 const _tracksInfoKey = 'tracksInfo';
 
@@ -20,12 +23,15 @@ class TracksBloc extends HydratedBloc<TracksEvent, TracksState> {
     required this.connectivityStatusRepository,
   }) : super(TracksLoadInProgress()) {
     on<TracksLoadStarted>(_onLoadingEvent);
+    on<TracksUpdated>(_onTracksUpdated);
 
     connectivityStatusRepository.statusSubject.listen((status) {
       if (status is ConnectivityStatusHasConnection) {
         add(TracksLoadStarted());
       }
     });
+
+    tracksRepository.tracksSubject.listen((value) => add(TracksUpdated(value)));
   }
 
   FutureOr<void> _onLoadingEvent(
@@ -51,6 +57,13 @@ class TracksBloc extends HydratedBloc<TracksEvent, TracksState> {
       }
       logger.e('Error loading tracks: $e');
     }
+  }
+
+  FutureOr<void> _onTracksUpdated(
+    TracksUpdated event,
+    Emitter<TracksState> emit,
+  ) {
+    emit(TracksLoadSuccess(event.tracks));
   }
 
   @override

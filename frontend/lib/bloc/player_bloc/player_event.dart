@@ -1,19 +1,24 @@
-import '../../models/playlist.dart';
-import '../../models/track.dart';
+part of 'player_bloc.dart';
 
-abstract class PlayerEvent {}
+sealed class PlayerEvent {}
 
-class PlayEvent extends PlayerEvent {
+final class PlayerPlayStarted extends PlayerEvent {
   final Track track;
   final Playlist? playlist;
 
-  PlayEvent({required this.track, this.playlist});
+  PlayerPlayStarted({required this.track, this.playlist});
 }
 
-class PauseEvent extends PlayerEvent {}
+final class PlayerPaused extends PlayerEvent {}
 
-class ResumeEvent extends PlayerEvent {}
+final class PlayerResumed extends PlayerEvent {}
 
-class PreviousEvent extends PlayerEvent {}
+final class PlayerPreviousStarted extends PlayerEvent {}
 
-class NextEvent extends PlayerEvent {}
+final class PlayerNextStarted extends PlayerEvent {}
+
+final class PlayerTracksUpdated extends PlayerEvent {
+  final Track track;
+
+  PlayerTracksUpdated(this.track);
+}

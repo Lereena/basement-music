@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bloc/player_bloc/player_bloc.dart';
-import '../bloc/player_bloc/player_state.dart';
 import '../bloc/track_progress_cubit/track_progress_cubit.dart';
 import '../models/track.dart';
 import 'controls/next_button.dart';
@@ -21,7 +20,7 @@ class BottomPlayer extends StatelessWidget {
   Widget build(BuildContext context) {
     final progress = context.watch<TrackProgressCubit>().state;
 
-    return BlocBuilder<PlayerBloc, AudioPlayerState>(
+    return BlocBuilder<PlayerBloc, PlayerState>(
       builder: (context, state) {
         if (state.currentTrack == Track.empty()) return Container(height: 0);
 
@@ -37,11 +36,9 @@ class BottomPlayer extends StatelessWidget {
                 child: Row(
                   children: [
                     const PreviousButton(),
-                    if (state is PlayingPlayerState ||
-                        state is ResumedPlayerState)
+                    if (state is PlayerPlay || state is PlayerResume)
                       const PauseButton()
-                    else if (state is PausedPlayerState ||
-                        state is InitialPlayerState)
+                    else if (state is PlayerPause || state is PlayerInitial)
                       PlayButton(
                         track: state.currentTrack,
                         state: state,
@@ -49,18 +46,18 @@ class BottomPlayer extends StatelessWidget {
                       ),
                     const NextButton(),
                     const SizedBox(width: 15),
-                    if (state is PausedPlayerState ||
-                        state is PlayingPlayerState ||
-                        state is ResumedPlayerState)
+                    if (state is PlayerPause ||
+                        state is PlayerPlay ||
+                        state is PlayerResume)
                       Image.asset(
                         state.currentTrack.cover,
                         height: 40,
                         width: 40,
                       ),
                     const SizedBox(width: 10),
-                    if (state is PlayingPlayerState ||
-                        state is PausedPlayerState ||
-                        state is ResumedPlayerState) ...[
+                    if (state is PlayerPlay ||
+                        state is PlayerPause ||
+                        state is PlayerResume) ...[
                       Expanded(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,

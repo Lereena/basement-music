@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:http_parser/http_parser.dart';
+import 'package:rxdart/rxdart.dart';
 
 import '../models/track.dart';
 import '../models/video_info.dart';
@@ -16,10 +17,14 @@ class TracksRepository {
   List<Track> get items => _items;
   List<Track> get searchItems => _searchItems;
 
+  BehaviorSubject<List<Track>> tracksSubject = BehaviorSubject.seeded([]);
+
   Future<void> getAllTracks() async {
     final result = await _restClient.getAllTracks();
     _items.clear();
     _items.addAll(result);
+
+    tracksSubject.add(_items);
   }
 
   void searchTracksOffline(String searchQuery) {
@@ -81,5 +86,7 @@ class TracksRepository {
       title: title,
       cover: cover,
     );
+
+    tracksSubject.add(_items);
   }
 }

@@ -1,6 +1,4 @@
-import 'dart:convert';
-
-import '../../models/track.dart';
+part of 'tracks_bloc.dart';
 
 class TracksState {
   final List<Track> tracks;

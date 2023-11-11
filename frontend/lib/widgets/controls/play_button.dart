@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../bloc/player_bloc/player_bloc.dart';
-import '../../bloc/player_bloc/player_event.dart';
-import '../../bloc/player_bloc/player_state.dart';
 import '../../models/playlist.dart';
 import '../../models/track.dart';
 
 class PlayButton extends StatelessWidget {
   final Track track;
-  final AudioPlayerState state;
+  final PlayerState state;
   final bool isBottomPlayer;
   final Playlist? openedPlaylist;
 
@@ -27,12 +25,12 @@ class PlayButton extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        if (isBottomPlayer && state is InitialPlayerState) return;
-        if (state is PausedPlayerState && playerBloc.currentTrack == track) {
-          playerBloc.add(ResumeEvent());
+        if (isBottomPlayer && state is PlayerInitial) return;
+        if (state is PlayerPause && playerBloc.currentTrack == track) {
+          playerBloc.add(PlayerResumed());
         } else {
           playerBloc.add(
-            PlayEvent(track: track, playlist: openedPlaylist),
+            PlayerPlayStarted(track: track, playlist: openedPlaylist),
           );
         }
       },

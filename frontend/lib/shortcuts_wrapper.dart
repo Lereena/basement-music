@@ -3,8 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'bloc/player_bloc/player_bloc.dart';
-import 'bloc/player_bloc/player_event.dart';
-import 'bloc/player_bloc/player_state.dart';
 
 class ShortcutsWrapper extends StatelessWidget {
   final Widget child;
@@ -25,13 +23,13 @@ class ShortcutsWrapper extends StatelessWidget {
   }
 
   void _spaceAction(PlayerBloc playerBloc) {
-    if (playerBloc.state is InitialPlayerState) return;
+    if (playerBloc.state is PlayerInitial) return;
 
-    if (playerBloc.state is PausedPlayerState) {
-      playerBloc.add(ResumeEvent());
-    } else if (playerBloc.state is PlayingPlayerState ||
-        playerBloc.state is ResumedPlayerState) {
-      playerBloc.add(PauseEvent());
+    if (playerBloc.state is PlayerPause) {
+      playerBloc.add(PlayerResumed());
+    } else if (playerBloc.state is PlayerPlay ||
+        playerBloc.state is PlayerResume) {
+      playerBloc.add(PlayerPaused());
     }
   }
 }
