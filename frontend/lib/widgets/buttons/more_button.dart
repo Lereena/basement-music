@@ -60,7 +60,18 @@ class MoreButton extends StatelessWidget {
                 SimpleDialogOption(
                   child: const Text('Cache track'),
                   onPressed: () {
-                    cacherBloc.add(CacherTrackCachingStarted(track.id));
+                    cacherBloc.add(CacherTracksCachingStarted([track.id]));
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+              if (!kIsWeb && cacherBloc.state.cached.contains(track.id)) ...[
+                const Divider(),
+                SimpleDialogOption(
+                  child: const Text('Remove from cache'),
+                  onPressed: () {
+                    cacherBloc
+                        .add(CacherRemoveTracksFromCacheStarted([track.id]));
                     Navigator.pop(context);
                   },
                 ),

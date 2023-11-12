@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -30,18 +33,6 @@ class _PlaylistPage extends StatelessWidget {
   final String playlistId;
 
   const _PlaylistPage({required this.playlistId});
-
-  List<Widget> _appBarActions({List<String>? tracksIds}) => [
-        if (tracksIds != null) PlaylistCacheAction(trackIds: tracksIds),
-        Builder(
-          builder: (context) {
-            return IconButton(
-              onPressed: () => context.go(RouteName.playlistEdit(playlistId)),
-              icon: const Icon(Icons.edit_outlined),
-            );
-          },
-        ),
-      ];
 
   @override
   Widget build(BuildContext context) {
@@ -92,8 +83,30 @@ class _PlaylistPage extends StatelessWidget {
           );
         }
 
+        if (state is PlaylistError) {
+          return Scaffold(
+            appBar: BasementAppBar(
+              title: '',
+            ),
+            body: const Center(child: Text('Error loading playlist')),
+          );
+        }
+
         return const SizedBox.shrink();
       },
     );
   }
+
+  List<Widget> _appBarActions({List<String>? tracksIds}) => [
+        if (!kIsWeb && Platform.isAndroid && tracksIds != null)
+          PlaylistCacheAction(trackIds: tracksIds),
+        Builder(
+          builder: (context) {
+            return IconButton(
+              onPressed: () => context.go(RouteName.playlistEdit(playlistId)),
+              icon: const Icon(Icons.edit_outlined),
+            );
+          },
+        ),
+      ];
 }
