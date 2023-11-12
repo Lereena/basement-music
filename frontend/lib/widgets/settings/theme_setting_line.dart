@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../bloc/settings_bloc/settings_bloc.dart';
-import 'settings_line_decoration.dart';
 
 extension ThemeModeTitle on ThemeMode {
   String get title => switch (this) {
@@ -32,7 +31,8 @@ class _ThemeSettingLineState extends State<ThemeSettingLine> {
   Widget build(BuildContext context) {
     final settingsBloc = context.read<SettingsBloc>();
 
-    return SettingsLineDecoration(
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
       child: Row(
         children: [
           const Text('Theme mode'),

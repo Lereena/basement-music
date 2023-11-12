@@ -16,8 +16,18 @@ final class CacherTracksCachingStarted extends CacherEvent {
   const CacherTracksCachingStarted(this.trackIds);
 }
 
+final class CacherCacheAllAvailableTracksStarted extends CacherEvent {}
+
 final class CacherRemoveTracksFromCacheStarted extends CacherEvent {
   final List<String> trackIds;
 
   const CacherRemoveTracksFromCacheStarted(this.trackIds);
 }
+
+final class CacherAvailableTracksUpdated extends CacherEvent {
+  final int availableTracksCout;
+
+  const CacherAvailableTracksUpdated(this.availableTracksCout);
+}
+
+final class CacherClearingStarted extends CacherEvent {}

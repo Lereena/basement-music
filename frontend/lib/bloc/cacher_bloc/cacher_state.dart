@@ -5,15 +5,17 @@ class CacherState extends Equatable {
   final Set<String> caching;
   final Set<String> cached;
   final Set<String> unsuccessful;
+  final int available;
 
   const CacherState({
     this.caching = const {},
     this.cached = const {},
     this.unsuccessful = const {},
+    this.available = 0,
   });
 
   @override
-  List<Object> get props => [caching, cached, unsuccessful];
+  List<Object> get props => [caching, cached, unsuccessful, available];
 
   bool isCached(List<String> trackIds) {
     return cached.containsAll(trackIds);
@@ -27,17 +29,14 @@ class CacherState extends Equatable {
     Set<String>? caching,
     Set<String>? cached,
     Set<String>? unsuccessful,
+    int? available,
   }) {
     return CacherState(
       caching: caching ?? this.caching,
       cached: cached ?? this.cached,
       unsuccessful: unsuccessful ?? this.unsuccessful,
+      available: available ?? this.available,
     );
-  }
-
-  @override
-  String toString() {
-    return 'CacherState(caching: $caching, cached: $cached, unsuccessful: $unsuccessful)';
   }
 }
 

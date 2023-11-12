@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../widgets/app_bar.dart';
+import '../widgets/settings/cache_all_tracks_settings_line.dart';
 import '../widgets/settings/theme_setting_line.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -16,9 +17,13 @@ class _SettingsPageState extends State<SettingsPage> {
     return Scaffold(
       appBar: BasementAppBar(title: 'Settings'),
       body: const Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Divider(),
           ThemeSettingLine(),
+          Divider(),
+          CacheAllTracksSettingsLine(),
+          Divider(),
         ],
       ),
     );
