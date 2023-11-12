@@ -14,8 +14,10 @@ class CacherBloc extends Bloc<CacherEvent, CacherState> {
 
   CacherBloc(this.cacheRepository) : super(const CacherInitial()) {
     on<CacherValidateStarted>(_onValidateStarted);
-    on<CacherTrackCachingStarted>(_onTrackCachingStarted);
     on<CacherTracksCachingStarted>(_onTracksCachingStarted);
+    on<CacherRemoveTracksFromCacheStarted>(
+      _onCacherRemoveTracksFromCacheStarted,
+    );
   }
 
   FutureOr<void> _onValidateStarted(
@@ -34,17 +36,6 @@ class CacherBloc extends Bloc<CacherEvent, CacherState> {
     } else {
       emit(CacherState(cached: cacheRepository.items));
     }
-  }
-
-  FutureOr<void> _onTrackCachingStarted(
-    CacherTrackCachingStarted event,
-    Emitter<CacherState> emit,
-  ) async {
-    emit(
-      state.copyWith(caching: {...state.caching, event.trackId}),
-    );
-
-    emit(await _cacheOneTrack(event.trackId));
   }
 
   FutureOr<void> _onTracksCachingStarted(
@@ -68,11 +59,34 @@ class CacherBloc extends Bloc<CacherEvent, CacherState> {
         caching: state.caching.where((id) => id != trackId).toSet(),
         cached: {...state.cached, trackId},
       );
-    } catch (e) {
+    } catch (_) {
       return state.copyWith(
         caching: state.caching.where((id) => id != trackId).toSet(),
         unsuccessful: {...state.unsuccessful, trackId},
       );
+    }
+  }
+
+  FutureOr<void> _onCacherRemoveTracksFromCacheStarted(
+    CacherRemoveTracksFromCacheStarted event,
+    Emitter<CacherState> emit,
+  ) async {
+    for (final trackId in event.trackIds) {
+      emit(await _removeOneTrackFromCache(trackId));
+    }
+  }
+
+  Future<CacherState> _removeOneTrackFromCache(String trackId) async {
+    try {
+      await cacheRepository.removeOneTrackFromCache(trackId);
+
+      return state.copyWith(
+        cached: state.cached.where((id) => id != trackId).toSet(),
+        caching: state.caching.where((id) => id != trackId).toSet(),
+        unsuccessful: state.unsuccessful.where((id) => id != trackId).toSet(),
+      );
+    } catch (_) {
+      return state;
     }
   }
 }

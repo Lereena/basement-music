@@ -29,6 +29,10 @@ class CacheRepository {
     _cachedBox.add(trackId);
   }
 
+  Future<void> removeOneTrackFromCache(String trackId) {
+    return DefaultCacheManager().removeFile(trackId);
+  }
+
   Future<bool> validateCache() async {
     final cachedFilesCount = await _getCachedFilesCount();
 
