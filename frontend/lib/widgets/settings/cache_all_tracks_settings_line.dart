@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../bloc/cacher_bloc/cacher_bloc.dart';
+import '../dialogs/confirm_action_dialog.dart';
 
 class CacheAllTracksSettingsLine extends StatelessWidget {
   const CacheAllTracksSettingsLine({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final cacherBloc = context.read<CacherBloc>();
-
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
       child: BlocBuilder<CacherBloc, CacherState>(
@@ -33,15 +32,20 @@ class CacheAllTracksSettingsLine extends StatelessWidget {
                 children: [
                   if (state.caching.isNotEmpty)
                     ElevatedButton(
-                      onPressed: () => cacherBloc.add(CacherCachingStopped()),
+                      onPressed: () => context
+                          .read<CacherBloc>()
+                          .add(CacherCachingStopped()),
                       child: const Text('Stop caching'),
                     )
                   else
                     ElevatedButton(
                       onPressed: state.cached.length == state.available
                           ? null
-                          : () => cacherBloc
-                              .add(CacherCacheAllAvailableTracksStarted()),
+                          : () => _onCacheAllAvailableTracks(
+                                context: context,
+                                tracksCount:
+                                    state.available - state.cached.length,
+                              ),
                       child:
                           const Text('Cache all available tracks', maxLines: 2),
                     ),
@@ -49,7 +53,7 @@ class CacheAllTracksSettingsLine extends StatelessWidget {
                   OutlinedButton(
                     onPressed: state.cached.isEmpty
                         ? null
-                        : () => cacherBloc.add(CacherClearingStarted()),
+                        : () => _onClearCache(context: context),
                     child: const Text('Clear cache'),
                   ),
                 ],
@@ -59,5 +63,32 @@ class CacheAllTracksSettingsLine extends StatelessWidget {
         },
       ),
     );
+  }
+
+  Future<void> _onCacheAllAvailableTracks({
+    required BuildContext context,
+    required int tracksCount,
+  }) async {
+    final isConfirmed = await ConfirmActionDialog.show(
+      context: context,
+      title: 'Do you want to cache $tracksCount tracks?',
+    );
+
+    if (context.mounted && isConfirmed) {
+      context.read<CacherBloc>().add(CacherCacheAllAvailableTracksStarted());
+    }
+  }
+
+  Future<void> _onClearCache({
+    required BuildContext context,
+  }) async {
+    final isConfirmed = await ConfirmActionDialog.show(
+      context: context,
+      title: 'Do you want to remove all tracks from cache?',
+    );
+
+    if (context.mounted && isConfirmed) {
+      context.read<CacherBloc>().add(CacherClearingStarted());
+    }
   }
 }
