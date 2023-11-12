@@ -35,7 +35,10 @@ class _ThemeSettingLineState extends State<ThemeSettingLine> {
       padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
       child: Row(
         children: [
-          const Text('Theme mode'),
+          Text(
+            'Theme mode',
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
           const Spacer(),
           BlocBuilder<SettingsBloc, SettingsState>(
             builder: (context, state) {

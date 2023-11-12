@@ -29,15 +29,22 @@ class CacheAllTracksSettingsLine extends StatelessWidget {
               Text('Available: ${state.available}'),
               const SizedBox(height: 8),
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  ElevatedButton(
-                    onPressed: state.cached.length == state.available
-                        ? null
-                        : () => cacherBloc
-                            .add(CacherCacheAllAvailableTracksStarted()),
-                    child:
-                        const Text('Cache all available tracks', maxLines: 2),
-                  ),
+                  if (state.caching.isNotEmpty)
+                    ElevatedButton(
+                      onPressed: () => cacherBloc.add(CacherCachingStopped()),
+                      child: const Text('Stop caching'),
+                    )
+                  else
+                    ElevatedButton(
+                      onPressed: state.cached.length == state.available
+                          ? null
+                          : () => cacherBloc
+                              .add(CacherCacheAllAvailableTracksStarted()),
+                      child:
+                          const Text('Cache all available tracks', maxLines: 2),
+                    ),
                   const SizedBox(width: 8),
                   OutlinedButton(
                     onPressed: state.cached.isEmpty

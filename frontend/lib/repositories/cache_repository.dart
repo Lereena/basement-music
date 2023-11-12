@@ -13,15 +13,11 @@ class CacheRepository {
 
   final Box<String> _cachedBox;
 
-  CacheRepository(this._appConfig, this._cachedBox) {
-    _items.addAll(_cachedBox.values);
-  }
+  CacheRepository(this._appConfig, this._cachedBox);
 
   final _cacheManager = TracksCacheManager(cacheKey: _cacheKey);
 
-  final _items = <String>{};
-
-  Set<String> get items => _items;
+  Set<String> get items => _cachedBox.values.toSet();
 
   Future<void> cacheTrack(String trackId) async {
     await _cacheManager.downloadFile(
@@ -29,27 +25,22 @@ class CacheRepository {
       key: trackId,
     );
 
-    _items.add(trackId);
-    _cachedBox.add(trackId);
+    _cachedBox.put(trackId, trackId);
   }
 
   Future<void> removeOneTrackFromCache(String trackId) async {
     await _cacheManager.removeFile(trackId);
 
-    _items.remove(trackId);
     _cachedBox.delete(trackId);
   }
 
-  Future<bool> validateCache() async {
+  Future<void> validateCache() async {
     final cachedFilesCount = await _getCachedFilesCount();
 
-    if (cachedFilesCount != _items.length) {
+    if (cachedFilesCount != items.length) {
       await _cacheManager.emptyCache();
       _cachedBox.clear();
-      return false;
     }
-
-    return true;
   }
 
   Future<int> _getCachedFilesCount() async {

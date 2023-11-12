@@ -20,6 +20,7 @@ class CacherBloc extends Bloc<CacherEvent, CacherState> {
     on<CacherCacheAllAvailableTracksStarted>(
       _onCacherCacheAllAvailableTracksStarted,
     );
+    on<CacherCachingStopped>(_onCacherCachingStopped);
     on<CacherRemoveTracksFromCacheStarted>(
       _onCacherRemoveTracksFromCacheStarted,
     );
@@ -40,23 +41,14 @@ class CacherBloc extends Bloc<CacherEvent, CacherState> {
       return;
     }
 
-    final isCacheValid = await cacheRepository.validateCache();
+    await cacheRepository.validateCache();
 
-    if (!isCacheValid) {
-      emit(
-        state.copyWith(
-          cached: {},
-          available: tracksRepository.items.length,
-        ),
-      );
-    } else {
-      emit(
-        state.copyWith(
-          cached: cacheRepository.items,
-          available: tracksRepository.items.length,
-        ),
-      );
-    }
+    emit(
+      state.copyWith(
+        cached: cacheRepository.items,
+        available: tracksRepository.items.length,
+      ),
+    );
   }
 
   FutureOr<void> _onTracksCachingStarted(
@@ -72,10 +64,14 @@ class CacherBloc extends Bloc<CacherEvent, CacherState> {
     }
   }
 
+  bool _shouldStopCaching = false;
+
   FutureOr<void> _onCacherCacheAllAvailableTracksStarted(
     CacherCacheAllAvailableTracksStarted event,
     Emitter<CacherState> emit,
   ) async {
+    _shouldStopCaching = false;
+
     final tracksToCache = tracksRepository.items
         .where((track) => !cacheRepository.items.contains(track.id))
         .map((track) => track.id);
@@ -83,7 +79,12 @@ class CacherBloc extends Bloc<CacherEvent, CacherState> {
     emit(state.copyWith(caching: tracksToCache.toSet()));
 
     for (final trackId in tracksToCache) {
-      emit(await _cacheOneTrack(trackId));
+      if (_shouldStopCaching) {
+        emit(state.copyWith(caching: {}));
+        break;
+      } else {
+        emit(await _cacheOneTrack(trackId));
+      }
     }
   }
 
@@ -103,6 +104,13 @@ class CacherBloc extends Bloc<CacherEvent, CacherState> {
     }
   }
 
+  FutureOr<void> _onCacherCachingStopped(
+    CacherCachingStopped event,
+    Emitter<CacherState> emit,
+  ) {
+    _shouldStopCaching = true;
+  }
+
   FutureOr<void> _onCacherRemoveTracksFromCacheStarted(
     CacherRemoveTracksFromCacheStarted event,
     Emitter<CacherState> emit,
@@ -116,11 +124,10 @@ class CacherBloc extends Bloc<CacherEvent, CacherState> {
     CacherClearingStarted event,
     Emitter<CacherState> emit,
   ) async {
-    final tracksToRemove = tracksRepository.items
-        .where((track) => cacheRepository.items.contains(track.id));
+    final tracks = cacheRepository.items.toList();
 
-    for (final track in tracksToRemove) {
-      emit(await _removeOneTrackFromCache(track.id));
+    for (final trackId in tracks) {
+      emit(await _removeOneTrackFromCache(trackId));
     }
   }
 

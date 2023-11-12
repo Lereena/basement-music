@@ -18,6 +18,8 @@ final class CacherTracksCachingStarted extends CacherEvent {
 
 final class CacherCacheAllAvailableTracksStarted extends CacherEvent {}
 
+final class CacherCachingStopped extends CacherEvent {}
+
 final class CacherRemoveTracksFromCacheStarted extends CacherEvent {
   final List<String> trackIds;
 
