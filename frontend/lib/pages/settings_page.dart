@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../widgets/app_bar.dart';
@@ -16,14 +17,16 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: BasementAppBar(title: 'Settings'),
-      body: const Column(
+      body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+        children: const [
           Divider(),
           ThemeSettingLine(),
           Divider(),
-          CacheAllTracksSettingsLine(),
-          Divider(),
+          if (!kIsWeb) ...[
+            CacheAllTracksSettingsLine(),
+            Divider(),
+          ],
         ],
       ),
     );
