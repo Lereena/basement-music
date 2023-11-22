@@ -38,10 +38,10 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
 
     tracksRepository.tracksSubject.listen(
       (tracks) {
-        if (currentTrack != Track.empty()) {
+        if (state.currentTrack != Track.empty()) {
           add(
             PlayerTracksUpdated(
-              tracks.firstWhere((track) => track.id == currentTrack.id),
+              tracks.firstWhere((track) => track.id == state.currentTrack.id),
             ),
           );
         }
@@ -49,20 +49,14 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
     );
   }
 
-  Playlist get currentPlaylist => audioHandler.currentPlaylist;
-  set currentPlaylist(Playlist playlist) =>
-      audioHandler.currentPlaylist = playlist;
-
-  Track get currentTrack => audioHandler.currentTrack;
-  set currentTrack(Track track) => audioHandler.currentTrack = track;
-
   FutureOr<void> _onPlayStarted(
     PlayerPlayStarted event,
     Emitter<PlayerState> emit,
   ) async {
-    currentPlaylist =
+    audioHandler.currentPlaylist =
         event.playlist ?? Playlist.anonymous(tracksRepository.items);
-    currentTrack = event.track;
+
+    audioHandler.addMediaItem(event.track);
 
     await audioHandler.play();
 
@@ -75,14 +69,14 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
   ) {
     audioHandler.pause();
 
-    emit(PlayerPause(currentTrack));
+    emit(PlayerPause(state.currentTrack));
   }
 
   FutureOr<void> _onPlayerPausedExternally(
     PlayerPausedExternally event,
     Emitter<PlayerState> emit,
   ) {
-    emit(PlayerPause(currentTrack));
+    emit(PlayerPause(state.currentTrack));
   }
 
   FutureOr<void> _onResumed(
@@ -91,13 +85,15 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
   ) {
     audioHandler.resume();
 
-    emit(PlayerResume(currentTrack));
+    emit(PlayerResume(state.currentTrack));
   }
 
   FutureOr<void> _onPlayerResumedExternally(
     PlayerResumedExternally event,
     Emitter<PlayerState> emit,
   ) {
+    final currentTrack = tracksRepository.items
+        .firstWhere((track) => track.id == audioHandler.mediaItem.value?.id);
     emit(PlayerResume(currentTrack));
   }
 
@@ -107,6 +103,8 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
   ) async {
     await audioHandler.skipToNext();
 
+    final currentTrack = tracksRepository.items
+        .firstWhere((track) => track.id == audioHandler.mediaItem.value?.id);
     emit(PlayerPlay(currentTrack));
   }
 
@@ -116,6 +114,8 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
   ) async {
     await audioHandler.skipToPrevious();
 
+    final currentTrack = tracksRepository.items
+        .firstWhere((track) => track.id == audioHandler.mediaItem.value?.id);
     emit(PlayerPlay(currentTrack));
   }
 
@@ -123,12 +123,10 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
     PlayerTracksUpdated event,
     Emitter<PlayerState> emit,
   ) {
-    currentTrack = event.track;
-
     if (state is PlayerPlay) {
-      emit(PlayerPlay(currentTrack));
+      emit(PlayerPlay(event.track));
     } else {
-      emit(PlayerPause(currentTrack));
+      emit(PlayerPause(event.track));
     }
   }
 }

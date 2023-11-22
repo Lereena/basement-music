@@ -52,10 +52,8 @@ class AudioPlayerHandler extends BaseAudioHandler {
       _audioPlayer.onPlayerStateChanged;
 
   Playlist currentPlaylist = Playlist.empty();
-  Track currentTrack = Track.empty();
 
   void addMediaItem(Track track) {
-    currentTrack = track;
     mediaItem.add(
       MediaItem(
         id: track.id,
@@ -68,7 +66,7 @@ class AudioPlayerHandler extends BaseAudioHandler {
 
   @override
   Future<void> play() async {
-    addMediaItem(currentTrack);
+    if (!mediaItem.hasValue) return;
 
     final trackId = mediaItem.value!.id;
     final cachedFile = await DefaultCacheManager().getFileFromCache(trackId);
@@ -104,23 +102,26 @@ class AudioPlayerHandler extends BaseAudioHandler {
       return pause();
     }
 
+    late final Track nextTrack;
     if (!settingsRepository.repeat) {
       if (settingsRepository.shuffle) {
         final nextTrackPosition = _shuffledNext(
           availableTracks,
-          availableTracks.indexOf(currentTrack),
+          availableTracks
+              .indexWhere((track) => track.id == mediaItem.value?.id),
         );
-        currentTrack = availableTracks[nextTrackPosition];
+        nextTrack = availableTracks[nextTrackPosition];
       } else {
-        final lastTrackPosition = availableTracks.indexOf(currentTrack);
+        final lastTrackPosition = availableTracks
+            .indexWhere((track) => track.id == mediaItem.value?.id);
         final nextTrackPosition = lastTrackPosition < availableTracks.length - 1
             ? lastTrackPosition + 1
             : 0;
-        currentTrack = availableTracks[nextTrackPosition];
+        nextTrack = availableTracks[nextTrackPosition];
       }
     }
 
-    addMediaItem(currentTrack);
+    addMediaItem(nextTrack);
     return play();
   }
 
@@ -134,23 +135,26 @@ class AudioPlayerHandler extends BaseAudioHandler {
       return pause();
     }
 
+    late final Track nextTrack;
     if (!settingsRepository.repeat) {
       if (settingsRepository.shuffle) {
         final nextTrackPosition = _shuffledNext(
           availableTracks,
-          availableTracks.indexOf(currentTrack),
+          availableTracks
+              .indexWhere((track) => track.id == mediaItem.value?.id),
         );
-        currentTrack = availableTracks[nextTrackPosition];
+        nextTrack = availableTracks[nextTrackPosition];
       } else {
-        final lastTrackPosition = availableTracks.indexOf(currentTrack);
+        final lastTrackPosition = availableTracks
+            .indexWhere((track) => track.id == mediaItem.value?.id);
         final previousTrackPosition = lastTrackPosition > 0
             ? lastTrackPosition - 1
             : availableTracks.length - 1;
-        currentTrack = availableTracks[previousTrackPosition];
+        nextTrack = availableTracks[previousTrackPosition];
       }
     }
 
-    addMediaItem(currentTrack);
+    addMediaItem(nextTrack);
     return play();
   }
 
