@@ -1,7 +1,4 @@
-import 'dart:io';
-
 import 'package:hive/hive.dart';
-import 'package:path_provider/path_provider.dart';
 
 import '../app_config.dart';
 import '../tracks_cache_manager.dart';
@@ -32,32 +29,5 @@ class CacheRepository {
     await _cacheManager.removeFile(trackId);
 
     _cachedBox.delete(trackId);
-  }
-
-  Future<void> validateCache() async {
-    final cachedFilesCount = await _getCachedFilesCount();
-
-    if (cachedFilesCount != items.length) {
-      await _cacheManager.emptyCache();
-      _cachedBox.clear();
-    }
-  }
-
-  Future<int> _getCachedFilesCount() async {
-    final tempDir = await getTemporaryDirectory();
-    final cacheDir = Directory('${tempDir.uri.path}$_cacheKey');
-
-    final cacheExists = await cacheDir.exists();
-
-    if (!cacheExists) return 0;
-
-    final cachedFilesCount = cacheDir
-        .listSync(recursive: true)
-        .where(
-          (element) => element.statSync().type == FileSystemEntityType.file,
-        )
-        .length;
-
-    return cachedFilesCount;
   }
 }

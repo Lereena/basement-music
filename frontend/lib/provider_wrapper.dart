@@ -52,7 +52,7 @@ class ProviderWrapper extends StatelessWidget {
             create: (_) => CacherBloc(
               cacheRepository: cacheRepository,
               tracksRepository: tracksRepository,
-            )..add(CacherValidateStarted()),
+            )..add(CacherInitializationStarted()),
           ),
           BlocProvider(
             create: (_) =>
