@@ -3,14 +3,14 @@ description: Music player with the ability to download tracks from YouTube
 
 publish_to: 'none'
 
-version: 1.0.0+5
+version: 1.0.0+7
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
   another_flushbar: ^1.12.30
-  audio_service: ^0.18.9
+  audio_service: ^0.18.12
   audioplayers: ^5.1.0
   auto_size_text: ^3.0.0
   bloc: ^8.1.2

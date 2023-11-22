@@ -45,15 +45,6 @@ Future<void> runBasement(AppConfig config) async {
 
   setPathUrlStrategy();
 
-  final audioHandler = await AudioService.init(
-    builder: () => AudioPlayerHandler(config),
-    config: const AudioServiceConfig(
-      androidNotificationChannelId: 'com.lereena.basement-music.channel.audio',
-      androidNotificationChannelName: 'Basement music',
-      androidNotificationOngoing: true,
-    ),
-  );
-
   final dio = Dio(BaseOptions(baseUrl: config.baseUrl))
     ..interceptors.addAll([
       JsonResponseConverter(),
@@ -68,14 +59,32 @@ Future<void> runBasement(AppConfig config) async {
   final cacheBox = await Hive.openBox<String>('tracks_cache');
   final settingsBox = await Hive.openBox<Object>('settings');
 
+  final settingsRepository = SettingsRepository(settingsBox);
+  final connectivityStatusRepository = ConnectivityStatusRepository();
+  final cacheRepository = CacheRepository(config, cacheBox);
+
+  final audioHandler = await AudioService.init(
+    builder: () => AudioPlayerHandler(
+      appConfig: config,
+      settingsRepository: settingsRepository,
+      connectivityStatusRepository: connectivityStatusRepository,
+      cacheRepository: cacheRepository,
+    ),
+    config: const AudioServiceConfig(
+      androidNotificationChannelId: 'com.lereena.basement.channel.audio',
+      androidNotificationChannelName: 'Basement',
+      androidNotificationOngoing: true,
+    ),
+  );
+
   runApp(
     BasementMusic(
       audioHandler: audioHandler,
-      cacheRepository: CacheRepository(config, cacheBox),
+      cacheRepository: cacheRepository,
       tracksRepository: TracksRepository(restClient),
-      settingsRepository: SettingsRepository(settingsBox),
+      settingsRepository: settingsRepository,
       playlistsRepository: PlaylistsRepository(restClient),
-      connectivityStatusRepository: ConnectivityStatusRepository(),
+      connectivityStatusRepository: connectivityStatusRepository,
     ),
   );
 }

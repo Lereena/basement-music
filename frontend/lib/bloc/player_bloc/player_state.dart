@@ -18,7 +18,3 @@ final class PlayerPlay extends PlayerState {
 final class PlayerPause extends PlayerState {
   const PlayerPause(super.currentTrack);
 }
-
-final class PlayerResume extends PlayerState {
-  const PlayerResume(super.currentTrack);
-}

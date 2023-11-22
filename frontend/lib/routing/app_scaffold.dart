@@ -22,7 +22,7 @@ class AppScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final playerBloc = context.watch<PlayerBloc>();
-    final hasCurrentTrack = playerBloc.currentTrack != Track.empty();
+    final hasCurrentTrack = playerBloc.state.currentTrack != Track.empty();
 
     return AdaptiveLayout(
       bodyRatio: 0.65,

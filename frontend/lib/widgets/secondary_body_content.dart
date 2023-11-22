@@ -72,7 +72,7 @@ class SecondaryBodyContent extends StatelessWidget {
                     ),
                     const Spacer(),
                     const PreviousButton(),
-                    if (state is PlayerPlay || state is PlayerResume)
+                    if (state is PlayerPlay)
                       const PauseButton()
                     else if (state is PlayerPause || state is PlayerInitial)
                       PlayButton(
