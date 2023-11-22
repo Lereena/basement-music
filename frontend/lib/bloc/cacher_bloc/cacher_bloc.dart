@@ -15,7 +15,7 @@ class CacherBloc extends Bloc<CacherEvent, CacherState> {
 
   CacherBloc({required this.cacheRepository, required this.tracksRepository})
       : super(const CacherInitial()) {
-    on<CacherValidateStarted>(_onValidateStarted);
+    on<CacherInitializationStarted>(_onCacherInitializationStarted);
     on<CacherTracksCachingStarted>(_onTracksCachingStarted);
     on<CacherCacheAllAvailableTracksStarted>(
       _onCacherCacheAllAvailableTracksStarted,
@@ -32,16 +32,14 @@ class CacherBloc extends Bloc<CacherEvent, CacherState> {
     );
   }
 
-  FutureOr<void> _onValidateStarted(
-    CacherValidateStarted event,
+  FutureOr<void> _onCacherInitializationStarted(
+    CacherInitializationStarted event,
     Emitter<CacherState> emit,
   ) async {
     if (kIsWeb) {
       emit(const CacherInitial());
       return;
     }
-
-    await cacheRepository.validateCache();
 
     emit(
       state.copyWith(

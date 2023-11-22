@@ -8,7 +8,7 @@ sealed class CacherEvent extends Equatable {
   List<Object> get props => [];
 }
 
-final class CacherValidateStarted extends CacherEvent {}
+final class CacherInitializationStarted extends CacherEvent {}
 
 final class CacherTracksCachingStarted extends CacherEvent {
   final List<String> trackIds;
