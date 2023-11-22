@@ -26,13 +26,9 @@ class PlayButton extends StatelessWidget {
     return InkWell(
       onTap: () {
         if (isBottomPlayer && state is PlayerInitial) return;
-        if (state is PlayerPause && playerBloc.state.currentTrack == track) {
-          playerBloc.add(PlayerResumed());
-        } else {
-          playerBloc.add(
-            PlayerPlayStarted(track: track, playlist: openedPlaylist),
-          );
-        }
+        playerBloc.add(
+          PlayerPlayStarted(track: track, playlist: openedPlaylist),
+        );
       },
       child: const Icon(Icons.play_arrow_rounded, size: 30),
     );

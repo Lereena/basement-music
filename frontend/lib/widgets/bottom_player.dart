@@ -36,7 +36,7 @@ class BottomPlayer extends StatelessWidget {
                 child: Row(
                   children: [
                     const PreviousButton(),
-                    if (state is PlayerPlay || state is PlayerResume)
+                    if (state is PlayerPlay)
                       const PauseButton()
                     else if (state is PlayerPause || state is PlayerInitial)
                       PlayButton(
@@ -46,18 +46,14 @@ class BottomPlayer extends StatelessWidget {
                       ),
                     const NextButton(),
                     const SizedBox(width: 15),
-                    if (state is PlayerPause ||
-                        state is PlayerPlay ||
-                        state is PlayerResume)
+                    if (state is PlayerPause || state is PlayerPlay)
                       Image.asset(
                         state.currentTrack.cover,
                         height: 40,
                         width: 40,
                       ),
                     const SizedBox(width: 10),
-                    if (state is PlayerPlay ||
-                        state is PlayerPause ||
-                        state is PlayerResume) ...[
+                    if (state is PlayerPlay || state is PlayerPause) ...[
                       Expanded(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,

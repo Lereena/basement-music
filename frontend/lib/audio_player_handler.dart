@@ -12,25 +12,6 @@ import 'repositories/repositories.dart';
 
 final _random = Random();
 
-final _playingPlaybackState = PlaybackState(
-  playing: true,
-  controls: [
-    MediaControl.skipToPrevious,
-    MediaControl.pause,
-    MediaControl.skipToNext,
-  ],
-  processingState: AudioProcessingState.ready,
-);
-
-final _pausedPlaybackState = PlaybackState(
-  controls: [
-    MediaControl.skipToPrevious,
-    MediaControl.play,
-    MediaControl.skipToNext,
-  ],
-  processingState: AudioProcessingState.ready,
-);
-
 class AudioPlayerHandler extends BaseAudioHandler {
   final AppConfig appConfig;
   final SettingsRepository settingsRepository;
@@ -78,24 +59,42 @@ class AudioPlayerHandler extends BaseAudioHandler {
       await _audioPlayer.play(DeviceFileSource(cachedFile.file.uri.path));
     }
 
-    playbackState.add(_playingPlaybackState);
+    playbackState.add(
+      playbackState.value.copyWith(
+        playing: true,
+        controls: [
+          MediaControl.skipToPrevious,
+          MediaControl.pause,
+          MediaControl.skipToNext,
+        ],
+        updatePosition:
+            await _audioPlayer.getCurrentPosition() ?? Duration.zero,
+        processingState: AudioProcessingState.ready,
+      ),
+    );
   }
 
   @override
   Future<void> pause() async {
     await _audioPlayer.pause();
-    playbackState.add(_pausedPlaybackState);
-  }
 
-  Future<void> resume() async {
-    await _audioPlayer.resume();
-    playbackState.add(_playingPlaybackState);
+    playbackState.add(
+      playbackState.value.copyWith(
+        playing: false,
+        controls: [
+          MediaControl.skipToPrevious,
+          MediaControl.play,
+          MediaControl.skipToNext,
+        ],
+        updatePosition:
+            await _audioPlayer.getCurrentPosition() ?? Duration.zero,
+        processingState: AudioProcessingState.ready,
+      ),
+    );
   }
 
   @override
   Future<void> skipToNext() {
-    pause();
-
     final availableTracks = _getAvailableTracks();
 
     if (availableTracks.isEmpty) {
@@ -127,8 +126,6 @@ class AudioPlayerHandler extends BaseAudioHandler {
 
   @override
   Future<void> skipToPrevious() {
-    pause();
-
     final availableTracks = _getAvailableTracks();
 
     if (availableTracks.isEmpty) {

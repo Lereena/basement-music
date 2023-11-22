@@ -22,8 +22,7 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
     on<PlayerPlayStarted>(_onPlayStarted);
     on<PlayerPaused>(_onPaused);
     on<PlayerPausedExternally>(_onPlayerPausedExternally);
-    on<PlayerResumed>(_onResumed);
-    on<PlayerResumedExternally>(_onPlayerResumedExternally);
+    on<PlayerPlayedExternally>(_onPlayerPlayedExternally);
     on<PlayerNextStarted>(_onNextStarted);
     on<PlayerPreviousStarted>(_onPreviousStarted);
     on<PlayerTracksUpdated>(_onTracksUpdated);
@@ -32,7 +31,7 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
 
     audioHandler.playbackState.listen(
       (state) => add(
-        state.playing ? PlayerResumedExternally() : PlayerPausedExternally(),
+        state.playing ? PlayerPlayedExternally() : PlayerPausedExternally(),
       ),
     );
 
@@ -63,6 +62,13 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
     emit(PlayerPlay(event.track));
   }
 
+  FutureOr<void> _onPlayerPlayedExternally(
+    PlayerPlayedExternally event,
+    Emitter<PlayerState> emit,
+  ) {
+    emit(PlayerPlay(_currentTrack));
+  }
+
   FutureOr<void> _onPaused(
     PlayerPaused event,
     Emitter<PlayerState> emit,
@@ -77,22 +83,6 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
     Emitter<PlayerState> emit,
   ) {
     emit(PlayerPause(state.currentTrack));
-  }
-
-  FutureOr<void> _onResumed(
-    PlayerResumed event,
-    Emitter<PlayerState> emit,
-  ) {
-    audioHandler.resume();
-
-    emit(PlayerResume(state.currentTrack));
-  }
-
-  FutureOr<void> _onPlayerResumedExternally(
-    PlayerResumedExternally event,
-    Emitter<PlayerState> emit,
-  ) {
-    emit(PlayerResume(_currentTrack));
   }
 
   FutureOr<void> _onNextStarted(

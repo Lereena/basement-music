@@ -66,8 +66,7 @@ class TrackCard extends StatelessWidget {
                               ),
                             ),
                             if (playerBloc.state.currentTrack == track &&
-                                (playerState is PlayerPlay ||
-                                    playerState is PlayerResume))
+                                (playerState is PlayerPlay))
                               const PauseButton()
                             else
                               PlayButton(
