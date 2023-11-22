@@ -1,7 +1,5 @@
 import 'dart:async';
-import 'dart:math';
 
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
 
@@ -13,33 +11,30 @@ import '../../repositories/repositories.dart';
 part 'player_event.dart';
 part 'player_state.dart';
 
-final random = Random();
-
 class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
-  final ConnectivityStatusRepository connectivityStatusRepository;
   final TracksRepository tracksRepository;
   final AudioPlayerHandler audioHandler;
-  final SettingsRepository settingsRepository;
-  final CacheRepository cacheRepository;
-
-  Playlist _currentPlaylist = Playlist.empty();
-  Track currentTrack = Track.empty();
 
   PlayerBloc({
-    required this.connectivityStatusRepository,
     required this.tracksRepository,
     required this.audioHandler,
-    required this.settingsRepository,
-    required this.cacheRepository,
   }) : super(PlayerInitial(Track.empty())) {
     on<PlayerPlayStarted>(_onPlayStarted);
     on<PlayerPaused>(_onPaused);
+    on<PlayerPausedExternally>(_onPlayerPausedExternally);
     on<PlayerResumed>(_onResumed);
+    on<PlayerResumedExternally>(_onPlayerResumedExternally);
     on<PlayerNextStarted>(_onNextStarted);
     on<PlayerPreviousStarted>(_onPreviousStarted);
     on<PlayerTracksUpdated>(_onTracksUpdated);
 
-    audioHandler.onPlayerComplete.listen((event) => add(PlayerNextStarted()));
+    audioHandler.onPlayerComplete.listen((_) => add(PlayerNextStarted()));
+
+    audioHandler.playbackState.listen(
+      (state) => add(
+        state.playing ? PlayerResumedExternally() : PlayerPausedExternally(),
+      ),
+    );
 
     tracksRepository.tracksSubject.listen(
       (tracks) {
@@ -54,16 +49,23 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
     );
   }
 
+  Playlist get currentPlaylist => audioHandler.currentPlaylist;
+  set currentPlaylist(Playlist playlist) =>
+      audioHandler.currentPlaylist = playlist;
+
+  Track get currentTrack => audioHandler.currentTrack;
+  set currentTrack(Track track) => audioHandler.currentTrack = track;
+
   FutureOr<void> _onPlayStarted(
     PlayerPlayStarted event,
     Emitter<PlayerState> emit,
   ) async {
-    _currentPlaylist =
+    currentPlaylist =
         event.playlist ?? Playlist.anonymous(tracksRepository.items);
-
     currentTrack = event.track;
-    audioHandler.addMediaItem(currentTrack);
-    audioHandler.play();
+
+    await audioHandler.play();
+
     emit(PlayerPlay(event.track));
   }
 
@@ -72,6 +74,14 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
     Emitter<PlayerState> emit,
   ) {
     audioHandler.pause();
+
+    emit(PlayerPause(currentTrack));
+  }
+
+  FutureOr<void> _onPlayerPausedExternally(
+    PlayerPausedExternally event,
+    Emitter<PlayerState> emit,
+  ) {
     emit(PlayerPause(currentTrack));
   }
 
@@ -80,40 +90,24 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
     Emitter<PlayerState> emit,
   ) {
     audioHandler.resume();
+
     emit(PlayerResume(currentTrack));
+  }
+
+  FutureOr<void> _onPlayerResumedExternally(
+    PlayerResumedExternally event,
+    Emitter<PlayerState> emit,
+  ) {
+    if (state is! PlayerPlay) {
+      emit(PlayerResume(currentTrack));
+    }
   }
 
   FutureOr<void> _onNextStarted(
     PlayerNextStarted event,
     Emitter<PlayerState> emit,
   ) async {
-    audioHandler.pause();
-
-    final availableTracks = _getAvailableTracks();
-
-    if (availableTracks.isEmpty) {
-      emit(PlayerPause(currentTrack));
-      return;
-    }
-
-    if (!settingsRepository.repeat) {
-      if (settingsRepository.shuffle) {
-        final nextTrackPosition = _shuffledNext(
-          availableTracks,
-          availableTracks.indexOf(currentTrack),
-        );
-        currentTrack = availableTracks[nextTrackPosition];
-      } else {
-        final lastTrackPosition = availableTracks.indexOf(currentTrack);
-        final nextTrackPosition = lastTrackPosition < availableTracks.length - 1
-            ? lastTrackPosition + 1
-            : 0;
-        currentTrack = availableTracks[nextTrackPosition];
-      }
-    }
-
-    audioHandler.addMediaItem(currentTrack);
-    audioHandler.play();
+    await audioHandler.skipToNext();
 
     emit(PlayerPlay(currentTrack));
   }
@@ -122,33 +116,7 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
     PlayerPreviousStarted event,
     Emitter<PlayerState> emit,
   ) async {
-    audioHandler.pause();
-
-    final availableTracks = _getAvailableTracks();
-
-    if (availableTracks.isEmpty) {
-      emit(PlayerPause(currentTrack));
-      return;
-    }
-
-    if (!settingsRepository.repeat) {
-      if (settingsRepository.shuffle) {
-        final nextTrackPosition = _shuffledNext(
-          availableTracks,
-          availableTracks.indexOf(currentTrack),
-        );
-        currentTrack = availableTracks[nextTrackPosition];
-      } else {
-        final lastTrackPosition = availableTracks.indexOf(currentTrack);
-        final previousTrackPosition = lastTrackPosition > 0
-            ? lastTrackPosition - 1
-            : availableTracks.length - 1;
-        currentTrack = availableTracks[previousTrackPosition];
-      }
-    }
-
-    audioHandler.addMediaItem(currentTrack);
-    audioHandler.play();
+    await audioHandler.skipToPrevious();
 
     emit(PlayerPlay(currentTrack));
   }
@@ -165,24 +133,5 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
     } else {
       emit(PlayerPause(currentTrack));
     }
-  }
-
-  List<Track> _getAvailableTracks() {
-    final isOffline = connectivityStatusRepository.statusSubject.value ==
-        ConnectivityResult.none;
-
-    return isOffline
-        ? _currentPlaylist.tracks
-            .where((track) => cacheRepository.items.contains(track.id))
-            .toList()
-        : _currentPlaylist.tracks;
-  }
-
-  int _shuffledNext(List<Track> availableTracks, int excluding) {
-    var result = random.nextInt(availableTracks.length);
-    while (result == excluding) {
-      result = random.nextInt(availableTracks.length);
-    }
-    return result;
   }
 }

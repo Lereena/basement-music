@@ -61,10 +61,7 @@ class ProviderWrapper extends StatelessWidget {
           BlocProvider(
             create: (_) => PlayerBloc(
               audioHandler: audioHandler,
-              cacheRepository: cacheRepository,
               tracksRepository: tracksRepository,
-              settingsRepository: settingsRepository,
-              connectivityStatusRepository: connectivityStatusRepository,
             ),
           ),
         ],
