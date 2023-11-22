@@ -12,6 +12,25 @@ import 'repositories/repositories.dart';
 
 final _random = Random();
 
+final _playingPlaybackState = PlaybackState(
+  playing: true,
+  controls: [
+    MediaControl.skipToPrevious,
+    MediaControl.pause,
+    MediaControl.skipToNext,
+  ],
+  processingState: AudioProcessingState.ready,
+);
+
+final _pausedPlaybackState = PlaybackState(
+  controls: [
+    MediaControl.skipToPrevious,
+    MediaControl.play,
+    MediaControl.skipToNext,
+  ],
+  processingState: AudioProcessingState.ready,
+);
+
 class AudioPlayerHandler extends BaseAudioHandler {
   final AppConfig appConfig;
   final SettingsRepository settingsRepository;
@@ -61,47 +80,18 @@ class AudioPlayerHandler extends BaseAudioHandler {
       await _audioPlayer.play(DeviceFileSource(cachedFile.file.uri.path));
     }
 
-    playbackState.add(
-      PlaybackState(
-        playing: true,
-        controls: [
-          MediaControl.skipToPrevious,
-          MediaControl.pause,
-          MediaControl.skipToNext,
-        ],
-        processingState: AudioProcessingState.ready,
-      ),
-    );
+    playbackState.add(_playingPlaybackState);
   }
 
   @override
   Future<void> pause() async {
     await _audioPlayer.pause();
-    playbackState.add(
-      PlaybackState(
-        controls: [
-          MediaControl.skipToPrevious,
-          MediaControl.play,
-          MediaControl.skipToNext,
-        ],
-        processingState: AudioProcessingState.ready,
-      ),
-    );
+    playbackState.add(_pausedPlaybackState);
   }
 
   Future<void> resume() async {
     await _audioPlayer.resume();
-    playbackState.add(
-      PlaybackState(
-        playing: true,
-        controls: [
-          MediaControl.skipToPrevious,
-          MediaControl.pause,
-          MediaControl.skipToNext,
-        ],
-        processingState: AudioProcessingState.ready,
-      ),
-    );
+    playbackState.add(_playingPlaybackState);
   }
 
   @override

@@ -98,9 +98,7 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
     PlayerResumedExternally event,
     Emitter<PlayerState> emit,
   ) {
-    if (state is! PlayerPlay) {
-      emit(PlayerResume(currentTrack));
-    }
+    emit(PlayerResume(currentTrack));
   }
 
   FutureOr<void> _onNextStarted(
@@ -126,7 +124,6 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
     Emitter<PlayerState> emit,
   ) {
     currentTrack = event.track;
-    audioHandler.addMediaItem(event.track);
 
     if (state is PlayerPlay) {
       emit(PlayerPlay(currentTrack));
