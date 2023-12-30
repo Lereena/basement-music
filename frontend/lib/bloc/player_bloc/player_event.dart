@@ -14,7 +14,9 @@ final class PlayerPaused extends PlayerEvent {}
 
 final class PlayerPausedExternally extends PlayerEvent {}
 
-final class PlayerPlayedExternally extends PlayerEvent {}
+final class PlayerPlayedByExternalControls extends PlayerEvent {}
+
+final class PlayerPlayedByShortcut extends PlayerEvent {}
 
 final class PlayerPreviousStarted extends PlayerEvent {}
 

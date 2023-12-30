@@ -22,7 +22,8 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
     on<PlayerPlayStarted>(_onPlayStarted);
     on<PlayerPaused>(_onPaused);
     on<PlayerPausedExternally>(_onPlayerPausedExternally);
-    on<PlayerPlayedExternally>(_onPlayerPlayedExternally);
+    on<PlayerPlayedByExternalControls>(_onPlayerPlayedByExternalControls);
+    on<PlayerPlayedByShortcut>(_onPlayerPlayedByShortcut);
     on<PlayerNextStarted>(_onNextStarted);
     on<PlayerPreviousStarted>(_onPreviousStarted);
     on<PlayerTracksUpdated>(_onTracksUpdated);
@@ -31,7 +32,9 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
 
     audioHandler.playbackState.listen(
       (state) => add(
-        state.playing ? PlayerPlayedExternally() : PlayerPausedExternally(),
+        state.playing
+            ? PlayerPlayedByExternalControls()
+            : PlayerPausedExternally(),
       ),
     );
 
@@ -62,18 +65,27 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
     emit(PlayerPlay(event.track));
   }
 
-  FutureOr<void> _onPlayerPlayedExternally(
-    PlayerPlayedExternally event,
+  FutureOr<void> _onPlayerPlayedByExternalControls(
+    PlayerPlayedByExternalControls event,
     Emitter<PlayerState> emit,
-  ) {
+  ) async {
+    emit(PlayerPlay(_currentTrack));
+  }
+
+  FutureOr<void> _onPlayerPlayedByShortcut(
+    PlayerPlayedByShortcut event,
+    Emitter<PlayerState> emit,
+  ) async {
+    await audioHandler.play();
+
     emit(PlayerPlay(_currentTrack));
   }
 
   FutureOr<void> _onPaused(
     PlayerPaused event,
     Emitter<PlayerState> emit,
-  ) {
-    audioHandler.pause();
+  ) async {
+    await audioHandler.pause();
 
     emit(PlayerPause(state.currentTrack));
   }

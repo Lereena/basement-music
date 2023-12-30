@@ -26,7 +26,7 @@ class ShortcutsWrapper extends StatelessWidget {
     if (playerBloc.state is PlayerInitial) return;
 
     if (playerBloc.state is PlayerPause) {
-      playerBloc.add(PlayerPlayedExternally());
+      playerBloc.add(PlayerPlayedByShortcut());
     } else if (playerBloc.state is PlayerPlay) {
       playerBloc.add(PlayerPaused());
     }
