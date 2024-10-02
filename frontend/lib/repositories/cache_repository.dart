@@ -1,3 +1,4 @@
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:hive/hive.dart';
 
 import '../app_config.dart';
@@ -30,4 +31,6 @@ class CacheRepository {
 
     _cachedBox.delete(trackId);
   }
+
+  Future<FileInfo?> retrieveTrack(String trackId) => _cacheManager.getFileFromCache(trackId);
 }

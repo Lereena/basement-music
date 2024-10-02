@@ -30,31 +30,39 @@ class CacheAllTracksSettingsLine extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  if (state.caching.isNotEmpty)
-                    ElevatedButton(
-                      onPressed: () => context
-                          .read<CacherBloc>()
-                          .add(CacherCachingStopped()),
-                      child: const Text('Stop caching'),
-                    )
-                  else
-                    ElevatedButton(
-                      onPressed: state.cached.length == state.available
-                          ? null
-                          : () => _onCacheAllAvailableTracks(
-                                context: context,
-                                tracksCount:
-                                    state.available - state.cached.length,
-                              ),
-                      child:
-                          const Text('Cache all available tracks', maxLines: 2),
-                    ),
+                  Expanded(
+                    flex: 2,
+                    child: state.caching.isNotEmpty
+                        ? ElevatedButton(
+                            onPressed: () => context.read<CacherBloc>().add(CacherCachingStopped()),
+                            child: const Text(
+                              'Stop caching',
+                              textAlign: TextAlign.center,
+                            ),
+                          )
+                        : ElevatedButton(
+                            onPressed: state.cached.length == state.available
+                                ? null
+                                : () => _onCacheAllAvailableTracks(
+                                      context: context,
+                                      tracksCount: state.available - state.cached.length,
+                                    ),
+                            child: const Text(
+                              'Cache all available tracks',
+                              maxLines: 2,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                  ),
                   const SizedBox(width: 8),
-                  OutlinedButton(
-                    onPressed: state.cached.isEmpty
-                        ? null
-                        : () => _onClearCache(context: context),
-                    child: const Text('Clear cache'),
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: state.cached.isEmpty ? null : () => _onClearCache(context: context),
+                      child: const Text(
+                        'Clear cache',
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
                   ),
                 ],
               ),

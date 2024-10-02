@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:audio_service/audio_service.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
 import 'app_config.dart';
 import 'models/playlist.dart';
@@ -29,8 +28,7 @@ class AudioPlayerHandler extends BaseAudioHandler {
 
   Stream<void> get onPlayerComplete => _audioPlayer.onPlayerComplete;
   Stream<Duration> get onPositionChanged => _audioPlayer.onPositionChanged;
-  Stream<PlayerState> get onPlayerStateChanged =>
-      _audioPlayer.onPlayerStateChanged;
+  Stream<PlayerState> get onPlayerStateChanged => _audioPlayer.onPlayerStateChanged;
 
   Playlist currentPlaylist = Playlist.empty();
 
@@ -50,11 +48,10 @@ class AudioPlayerHandler extends BaseAudioHandler {
     if (!mediaItem.hasValue) return;
 
     final trackId = mediaItem.value!.id;
-    final cachedFile = await DefaultCacheManager().getFileFromCache(trackId);
+    final cachedFile = await cacheRepository.retrieveTrack(trackId);
 
     if (cachedFile == null) {
-      await _audioPlayer
-          .play(UrlSource('${appConfig.baseUrl}/api/track/$trackId'));
+      await _audioPlayer.play(UrlSource('${appConfig.baseUrl}/api/track/$trackId'));
     } else {
       await _audioPlayer.play(DeviceFileSource(cachedFile.file.uri.path));
     }
@@ -67,8 +64,7 @@ class AudioPlayerHandler extends BaseAudioHandler {
           MediaControl.pause,
           MediaControl.skipToNext,
         ],
-        updatePosition:
-            await _audioPlayer.getCurrentPosition() ?? Duration.zero,
+        updatePosition: await _audioPlayer.getCurrentPosition() ?? Duration.zero,
         processingState: AudioProcessingState.ready,
       ),
     );
@@ -86,8 +82,7 @@ class AudioPlayerHandler extends BaseAudioHandler {
           MediaControl.play,
           MediaControl.skipToNext,
         ],
-        updatePosition:
-            await _audioPlayer.getCurrentPosition() ?? Duration.zero,
+        updatePosition: await _audioPlayer.getCurrentPosition() ?? Duration.zero,
         processingState: AudioProcessingState.ready,
       ),
     );
@@ -106,16 +101,12 @@ class AudioPlayerHandler extends BaseAudioHandler {
       if (settingsRepository.shuffle) {
         final nextTrackPosition = _shuffledNext(
           availableTracks,
-          availableTracks
-              .indexWhere((track) => track.id == mediaItem.value?.id),
+          availableTracks.indexWhere((track) => track.id == mediaItem.value?.id),
         );
         nextTrack = availableTracks[nextTrackPosition];
       } else {
-        final lastTrackPosition = availableTracks
-            .indexWhere((track) => track.id == mediaItem.value?.id);
-        final nextTrackPosition = lastTrackPosition < availableTracks.length - 1
-            ? lastTrackPosition + 1
-            : 0;
+        final lastTrackPosition = availableTracks.indexWhere((track) => track.id == mediaItem.value?.id);
+        final nextTrackPosition = lastTrackPosition < availableTracks.length - 1 ? lastTrackPosition + 1 : 0;
         nextTrack = availableTracks[nextTrackPosition];
       }
     }
@@ -137,16 +128,12 @@ class AudioPlayerHandler extends BaseAudioHandler {
       if (settingsRepository.shuffle) {
         final nextTrackPosition = _shuffledNext(
           availableTracks,
-          availableTracks
-              .indexWhere((track) => track.id == mediaItem.value?.id),
+          availableTracks.indexWhere((track) => track.id == mediaItem.value?.id),
         );
         nextTrack = availableTracks[nextTrackPosition];
       } else {
-        final lastTrackPosition = availableTracks
-            .indexWhere((track) => track.id == mediaItem.value?.id);
-        final previousTrackPosition = lastTrackPosition > 0
-            ? lastTrackPosition - 1
-            : availableTracks.length - 1;
+        final lastTrackPosition = availableTracks.indexWhere((track) => track.id == mediaItem.value?.id);
+        final previousTrackPosition = lastTrackPosition > 0 ? lastTrackPosition - 1 : availableTracks.length - 1;
         nextTrack = availableTracks[previousTrackPosition];
       }
     }
@@ -156,13 +143,10 @@ class AudioPlayerHandler extends BaseAudioHandler {
   }
 
   List<Track> _getAvailableTracks() {
-    final isOffline = connectivityStatusRepository.statusSubject.value ==
-        ConnectivityResult.none;
+    final isOffline = connectivityStatusRepository.statusSubject.value == ConnectivityResult.none;
 
     return isOffline
-        ? currentPlaylist.tracks
-            .where((track) => cacheRepository.items.contains(track.id))
-            .toList()
+        ? currentPlaylist.tracks.where((track) => cacheRepository.items.contains(track.id)).toList()
         : currentPlaylist.tracks;
   }
 
