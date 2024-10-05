@@ -7,6 +7,7 @@ import 'bloc/connectivity_status_bloc/connectivity_status_cubit.dart';
 import 'bloc/player_bloc/player_bloc.dart';
 import 'bloc/settings_bloc/settings_bloc.dart';
 import 'bloc/track_progress_cubit/track_progress_cubit.dart';
+import 'repositories/artists_repository.dart';
 import 'repositories/repositories.dart';
 
 class ProviderWrapper extends StatelessWidget {
@@ -17,6 +18,7 @@ class ProviderWrapper extends StatelessWidget {
   final TracksRepository tracksRepository;
   final SettingsRepository settingsRepository;
   final PlaylistsRepository playlistsRepository;
+  final ArtistsRepository artistsRepository;
   final ConnectivityStatusRepository connectivityStatusRepository;
 
   const ProviderWrapper({
@@ -28,6 +30,7 @@ class ProviderWrapper extends StatelessWidget {
     required this.settingsRepository,
     required this.playlistsRepository,
     required this.connectivityStatusRepository,
+    required this.artistsRepository,
   });
 
   @override
@@ -40,12 +43,12 @@ class ProviderWrapper extends StatelessWidget {
         RepositoryProvider.value(value: settingsRepository),
         RepositoryProvider.value(value: playlistsRepository),
         RepositoryProvider.value(value: connectivityStatusRepository),
+        RepositoryProvider.value(value: artistsRepository),
       ],
       child: MultiBlocProvider(
         providers: [
           BlocProvider(
-            create: (_) =>
-                ConnectivityStatusCubit(connectivityStatusRepository),
+            create: (_) => ConnectivityStatusCubit(connectivityStatusRepository),
           ),
           BlocProvider(create: (_) => TrackProgressCubit(audioHandler)),
           BlocProvider(
@@ -55,8 +58,7 @@ class ProviderWrapper extends StatelessWidget {
             )..add(CacherInitializationStarted()),
           ),
           BlocProvider(
-            create: (_) =>
-                SettingsBloc(settingsRepository)..add(RetrieveSettings()),
+            create: (_) => SettingsBloc(settingsRepository)..add(RetrieveSettings()),
           ),
           BlocProvider(
             create: (_) => PlayerBloc(

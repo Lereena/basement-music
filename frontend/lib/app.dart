@@ -18,6 +18,7 @@ import 'audio_player_handler.dart';
 import 'bloc/settings_bloc/settings_bloc.dart';
 import 'firebase_options.dart';
 import 'provider_wrapper.dart';
+import 'repositories/artists_repository.dart';
 import 'repositories/repositories.dart';
 import 'rest_client.dart';
 import 'routing/router.dart';
@@ -38,9 +39,7 @@ Future<void> runBasement(AppConfig config) async {
   };
 
   HydratedBloc.storage = await HydratedStorage.build(
-    storageDirectory: kIsWeb
-        ? HydratedStorage.webStorageDirectory
-        : await getApplicationDocumentsDirectory(),
+    storageDirectory: kIsWeb ? HydratedStorage.webStorageDirectory : await getApplicationDocumentsDirectory(),
   );
 
   setPathUrlStrategy();
@@ -84,6 +83,7 @@ Future<void> runBasement(AppConfig config) async {
       tracksRepository: TracksRepository(restClient),
       settingsRepository: settingsRepository,
       playlistsRepository: PlaylistsRepository(restClient),
+      artistsRepository: ArtistsRepository(restClient),
       connectivityStatusRepository: connectivityStatusRepository,
     ),
   );
@@ -97,6 +97,7 @@ class BasementMusic extends StatelessWidget {
   final TracksRepository tracksRepository;
   final SettingsRepository settingsRepository;
   final PlaylistsRepository playlistsRepository;
+  final ArtistsRepository artistsRepository;
   final ConnectivityStatusRepository connectivityStatusRepository;
 
   const BasementMusic({
@@ -106,6 +107,7 @@ class BasementMusic extends StatelessWidget {
     required this.tracksRepository,
     required this.settingsRepository,
     required this.playlistsRepository,
+    required this.artistsRepository,
     required this.connectivityStatusRepository,
   });
 
@@ -118,6 +120,7 @@ class BasementMusic extends StatelessWidget {
       audioHandler: audioHandler,
       cacheRepository: cacheRepository,
       settingsRepository: settingsRepository,
+      artistsRepository: artistsRepository,
       child: ShortcutsWrapper(
         child: BlocBuilder<SettingsBloc, SettingsState>(
           builder: (_, settingsState) {

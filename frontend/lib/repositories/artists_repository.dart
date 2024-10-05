@@ -1,4 +1,3 @@
-import 'package:collection/collection.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../models/artist.dart';
@@ -25,13 +24,5 @@ class ArtistsRepository {
     return true;
   }
 
-  Future<Artist> getArtist(String artistId) async {
-    final artist = _items.firstWhereOrNull((item) => item.id == artistId);
-
-    if (artist == null) {
-      return _restClient.getArtist(artistId);
-    }
-
-    return artist;
-  }
+  Future<Artist> getArtist(String artistId) => _restClient.getArtist(artistId);
 }

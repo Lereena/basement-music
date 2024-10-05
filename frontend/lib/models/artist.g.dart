@@ -9,7 +9,7 @@ part of 'artist.dart';
 Artist _$ArtistFromJson(Map<String, dynamic> json) => Artist(
       id: json['Id'] as String,
       name: json['Name'] as String,
-      image: json['Image'] as String,
+      image: json['Image'] as String?,
       tracks: (json['Tracks'] as List<dynamic>?)
           ?.map((e) => Track.fromJson(e as Map<String, dynamic>))
           .toList(),
