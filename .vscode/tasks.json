@@ -1,0 +1,24 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "shell",
+			"command": "flutter",
+			"args": [
+				"pub",
+				"run",
+				"build_runner",
+				"build"
+			],
+			"options": {
+				"cwd": "frontend"
+			},
+			"problemMatcher": [
+				"$dart-build_runner"
+			],
+			"group": "build",
+			"label": "flutter: flutter pub run build_runner build",
+			"detail": "frontend"
+		}
+	]
+}
