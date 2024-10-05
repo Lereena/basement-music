@@ -28,6 +28,9 @@ func main() {
 	playlistsRepo := &repositories.PlaylistsRepository{DB: db}
 	playlistsRepo.Init()
 
+	artistsRepo := &repositories.ArtistsRepository{DB: db}
+	artistsRepo.Init()
+
 	localDirectoryWorker := &LocalDirectoryWorker{
 		musicRepo: musicRepo,
 		Cfg:       &cfg,
@@ -57,6 +60,9 @@ func main() {
 	router.HandleFunc("/playlist/{id}", playlistsRepo.DeletePlaylist).Methods("DELETE")
 	router.HandleFunc("/playlist/{playlistId}/track/{trackId}", playlistsRepo.AddTrackToPlaylist).Methods("POST")
 	router.HandleFunc("/playlist/{playlistId}/track/{trackId}", playlistsRepo.DeleteTrackFromPlaylist).Methods("DELETE")
+
+	router.HandleFunc("/artists", artistsRepo.GetAllArtists).Methods("GET")
+	router.HandleFunc("/artist/{id}", artistsRepo.GetArtist).Methods("GET")
 
 	handler := cors.Default().Handler(router)
 

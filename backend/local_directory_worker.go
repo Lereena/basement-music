@@ -13,6 +13,7 @@ import (
 	"github.com/Lereena/server_basement_music/config"
 	"github.com/Lereena/server_basement_music/models"
 	"github.com/Lereena/server_basement_music/repositories"
+	"github.com/google/uuid"
 )
 
 type LocalDirectoryWorker struct {
@@ -31,11 +32,34 @@ func (ldw *LocalDirectoryWorker) ScanMusicDirectory() {
 
 	for _, f := range files {
 		result := ldw.musicRepo.DB.Where("Url = ?", f.Name()).Limit(1).Find(&models.Track{})
-		if result.RowsAffected != 0 {
-			continue
+		if result.RowsAffected == 0 {
+			ldw.saveTrack(f.Name())
 		}
 
-		ldw.saveTrack(f.Name())
+		// Extract artist names from the track's artist field
+		track := models.Track{}
+		ldw.musicRepo.DB.Where("Url = ?", f.Name()).First(&track)
+		artistNames := strings.Split(track.Artist, ",")
+
+		// Create artist-track entries in the database
+		for _, artistName := range artistNames {
+			artistName = strings.TrimSpace(artistName)
+			artist := models.Artist{
+				Id:   uuid.New().String(),
+				Name: artistName,
+			}
+
+			result := ldw.musicRepo.DB.Where("name = ?", artistName).FirstOrCreate(&artist)
+			if result.Error != nil {
+				log.Printf("Error creating or finding artist: %v", result.Error)
+				continue
+			}
+
+			err := ldw.musicRepo.DB.Model(&track).Association("Artists").Append(&artist)
+			if err != nil {
+				log.Printf("Error associating artist with track: %v", err)
+			}
+		}
 	}
 }
 
