@@ -52,27 +52,19 @@ class AppRouter {
                 ),
                 routes: [
                   GoRoute(
-                    path: ":id",
+                    path: "playlist/:id",
                     pageBuilder: (_, state) => NoTransitionPage(
                       child: PlaylistPage(
                         playlistId: state.pathParameters['id']!,
                       ),
                     ),
-                    routes: [
-                      GoRoute(
-                        path: "edit",
-                        pageBuilder: (_, state) => NoTransitionPage(
-                          child: PlaylistEditPage(
-                            playlistId: state.pathParameters['id']!,
-                          ),
-                        ),
-                      ),
-                    ],
                   ),
                   GoRoute(
-                    path: "artists",
-                    pageBuilder: (_, __) => const NoTransitionPage(
-                      child: LibraryPage(initialTab: LibraryPageTab.artists),
+                    path: "playlist/:id/edit",
+                    pageBuilder: (_, state) => NoTransitionPage(
+                      child: PlaylistEditPage(
+                        playlistId: state.pathParameters['id']!,
+                      ),
                     ),
                   ),
                   GoRoute(

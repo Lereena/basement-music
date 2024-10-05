@@ -2,9 +2,8 @@ abstract class RouteName {
   static String get initial => '/';
   static String get tracks => '/tracks';
   static String get library => '/library';
-  static String playlist(String id) => '/library/$id';
-  static String playlistEdit(String id) => '/library/$id/edit';
-  static String get artists => '/library/artists';
+  static String playlist(String id) => '/library/playlist/$id';
+  static String playlistEdit(String id) => '/library/playlist/$id/edit';
   static String artist(String id) => '/library/artist/$id';
   static String get search => '/search';
   static String get settings => '/settings';
