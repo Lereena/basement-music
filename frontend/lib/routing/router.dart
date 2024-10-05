@@ -1,8 +1,9 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
+import '../pages/artist_page.dart';
 import '../pages/edit_playlist/playlist_edit_page.dart';
-import '../pages/library_page.dart';
+import '../pages/library/library_page.dart';
 import '../pages/playlist_page.dart';
 import '../pages/search_page.dart';
 import '../pages/settings_page.dart';
@@ -47,26 +48,32 @@ class AppRouter {
               GoRoute(
                 path: RouteName.library,
                 pageBuilder: (_, __) => const NoTransitionPage(
-                  child: LibraryPage(),
+                  child: LibraryPage(initialTab: LibraryPageTab.playlists),
                 ),
                 routes: [
                   GoRoute(
-                    path: ":id",
+                    path: "playlist/:id",
                     pageBuilder: (_, state) => NoTransitionPage(
                       child: PlaylistPage(
                         playlistId: state.pathParameters['id']!,
                       ),
                     ),
-                    routes: [
-                      GoRoute(
-                        path: "edit",
-                        pageBuilder: (_, state) => NoTransitionPage(
-                          child: PlaylistEditPage(
-                            playlistId: state.pathParameters['id']!,
-                          ),
-                        ),
+                  ),
+                  GoRoute(
+                    path: "playlist/:id/edit",
+                    pageBuilder: (_, state) => NoTransitionPage(
+                      child: PlaylistEditPage(
+                        playlistId: state.pathParameters['id']!,
                       ),
-                    ],
+                    ),
+                  ),
+                  GoRoute(
+                    path: "artist/:id",
+                    pageBuilder: (_, state) => NoTransitionPage(
+                      child: ArtistPage(
+                        artistId: state.pathParameters['id']!,
+                      ),
+                    ),
                   ),
                 ],
               ),

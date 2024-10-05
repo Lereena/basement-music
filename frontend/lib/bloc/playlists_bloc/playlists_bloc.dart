@@ -14,33 +14,26 @@ part 'playlists_state.dart';
 
 const _playlistsInfoKey = 'playlistsInfo';
 
-class PlaylistsBloc extends HydratedBloc<PlaylistsEvent, PlaylistsState> {
+class PlaylistsCubit extends HydratedCubit<PlaylistsState> {
   final PlaylistsRepository playlistsRepository;
   final ConnectivityStatusRepository connectivityStatusRepository;
 
-  PlaylistsBloc({
+  PlaylistsCubit({
     required this.playlistsRepository,
     required this.connectivityStatusRepository,
   }) : super(PlaylistsLoadingState()) {
-    on<PlaylistsLoadStarted>(_onPlaylistsLoadStarted);
-    on<PlaylistsUpdated>(_onPlaylistsUpdated);
-
     connectivityStatusRepository.statusSubject.listen((status) {
       if (status is ConnectivityStatusHasConnection) {
-        add(PlaylistsLoadStarted());
+        loadPlaylists();
       }
     });
 
-    playlistsRepository.playlistsSubject
-        .listen((value) => add(PlaylistsUpdated(value)));
+    playlistsRepository.playlistsSubject.listen((value) => updatePlaylists(value));
   }
 
   Playlist get openedPlaylist => playlistsRepository.openedPlaylist;
 
-  FutureOr<void> _onPlaylistsLoadStarted(
-    PlaylistsLoadStarted event,
-    Emitter<PlaylistsState> emit,
-  ) async {
+  Future<void> loadPlaylists() async {
     final oldState = state;
     emit(PlaylistsLoadingState());
 
@@ -62,11 +55,9 @@ class PlaylistsBloc extends HydratedBloc<PlaylistsEvent, PlaylistsState> {
     }
   }
 
-  FutureOr<void> _onPlaylistsUpdated(
-    PlaylistsUpdated event,
-    Emitter<PlaylistsState> emit,
-  ) {
-    emit(PlaylistsLoadedState(event.playlists));
+  void updatePlaylists(List<Playlist> playlists) {
+    if (isClosed) return;
+    emit(PlaylistsLoadedState(playlists));
   }
 
   @override
@@ -79,6 +70,5 @@ class PlaylistsBloc extends HydratedBloc<PlaylistsEvent, PlaylistsState> {
   }
 
   @override
-  Map<String, dynamic>? toJson(PlaylistsState state) =>
-      {_playlistsInfoKey: state.toJson()};
+  Map<String, dynamic>? toJson(PlaylistsState state) => {_playlistsInfoKey: state.toJson()};
 }

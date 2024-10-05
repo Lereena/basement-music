@@ -70,8 +70,13 @@ func (repo *TracksRepository) GetTrack(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, filepath.Join(repo.Cfg.MusicPath, track.Url))
 }
 
-func (repo *TracksRepository) CreateTrack(artist string, title string, duration int, url string, cover string) {
-	repo.DB.Create(&models.Track{Id: uuid.New().String(), Artist: artist, Title: title, Duration: duration, Url: url, Cover: cover})
+func (repo *TracksRepository) CreateTrack(artist string, title string, duration int, url string, cover string) string {
+	track := models.Track{
+		Id: uuid.New().String(), Artist: artist, Title: title, Duration: duration, Url: url, Cover: cover,
+	}
+	repo.DB.Create(&track)
+
+	return track.Id
 }
 
 func (repo *TracksRepository) EditTrack(w http.ResponseWriter, r *http.Request) {
