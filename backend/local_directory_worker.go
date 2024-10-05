@@ -17,8 +17,9 @@ import (
 )
 
 type LocalDirectoryWorker struct {
-	musicRepo *repositories.TracksRepository
-	Cfg       *config.Config
+	musicRepo   *repositories.TracksRepository
+	artistsRepo *repositories.ArtistsRepository
+	Cfg         *config.Config
 }
 
 func (ldw *LocalDirectoryWorker) ScanMusicDirectory() {
@@ -30,6 +31,15 @@ func (ldw *LocalDirectoryWorker) ScanMusicDirectory() {
 		return
 	}
 
+	err = ldw.artistsRepo.DB.Exec("DELETE FROM artist_tracks").Error
+	if err != nil {
+		log.Printf("Error clearing artist_tracks table: %v", err)
+	}
+	err = ldw.musicRepo.DB.Exec("DELETE FROM artists").Error
+	if err != nil {
+		log.Printf("Error clearing artists table: %v", err)
+	}
+
 	for _, f := range files {
 		result := ldw.musicRepo.DB.Where("Url = ?", f.Name()).Limit(1).Find(&models.Track{})
 		if result.RowsAffected == 0 {
@@ -38,24 +48,32 @@ func (ldw *LocalDirectoryWorker) ScanMusicDirectory() {
 
 		// Extract artist names from the track's artist field
 		track := models.Track{}
-		ldw.musicRepo.DB.Where("Url = ?", f.Name()).First(&track)
+		result = ldw.musicRepo.DB.Where("Url = ?", f.Name()).First(&track)
+		if result.RowsAffected == 0 {
+			log.Printf("Error getting track: %v", result.Error)
+			continue
+		}
+
 		artistNames := strings.Split(track.Artist, ",")
 
 		// Create artist-track entries in the database
 		for _, artistName := range artistNames {
-			artistName = strings.TrimSpace(artistName)
-			artist := models.Artist{
-				Id:   uuid.New().String(),
-				Name: artistName,
+			name := strings.TrimSpace(artistName)
+			artist := models.Artist{}
+
+			result := ldw.artistsRepo.DB.Where("Name = ?", name).First(&artist)
+			if result.RowsAffected == 0 {
+				artist = models.Artist{
+					Id:   uuid.New().String(),
+					Name: name,
+				}
+				ldw.artistsRepo.DB.Create(&artist)
 			}
 
-			result := ldw.musicRepo.DB.Where("name = ?", artistName).FirstOrCreate(&artist)
-			if result.Error != nil {
-				log.Printf("Error creating or finding artist: %v", result.Error)
-				continue
-			}
+			// Refresh the artist object to ensure it has the correct ID
+			ldw.artistsRepo.DB.Where("Name = ?", name).First(&artist)
 
-			err := ldw.musicRepo.DB.Model(&track).Association("Artists").Append(&artist)
+			err := ldw.artistsRepo.DB.Model(&artist).Association("Tracks").Append(&track)
 			if err != nil {
 				log.Printf("Error associating artist with track: %v", err)
 			}

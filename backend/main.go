@@ -32,8 +32,9 @@ func main() {
 	artistsRepo.Init()
 
 	localDirectoryWorker := &LocalDirectoryWorker{
-		musicRepo: musicRepo,
-		Cfg:       &cfg,
+		musicRepo:   musicRepo,
+		artistsRepo: artistsRepo,
+		Cfg:         &cfg,
 	}
 	localDirectoryWorker.ScanMusicDirectory()
 

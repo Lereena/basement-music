@@ -4,8 +4,8 @@ import "github.com/jinzhu/gorm"
 
 type Artist struct {
 	gorm.Model
-	Id     string
+	Id     string `gorm:"primaryKey"`
 	Name   string
-	Image  string
+	Image  *string
 	Tracks []Track `gorm:"many2many:artist_tracks"`
 }
