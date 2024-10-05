@@ -1,26 +1,11 @@
 part of 'library_page.dart';
 
-// class _PlaylistsPage extends StatelessWidget {
-//   const _PlaylistsPage();
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return BlocProvider(
-//       create: (context) => PlaylistsBloc(
-//         playlistsRepository: context.read<PlaylistsRepository>(),
-//         connectivityStatusRepository: context.read<ConnectivityStatusRepository>(),
-//       )..add(PlaylistsLoadStarted()),
-//       child: const _Playlists(),
-//     );
-//   }
-// }
-
 class _Playlists extends StatelessWidget {
   const _Playlists();
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<PlaylistsBloc, PlaylistsState>(
+    return BlocBuilder<PlaylistsCubit, PlaylistsState>(
       builder: (context, state) {
         if (state is PlaylistsLoadingState) {
           return const Center(child: CircularProgressIndicator());

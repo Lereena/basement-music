@@ -1,19 +1,5 @@
 part of 'library_page.dart';
 
-class _ArtistsPage extends StatelessWidget {
-  const _ArtistsPage();
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => ArtistsCubit(
-        artistsRepository: context.read<ArtistsRepository>(),
-      )..loadArtists(),
-      child: const _Artists(),
-    );
-  }
-}
-
 class _Artists extends StatelessWidget {
   const _Artists();
 

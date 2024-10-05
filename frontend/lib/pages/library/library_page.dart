@@ -21,9 +21,9 @@ enum LibraryPageTab {
 
   Future<void> Function(BuildContext) get load => switch (this) {
         LibraryPageTab.playlists => (context) async {
-            final playlistsBloc = context.read<PlaylistsBloc>();
-            final newState = playlistsBloc.stream.first;
-            playlistsBloc.add(PlaylistsLoadStarted());
+            final playlistsCubit = context.read<PlaylistsCubit>();
+            final newState = playlistsCubit.stream.first;
+            playlistsCubit.loadPlaylists();
             await newState;
           },
         LibraryPageTab.artists => (context) async {
@@ -89,10 +89,10 @@ class _LibraryPageState extends State<LibraryPage> with SingleTickerProviderStat
           controller: tabController,
           children: [
             BlocProvider(
-              create: (context) => PlaylistsBloc(
+              create: (context) => PlaylistsCubit(
                 playlistsRepository: context.read<PlaylistsRepository>(),
                 connectivityStatusRepository: context.read<ConnectivityStatusRepository>(),
-              )..add(PlaylistsLoadStarted()),
+              )..loadPlaylists(),
               child: const _Playlists(),
             ),
             BlocProvider(
