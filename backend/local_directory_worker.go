@@ -85,6 +85,10 @@ func (ldw *LocalDirectoryWorker) UploadFile(w http.ResponseWriter, r *http.Reque
 		}
 
 		ldw.saveTrack(file.Filename)
+
+		track := models.Track{}
+		ldw.musicRepo.DB.Where("Url = ?", file.Filename).First(&track)
+		ldw.handleArtists(track.Artist, track.Id)
 	}
 }
 
@@ -107,9 +111,7 @@ func (ldw *LocalDirectoryWorker) saveTrack(filename string) {
 	}
 
 	duration := ldw.Cfg.GetTrackDuration(filename)
-	trackId := ldw.musicRepo.CreateTrack(artists, title, duration, filename, "")
-
-	ldw.handleArtists(artists, trackId)
+	ldw.musicRepo.CreateTrack(artists, title, duration, filename, "")
 }
 
 func (ldw *LocalDirectoryWorker) handleArtists(artists string, trackId string) {

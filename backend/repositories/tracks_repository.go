@@ -74,7 +74,7 @@ func (repo *TracksRepository) CreateTrack(artist string, title string, duration 
 	track := models.Track{
 		Id: uuid.New().String(), Artist: artist, Title: title, Duration: duration, Url: url, Cover: cover,
 	}
-	repo.DB.Create(track)
+	repo.DB.Create(&track)
 
 	return track.Id
 }
