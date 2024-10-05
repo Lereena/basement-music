@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart' hide Headers;
 import 'package:retrofit/retrofit.dart';
 
+import 'models/artist.dart';
 import 'models/playlist.dart';
 import 'models/track.dart';
 import 'models/video_info.dart';
@@ -73,4 +74,10 @@ abstract class RestClient {
     @Path('playlistId') required String playlistId,
     @Path('trackId') required String trackId,
   });
+
+  @GET('/artists')
+  Future<List<Artist>> getAllArtists();
+
+  @GET('/artist/{id}')
+  Future<Artist> getArtist(@Path('id') String id);
 }
