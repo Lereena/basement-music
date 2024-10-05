@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bloc/artist_bloc/artist_cubit.dart';
 import '../bloc/playlist_bloc/playlist_bloc.dart';
+import '../models/playlist.dart';
 import '../models/track.dart';
 import '../repositories/artists_repository.dart';
 import '../widgets/app_bar.dart';
@@ -69,8 +70,8 @@ class _ArtistPage extends StatelessWidget {
                     itemCount: state.artist.tracks?.length ?? 0,
                     itemBuilder: (context, index) => TrackCard(
                       track: state.artist.tracks?[index] ?? Track.empty(),
-                      // containingPlaylist: null,
-                      // openedPlaylist: null,
+                      containingPlaylist: Playlist.anonymous(state.artist.tracks ?? []),
+                      openedPlaylist: Playlist.anonymous(state.artist.tracks ?? []),
                     ),
                   ),
                 ),
