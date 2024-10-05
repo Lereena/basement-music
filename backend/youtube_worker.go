@@ -17,8 +17,9 @@ import (
 )
 
 type YoutubeWorker struct {
-	musicRepo *repositories.TracksRepository
-	Cfg       *config.Config
+	musicRepo   *repositories.TracksRepository
+	artistsRepo *repositories.ArtistsRepository
+	Cfg         *config.Config
 }
 
 type VideoInfo struct {
@@ -87,9 +88,25 @@ func (yw *YoutubeWorker) FetchFromYoutube(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	yw.musicRepo.CreateTrack(artist, title, int(youtubeDl.Info.Duration), trackFileName, "")
+	trackId := yw.musicRepo.CreateTrack(artist, title, int(youtubeDl.Info.Duration), trackFileName, "")
 	if err != nil {
 		log.Print("Couldn't create track in db: ", err)
 		return
 	}
+
+	// Extract artist names from the track's artist field
+	artistNames := strings.Split(artist, ",")
+
+	// Create artist-track entries in the database
+	for _, artistName := range artistNames {
+		name := strings.TrimSpace(artistName)
+		artistId := yw.artistsRepo.CreateArtist(name)
+
+		err := yw.artistsRepo.AssociateTrackWithArtist(artistId, trackId)
+
+		if err != nil {
+			log.Printf("Error associating artist with track: %v", err)
+		}
+	}
+
 }

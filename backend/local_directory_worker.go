@@ -13,7 +13,6 @@ import (
 	"github.com/Lereena/server_basement_music/config"
 	"github.com/Lereena/server_basement_music/models"
 	"github.com/Lereena/server_basement_music/repositories"
-	"github.com/google/uuid"
 )
 
 type LocalDirectoryWorker struct {
@@ -46,38 +45,9 @@ func (ldw *LocalDirectoryWorker) ScanMusicDirectory() {
 			ldw.saveTrack(f.Name())
 		}
 
-		// Extract artist names from the track's artist field
 		track := models.Track{}
-		result = ldw.musicRepo.DB.Where("Url = ?", f.Name()).First(&track)
-		if result.RowsAffected == 0 {
-			log.Printf("Error getting track: %v", result.Error)
-			continue
-		}
-
-		artistNames := strings.Split(track.Artist, ",")
-
-		// Create artist-track entries in the database
-		for _, artistName := range artistNames {
-			name := strings.TrimSpace(artistName)
-			artist := models.Artist{}
-
-			result := ldw.artistsRepo.DB.Where("Name = ?", name).First(&artist)
-			if result.RowsAffected == 0 {
-				artist = models.Artist{
-					Id:   uuid.New().String(),
-					Name: name,
-				}
-				ldw.artistsRepo.DB.Create(&artist)
-			}
-
-			// Refresh the artist object to ensure it has the correct ID
-			ldw.artistsRepo.DB.Where("Name = ?", name).First(&artist)
-
-			err := ldw.artistsRepo.DB.Model(&artist).Association("Tracks").Append(&track)
-			if err != nil {
-				log.Printf("Error associating artist with track: %v", err)
-			}
-		}
+		ldw.musicRepo.DB.Where("Url = ?", f.Name()).First(&track)
+		ldw.handleArtists(track.Artist, track.Id)
 	}
 }
 
@@ -129,7 +99,7 @@ func (ldw *LocalDirectoryWorker) saveTrack(filename string) {
 	}
 
 	fmt.Println(filename)
-	artist, title := strings.TrimSpace(titleSplit[0]), strings.TrimSpace(titleSplit[1])
+	artists, title := strings.TrimSpace(titleSplit[0]), strings.TrimSpace(titleSplit[1])
 
 	index := strings.LastIndex(title, ".")
 	if index > -1 {
@@ -137,5 +107,24 @@ func (ldw *LocalDirectoryWorker) saveTrack(filename string) {
 	}
 
 	duration := ldw.Cfg.GetTrackDuration(filename)
-	ldw.musicRepo.CreateTrack(artist, title, duration, filename, "")
+	trackId := ldw.musicRepo.CreateTrack(artists, title, duration, filename, "")
+
+	ldw.handleArtists(artists, trackId)
+}
+
+func (ldw *LocalDirectoryWorker) handleArtists(artists string, trackId string) {
+	// Extract artist names from the track's artist field
+	artistNames := strings.Split(artists, ",")
+
+	// Create artist-track entries in the database
+	for _, artistName := range artistNames {
+		name := strings.TrimSpace(artistName)
+		artistId := ldw.artistsRepo.CreateArtist(name)
+
+		err := ldw.artistsRepo.AssociateTrackWithArtist(artistId, trackId)
+
+		if err != nil {
+			log.Printf("Error associating artist with track: %v", err)
+		}
+	}
 }
