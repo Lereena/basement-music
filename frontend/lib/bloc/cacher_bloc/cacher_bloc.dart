@@ -13,8 +13,7 @@ class CacherBloc extends Bloc<CacherEvent, CacherState> {
   final CacheRepository cacheRepository;
   final TracksRepository tracksRepository;
 
-  CacherBloc({required this.cacheRepository, required this.tracksRepository})
-      : super(const CacherInitial()) {
+  CacherBloc({required this.cacheRepository, required this.tracksRepository}) : super(const CacherInitial()) {
     on<CacherInitializationStarted>(_onCacherInitializationStarted);
     on<CacherTracksCachingStarted>(_onTracksCachingStarted);
     on<CacherCacheAllAvailableTracksStarted>(
@@ -32,10 +31,10 @@ class CacherBloc extends Bloc<CacherEvent, CacherState> {
     );
   }
 
-  FutureOr<void> _onCacherInitializationStarted(
+  void _onCacherInitializationStarted(
     CacherInitializationStarted event,
     Emitter<CacherState> emit,
-  ) async {
+  ) {
     if (kIsWeb) {
       emit(const CacherInitial());
       return;
@@ -49,7 +48,7 @@ class CacherBloc extends Bloc<CacherEvent, CacherState> {
     );
   }
 
-  FutureOr<void> _onTracksCachingStarted(
+  Future<void> _onTracksCachingStarted(
     CacherTracksCachingStarted event,
     Emitter<CacherState> emit,
   ) async {
@@ -64,15 +63,14 @@ class CacherBloc extends Bloc<CacherEvent, CacherState> {
 
   bool _shouldStopCaching = false;
 
-  FutureOr<void> _onCacherCacheAllAvailableTracksStarted(
+  Future<void> _onCacherCacheAllAvailableTracksStarted(
     CacherCacheAllAvailableTracksStarted event,
     Emitter<CacherState> emit,
   ) async {
     _shouldStopCaching = false;
 
-    final tracksToCache = tracksRepository.items
-        .where((track) => !cacheRepository.items.contains(track.id))
-        .map((track) => track.id);
+    final tracksToCache =
+        tracksRepository.items.where((track) => !cacheRepository.items.contains(track.id)).map((track) => track.id);
 
     emit(state.copyWith(caching: tracksToCache.toSet()));
 
@@ -102,14 +100,14 @@ class CacherBloc extends Bloc<CacherEvent, CacherState> {
     }
   }
 
-  FutureOr<void> _onCacherCachingStopped(
+  void _onCacherCachingStopped(
     CacherCachingStopped event,
     Emitter<CacherState> emit,
   ) {
     _shouldStopCaching = true;
   }
 
-  FutureOr<void> _onCacherRemoveTracksFromCacheStarted(
+  Future<void> _onCacherRemoveTracksFromCacheStarted(
     CacherRemoveTracksFromCacheStarted event,
     Emitter<CacherState> emit,
   ) async {
@@ -118,7 +116,7 @@ class CacherBloc extends Bloc<CacherEvent, CacherState> {
     }
   }
 
-  FutureOr<void> _onCacherClearingStarted(
+  Future<void> _onCacherClearingStarted(
     CacherClearingStarted event,
     Emitter<CacherState> emit,
   ) async {
@@ -143,7 +141,7 @@ class CacherBloc extends Bloc<CacherEvent, CacherState> {
     }
   }
 
-  FutureOr<void> _onCacherAvailableTracksUpdated(
+  void _onCacherAvailableTracksUpdated(
     CacherAvailableTracksUpdated event,
     Emitter<CacherState> emit,
   ) {

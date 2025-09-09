@@ -11,20 +11,18 @@ import '../../repositories/tracks_repository.dart';
 part 'youtube_extractor_event.dart';
 part 'youtube_extractor_state.dart';
 
-class YoutubeExtractorBloc
-    extends Bloc<YoutubeExtractorEvent, YoutubeExtractorState> {
+class YoutubeExtractorBloc extends Bloc<YoutubeExtractorEvent, YoutubeExtractorState> {
   final TracksRepository _tracksRepository;
 
   String currentUploadingLink = '';
 
-  YoutubeExtractorBloc(this._tracksRepository)
-      : super(const YoutubeExtractorLinkInputInProgress()) {
+  YoutubeExtractorBloc(this._tracksRepository) : super(const YoutubeExtractorLinkInputInProgress()) {
     on<YoutubeExtractorStarted>(_onYoutubeExtractorStarted);
     on<YoutubeExtractorLinkEntered>(_onYoutubeExtractorLinkEntered);
     on<YoutubeExtractorInfoChecked>(_onYoutubeExtractorInfoChecked);
   }
 
-  FutureOr<void> _onYoutubeExtractorStarted(
+  void _onYoutubeExtractorStarted(
     YoutubeExtractorStarted event,
     Emitter<YoutubeExtractorState> emit,
   ) {
@@ -32,7 +30,7 @@ class YoutubeExtractorBloc
     currentUploadingLink = event.url ?? '';
   }
 
-  FutureOr<void> _onYoutubeExtractorLinkEntered(
+  Future<void> _onYoutubeExtractorLinkEntered(
     YoutubeExtractorLinkEntered event,
     Emitter<YoutubeExtractorState> emit,
   ) async {
@@ -62,7 +60,7 @@ class YoutubeExtractorBloc
     );
   }
 
-  FutureOr<void> _onYoutubeExtractorInfoChecked(
+  Future<void> _onYoutubeExtractorInfoChecked(
     YoutubeExtractorInfoChecked event,
     Emitter<YoutubeExtractorState> emit,
   ) async {

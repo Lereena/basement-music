@@ -8,7 +8,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:sizer/sizer.dart';
 import 'package:url_strategy/url_strategy.dart';
 
@@ -22,7 +21,6 @@ import 'repositories/artists_repository.dart';
 import 'repositories/repositories.dart';
 import 'rest_client.dart';
 import 'routing/router.dart';
-import 'shortcuts_wrapper.dart';
 import 'theme/custom_theme.dart';
 import 'utils/json_response_converter.dart';
 
@@ -47,7 +45,7 @@ Future<void> runBasement(AppConfig config) async {
   final dio = Dio(BaseOptions(baseUrl: config.baseUrl))
     ..interceptors.addAll([
       JsonResponseConverter(),
-      PrettyDioLogger(maxWidth: 120),
+      // PrettyDioLogger(maxWidth: 120),
     ]);
 
   final restClient = RestClient(dio);
@@ -121,22 +119,21 @@ class BasementMusic extends StatelessWidget {
       cacheRepository: cacheRepository,
       settingsRepository: settingsRepository,
       artistsRepository: artistsRepository,
-      child: ShortcutsWrapper(
-        child: BlocBuilder<SettingsBloc, SettingsState>(
-          builder: (_, settingsState) {
-            return Sizer(
-              builder: (_, __, ___) => MaterialApp.router(
-                title: 'Basement',
-                theme: CustomTheme.lightTheme,
-                darkTheme: CustomTheme.darkTheme,
-                themeMode: settingsState.themeMode,
-                routeInformationProvider: _router.routeInformationProvider,
-                routeInformationParser: _router.routeInformationParser,
-                routerDelegate: _router.routerDelegate,
-              ),
-            );
-          },
-        ),
+      child: BlocBuilder<SettingsBloc, SettingsState>(
+        builder: (_, settingsState) {
+          // ShortcutsWrapper is needed
+          return Sizer(
+            builder: (_, __, ___) => MaterialApp.router(
+              title: 'Basement',
+              theme: CustomTheme.lightTheme,
+              darkTheme: CustomTheme.darkTheme,
+              themeMode: settingsState.themeMode,
+              routeInformationProvider: _router.routeInformationProvider,
+              routeInformationParser: _router.routeInformationParser,
+              routerDelegate: _router.routerDelegate,
+            ),
+          );
+        },
       ),
     );
   }

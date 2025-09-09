@@ -1,7 +1,7 @@
 import 'app.dart';
 import 'app_config.dart';
 
-void main() async {
+void main() {
   const config = AppConfig(baseUrl: 'https://basement.madetara.dev');
 
   runBasement(config);

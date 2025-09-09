@@ -8,7 +8,7 @@ import 'app_config.dart';
 const _androidLocalhost = 'http://10.0.2.2:9000';
 const _localhost = 'http://localhost:9000';
 
-void main() async {
+void main() {
   String baseUrl = _localhost;
   if (!kIsWeb && Platform.isAndroid) {
     baseUrl = _androidLocalhost;

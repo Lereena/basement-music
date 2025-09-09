@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
@@ -19,7 +17,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     on<SetThemeMode>(_onSetThemeMode);
   }
 
-  FutureOr<void> _onRetrieveSettings(
+  void _onRetrieveSettings(
     RetrieveSettings event,
     Emitter<SettingsState> emit,
   ) {
@@ -32,19 +30,19 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     emit(state);
   }
 
-  FutureOr<void> _onSetShuffle(SetShuffle event, Emitter<SettingsState> emit) {
+  void _onSetShuffle(SetShuffle event, Emitter<SettingsState> emit) {
     settingsRepository.shuffle = event.shuffleValue;
 
     emit(state.copyWith(shuffle: event.shuffleValue));
   }
 
-  FutureOr<void> _onSetRepeat(SetRepeat event, Emitter<SettingsState> emit) {
+  void _onSetRepeat(SetRepeat event, Emitter<SettingsState> emit) {
     settingsRepository.repeat = event.repeatValue;
 
     emit(state.copyWith(repeat: event.repeatValue));
   }
 
-  FutureOr<void> _onSetThemeMode(
+  void _onSetThemeMode(
     SetThemeMode event,
     Emitter<SettingsState> emit,
   ) {

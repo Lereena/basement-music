@@ -9,8 +9,7 @@ import '../../repositories/repositories.dart';
 part 'track_from_playlist_remover_event.dart';
 part 'track_from_playlist_remover_state.dart';
 
-class TrackFromPlaylistRemoverBloc
-    extends Bloc<TrackFromPlaylistRemoverEvent, TrackFromPlaylistRemoverState> {
+class TrackFromPlaylistRemoverBloc extends Bloc<TrackFromPlaylistRemoverEvent, TrackFromPlaylistRemoverState> {
   final TracksRepository tracksRepository;
   final PlaylistsRepository playlistsRepository;
   final String trackId;
@@ -25,7 +24,7 @@ class TrackFromPlaylistRemoverBloc
     on<TrackFromPlaylistRemoverConfirmed>(_onTrackFromPlaylistRemoverConfirmed);
   }
 
-  FutureOr<void> _onTrackFromPlaylistRemoverConfirmed(
+  Future<void> _onTrackFromPlaylistRemoverConfirmed(
     TrackFromPlaylistRemoverConfirmed event,
     Emitter<TrackFromPlaylistRemoverState> emit,
   ) async {
@@ -37,10 +36,7 @@ class TrackFromPlaylistRemoverBloc
         trackId,
       );
 
-      playlistsRepository.items
-          .firstWhere((playlist) => playlist.id == playlistId)
-          .tracks
-          .remove(
+      playlistsRepository.items.firstWhere((playlist) => playlist.id == playlistId).tracks.remove(
             tracksRepository.items.firstWhere((track) => track.id == trackId),
           );
 

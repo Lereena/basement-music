@@ -34,7 +34,7 @@ class TracksBloc extends HydratedBloc<TracksEvent, TracksState> {
     tracksRepository.tracksSubject.listen((value) => add(TracksUpdated(value)));
   }
 
-  FutureOr<void> _onTracksLoadStarted(
+  Future<void> _onTracksLoadStarted(
     TracksLoadStarted event,
     Emitter<TracksState> emit,
   ) async {
@@ -59,7 +59,7 @@ class TracksBloc extends HydratedBloc<TracksEvent, TracksState> {
     }
   }
 
-  FutureOr<void> _onTracksUpdated(
+  void _onTracksUpdated(
     TracksUpdated event,
     Emitter<TracksState> emit,
   ) {
@@ -76,6 +76,5 @@ class TracksBloc extends HydratedBloc<TracksEvent, TracksState> {
   }
 
   @override
-  Map<String, dynamic>? toJson(TracksState state) =>
-      {_tracksInfoKey: state.toJson()};
+  Map<String, dynamic>? toJson(TracksState state) => {_tracksInfoKey: state.toJson()};
 }

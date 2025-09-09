@@ -32,9 +32,7 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
 
     audioHandler.playbackState.listen(
       (state) => add(
-        state.playing
-            ? PlayerPlayedByExternalControls()
-            : PlayerPausedExternally(),
+        state.playing ? PlayerPlayedByExternalControls() : PlayerPausedExternally(),
       ),
     );
 
@@ -51,12 +49,11 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
     );
   }
 
-  FutureOr<void> _onPlayStarted(
+  Future<void> _onPlayStarted(
     PlayerPlayStarted event,
     Emitter<PlayerState> emit,
   ) async {
-    audioHandler.currentPlaylist =
-        event.playlist ?? Playlist.anonymous(tracksRepository.items);
+    audioHandler.currentPlaylist = event.playlist ?? Playlist.anonymous(tracksRepository.items);
 
     audioHandler.addMediaItem(event.track);
 
@@ -65,14 +62,14 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
     emit(PlayerPlay(event.track));
   }
 
-  FutureOr<void> _onPlayerPlayedByExternalControls(
+  Future<void> _onPlayerPlayedByExternalControls(
     PlayerPlayedByExternalControls event,
     Emitter<PlayerState> emit,
   ) async {
     emit(PlayerPlay(_currentTrack));
   }
 
-  FutureOr<void> _onPlayerPlayedByShortcut(
+  Future<void> _onPlayerPlayedByShortcut(
     PlayerPlayedByShortcut event,
     Emitter<PlayerState> emit,
   ) async {
@@ -81,7 +78,7 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
     emit(PlayerPlay(_currentTrack));
   }
 
-  FutureOr<void> _onPaused(
+  Future<void> _onPaused(
     PlayerPaused event,
     Emitter<PlayerState> emit,
   ) async {
@@ -90,14 +87,14 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
     emit(PlayerPause(state.currentTrack));
   }
 
-  FutureOr<void> _onPlayerPausedExternally(
+  void _onPlayerPausedExternally(
     PlayerPausedExternally event,
     Emitter<PlayerState> emit,
   ) {
     emit(PlayerPause(state.currentTrack));
   }
 
-  FutureOr<void> _onNextStarted(
+  Future<void> _onNextStarted(
     PlayerNextStarted event,
     Emitter<PlayerState> emit,
   ) async {
@@ -106,7 +103,7 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
     emit(PlayerPlay(_currentTrack));
   }
 
-  FutureOr<void> _onPreviousStarted(
+  Future<void> _onPreviousStarted(
     PlayerPreviousStarted event,
     Emitter<PlayerState> emit,
   ) async {
@@ -115,7 +112,7 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
     emit(PlayerPlay(_currentTrack));
   }
 
-  FutureOr<void> _onTracksUpdated(
+  void _onTracksUpdated(
     PlayerTracksUpdated event,
     Emitter<PlayerState> emit,
   ) {
@@ -126,6 +123,5 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
     }
   }
 
-  Track get _currentTrack => tracksRepository.items
-      .firstWhere((track) => track.id == audioHandler.mediaItem.value?.id);
+  Track get _currentTrack => tracksRepository.items.firstWhere((track) => track.id == audioHandler.mediaItem.value?.id);
 }

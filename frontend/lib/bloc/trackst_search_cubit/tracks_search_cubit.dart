@@ -26,7 +26,7 @@ class TracksSearchCubit extends Cubit<TracksSearchState> {
 
   String lastSearch = '';
 
-  FutureOr<void> onSearch(String searchQuery) async {
+  Future<void> onSearch(String searchQuery) async {
     final query = searchQuery.trim();
     if (lastSearch == query) return;
     lastSearch = query;
@@ -39,8 +39,7 @@ class TracksSearchCubit extends Cubit<TracksSearchState> {
     emit(TracksSearchLoadInProgress(query));
 
     try {
-      if (connectivityStatusRepository.statusSubject.value ==
-          ConnectivityResult.none) {
+      if (connectivityStatusRepository.statusSubject.value == ConnectivityResult.none) {
         tracksRepository.searchTracksOffline(query);
       } else {
         await tracksRepository.searchTracksOnline(query);
@@ -49,8 +48,7 @@ class TracksSearchCubit extends Cubit<TracksSearchState> {
       if (tracksRepository.searchItems.isEmpty) {
         emit(TracksSearchSuccessEmpty(query));
       } else {
-        playlistsRepository.openedPlaylist =
-            Playlist.anonymous(tracksRepository.searchItems);
+        playlistsRepository.openedPlaylist = Playlist.anonymous(tracksRepository.searchItems);
 
         emit(TracksSearchSuccess(query, tracksRepository.searchItems));
       }
