@@ -46,6 +46,9 @@ frontend/android/app/debug
 frontend/android/app/profile
 frontend/android/app/release
 
+.idea/
+.vscode/settings.json
+.DS_Store
 
 .env
 backend/.work

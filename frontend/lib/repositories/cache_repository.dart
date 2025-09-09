@@ -18,9 +18,16 @@ class CacheRepository {
   Set<String> get items => _cachedBox.values.toSet();
 
   Future<void> cacheTrack(String trackId) async {
-    await _cacheManager.downloadFile(
-      '${_appConfig.baseUrl}/api/track/$trackId',
+    final url = '${_appConfig.baseUrl}/api/track/$trackId';
+
+    final file = await _cacheManager.getSingleFile(url);
+
+    await _cacheManager.putFile(
+      url,
+      file.readAsBytesSync(),
+      maxAge: const Duration(days: 365 * 10),
       key: trackId,
+      fileExtension: 'mp3',
     );
 
     _cachedBox.put(trackId, trackId);
