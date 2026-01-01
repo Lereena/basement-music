@@ -14,9 +14,9 @@ COPY ./ ./
 RUN go build -o server
 
 FROM alpine:3.15.5
-RUN apk add --no-cache ffmpeg python3
-RUN wget https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -O /usr/local/bin/youtube-dl
-RUN chmod +x /usr/local/bin/youtube-dl
+RUN apk add --no-cache ffmpeg python3 py3-pip
+RUN pip3 install --upgrade yt-dlp
+RUN ln -s /usr/bin/yt-dlp /usr/local/bin/youtube-dl
 
 WORKDIR /server
 

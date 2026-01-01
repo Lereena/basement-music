@@ -39,8 +39,9 @@ func main() {
 	localDirectoryWorker.ScanMusicDirectory()
 
 	youtubeWorker := &YoutubeWorker{
-		musicRepo: musicRepo,
-		Cfg:       &cfg,
+		musicRepo:   musicRepo,
+		artistsRepo: artistsRepo,
+		Cfg:         &cfg,
 	}
 
 	router := mux.NewRouter().PathPrefix("/api").Subrouter()
