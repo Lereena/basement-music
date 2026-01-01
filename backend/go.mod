@@ -3,7 +3,6 @@ module github.com/Lereena/server_basement_music
 go 1.18
 
 require (
-	github.com/TheKinrar/goydl v0.0.0-20210916211739-e36980173c4c
 	github.com/google/uuid v1.3.0
 	github.com/gorilla/mux v1.8.0
 	github.com/jinzhu/gorm v1.9.16
@@ -14,7 +13,6 @@ require (
 )
 
 require (
-	github.com/BrianAllred/goydl v0.0.0-20200922193158-6eeb623d0fe8 // indirect
 	github.com/agnivade/levenshtein v1.1.1 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect

@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"log"
 	"net/http"
 	"net/url"
@@ -14,7 +15,6 @@ import (
 	"github.com/Lereena/server_basement_music/config"
 	"github.com/Lereena/server_basement_music/repositories"
 	"github.com/Lereena/server_basement_music/respond"
-	"github.com/TheKinrar/goydl"
 	"github.com/google/uuid"
 )
 
@@ -29,26 +29,88 @@ type VideoInfo struct {
 	Title  string `json:"title"`
 }
 
+type videoData struct {
+	Title    string  `json:"title"`
+	Uploader string  `json:"uploader"`
+	Duration float64 `json:"duration"`
+}
+
+func findYtDlpPath() string {
+	ytDlpPath := "/usr/bin/yt-dlp"
+	if _, err := os.Stat(ytDlpPath); os.IsNotExist(err) {
+		ytDlpPath = "/usr/local/bin/youtube-dl"
+	}
+	return ytDlpPath
+}
+
+func buildYtDlpBaseArgs() []string {
+	return []string{
+		"--no-warnings",
+		"--user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+		"--extractor-args", "youtube:player_client=android",
+		"--retries", "3",
+	}
+}
+
+func runYtDlpCommand(ytDlpPath string, args []string) ([]byte, []byte, error) {
+	cmd := exec.Command(ytDlpPath, args...)
+	var stdout, stderr bytes.Buffer
+	cmd.Stdout = &stdout
+	cmd.Stderr = &stderr
+	err := cmd.Run()
+	return stdout.Bytes(), stderr.Bytes(), err
+}
+
+func extractErrorMessage(stderr, stdout []byte, err error) string {
+	if errorMsg := string(stderr); errorMsg != "" {
+		return errorMsg
+	}
+	if errorMsg := string(stdout); errorMsg != "" {
+		return errorMsg
+	}
+	if err != nil {
+		return err.Error()
+	}
+	return "unknown error"
+}
+
+func getVideoInfo(ytDlpPath, videoURL string) (*videoData, []byte, error) {
+	args := append([]string{"--dump-json"}, buildYtDlpBaseArgs()...)
+	args = append(args, videoURL)
+
+	stdout, stderr, err := runYtDlpCommand(ytDlpPath, args)
+	if err != nil {
+		return nil, stderr, err
+	}
+
+	var videoData videoData
+	if err := json.Unmarshal(stdout, &videoData); err != nil {
+		return nil, stderr, err
+	}
+
+	return &videoData, stderr, nil
+}
+
 func (yw *YoutubeWorker) FetchVideoInfo(w http.ResponseWriter, r *http.Request) {
 	uri := r.FormValue("url")
 
-	youtubeDl := goydl.NewYoutubeDl()
-	youtubeDl.VideoURL = uri
-
-	fetchedInfo, err := youtubeDl.GetInfo()
+	ytDlpPath := findYtDlpPath()
+	videoData, stderr, err := getVideoInfo(ytDlpPath, uri)
 	if err != nil {
-		respond.RespondError(w, http.StatusNotFound, "Couldn't fetch video info: url = "+uri)
+		errorMsg := extractErrorMessage(stderr, nil, err)
+		log.Printf("Failed to fetch video info: %v - %s", err, errorMsg)
+		respond.RespondError(w, http.StatusNotFound, "Couldn't fetch video info: "+errorMsg)
 		return
 	}
 
 	splitSymbolsRegexp := regexp.MustCompile(splitSymbols)
-	titleSplit := splitSymbolsRegexp.Split(fetchedInfo.Fulltitle, -1)
+	titleSplit := splitSymbolsRegexp.Split(videoData.Title, -1)
 
 	var title, artist string
 
 	if len(titleSplit) == 1 {
 		title = titleSplit[0]
-		artist = fetchedInfo.Uploader
+		artist = videoData.Uploader
 	}
 	if len(titleSplit) >= 2 {
 		artist = titleSplit[0]
@@ -77,51 +139,35 @@ func (yw *YoutubeWorker) FetchFromYoutube(w http.ResponseWriter, r *http.Request
 	tempFileBase := "track" + uuid.NewString()
 	tempFilePathNoExt := filepath.Join(yw.Cfg.MusicPath, tempFileBase)
 
+	ytDlpPath := findYtDlpPath()
+
 	// Get video info to get duration
-	youtubeDl := goydl.NewYoutubeDl()
-	youtubeDl.VideoURL = url
-	fetchedInfo, err := youtubeDl.GetInfo()
+	videoData, stderr, err := getVideoInfo(ytDlpPath, url)
 	if err != nil {
-		log.Printf("Couldn't fetch video info: %v", err)
-		respond.RespondError(w, http.StatusInternalServerError, "Couldn't fetch video info")
+		errorMsg := extractErrorMessage(stderr, nil, err)
+		log.Printf("Couldn't fetch video info: %v - %s", err, errorMsg)
+		respond.RespondError(w, http.StatusInternalServerError, "Couldn't fetch video info: "+errorMsg)
 		return
 	}
 
-	// Find yt-dlp binary
-	ytDlpPath := "/usr/bin/yt-dlp"
-	if _, err := os.Stat(ytDlpPath); os.IsNotExist(err) {
-		ytDlpPath = "/usr/local/bin/youtube-dl"
-	}
-	cmd := exec.Command(ytDlpPath,
+	// Download audio
+	downloadArgs := append([]string{
 		"-f", "bestaudio/best",
 		"-x",
 		"--audio-format", "mp3",
 		"--audio-quality", "0",
-		"-o", tempFilePathNoExt+".%(ext)s",
-		"--no-warnings",
-		"--user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-		"--extractor-args", "youtube:player_client=android",
-		"--retries", "3",
-		url,
-	)
+		"-o", tempFilePathNoExt + ".%(ext)s",
+	}, buildYtDlpBaseArgs()...)
+	downloadArgs = append(downloadArgs, url)
 
-	var stdout, stderr bytes.Buffer
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-
-	err = cmd.Run()
+	stdout, stderr, err := runYtDlpCommand(ytDlpPath, downloadArgs)
 	if err != nil {
-		errorMsg := stderr.String()
-		if errorMsg == "" {
-			errorMsg = stdout.String()
-		}
-		if errorMsg == "" {
-			errorMsg = err.Error()
-		}
+		errorMsg := extractErrorMessage(stderr, stdout, err)
 		log.Printf("Download failed: %v - %s", err, errorMsg)
 		respond.RespondError(w, http.StatusInternalServerError, "Download failed: "+errorMsg)
 		return
 	}
+	_ = stdout // Suppress unused variable warning
 
 	// Verify the downloaded file exists (should be .mp3 after conversion)
 	tempFilePath := tempFilePathNoExt + ".mp3"
@@ -139,7 +185,7 @@ func (yw *YoutubeWorker) FetchFromYoutube(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	trackId := yw.musicRepo.CreateTrack(artist, title, int(fetchedInfo.Duration), trackFileName, "")
+	trackId := yw.musicRepo.CreateTrack(artist, title, int(videoData.Duration), trackFileName, "")
 	if err != nil {
 		log.Printf("Couldn't create track in db: %v", err)
 		respond.RespondError(w, http.StatusInternalServerError, "Couldn't create track in database")
