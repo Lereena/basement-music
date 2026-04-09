@@ -5,13 +5,14 @@ import 'package:sizer/sizer.dart';
 import '../bloc/player_bloc/player_bloc.dart';
 import '../bloc/track_progress_cubit/track_progress_cubit.dart';
 import '../models/track.dart';
+import '../repositories/theaudiodb_repository.dart';
 import 'controls/next_button.dart';
 import 'controls/pause_button.dart';
 import 'controls/play_button.dart';
 import 'controls/previous_button.dart';
 import 'controls/repeat_toggle.dart';
 import 'controls/shuffle_toggle.dart';
-import 'cover.dart';
+import 'theaudiodb_track_cover.dart';
 import 'track_name.dart';
 import 'track_progress_indicator.dart';
 
@@ -42,10 +43,12 @@ class SecondaryBodyContent extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Cover(
-                  key: const Key('album_cover'),
-                  cover: track.cover,
-                  size: 27.w,
+                TheAudioDbTrackCover(
+                  key: ValueKey('theaudiodb_secondary_${track.id}'),
+                  track: track,
+                  width: 27.w,
+                  height: 27.w,
+                  imageSize: TheAudioDbImageSize.medium,
                 ),
                 const SizedBox(height: 20),
                 TrackName(track: track, moving: true),

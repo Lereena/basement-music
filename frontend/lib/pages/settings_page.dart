@@ -17,9 +17,9 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: BasementAppBar(title: 'Settings'),
-      body: Column(
+      body: const Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: const [
+        children: [
           Divider(),
           ThemeSettingLine(),
           Divider(),

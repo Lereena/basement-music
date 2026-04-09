@@ -20,6 +20,7 @@ class ProviderWrapper extends StatelessWidget {
   final PlaylistsRepository playlistsRepository;
   final ArtistsRepository artistsRepository;
   final ConnectivityStatusRepository connectivityStatusRepository;
+  final TheAudioDbRepository theAudioDbRepository;
 
   const ProviderWrapper({
     super.key,
@@ -31,6 +32,7 @@ class ProviderWrapper extends StatelessWidget {
     required this.playlistsRepository,
     required this.connectivityStatusRepository,
     required this.artistsRepository,
+    required this.theAudioDbRepository,
   });
 
   @override
@@ -44,11 +46,13 @@ class ProviderWrapper extends StatelessWidget {
         RepositoryProvider.value(value: playlistsRepository),
         RepositoryProvider.value(value: connectivityStatusRepository),
         RepositoryProvider.value(value: artistsRepository),
+        RepositoryProvider.value(value: theAudioDbRepository),
       ],
       child: MultiBlocProvider(
         providers: [
           BlocProvider(
-            create: (_) => ConnectivityStatusCubit(connectivityStatusRepository),
+            create: (_) =>
+                ConnectivityStatusCubit(connectivityStatusRepository),
           ),
           BlocProvider(create: (_) => TrackProgressCubit(audioHandler)),
           BlocProvider(
@@ -58,7 +62,8 @@ class ProviderWrapper extends StatelessWidget {
             )..add(CacherInitializationStarted()),
           ),
           BlocProvider(
-            create: (_) => SettingsBloc(settingsRepository)..add(RetrieveSettings()),
+            create: (_) =>
+                SettingsBloc(settingsRepository)..add(RetrieveSettings()),
           ),
           BlocProvider(
             create: (_) => PlayerBloc(

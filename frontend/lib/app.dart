@@ -60,6 +60,7 @@ Future<void> runBasement(AppConfig config) async {
 
   final settingsRepository = SettingsRepository(settingsBox);
   final connectivityStatusRepository = ConnectivityStatusRepository();
+  final theAudioDbRepository = TheAudioDbRepository();
   final cacheRepository = CacheRepository(config, cacheBox);
 
   final audioHandler = await AudioService.init(
@@ -84,6 +85,7 @@ Future<void> runBasement(AppConfig config) async {
       settingsRepository: settingsRepository,
       playlistsRepository: PlaylistsRepository(restClient),
       artistsRepository: ArtistsRepository(restClient),
+      theAudioDbRepository: theAudioDbRepository,
       connectivityStatusRepository: connectivityStatusRepository,
     ),
   );
@@ -98,6 +100,7 @@ class BasementMusic extends StatelessWidget {
   final SettingsRepository settingsRepository;
   final PlaylistsRepository playlistsRepository;
   final ArtistsRepository artistsRepository;
+  final TheAudioDbRepository theAudioDbRepository;
   final ConnectivityStatusRepository connectivityStatusRepository;
 
   const BasementMusic({
@@ -108,6 +111,7 @@ class BasementMusic extends StatelessWidget {
     required this.settingsRepository,
     required this.playlistsRepository,
     required this.artistsRepository,
+    required this.theAudioDbRepository,
     required this.connectivityStatusRepository,
   });
 
@@ -121,6 +125,7 @@ class BasementMusic extends StatelessWidget {
       cacheRepository: cacheRepository,
       settingsRepository: settingsRepository,
       artistsRepository: artistsRepository,
+      theAudioDbRepository: theAudioDbRepository,
       child: BlocBuilder<SettingsBloc, SettingsState>(
         builder: (_, settingsState) => Sizer(
           builder: (_, __, ___) => MaterialApp.router(
