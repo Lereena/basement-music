@@ -35,7 +35,7 @@ class _FileUploadDropzoneState extends State<FileUploadDropzone> {
               onLoaded: () => debugPrint('Loaded'),
               onError: (ev) => debugPrint('Error: $ev'),
               onHover: () => debugPrint('Zone hovered'),
-              onDrop: (file) async {
+              onDropFile: (DropzoneFileInterface file) async {
                 if (!(await isAudio(file))) {
                   debugPrint('File is not audio');
                   return;
@@ -44,7 +44,6 @@ class _FileUploadDropzoneState extends State<FileUploadDropzone> {
                 final data = await dropController.getFileData(file);
                 widget.saveFileName(name, data);
               },
-              onDropMultiple: (_) {},
               onLeave: () => debugPrint('Zone left'),
             ),
             const Text(
@@ -57,7 +56,7 @@ class _FileUploadDropzoneState extends State<FileUploadDropzone> {
     );
   }
 
-  Future<bool> isAudio(dynamic file) async {
+  Future<bool> isAudio(DropzoneFileInterface file) async {
     final mime = await dropController.getFileMIME(file);
     return mime.startsWith('audio');
   }
