@@ -1,7 +1,7 @@
 name: basement_music
 description: Music player with the ability to download tracks from YouTube
 
-publish_to: 'none'
+publish_to: "none"
 
 version: 1.0.0+7
 
@@ -11,7 +11,7 @@ environment:
 dependencies:
   another_flushbar: ^1.12.30
   audio_service: ^0.18.12
-  audioplayers: ^5.1.0
+  audioplayers: ^6.6.0
   auto_size_text: ^3.0.0
   bloc: ^8.1.2
   collection: ^1.17.2
@@ -21,8 +21,8 @@ dependencies:
   dotted_border: ^2.0.0
   equatable: ^2.0.3
   file_picker: ^5.5.0
-  firebase_core: ^2.4.1
-  firebase_crashlytics: ^3.0.11
+  firebase_core: ^3.15.2
+  firebase_crashlytics: ^4.3.10
   flex_color_scheme: ^8.4.0
   flutter:
     sdk: flutter
@@ -57,8 +57,14 @@ dev_dependencies:
   flutter_native_splash: ^2.2.14
   flutter_test:
     sdk: flutter
-  json_serializable: ^6.7.1  
+  json_serializable: ^6.7.1
   retrofit_generator: ^8.0.3
+
+# win32 5.0.x references UnmodifiableUint8ListView, which is not in Dart 3.11's
+# dart:typed_data (use Uint8List.asUnmodifiableView() instead). A transitive
+# dependency pins an incompatible 5.0.8; override to a release that matches the SDK.
+dependency_overrides:
+  win32: ^5.10.0
 
 flutter:
   assets:
@@ -74,4 +80,3 @@ flutter_native_splash:
   image_dark: assets/audio-waves-colored.png
 
   android_12:
-  
