@@ -22,7 +22,7 @@ class Cover extends StatelessWidget {
         image,
         if (overlay != null)
           Container(
-            color: Theme.of(context).shadowColor.withOpacity(0.2),
+            color: Theme.of(context).shadowColor.withValues(alpha: 0.2),
             width: size,
             height: size,
           ),

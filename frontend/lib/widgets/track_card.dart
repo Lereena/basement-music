@@ -43,7 +43,7 @@ class TrackCard extends StatelessWidget {
             child: BlocBuilder<PlayerBloc, PlayerState>(
               builder: (context, playerState) => ColoredBox(
                 color: playerBloc.state.currentTrack == track
-                    ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
+                    ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.1)
                     : Colors.transparent,
                 child: Row(
                   children: [
@@ -65,8 +65,7 @@ class TrackCard extends StatelessWidget {
                                 isCached: isCached,
                               ),
                             ),
-                            if (playerBloc.state.currentTrack == track &&
-                                (playerState is PlayerPlay))
+                            if (playerBloc.state.currentTrack == track && (playerState is PlayerPlay))
                               const PauseButton()
                             else
                               PlayButton(

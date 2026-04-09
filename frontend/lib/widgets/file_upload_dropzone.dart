@@ -24,7 +24,7 @@ class _FileUploadDropzoneState extends State<FileUploadDropzone> {
       child: Container(
         width: widget.width,
         height: widget.height,
-        color: Theme.of(context).primaryColorLight.withOpacity(0.5),
+        color: Theme.of(context).primaryColorLight.withValues(alpha: 0.5),
         child: Stack(
           alignment: Alignment.center,
           children: [

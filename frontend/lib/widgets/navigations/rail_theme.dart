@@ -21,7 +21,7 @@ class NavigationRailDefaultsM2 extends NavigationRailThemeData {
 
   @override
   TextStyle? get unselectedLabelTextStyle {
-    return _theme.textTheme.bodyLarge!.copyWith(color: _colors.onSurface.withOpacity(0.64));
+    return _theme.textTheme.bodyLarge!.copyWith(color: _colors.onSurface.withValues(alpha: 0.64));
   }
 
   @override

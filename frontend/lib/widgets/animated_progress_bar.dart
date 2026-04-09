@@ -77,7 +77,7 @@ class _AnimatedProgressBarState extends State<AnimatedProgressBar> with SingleTi
       builder: (context, child) {
         return LinearProgressIndicator(
           value: _animation.value,
-          backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+          backgroundColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
         );
       },
     );

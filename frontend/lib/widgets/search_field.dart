@@ -23,7 +23,7 @@ class SearchField extends StatelessWidget {
       onSubmitted: (text) => onSearch(text),
       decoration: InputDecoration(
         suffixIcon: InkWell(
-          hoverColor: Theme.of(context).primaryColor.withOpacity(0.1),
+          hoverColor: Theme.of(context).primaryColor.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(30),
           onTap: () {
             onSearch(_controller.text);
