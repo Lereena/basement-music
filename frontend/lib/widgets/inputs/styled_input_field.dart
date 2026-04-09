@@ -20,7 +20,7 @@ class StyledInputField extends StatelessWidget {
     return TextField(
       decoration: InputDecoration(
         filled: true,
-        fillColor: Theme.of(context).primaryColor.withOpacity(0.1),
+        fillColor: Theme.of(context).primaryColor.withValues(alpha: 0.1),
         border: OutlineInputBorder(
           borderSide: BorderSide(color: Theme.of(context).primaryColor),
         ),

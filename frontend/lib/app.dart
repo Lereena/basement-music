@@ -121,21 +121,20 @@ class BasementMusic extends StatelessWidget {
       cacheRepository: cacheRepository,
       settingsRepository: settingsRepository,
       artistsRepository: artistsRepository,
-      child: ShortcutsWrapper(
-        child: BlocBuilder<SettingsBloc, SettingsState>(
-          builder: (_, settingsState) {
-            return Sizer(
-              builder: (_, __, ___) => MaterialApp.router(
-                title: 'Basement',
-                theme: CustomTheme.lightTheme,
-                darkTheme: CustomTheme.darkTheme,
-                themeMode: settingsState.themeMode,
-                routeInformationProvider: _router.routeInformationProvider,
-                routeInformationParser: _router.routeInformationParser,
-                routerDelegate: _router.routerDelegate,
-              ),
-            );
-          },
+      child: BlocBuilder<SettingsBloc, SettingsState>(
+        builder: (_, settingsState) => Sizer(
+          builder: (_, __, ___) => MaterialApp.router(
+            title: 'Basement',
+            theme: CustomTheme.lightTheme,
+            darkTheme: CustomTheme.darkTheme,
+            themeMode: settingsState.themeMode,
+            routeInformationProvider: _router.routeInformationProvider,
+            routeInformationParser: _router.routeInformationParser,
+            routerDelegate: _router.routerDelegate,
+            builder: (context, child) => ShortcutsWrapper(
+              child: child ?? const SizedBox.shrink(),
+            ),
+          ),
         ),
       ),
     );

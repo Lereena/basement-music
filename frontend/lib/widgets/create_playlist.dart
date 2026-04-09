@@ -17,8 +17,7 @@ class CreatePlaylistDialog extends StatefulWidget {
           height: min(30.h, 300),
           width: min(50.w, 450),
           child: BlocProvider(
-            create: (_) =>
-                PlaylistCreationBloc(context.read<PlaylistsRepository>()),
+            create: (_) => PlaylistCreationBloc(context.read<PlaylistsRepository>()),
             child: const CreatePlaylistDialog(),
           ),
         ),
@@ -45,7 +44,7 @@ class _CreatePlaylistDialogState extends State<CreatePlaylistDialog> {
 
             if (state is PlaylistCreationSuccess) {
               Future.delayed(const Duration(seconds: 2), () {
-                if (mounted) {
+                if (context.mounted) {
                   Navigator.of(context).pop();
                 }
               });
@@ -88,9 +87,7 @@ class _CreatePlaylistDialogState extends State<CreatePlaylistDialog> {
                     ),
                     controller: _titleController,
                     autofocus: true,
-                    validator: (value) => value?.isNotEmpty != true
-                        ? 'Title must not be empty'
-                        : null,
+                    validator: (value) => value?.isNotEmpty != true ? 'Title must not be empty' : null,
                   ),
                   const SizedBox(height: 16),
                   SizedBox(
