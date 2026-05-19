@@ -47,10 +47,9 @@ class AppScaffoldShell extends StatelessWidget {
       if (isSmall) {
         return Scaffold(
           body: body,
-          bottomNavigationBar: NavigationBar(
+          bottomNavigationBar: _NavigationBottomBar(
             selectedIndex: navigationShell.currentIndex,
             onDestinationSelected: (i) => onNavigationEvent(context, i),
-            destinations: _Destination.values.map((e) => NavigationDestination(icon: e.icon, label: e.title)).toList(),
           ),
         );
       }
@@ -116,6 +115,8 @@ class _NavigationSidebar extends StatelessWidget {
                 color: Colors.transparent,
                 borderRadius: BorderRadius.circular(30),
                 child: InkWell(
+                  hoverColor: theme.primaryColor.withValues(alpha: 0.1),
+                  highlightColor: theme.primaryColor.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(30),
                   onTap: () => onDestinationSelected(i),
                   child: Padding(
@@ -140,6 +141,49 @@ class _NavigationSidebar extends StatelessWidget {
             );
           }),
         ],
+      ),
+    );
+  }
+}
+
+class _NavigationBottomBar extends StatelessWidget {
+  final int selectedIndex;
+  final ValueChanged<int> onDestinationSelected;
+
+  const _NavigationBottomBar({
+    required this.selectedIndex,
+    required this.onDestinationSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return NavigationBarTheme(
+      data: NavigationBarThemeData(
+        indicatorColor: Colors.transparent,
+        overlayColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.hovered)) return theme.primaryColor.withValues(alpha: 0.1);
+          if (states.contains(WidgetState.pressed)) return theme.primaryColor.withValues(alpha: 0.2);
+          return null;
+        }),
+        iconTheme: WidgetStateProperty.resolveWith((states) {
+          final color = states.contains(WidgetState.selected)
+              ? theme.primaryColor.withValues(alpha: 0.9)
+              : theme.colorScheme.onSurface;
+          return IconThemeData(color: color);
+        }),
+        labelTextStyle: WidgetStateProperty.resolveWith((states) {
+          final color = states.contains(WidgetState.selected)
+              ? theme.primaryColor.withValues(alpha: 0.9)
+              : theme.colorScheme.onSurface;
+          return TextStyle(color: color);
+        }),
+      ),
+      child: NavigationBar(
+        selectedIndex: selectedIndex,
+        onDestinationSelected: onDestinationSelected,
+        destinations: _Destination.values.map((e) => NavigationDestination(icon: e.icon, label: e.title)).toList(),
       ),
     );
   }
