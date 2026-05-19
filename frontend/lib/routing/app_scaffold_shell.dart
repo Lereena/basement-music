@@ -47,12 +47,9 @@ class AppScaffoldShell extends StatelessWidget {
       if (isSmall) {
         return Scaffold(
           body: body,
-          bottomNavigationBar: NavigationBar(
+          bottomNavigationBar: _NavigationBottomBar(
             selectedIndex: navigationShell.currentIndex,
             onDestinationSelected: (i) => onNavigationEvent(context, i),
-            destinations: _Destination.values
-                .map((e) => NavigationDestination(icon: e.icon, label: e.title))
-                .toList(),
           ),
         );
       }
@@ -60,17 +57,10 @@ class AppScaffoldShell extends StatelessWidget {
       return Scaffold(
         body: Row(
           children: [
-            NavigationRail(
+            _NavigationSidebar(
               extended: isLarge,
-              leading: LeadingRailWidget(extended: isLarge),
               selectedIndex: navigationShell.currentIndex,
               onDestinationSelected: (i) => onNavigationEvent(context, i),
-              destinations: _Destination.values
-                  .map((e) => NavigationRailDestination(
-                        icon: e.icon,
-                        label: Text(e.title),
-                      ))
-                  .toList(),
             ),
             const VerticalDivider(thickness: 1, width: 1),
             Expanded(child: body),
@@ -84,6 +74,117 @@ class AppScaffoldShell extends StatelessWidget {
     navigationShell.goBranch(
       index,
       initialLocation: index == navigationShell.currentIndex,
+    );
+  }
+}
+
+class _NavigationSidebar extends StatelessWidget {
+  final bool extended;
+  final int selectedIndex;
+  final ValueChanged<int> onDestinationSelected;
+
+  const _NavigationSidebar({
+    required this.extended,
+    required this.selectedIndex,
+    required this.onDestinationSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return SizedBox(
+      width: extended ? 256.0 : 80.0,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            child: Center(child: LeadingRailWidget(extended: extended)),
+          ),
+          ..._Destination.values.indexed.map((entry) {
+            final (i, dest) = entry;
+            final selected = i == selectedIndex;
+            final iconColor = selected
+                ? theme.primaryColor.withValues(alpha: 0.8)
+                : theme.colorScheme.onSurface.withValues(alpha: 0.64);
+
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+              child: Material(
+                color: Colors.transparent,
+                borderRadius: BorderRadius.circular(30),
+                child: InkWell(
+                  hoverColor: theme.primaryColor.withValues(alpha: 0.1),
+                  highlightColor: theme.primaryColor.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(30),
+                  onTap: () => onDestinationSelected(i),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                    child: extended
+                        ? Row(
+                            children: [
+                              IconTheme.merge(data: IconThemeData(color: iconColor), child: dest.icon),
+                              const SizedBox(width: 12),
+                              Text(dest.title, style: TextStyle(color: iconColor)),
+                            ],
+                          )
+                        : Tooltip(
+                            message: dest.title,
+                            child: Center(
+                              child: IconTheme.merge(data: IconThemeData(color: iconColor), child: dest.icon),
+                            ),
+                          ),
+                  ),
+                ),
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+}
+
+class _NavigationBottomBar extends StatelessWidget {
+  final int selectedIndex;
+  final ValueChanged<int> onDestinationSelected;
+
+  const _NavigationBottomBar({
+    required this.selectedIndex,
+    required this.onDestinationSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return NavigationBarTheme(
+      data: NavigationBarThemeData(
+        indicatorColor: Colors.transparent,
+        overlayColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.hovered)) return theme.primaryColor.withValues(alpha: 0.1);
+          if (states.contains(WidgetState.pressed)) return theme.primaryColor.withValues(alpha: 0.2);
+          return null;
+        }),
+        iconTheme: WidgetStateProperty.resolveWith((states) {
+          final color = states.contains(WidgetState.selected)
+              ? theme.primaryColor.withValues(alpha: 0.9)
+              : theme.colorScheme.onSurface;
+          return IconThemeData(color: color);
+        }),
+        labelTextStyle: WidgetStateProperty.resolveWith((states) {
+          final color = states.contains(WidgetState.selected)
+              ? theme.primaryColor.withValues(alpha: 0.9)
+              : theme.colorScheme.onSurface;
+          return TextStyle(color: color);
+        }),
+      ),
+      child: NavigationBar(
+        selectedIndex: selectedIndex,
+        onDestinationSelected: onDestinationSelected,
+        destinations: _Destination.values.map((e) => NavigationDestination(icon: e.icon, label: e.title)).toList(),
+      ),
     );
   }
 }
