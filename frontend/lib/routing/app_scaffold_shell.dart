@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_adaptive_scaffold/flutter_adaptive_scaffold.dart';
 import 'package:go_router/go_router.dart';
 
 import '../widgets/leading_rail_widget.dart';
 import 'app_scaffold.dart';
+import 'breakpoints.dart';
 
 enum _Destination {
   tracks,
@@ -39,23 +39,45 @@ class AppScaffoldShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AdaptiveScaffold(
-      useDrawer: false,
-      drawerBreakpoint: Breakpoints.small,
-      leadingExtendedNavRail: const LeadingRailWidget(extended: true),
-      leadingUnextendedNavRail: const LeadingRailWidget(extended: false),
-      selectedIndex: navigationShell.currentIndex,
-      onSelectedIndexChange: (index) => onNavigationEvent(context, index),
-      destinations: _Destination.values
-          .map(
-            (e) => NavigationDestination(
-              icon: e.icon,
-              label: e.title,
+    return LayoutBuilder(builder: (context, constraints) {
+      final isSmall = constraints.maxWidth < kSmallBreakpoint;
+      final isLarge = constraints.maxWidth >= kLargeBreakpoint;
+      final body = AppScaffold(child: navigationShell);
+
+      if (isSmall) {
+        return Scaffold(
+          body: body,
+          bottomNavigationBar: NavigationBar(
+            selectedIndex: navigationShell.currentIndex,
+            onDestinationSelected: (i) => onNavigationEvent(context, i),
+            destinations: _Destination.values
+                .map((e) => NavigationDestination(icon: e.icon, label: e.title))
+                .toList(),
+          ),
+        );
+      }
+
+      return Scaffold(
+        body: Row(
+          children: [
+            NavigationRail(
+              extended: isLarge,
+              leading: LeadingRailWidget(extended: isLarge),
+              selectedIndex: navigationShell.currentIndex,
+              onDestinationSelected: (i) => onNavigationEvent(context, i),
+              destinations: _Destination.values
+                  .map((e) => NavigationRailDestination(
+                        icon: e.icon,
+                        label: Text(e.title),
+                      ))
+                  .toList(),
             ),
-          )
-          .toList(),
-      body: (_) => AppScaffold(child: navigationShell),
-    );
+            const VerticalDivider(thickness: 1, width: 1),
+            Expanded(child: body),
+          ],
+        ),
+      );
+    });
   }
 
   void onNavigationEvent(BuildContext context, int index) {
