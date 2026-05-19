@@ -47,7 +47,7 @@ Future<void> runBasement(AppConfig config) async {
   final dio = Dio(BaseOptions(baseUrl: config.baseUrl))
     ..interceptors.addAll([
       JsonResponseConverter(),
-      PrettyDioLogger(maxWidth: 120),
+      PrettyDioLogger(maxWidth: 120, responseBody: false),
     ]);
 
   final restClient = RestClient(dio);

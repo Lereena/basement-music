@@ -73,13 +73,7 @@ class _LibraryPageState extends State<LibraryPage> with SingleTickerProviderStat
             letterSpacing: 1.1,
           ),
           tabs: LibraryPageTab.values
-              .map(
-                (tab) => Tab(
-                  text: tab.title,
-                  height: 22,
-                  iconMargin: EdgeInsets.zero,
-                ),
-              )
+              .map((tab) => Tab(text: tab.title, height: 28, iconMargin: EdgeInsets.zero))
               .toList(),
           onTap: (index) => setState(() => tab = LibraryPageTab.values[index]),
         ),
