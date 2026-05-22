@@ -1,6 +1,6 @@
 # Freezed Cubit Skill
 
-Use this skill when writing a new cubit or converting an existing one in this project. All cubit states must use Freezed.
+Use this skill when writing or editing any cubit in this project. All cubit states must use Freezed.
 
 ---
 
@@ -167,6 +167,27 @@ Verify no issues:
 ```sh
 fvm flutter analyze
 ```
+
+---
+
+## Adding helper methods to Freezed states
+
+Use the private constructor trick to add computed getters or helper methods to a Freezed class:
+
+```dart
+@freezed
+abstract class MyState with _$MyState {
+  const MyState._(); // enables custom methods
+  const factory MyState.play({required Track track}) = _Play;
+  const factory MyState.pause({required Track track}) = _Pause;
+
+  // Boolean helpers to avoid is-checks in UI
+  bool get isPlay => maybeMap(play: (_) => true, orElse: () => false);
+  bool get isPause => maybeMap(pause: (_) => true, orElse: () => false);
+}
+```
+
+Note: if all variants share a field (e.g. `currentTrack`), Freezed generates the getter automatically — no need for a custom one.
 
 ---
 

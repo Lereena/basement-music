@@ -1,12 +1,12 @@
 ---
-description: How to write any cubit in this project using Freezed states — new cubits and conversions alike
+description: How to write or edit any cubit in this project using Freezed states
 globs: ["**/bloc/**/*.dart"]
 alwaysApply: false
 ---
 
 # Freezed Cubit Pattern
 
-Use this rule when writing a new cubit or converting an existing one. All cubit states in this project use Freezed.
+Use this rule when writing or editing any cubit. All cubit states in this project use Freezed.
 
 ## When to use a union state vs a data class state
 
@@ -114,6 +114,24 @@ state.maybeWhen(
 ```
 
 Never use `is SubclassName` checks — use `when` / `maybeWhen` / `map` / `maybeMap`.
+
+## Adding helpers to Freezed states (private constructor trick)
+
+```dart
+@freezed
+abstract class MyState with _$MyState {
+  const MyState._(); // enables custom methods on the abstract class
+
+  const factory MyState.play({required Track currentTrack}) = _Play;
+  const factory MyState.pause({required Track currentTrack}) = _Pause;
+
+  // Boolean helpers avoid is-checks in UI
+  bool get isPlay => maybeMap(play: (_) => true, orElse: () => false);
+  bool get isPause => maybeMap(pause: (_) => true, orElse: () => false);
+}
+```
+
+Note: if all variants share a field (e.g. `currentTrack`), Freezed generates the getter automatically.
 
 ## Codegen
 
