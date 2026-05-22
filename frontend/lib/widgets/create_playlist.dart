@@ -1,21 +1,16 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sizer/sizer.dart';
 
 import '../bloc/playlist_creation_bloc/playlist_creation_bloc.dart';
 import '../repositories/playlists_repository.dart';
-import 'dialogs/dialog.dart';
+import 'dialogs/base_dialog.dart';
 
 class CreatePlaylistDialog extends StatefulWidget {
   const CreatePlaylistDialog({super.key});
 
   static Future<void> show({required BuildContext context}) => showDialog(
         context: context,
-        builder: (_) => CustomDialog(
-          height: min(30.h, 300),
-          width: min(50.w, 450),
+        builder: (_) => BaseDialog(
           child: BlocProvider(
             create: (_) => PlaylistCreationBloc(context.read<PlaylistsRepository>()),
             child: const CreatePlaylistDialog(),

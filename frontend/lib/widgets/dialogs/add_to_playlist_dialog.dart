@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sizer/sizer.dart';
 
 import '../../bloc/track_to_playlist_adder_bloc/track_to_playlist_adder_bloc.dart';
 import '../../repositories/repositories.dart';
 import '../icons/error_icon.dart';
 import '../icons/success_icon.dart';
-import 'dialog.dart';
+import 'base_dialog.dart';
 
 class AddToPlaylistDialog extends StatelessWidget {
   final String trackId;
@@ -31,48 +30,35 @@ class AddToPlaylistDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomDialog(
-      width: SizerUtil.deviceType == DeviceType.mobile ? 80.w : 40.w,
-      height: 50.h,
+    return BaseDialog(
       child: BlocBuilder<TrackToPlaylistAdderBloc, TrackToPlaylistAdderState>(
         builder: (context, state) {
           if (state is TrackToPlaylistAdderPlaylistSelectInProgress) {
             return Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  padding: const EdgeInsets.only(bottom: 16, top: 8),
                   child: Text(
                     'Choose playlist',
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
                 ),
-                const Divider(
-                  height: 1.5,
-                  indent: 10,
-                  endIndent: 10,
-                ),
-                Expanded(
+                const Divider(height: 1.5, indent: 8, endIndent: 8),
+                Flexible(
                   child: ListView.separated(
                     shrinkWrap: true,
                     itemCount: state.playlists.length,
-                    separatorBuilder: (context, _) => const Divider(
-                      height: 1.5,
-                      indent: 10,
-                      endIndent: 10,
-                    ),
+                    separatorBuilder: (context, _) => const Divider(height: 1.5, indent: 8, endIndent: 8),
                     itemBuilder: (context, index) => SimpleDialogOption(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 10,
-                        horizontal: 15,
-                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
                       child: Text(state.playlists[index].title),
-                      onPressed: () =>
-                          context.read<TrackToPlaylistAdderBloc>().add(
-                                TrackToPlaylistAdderPlaylistSelected(
-                                  trackId,
-                                  state.playlists[index].id,
-                                ),
-                              ),
+                      onPressed: () => context.read<TrackToPlaylistAdderBloc>().add(
+                            TrackToPlaylistAdderPlaylistSelected(
+                              trackId,
+                              state.playlists[index].id,
+                            ),
+                          ),
                     ),
                   ),
                 ),
@@ -88,6 +74,7 @@ class AddToPlaylistDialog extends StatelessWidget {
           if (state is TrackToPlaylistAdderSuccess) {
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 SuccessIcon(),
                 const SizedBox(height: 20),
@@ -99,6 +86,7 @@ class AddToPlaylistDialog extends StatelessWidget {
           if (state is TrackToPlaylistAdderError) {
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 ErrorIcon(),
                 const SizedBox(height: 20),
@@ -107,7 +95,7 @@ class AddToPlaylistDialog extends StatelessWidget {
             );
           }
 
-          return Container();
+          return const SizedBox.shrink();
         },
       ),
     );

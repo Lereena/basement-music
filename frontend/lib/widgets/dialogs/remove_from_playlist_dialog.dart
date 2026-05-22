@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sizer/sizer.dart';
 
 import '../../bloc/track_from_playlist_remover_bloc/track_from_playlist_remover_bloc.dart';
 import '../../models/playlist.dart';
@@ -8,7 +7,7 @@ import '../../models/track.dart';
 import '../../repositories/repositories.dart';
 import '../icons/error_icon.dart';
 import '../icons/success_icon.dart';
-import 'dialog.dart';
+import 'base_dialog.dart';
 
 class RemoveFromPlaylistDialog extends StatelessWidget {
   final Track track;
@@ -39,45 +38,45 @@ class RemoveFromPlaylistDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomDialog(
-      width: SizerUtil.deviceType == DeviceType.mobile ? 80.w : 40.w,
-      height: SizerUtil.deviceType == DeviceType.mobile ? 50.h : 30.h,
-      child: BlocBuilder<TrackFromPlaylistRemoverBloc,
-          TrackFromPlaylistRemoverState>(
+    final theme = Theme.of(context);
+    return BaseDialog(
+      child: BlocBuilder<TrackFromPlaylistRemoverBloc, TrackFromPlaylistRemoverState>(
         builder: (context, state) {
           if (state is RemoveFromPlaylistInitial) {
             return Column(
+              mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                RichText(
-                  text: TextSpan(
+                Text.rich(
+                  TextSpan(
                     text: 'Do you want to remove ',
                     children: [
                       TextSpan(
                         text: track.title,
-                        style: const TextStyle(fontStyle: FontStyle.italic),
+                        style: const TextStyle(decoration: TextDecoration.underline),
                       ),
                       const TextSpan(text: ' from '),
                       TextSpan(
                         text: '${playlist.title} ',
-                        style: const TextStyle(fontStyle: FontStyle.italic),
+                        style: const TextStyle(decoration: TextDecoration.underline),
                       ),
                       const TextSpan(text: 'playlist?'),
                     ],
                   ),
+                  style: theme.textTheme.bodyLarge?.copyWith(color: theme.colorScheme.onSurface),
+                  textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 15),
+                const SizedBox(height: 8),
                 ElevatedButton(
-                  onPressed: () =>
-                      context.read<TrackFromPlaylistRemoverBloc>().add(
-                            TrackFromPlaylistRemoverConfirmed(
-                              track.id,
-                              playlist.id,
-                            ),
-                          ),
+                  onPressed: () => context.read<TrackFromPlaylistRemoverBloc>().add(
+                        TrackFromPlaylistRemoverConfirmed(
+                          track.id,
+                          playlist.id,
+                        ),
+                      ),
                   child: const Text('Remove'),
                 ),
-                const SizedBox(height: 15),
+                const SizedBox(height: 8),
                 TextButton(
                   onPressed: () => Navigator.pop(context),
                   child: const Text('Cancel'),
@@ -93,6 +92,7 @@ class RemoveFromPlaylistDialog extends StatelessWidget {
           if (state is TrackFromPlaylistRemoverSuccess) {
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 SuccessIcon(),
                 const SizedBox(height: 20),
@@ -104,6 +104,7 @@ class RemoveFromPlaylistDialog extends StatelessWidget {
           if (state is TrackFromPlaylistRemoverError) {
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 ErrorIcon(),
                 const SizedBox(height: 20),

@@ -53,12 +53,10 @@ class _UploadFromDevice extends StatelessWidget {
                     context,
                     currentFiles: state.files,
                   ),
-                  onMoveNext: () => trackUploadingBloc
-                      .add(TracksUploaderFilesApproved(files: state.files)),
+                  onMoveNext: () => trackUploadingBloc.add(TracksUploaderFilesApproved(files: state.files)),
                   onRemoveFile: (file) {
                     state.files.removeWhere((element) => element.file == file);
-                    trackUploadingBloc
-                        .add(TracksUploaderFilesSelected(files: state.files));
+                    trackUploadingBloc.add(TracksUploaderFilesSelected(files: state.files));
                   },
                   onEditFileInfo: (fileInfo) {
                     final (artist, title) = getArtistAndTitle(fileInfo.name);
@@ -74,10 +72,7 @@ class _UploadFromDevice extends StatelessWidget {
                         state.files.removeAt(fileIndex);
                         state.files.insert(
                           fileIndex,
-                          (
-                            file: fileInfo.file,
-                            name: constructFilename(result.artist, result.title)
-                          ),
+                          (file: fileInfo.file, name: constructFilename(result.artist, result.title)),
                         );
 
                         trackUploadingBloc.add(
@@ -96,15 +91,11 @@ class _UploadFromDevice extends StatelessWidget {
                 );
               }
 
-              if (state is TracksUploaderUploadSucces ||
-                  state is TracksUploaderUploadError) {
+              if (state is TracksUploaderUploadSucces || state is TracksUploaderUploadError) {
                 return ResultPage(
-                  result: state is TracksUploaderUploadSucces
-                      ? Result.success
-                      : Result.fail,
+                  result: state is TracksUploaderUploadSucces ? Result.success : Result.fail,
                   successMessage: 'Track was successfully uploaded',
-                  failMessage:
-                      'Track uploading is failed, please try again later',
+                  failMessage: 'Track uploading is failed, please try again later',
                   buttonText: 'OK',
                   onLeavePage: () => _onUploadOtherTrack(context),
                 );
@@ -139,9 +130,7 @@ class _UploadFromDevice extends StatelessWidget {
     selectedFiles.addAll(newFiles.map((file) => (name: file.name, file: file)));
 
     if (context.mounted) {
-      context
-          .read<TracksUploaderBloc>()
-          .add(TracksUploaderFilesSelected(files: selectedFiles));
+      context.read<TracksUploaderBloc>().add(TracksUploaderFilesSelected(files: selectedFiles));
     }
   }
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'dialog.dart';
+import 'base_dialog.dart';
 
 class StatusDialog extends StatelessWidget {
   final bool success;
@@ -10,7 +10,7 @@ class StatusDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomDialog(
+    return BaseDialog(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
         child: Column(
