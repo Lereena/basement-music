@@ -1,0 +1,133 @@
+---
+description: How to write any cubit in this project using Freezed states — new cubits and conversions alike
+globs: ["**/bloc/**/*.dart"]
+alwaysApply: false
+---
+
+# Freezed Cubit Pattern
+
+Use this rule when writing a new cubit or converting an existing one. All cubit states in this project use Freezed.
+
+## When to use a union state vs a data class state
+
+**Union** — multiple named states where available fields differ (loading, loaded, error, etc.)
+**Data class** — a single shape of data that updates over time (progress, form, counter)
+
+## File structure
+
+```
+bloc/
+  my_feature_cubit/
+    my_feature_cubit.dart       ← cubit class
+    my_feature_state.dart       ← state class (part of cubit)
+    my_feature_cubit.freezed.dart  ← generated, do not edit
+```
+
+## Union state template
+
+**`my_feature_state.dart`**
+```dart
+part of 'my_feature_cubit.dart';
+
+@freezed
+abstract class MyFeatureState with _$MyFeatureState {
+  const factory MyFeatureState.initial() = _Initial;
+  const factory MyFeatureState.loading() = _Loading;
+  const factory MyFeatureState.loaded({required MyData data}) = _Loaded;
+  const factory MyFeatureState.error({required String message}) = _Error;
+}
+```
+
+**`my_feature_cubit.dart`**
+```dart
+import 'package:bloc/bloc.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+part 'my_feature_cubit.freezed.dart';
+part 'my_feature_state.dart';
+
+class MyFeatureCubit extends Cubit<MyFeatureState> {
+  MyFeatureCubit() : super(const MyFeatureState.initial());
+
+  Future<void> load() async {
+    emit(const MyFeatureState.loading());
+    try {
+      final data = await _someRepo.fetch();
+      emit(MyFeatureState.loaded(data: data));
+    } catch (e) {
+      emit(MyFeatureState.error(message: e.toString()));
+    }
+  }
+}
+```
+
+## Data class state template
+
+```dart
+part of 'my_feature_cubit.dart';
+
+@freezed
+abstract class MyFeatureState with _$MyFeatureState {
+  const factory MyFeatureState({
+    @Default(0.0) double progress,
+    @Default('') String label,
+  }) = _MyFeatureState;
+}
+```
+
+Initial state: `const MyFeatureState()` — all `@Default` values apply.
+Update: `emit(state.copyWith(progress: 0.75))`.
+
+## Naming conventions
+
+| Variant purpose | Factory name |
+|---|---|
+| No data yet | `.initial()` |
+| Async in-flight | `.loading()` |
+| Success with data | `.loaded(...)` |
+| Success, empty result | `.empty()` |
+| Recoverable error | `.error(message: ...)` |
+
+## Part directives — exact order in cubit file
+
+```dart
+part 'my_feature_cubit.freezed.dart';  // generated — always first
+part 'my_feature_state.dart';
+```
+
+## Reading state in widgets
+
+```dart
+// Exhaustive
+state.when(
+  initial: () => const SizedBox.shrink(),
+  loading: () => const CircularProgressIndicator(),
+  loaded: (data) => MyWidget(data: data),
+  error: (message) => Text(message),
+)
+
+// Partial
+state.maybeWhen(
+  loaded: (data) => MyWidget(data: data),
+  orElse: () => const SizedBox.shrink(),
+)
+```
+
+Never use `is SubclassName` checks — use `when` / `maybeWhen` / `map` / `maybeMap`.
+
+## Codegen
+
+```sh
+fvm flutter pub run build_runner build --delete-conflicting-outputs
+fvm flutter analyze
+```
+
+## Checklist
+
+- [ ] Directory named `<feature>_cubit/`
+- [ ] State: `@freezed abstract class` with `_$ClassName` mixin
+- [ ] Cubit: `freezed_annotation` imported, both `part` directives (freezed first)
+- [ ] Initial state is `const` constructor
+- [ ] Emits use named factories (union) or `copyWith` (data class)
+- [ ] Widget usages use `when` / `maybeWhen` — no `is` checks
+- [ ] Codegen run, `fvm flutter analyze` passes

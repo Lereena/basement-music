@@ -6,8 +6,9 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 
 import 'package:basement_music/logger.dart';
 import 'package:basement_music/models/playlist.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+
 import 'package:basement_music/repositories/repositories.dart';
-import 'package:basement_music/bloc/connectivity_status_bloc/connectivity_status_cubit.dart';
 
 part 'playlists_event.dart';
 part 'playlists_state.dart';
@@ -23,7 +24,7 @@ class PlaylistsCubit extends HydratedCubit<PlaylistsState> {
     required this.connectivityStatusRepository,
   }) : super(PlaylistsLoadingState()) {
     connectivityStatusRepository.statusSubject.listen((status) {
-      if (status is ConnectivityStatusHasConnection) {
+      if (status != ConnectivityResult.none) {
         loadPlaylists();
       }
     });

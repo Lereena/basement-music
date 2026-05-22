@@ -1,18 +1,20 @@
 import 'package:bloc/bloc.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'package:basement_music/repositories/connectivity_status_repository.dart';
 
+part 'connectivity_status_cubit.freezed.dart';
 part 'connectivity_status_state.dart';
 
 class ConnectivityStatusCubit extends Cubit<ConnectivityStatusState> {
   final ConnectivityStatusRepository connectivityStatusRepository;
 
   ConnectivityStatusCubit(this.connectivityStatusRepository)
-      : super(ConnectivityStatusInitial()) {
+      : super(const ConnectivityStatusState.initial()) {
     if (kIsWeb) {
-      emit(ConnectivityStatusHasConnection());
+      emit(const ConnectivityStatusState.hasConnection());
     }
 
     connectivityStatusRepository.statusSubject.listen(_emitStatus);
@@ -20,9 +22,9 @@ class ConnectivityStatusCubit extends Cubit<ConnectivityStatusState> {
 
   void _emitStatus(ConnectivityResult connectivityResult) {
     if (connectivityResult == ConnectivityResult.none) {
-      emit(ConnectivityStatusNoConnection());
+      emit(const ConnectivityStatusState.noConnection());
     } else {
-      emit(ConnectivityStatusHasConnection());
+      emit(const ConnectivityStatusState.hasConnection());
     }
   }
 }

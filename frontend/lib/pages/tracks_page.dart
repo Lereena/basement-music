@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:basement_music/bloc/connectivity_status_bloc/connectivity_status_cubit.dart';
+import 'package:basement_music/bloc/connectivity_status_cubit/connectivity_status_cubit.dart';
 import 'package:basement_music/bloc/tracks_bloc/tracks_bloc.dart';
 import 'package:basement_music/models/track.dart';
 import 'package:basement_music/repositories/repositories.dart';
@@ -60,8 +60,10 @@ class _TracksPage extends StatelessWidget {
                               children: [
                                 TrackCard(
                                   track: state.tracks[index],
-                                  active: connectivityStatus
-                                      is ConnectivityStatusHasConnection,
+                                  active: connectivityStatus.maybeWhen(
+                                    hasConnection: () => true,
+                                    orElse: () => false,
+                                  ),
                                 ),
                                 const Divider(height: 1),
                               ],

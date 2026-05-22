@@ -1,17 +1,4 @@
 import 'package:audio_service/audio_service.dart';
-import 'package:dio/dio.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:hydrated_bloc/hydrated_bloc.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:pretty_dio_logger/pretty_dio_logger.dart';
-import 'package:sizer/sizer.dart';
-import 'package:url_strategy/url_strategy.dart';
-
 import 'package:basement_music/adapters/theme_mode_adapter.dart';
 import 'package:basement_music/app_config.dart';
 import 'package:basement_music/audio_player_handler.dart';
@@ -25,6 +12,18 @@ import 'package:basement_music/routing/router.dart';
 import 'package:basement_music/shortcuts_wrapper.dart';
 import 'package:basement_music/theme/custom_theme.dart';
 import 'package:basement_music/utils/json_response_converter.dart';
+import 'package:dio/dio.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:pretty_dio_logger/pretty_dio_logger.dart';
+import 'package:sizer/sizer.dart';
+import 'package:url_strategy/url_strategy.dart';
 
 Future<void> runBasement(AppConfig config) async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -39,16 +38,15 @@ Future<void> runBasement(AppConfig config) async {
   };
 
   HydratedBloc.storage = await HydratedStorage.build(
-    storageDirectory: kIsWeb ? HydratedStorage.webStorageDirectory : await getApplicationDocumentsDirectory(),
+    storageDirectory: kIsWeb
+        ? HydratedStorageDirectory.web
+        : HydratedStorageDirectory((await getTemporaryDirectory()).path),
   );
 
   setPathUrlStrategy();
 
   final dio = Dio(BaseOptions(baseUrl: config.baseUrl))
-    ..interceptors.addAll([
-      JsonResponseConverter(),
-      PrettyDioLogger(maxWidth: 120, responseBody: false),
-    ]);
+    ..interceptors.addAll([JsonResponseConverter(), PrettyDioLogger(maxWidth: 120, responseBody: false)]);
 
   final restClient = RestClient(dio);
 
@@ -131,9 +129,7 @@ class BasementMusic extends StatelessWidget {
             routeInformationProvider: _router.routeInformationProvider,
             routeInformationParser: _router.routeInformationParser,
             routerDelegate: _router.routerDelegate,
-            builder: (context, child) => ShortcutsWrapper(
-              child: child ?? const SizedBox.shrink(),
-            ),
+            builder: (context, child) => ShortcutsWrapper(child: child ?? const SizedBox.shrink()),
           ),
         ),
       ),

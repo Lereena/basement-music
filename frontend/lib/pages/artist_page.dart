@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:basement_music/bloc/artist_bloc/artist_cubit.dart';
-import 'package:basement_music/bloc/playlist_bloc/playlist_bloc.dart';
+import 'package:basement_music/bloc/artist_cubit/artist_cubit.dart';
 import 'package:basement_music/models/playlist.dart';
 import 'package:basement_music/models/track.dart';
 import 'package:basement_music/repositories/artists_repository.dart';
@@ -34,63 +33,49 @@ class _ArtistPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ArtistCubit, ArtistState>(
-      builder: (context, state) {
-        if (state is ArtistLoadInProgress) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        if (state is ArtistLoadedEmpty) {
-          return Scaffold(
-            appBar: BasementAppBar(
-              title: state.name,
-              // actions: _appBarActions(),
+      builder: (context, state) => state.when(
+        initial: () => const SizedBox.shrink(),
+        loadInProgress: () => const Center(child: CircularProgressIndicator()),
+        loadedEmpty: (name) => Scaffold(
+          appBar: BasementAppBar(
+            title: name,
+            // actions: _appBarActions(),
+          ),
+          body: Center(
+            child: Text(
+              'No tracks',
+              style: Theme.of(context).textTheme.bodyLarge,
             ),
-            body: Center(
-              child: Text(
-                'No tracks',
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
-            ),
-          );
-        }
-
-        if (state is ArtistLoaded) {
-          return Scaffold(
-            appBar: BasementAppBar(
-              title: state.artist.name,
-              //   actions: _appBarActions(
-              //     tracksIds: state.playlist.tracks.map((e) => e.id).toList(),
-              //   ),
-            ),
-            body: Column(
-              children: [
-                Expanded(
-                  child: ListView.separated(
-                    separatorBuilder: (context, _) => const Divider(height: 1),
-                    itemCount: state.artist.tracks?.length ?? 0,
-                    itemBuilder: (context, index) => TrackCard(
-                      track: state.artist.tracks?[index] ?? Track.empty(),
-                      containingPlaylist: Playlist.anonymous(state.artist.tracks ?? []),
-                      openedPlaylist: Playlist.anonymous(state.artist.tracks ?? []),
-                    ),
+          ),
+        ),
+        loaded: (artist) => Scaffold(
+          appBar: BasementAppBar(
+            title: artist.name,
+            //   actions: _appBarActions(
+            //     tracksIds: state.playlist.tracks.map((e) => e.id).toList(),
+            //   ),
+          ),
+          body: Column(
+            children: [
+              Expanded(
+                child: ListView.separated(
+                  separatorBuilder: (context, _) => const Divider(height: 1),
+                  itemCount: artist.tracks?.length ?? 0,
+                  itemBuilder: (context, index) => TrackCard(
+                    track: artist.tracks?[index] ?? Track.empty(),
+                    containingPlaylist: Playlist.anonymous(artist.tracks ?? []),
+                    openedPlaylist: Playlist.anonymous(artist.tracks ?? []),
                   ),
                 ),
-              ],
-            ),
-          );
-        }
-
-        if (state is PlaylistError) {
-          return Scaffold(
-            appBar: BasementAppBar(
-              title: '',
-            ),
-            body: const Center(child: Text('Error loading artist')),
-          );
-        }
-
-        return const SizedBox.shrink();
-      },
+              ),
+            ],
+          ),
+        ),
+        error: () => Scaffold(
+          appBar: BasementAppBar(title: ''),
+          body: const Center(child: Text('Error loading artist')),
+        ),
+      ),
     );
   }
 

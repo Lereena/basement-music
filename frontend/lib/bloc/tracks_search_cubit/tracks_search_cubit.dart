@@ -2,13 +2,14 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter/foundation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'package:basement_music/logger.dart';
 import 'package:basement_music/models/playlist.dart';
 import 'package:basement_music/models/track.dart';
 import 'package:basement_music/repositories/repositories.dart';
 
+part 'tracks_search_cubit.freezed.dart';
 part 'tracks_search_state.dart';
 
 class TracksSearchCubit extends Cubit<TracksSearchState> {
@@ -20,7 +21,7 @@ class TracksSearchCubit extends Cubit<TracksSearchState> {
     required this.tracksRepository,
     required this.playlistsRepository,
     required this.connectivityStatusRepository,
-  }) : super(const TracksSearchInitial());
+  }) : super(const TracksSearchState.initial());
 
   Playlist get openedPlaylist => playlistsRepository.openedPlaylist;
 
@@ -32,11 +33,11 @@ class TracksSearchCubit extends Cubit<TracksSearchState> {
     lastSearch = query;
 
     if (query.isEmpty) {
-      emit(const TracksSearchInitial());
+      emit(const TracksSearchState.initial());
       return;
     }
 
-    emit(TracksSearchLoadInProgress(query));
+    emit(TracksSearchState.loadInProgress(searchQuery: query));
 
     try {
       if (connectivityStatusRepository.statusSubject.value == ConnectivityResult.none) {
@@ -46,14 +47,14 @@ class TracksSearchCubit extends Cubit<TracksSearchState> {
       }
 
       if (tracksRepository.searchItems.isEmpty) {
-        emit(TracksSearchSuccessEmpty(query));
+        emit(TracksSearchState.successEmpty(searchQuery: query));
       } else {
         playlistsRepository.openedPlaylist = Playlist.anonymous(tracksRepository.searchItems);
 
-        emit(TracksSearchSuccess(query, tracksRepository.searchItems));
+        emit(TracksSearchState.success(searchQuery: query, tracks: tracksRepository.searchItems));
       }
     } catch (e) {
-      emit(const TracksSearchError());
+      emit(const TracksSearchState.error());
       logger.e('Error searching tracks: $e');
     }
   }

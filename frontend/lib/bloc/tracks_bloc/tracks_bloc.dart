@@ -6,8 +6,9 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 
 import 'package:basement_music/logger.dart';
 import 'package:basement_music/models/track.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+
 import 'package:basement_music/repositories/repositories.dart';
-import 'package:basement_music/bloc/connectivity_status_bloc/connectivity_status_cubit.dart';
 
 part 'tracks_event.dart';
 part 'tracks_state.dart';
@@ -26,7 +27,7 @@ class TracksBloc extends HydratedBloc<TracksEvent, TracksState> {
     on<TracksUpdated>(_onTracksUpdated);
 
     connectivityStatusRepository.statusSubject.listen((status) {
-      if (status is ConnectivityStatusHasConnection) {
+      if (status != ConnectivityResult.none) {
         add(TracksLoadStarted());
       }
     });

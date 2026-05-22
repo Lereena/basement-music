@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:basement_music/audio_player_handler.dart';
 import 'package:basement_music/bloc/cacher_bloc/cacher_bloc.dart';
-import 'package:basement_music/bloc/connectivity_status_bloc/connectivity_status_cubit.dart';
+import 'package:basement_music/bloc/connectivity_status_cubit/connectivity_status_cubit.dart';
 import 'package:basement_music/bloc/player_bloc/player_bloc.dart';
 import 'package:basement_music/bloc/settings_bloc/settings_bloc.dart';
 import 'package:basement_music/bloc/track_progress_cubit/track_progress_cubit.dart';

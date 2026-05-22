@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:basement_music/bloc/artists_bloc/artists_cubit.dart';
+import 'package:basement_music/bloc/artists_cubit/artists_cubit.dart';
 import 'package:basement_music/bloc/playlists_bloc/playlists_bloc.dart';
 import 'package:basement_music/repositories/artists_repository.dart';
 import 'package:basement_music/repositories/repositories.dart';
