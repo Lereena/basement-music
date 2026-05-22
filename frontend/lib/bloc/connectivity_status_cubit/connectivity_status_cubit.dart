@@ -20,8 +20,8 @@ class ConnectivityStatusCubit extends Cubit<ConnectivityStatusState> {
     connectivityStatusRepository.statusSubject.listen(_emitStatus);
   }
 
-  void _emitStatus(ConnectivityResult connectivityResult) {
-    if (connectivityResult == ConnectivityResult.none) {
+  void _emitStatus(List<ConnectivityResult> results) {
+    if (results.contains(ConnectivityResult.none)) {
       emit(const ConnectivityStatusState.noConnection());
     } else {
       emit(const ConnectivityStatusState.hasConnection());
