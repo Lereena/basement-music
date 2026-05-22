@@ -2,7 +2,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:basement_music/adapters/theme_mode_adapter.dart';
 import 'package:basement_music/app_config.dart';
 import 'package:basement_music/audio_player_handler.dart';
-import 'package:basement_music/bloc/settings_bloc/settings_bloc.dart';
+import 'package:basement_music/bloc/settings_cubit/settings_cubit.dart';
 import 'package:basement_music/firebase_options.dart';
 import 'package:basement_music/provider_wrapper.dart';
 import 'package:basement_music/repositories/artists_repository.dart';
@@ -119,7 +119,7 @@ class BasementMusic extends StatelessWidget {
       cacheRepository: cacheRepository,
       settingsRepository: settingsRepository,
       artistsRepository: artistsRepository,
-      child: BlocBuilder<SettingsBloc, SettingsState>(
+      child: BlocBuilder<SettingsCubit, SettingsState>(
         builder: (_, settingsState) => Sizer(
           builder: (_, _, _) => MaterialApp.router(
             title: 'Basement',

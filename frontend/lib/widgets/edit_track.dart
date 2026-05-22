@@ -1,31 +1,22 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-
-import 'package:basement_music/bloc/track_editor_bloc/track_editor_bloc.dart';
+import 'package:basement_music/bloc/track_editor_cubit/track_editor_cubit.dart';
 import 'package:basement_music/models/track.dart';
 import 'package:basement_music/repositories/tracks_repository.dart';
 import 'package:basement_music/widgets/dialogs/base_dialog.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class EditTrack extends StatefulWidget {
   final Track track;
 
   const EditTrack._({required this.track});
 
-  static Future<void> show({
-    required BuildContext context,
-    required Track track,
-  }) =>
-      showDialog(
-        context: context,
-        builder: (_) => BlocProvider(
-          create: (_) => TrackEditorBloc(context.read<TracksRepository>()),
-          child: BaseDialog(
-            child: EditTrack._(
-              track: track,
-            ),
-          ),
-        ),
-      );
+  static Future<void> show({required BuildContext context, required Track track}) => showDialog(
+    context: context,
+    builder: (_) => BlocProvider(
+      create: (_) => TrackEditorCubit(context.read<TracksRepository>()),
+      child: BaseDialog(child: EditTrack._(track: track)),
+    ),
+  );
 
   @override
   State<EditTrack> createState() => _EditTrackState();
@@ -41,36 +32,19 @@ class _EditTrackState extends State<EditTrack> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TrackEditorBloc, TrackEditorState>(
-      builder: (context, state) {
-        if (state is TrackEditorLoadInProgress) {
-          return const CircularProgressIndicator();
-        }
-
-        if (state is TrackEditorSuccess) {
-          return const Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Text('Track was successfully edited'),
-          );
-        }
-
-        if (state is TrackEditorError) {
-          return const Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Text('Track was not edited, please try again later'),
-          );
-        }
-
-        return Form(
+    return BlocBuilder<TrackEditorCubit, TrackEditorState>(
+      builder: (context, state) => state.when(
+        loadInProgress: () => const CircularProgressIndicator(),
+        success: () => const Padding(padding: EdgeInsets.all(8.0), child: Text('Track was successfully edited')),
+        error: () =>
+            const Padding(padding: EdgeInsets.all(8.0), child: Text('Track was not edited, please try again later')),
+        initial: () => Form(
           key: _formKey,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
-                'Edit track info',
-                style: TextStyle(fontSize: 24),
-              ),
+              const Text('Edit track info', style: TextStyle(fontSize: 24)),
               const SizedBox(height: 16),
               TextFormField(
                 decoration: const InputDecoration(label: Text('Artist')),
@@ -85,24 +59,14 @@ class _EditTrackState extends State<EditTrack> {
                 focusNode: _titleFocusNode,
                 controller: _titleController,
                 validator: (value) => value?.isNotEmpty != true ? 'Field is required' : null,
-                onEditingComplete: () => context.read<TrackEditorBloc>().add(
-                      TrackEditorEdited(
-                        trackId: widget.track.id,
-                        title: _titleController.text,
-                        artist: _artistController.text,
-                        cover: widget.track.cover,
-                      ),
-                    ),
+                onEditingComplete: _onSave,
               ),
               const SizedBox(height: 16),
-              FilledButton(
-                onPressed: _onSave,
-                child: const Text('Submit'),
-              ),
+              FilledButton(onPressed: _onSave, child: const Text('Submit')),
             ],
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 
@@ -110,14 +74,12 @@ class _EditTrackState extends State<EditTrack> {
     final isValid = _formKey.currentState?.validate();
 
     if (isValid == true) {
-      context.read<TrackEditorBloc>().add(
-            TrackEditorEdited(
-              trackId: widget.track.id,
-              title: _titleController.text,
-              artist: _artistController.text,
-              cover: widget.track.cover,
-            ),
-          );
+      context.read<TrackEditorCubit>().editTrack(
+        trackId: widget.track.id,
+        title: _titleController.text,
+        artist: _artistController.text,
+        cover: widget.track.cover,
+      );
     }
   }
 }

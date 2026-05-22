@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:basement_music/bloc/player_bloc/player_bloc.dart';
+import 'package:basement_music/bloc/player_cubit/player_cubit.dart';
 
 class ShortcutsWrapper extends StatelessWidget {
   final Widget child;
@@ -11,24 +11,24 @@ class ShortcutsWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final playerBloc = context.read<PlayerBloc>();
+    final playerCubit = context.read<PlayerCubit>();
 
     return CallbackShortcuts(
       bindings: {
         const SingleActivator(LogicalKeyboardKey.space): () =>
-            _spaceAction(playerBloc),
+            _spaceAction(playerCubit),
       },
       child: Focus(autofocus: true, child: child),
     );
   }
 
-  void _spaceAction(PlayerBloc playerBloc) {
-    if (playerBloc.state is PlayerInitial) return;
+  void _spaceAction(PlayerCubit playerCubit) {
+    if (playerCubit.state.isInitial) return;
 
-    if (playerBloc.state is PlayerPause) {
-      playerBloc.add(PlayerPlayedByShortcut());
-    } else if (playerBloc.state is PlayerPlay) {
-      playerBloc.add(PlayerPaused());
+    if (playerCubit.state.isPause) {
+      playerCubit.playByShortcut();
+    } else if (playerCubit.state.isPlay) {
+      playerCubit.pause();
     }
   }
 }

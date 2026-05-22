@@ -1,14 +1,13 @@
+import 'package:basement_music/bloc/settings_cubit/settings_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:basement_music/bloc/settings_bloc/settings_bloc.dart';
-
 extension ThemeModeTitle on ThemeMode {
   String get title => switch (this) {
-        ThemeMode.system => 'Device settings',
-        ThemeMode.light => 'Light',
-        ThemeMode.dark => 'Dark',
-      };
+    ThemeMode.system => 'Device settings',
+    ThemeMode.light => 'Light',
+    ThemeMode.dark => 'Dark',
+  };
 }
 
 class ThemeSettingLine extends StatefulWidget {
@@ -29,34 +28,24 @@ class _ThemeSettingLineState extends State<ThemeSettingLine> {
 
   @override
   Widget build(BuildContext context) {
-    final settingsBloc = context.read<SettingsBloc>();
+    final settingsCubit = context.read<SettingsCubit>();
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
       child: Row(
         children: [
-          Text(
-            'Theme mode',
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
+          Text('Theme mode', style: Theme.of(context).textTheme.titleMedium),
           const Spacer(),
-          BlocBuilder<SettingsBloc, SettingsState>(
+          BlocBuilder<SettingsCubit, SettingsState>(
             builder: (context, state) {
               return DropdownButton<ThemeMode>(
                 value: state.themeMode,
-                items: ThemeMode.values
-                    .map(
-                      (mode) => DropdownMenuItem(
-                        value: mode,
-                        child: Text(mode.title),
-                      ),
-                    )
-                    .toList(),
+                items: ThemeMode.values.map((mode) => DropdownMenuItem(value: mode, child: Text(mode.title))).toList(),
                 focusNode: _themeFocusNode,
                 focusColor: Colors.transparent,
                 onChanged: (value) {
                   if (value != null) {
-                    settingsBloc.add(SetThemeMode(value));
+                    settingsCubit.setThemeMode(value);
                   }
                   _themeFocusNode.unfocus();
                 },

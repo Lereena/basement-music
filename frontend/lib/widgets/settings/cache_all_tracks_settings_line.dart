@@ -1,8 +1,7 @@
+import 'package:basement_music/bloc/cacher_cubit/cacher_cubit.dart';
+import 'package:basement_music/widgets/dialogs/confirm_action_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import 'package:basement_music/bloc/cacher_bloc/cacher_bloc.dart';
-import 'package:basement_music/widgets/dialogs/confirm_action_dialog.dart';
 
 class CacheAllTracksSettingsLine extends StatelessWidget {
   const CacheAllTracksSettingsLine({super.key});
@@ -11,15 +10,12 @@ class CacheAllTracksSettingsLine extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-      child: BlocBuilder<CacherBloc, CacherState>(
+      child: BlocBuilder<CacherCubit, CacherState>(
         builder: (_, state) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Tracks cache',
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
+              Text('Tracks cache', style: Theme.of(context).textTheme.titleMedium),
               const SizedBox(height: 16),
               Text('Cached: ${state.cached.length}'),
               const SizedBox(height: 8),
@@ -34,34 +30,24 @@ class CacheAllTracksSettingsLine extends StatelessWidget {
                     flex: 2,
                     child: state.caching.isNotEmpty
                         ? ElevatedButton(
-                            onPressed: () => context.read<CacherBloc>().add(CacherCachingStopped()),
-                            child: const Text(
-                              'Stop caching',
-                              textAlign: TextAlign.center,
-                            ),
+                            onPressed: () => context.read<CacherCubit>().stopCaching(),
+                            child: const Text('Stop caching', textAlign: TextAlign.center),
                           )
                         : ElevatedButton(
                             onPressed: state.cached.length == state.available
                                 ? null
                                 : () => _onCacheAllAvailableTracks(
-                                      context: context,
-                                      tracksCount: state.available - state.cached.length,
-                                    ),
-                            child: const Text(
-                              'Cache all available tracks',
-                              maxLines: 2,
-                              textAlign: TextAlign.center,
-                            ),
+                                    context: context,
+                                    tracksCount: state.available - state.cached.length,
+                                  ),
+                            child: const Text('Cache all available tracks', maxLines: 2, textAlign: TextAlign.center),
                           ),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: OutlinedButton(
                       onPressed: state.cached.isEmpty ? null : () => _onClearCache(context: context),
-                      child: const Text(
-                        'Clear cache',
-                        textAlign: TextAlign.center,
-                      ),
+                      child: const Text('Clear cache', textAlign: TextAlign.center),
                     ),
                   ),
                 ],
@@ -73,30 +59,25 @@ class CacheAllTracksSettingsLine extends StatelessWidget {
     );
   }
 
-  Future<void> _onCacheAllAvailableTracks({
-    required BuildContext context,
-    required int tracksCount,
-  }) async {
+  Future<void> _onCacheAllAvailableTracks({required BuildContext context, required int tracksCount}) async {
     final isConfirmed = await ConfirmActionDialog.show(
       context: context,
       title: 'Do you want to cache $tracksCount tracks?',
     );
 
     if (context.mounted && isConfirmed) {
-      context.read<CacherBloc>().add(CacherCacheAllAvailableTracksStarted());
+      context.read<CacherCubit>().cacheAllAvailableTracks();
     }
   }
 
-  Future<void> _onClearCache({
-    required BuildContext context,
-  }) async {
+  Future<void> _onClearCache({required BuildContext context}) async {
     final isConfirmed = await ConfirmActionDialog.show(
       context: context,
       title: 'Do you want to remove all tracks from cache?',
     );
 
     if (context.mounted && isConfirmed) {
-      context.read<CacherBloc>().add(CacherClearingStarted());
+      context.read<CacherCubit>().clearCache();
     }
   }
 }

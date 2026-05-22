@@ -2,12 +2,12 @@ import 'dart:math';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:audioplayers/audioplayers.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
-
 import 'package:basement_music/app_config.dart';
 import 'package:basement_music/models/playlist.dart';
 import 'package:basement_music/models/track.dart';
 import 'package:basement_music/repositories/repositories.dart';
+import 'package:collection/collection.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 final _random = Random();
 
@@ -59,11 +59,7 @@ class AudioPlayerHandler extends BaseAudioHandler {
     playbackState.add(
       playbackState.value.copyWith(
         playing: true,
-        controls: [
-          MediaControl.skipToPrevious,
-          MediaControl.pause,
-          MediaControl.skipToNext,
-        ],
+        controls: [MediaControl.skipToPrevious, MediaControl.pause, MediaControl.skipToNext],
         updatePosition: await _audioPlayer.getCurrentPosition() ?? Duration.zero,
         processingState: AudioProcessingState.ready,
       ),
@@ -77,11 +73,7 @@ class AudioPlayerHandler extends BaseAudioHandler {
     playbackState.add(
       playbackState.value.copyWith(
         playing: false,
-        controls: [
-          MediaControl.skipToPrevious,
-          MediaControl.play,
-          MediaControl.skipToNext,
-        ],
+        controls: [MediaControl.skipToPrevious, MediaControl.play, MediaControl.skipToNext],
         updatePosition: await _audioPlayer.getCurrentPosition() ?? Duration.zero,
         processingState: AudioProcessingState.ready,
       ),
@@ -97,7 +89,11 @@ class AudioPlayerHandler extends BaseAudioHandler {
     }
 
     late final Track nextTrack;
-    if (!settingsRepository.repeat) {
+    if (settingsRepository.repeat) {
+      stop();
+      nextTrack =
+          availableTracks.firstWhereOrNull((track) => track.id == mediaItem.valueOrNull!.id) ?? availableTracks.first;
+    } else {
       if (settingsRepository.shuffle) {
         final nextTrackPosition = _shuffledNext(
           availableTracks,

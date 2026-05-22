@@ -1,7 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-
-import 'package:basement_music/bloc/player_bloc/player_bloc.dart';
+import 'package:basement_music/bloc/player_cubit/player_cubit.dart';
 import 'package:basement_music/bloc/track_progress_cubit/track_progress_cubit.dart';
 import 'package:basement_music/models/track.dart';
 import 'package:basement_music/widgets/controls/next_button.dart';
@@ -12,6 +9,8 @@ import 'package:basement_music/widgets/controls/repeat_toggle.dart';
 import 'package:basement_music/widgets/controls/shuffle_toggle.dart';
 import 'package:basement_music/widgets/track_name.dart';
 import 'package:basement_music/widgets/track_progress_indicator.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class BottomPlayer extends StatelessWidget {
   const BottomPlayer({super.key});
@@ -20,7 +19,7 @@ class BottomPlayer extends StatelessWidget {
   Widget build(BuildContext context) {
     final progress = context.watch<TrackProgressCubit>().state;
 
-    return BlocBuilder<PlayerBloc, PlayerState>(
+    return BlocBuilder<PlayerCubit, PlayerState>(
       builder: (context, state) {
         if (state.currentTrack == Track.empty()) return Container(height: 0);
 
@@ -36,33 +35,21 @@ class BottomPlayer extends StatelessWidget {
                 child: Row(
                   children: [
                     const PreviousButton(),
-                    if (state is PlayerPlay)
+                    if (state.isPlay)
                       const PauseButton()
-                    else if (state is PlayerPause || state is PlayerInitial)
-                      PlayButton(
-                        track: state.currentTrack,
-                        state: state,
-                        isBottomPlayer: true,
-                      ),
+                    else if (state.isPause || state.isInitial)
+                      PlayButton(track: state.currentTrack, state: state, isBottomPlayer: true),
                     const NextButton(),
                     const SizedBox(width: 15),
-                    if (state is PlayerPause || state is PlayerPlay)
-                      Image.asset(
-                        state.currentTrack.cover,
-                        height: 40,
-                        width: 40,
-                      ),
+                    if (state.isPause || state.isPlay) Image.asset(state.currentTrack.cover, height: 40, width: 40),
                     const SizedBox(width: 10),
-                    if (state is PlayerPlay || state is PlayerPause) ...[
+                    if (state.isPlay || state.isPause) ...[
                       Expanded(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            TrackName(
-                              track: state.currentTrack,
-                              moving: true,
-                            ),
+                            TrackName(track: state.currentTrack, moving: true),
                             Text(
                               state.currentTrack.artist,
                               overflow: TextOverflow.ellipsis,

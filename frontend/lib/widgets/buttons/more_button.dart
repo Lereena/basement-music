@@ -1,13 +1,12 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-
-import 'package:basement_music/bloc/cacher_bloc/cacher_bloc.dart';
+import 'package:basement_music/bloc/cacher_cubit/cacher_cubit.dart';
 import 'package:basement_music/models/playlist.dart';
 import 'package:basement_music/models/track.dart';
 import 'package:basement_music/widgets/dialogs/add_to_playlist_dialog.dart';
 import 'package:basement_music/widgets/dialogs/remove_from_playlist_dialog.dart';
 import 'package:basement_music/widgets/edit_track.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MoreButton extends StatelessWidget {
   final Track track;
@@ -17,7 +16,7 @@ class MoreButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cacherBloc = context.read<CacherBloc>();
+    final cacherCubit = context.read<CacherCubit>();
 
     return InkWell(
       child: const Icon(Icons.more_vert),
@@ -47,31 +46,26 @@ class MoreButton extends StatelessWidget {
                   child: const Text('Remove from playlist'),
                   onPressed: () {
                     Navigator.pop(context);
-                    RemoveFromPlaylistDialog.show(
-                      context: context,
-                      track: track,
-                      playlist: playlist!,
-                    );
+                    RemoveFromPlaylistDialog.show(context: context, track: track, playlist: playlist!);
                   },
                 ),
               ],
-              if (!kIsWeb && !cacherBloc.state.cached.contains(track.id)) ...[
+              if (!kIsWeb && !cacherCubit.state.cached.contains(track.id)) ...[
                 const Divider(),
                 SimpleDialogOption(
                   child: const Text('Cache track'),
                   onPressed: () {
-                    cacherBloc.add(CacherTracksCachingStarted([track.id]));
+                    cacherCubit.cacheTrackIds([track.id]);
                     Navigator.pop(context);
                   },
                 ),
               ],
-              if (!kIsWeb && cacherBloc.state.cached.contains(track.id)) ...[
+              if (!kIsWeb && cacherCubit.state.cached.contains(track.id)) ...[
                 const Divider(),
                 SimpleDialogOption(
                   child: const Text('Remove from cache'),
                   onPressed: () {
-                    cacherBloc
-                        .add(CacherRemoveTracksFromCacheStarted([track.id]));
+                    cacherCubit.removeTrackIds([track.id]);
                     Navigator.pop(context);
                   },
                 ),
