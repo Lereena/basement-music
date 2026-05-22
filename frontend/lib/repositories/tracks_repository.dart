@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
+import 'package:hive/hive.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:rxdart/rxdart.dart';
 
+import 'package:basement_music/logger.dart';
 import 'package:basement_music/models/track.dart';
 import 'package:basement_music/models/video_info.dart';
 import 'package:basement_music/rest_client.dart';
@@ -11,8 +15,23 @@ class TracksRepository {
   final _searchItems = <Track>[];
 
   final RestClient _restClient;
+  final Box<String> _persistenceBox;
+  static const _cacheKey = 'tracks';
 
-  TracksRepository(this._restClient);
+  TracksRepository(this._restClient, {required Box<String> persistenceBox})
+      : _persistenceBox = persistenceBox {
+    final cached = persistenceBox.get(_cacheKey);
+    if (cached != null) {
+      try {
+        _items.addAll(
+          (jsonDecode(cached) as List).map((e) => Track.fromJson(e as Map<String, dynamic>)),
+        );
+      } catch (e) {
+        persistenceBox.delete(_cacheKey);
+        logger.w('Tracks cache decode failed, cleared: $e');
+      }
+    }
+  }
 
   List<Track> get items => _items;
   List<Track> get searchItems => _searchItems;
@@ -23,7 +42,7 @@ class TracksRepository {
     final result = await _restClient.getAllTracks();
     _items.clear();
     _items.addAll(result);
-
+    await _persistenceBox.put(_cacheKey, jsonEncode(_items.map((e) => e.toJson()).toList()));
     tracksSubject.add(_items);
   }
 

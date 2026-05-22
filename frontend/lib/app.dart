@@ -19,8 +19,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:hydrated_bloc/hydrated_bloc.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:sizer/sizer.dart';
 import 'package:url_strategy/url_strategy.dart';
@@ -37,12 +35,6 @@ Future<void> runBasement(AppConfig config) async {
     return true;
   };
 
-  HydratedBloc.storage = await HydratedStorage.build(
-    storageDirectory: kIsWeb
-        ? HydratedStorageDirectory.web
-        : HydratedStorageDirectory((await getTemporaryDirectory()).path),
-  );
-
   setPathUrlStrategy();
 
   final dio = Dio(BaseOptions(baseUrl: config.baseUrl))
@@ -55,6 +47,8 @@ Future<void> runBasement(AppConfig config) async {
 
   final cacheBox = await Hive.openBox<String>('tracks_cache');
   final settingsBox = await Hive.openBox<Object>('settings');
+  final tracksPersistenceBox = await Hive.openBox<String>('tracks_persistent');
+  final playlistsPersistenceBox = await Hive.openBox<String>('playlists_persistent');
 
   final settingsRepository = SettingsRepository(settingsBox);
   final connectivityStatusRepository = ConnectivityStatusRepository();
@@ -78,9 +72,9 @@ Future<void> runBasement(AppConfig config) async {
     BasementMusic(
       audioHandler: audioHandler,
       cacheRepository: cacheRepository,
-      tracksRepository: TracksRepository(restClient),
+      tracksRepository: TracksRepository(restClient, persistenceBox: tracksPersistenceBox),
       settingsRepository: settingsRepository,
-      playlistsRepository: PlaylistsRepository(restClient),
+      playlistsRepository: PlaylistsRepository(restClient, persistenceBox: playlistsPersistenceBox),
       artistsRepository: ArtistsRepository(restClient),
       connectivityStatusRepository: connectivityStatusRepository,
     ),
