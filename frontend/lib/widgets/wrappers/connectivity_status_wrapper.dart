@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../bloc/connectivity_status_bloc/connectivity_status_cubit.dart';
+import 'package:basement_music/bloc/connectivity_status_cubit/connectivity_status_cubit.dart';
 
 class ConnectivityStatusWrapper extends StatefulWidget {
   final Widget child;
@@ -56,13 +56,14 @@ class _ConnectivityStatusWrapperState extends State<ConnectivityStatusWrapper> {
   }
 
   void _handleFlushbar(ConnectivityStatusState status) {
-    if (status is ConnectivityStatusNoConnection) {
-      if (!_flushbar.isShowing()) {
-        _flushbar.show(context);
-      }
-    } else {
-      _flushbar.dismiss();
-    }
+    status.maybeWhen(
+      noConnection: () {
+        if (!_flushbar.isShowing()) {
+          _flushbar.show(context);
+        }
+      },
+      orElse: () => _flushbar.dismiss(),
+    );
   }
 
   @override

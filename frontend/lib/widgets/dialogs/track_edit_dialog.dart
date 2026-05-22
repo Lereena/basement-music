@@ -1,9 +1,6 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:sizer/sizer.dart';
 
-import 'dialog.dart';
+import 'package:basement_music/widgets/dialogs/base_dialog.dart';
 
 class TrackEditDialog extends StatefulWidget {
   final String? artist;
@@ -25,8 +22,7 @@ class TrackEditDialog extends StatefulWidget {
   }) =>
       showDialog(
         context: context,
-        builder: (_) => CustomDialog(
-          height: min(30.w, 400),
+        builder: (_) => BaseDialog(
           child: TrackEditDialog(
             artist: artist,
             title: title,
@@ -49,37 +45,32 @@ class _TrackEditDialogState extends State<TrackEditDialog> {
   Widget build(BuildContext context) {
     return Form(
       key: _formKey,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 15),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              'Edit track info',
-              style: TextStyle(fontSize: 24),
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              decoration: const InputDecoration(label: Text('Artist')),
-              controller: _artistController,
-              validator: (value) =>
-                  value?.isNotEmpty != true ? 'Field is required' : null,
-            ),
-            const SizedBox(height: 8),
-            TextFormField(
-              decoration: const InputDecoration(label: Text('Title')),
-              controller: _titleController,
-              validator: (value) =>
-                  value?.isNotEmpty != true ? 'Field is required' : null,
-            ),
-            const SizedBox(height: 16),
-            FilledButton(
-              onPressed: _onSave,
-              child: const Text('Submit'),
-            ),
-          ],
-        ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text(
+            'Edit track info',
+            style: TextStyle(fontSize: 24),
+          ),
+          const SizedBox(height: 16),
+          TextFormField(
+            decoration: const InputDecoration(label: Text('Artist')),
+            controller: _artistController,
+            validator: (value) => value?.isNotEmpty != true ? 'Field is required' : null,
+          ),
+          const SizedBox(height: 8),
+          TextFormField(
+            decoration: const InputDecoration(label: Text('Title')),
+            controller: _titleController,
+            validator: (value) => value?.isNotEmpty != true ? 'Field is required' : null,
+          ),
+          const SizedBox(height: 16),
+          FilledButton(
+            onPressed: _onSave,
+            child: const Text('Submit'),
+          ),
+        ],
       ),
     );
   }

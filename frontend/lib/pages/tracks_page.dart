@@ -1,12 +1,11 @@
+import 'package:basement_music/bloc/connectivity_status_cubit/connectivity_status_cubit.dart';
+import 'package:basement_music/bloc/tracks_cubit/tracks_cubit.dart';
+import 'package:basement_music/models/track.dart';
+import 'package:basement_music/repositories/repositories.dart';
+import 'package:basement_music/widgets/app_bar.dart';
+import 'package:basement_music/widgets/track_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../bloc/connectivity_status_bloc/connectivity_status_cubit.dart';
-import '../bloc/tracks_bloc/tracks_bloc.dart';
-import '../models/track.dart';
-import '../repositories/repositories.dart';
-import '../widgets/app_bar.dart';
-import '../widgets/track_card.dart';
 
 class TracksPage extends StatelessWidget {
   const TracksPage({super.key});
@@ -14,11 +13,10 @@ class TracksPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => TracksBloc(
+      create: (context) => TracksCubit(
         tracksRepository: context.read<TracksRepository>(),
-        connectivityStatusRepository:
-            context.read<ConnectivityStatusRepository>(),
-      )..add(TracksLoadStarted()),
+        connectivityStatusRepository: context.read<ConnectivityStatusRepository>(),
+      )..loadTracks(),
       child: _TracksPage(),
     );
   }
@@ -36,55 +34,37 @@ class _TracksPage extends StatelessWidget {
             body: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                BlocBuilder<TracksBloc, TracksState>(
-                  builder: (context, state) {
-                    if (state is TracksLoadInProgress) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-
-                    if (state is TracksEmptyState) {
-                      return const Center(
-                        child: Text('No tracks'),
-                      );
-                    }
-
-                    if (state is TracksLoadSuccess) {
-                      return Expanded(
-                        child: ListView.builder(
-                          itemCount: state.tracks.length + 1,
-                          itemBuilder: (context, index) {
-                            if (index == state.tracks.length) {
-                              return const SizedBox(height: 40);
-                            }
-                            return Column(
-                              children: [
-                                TrackCard(
-                                  track: state.tracks[index],
-                                  active: connectivityStatus
-                                      is ConnectivityStatusHasConnection,
-                                ),
-                                const Divider(height: 1),
-                              ],
-                            );
-                          },
-                          prototypeItem: Column(
+                BlocBuilder<TracksCubit, TracksState>(
+                  builder: (context, state) => state.when(
+                    loadInProgress: () => const Center(child: CircularProgressIndicator()),
+                    empty: () => const Center(child: Text('No tracks')),
+                    loaded: (tracks) => Expanded(
+                      child: ListView.builder(
+                        itemCount: tracks.length + 1,
+                        itemBuilder: (context, index) {
+                          if (index == tracks.length) {
+                            return const SizedBox(height: 40);
+                          }
+                          return Column(
                             children: [
-                              TrackCard(track: Track.empty()),
+                              TrackCard(
+                                track: tracks[index],
+                                active: connectivityStatus.maybeWhen(hasConnection: () => true, orElse: () => false),
+                              ),
                               const Divider(height: 1),
                             ],
-                          ),
+                          );
+                        },
+                        prototypeItem: Column(
+                          children: [
+                            TrackCard(track: Track.empty()),
+                            const Divider(height: 1),
+                          ],
                         ),
-                      );
-                    }
-
-                    if (state is TracksError) {
-                      return const Center(
-                        child: Text('Error loading tracks'),
-                      );
-                    }
-
-                    return Container();
-                  },
+                      ),
+                    ),
+                    error: () => const Center(child: Text('Error loading tracks')),
+                  ),
                 ),
               ],
             ),
@@ -95,10 +75,9 @@ class _TracksPage extends StatelessWidget {
   }
 
   Future<void> _onRefresh(BuildContext context) async {
-    final tracksBloc = context.read<TracksBloc>();
-
-    final newState = tracksBloc.stream.first;
-    tracksBloc.add(TracksLoadStarted());
+    final cubit = context.read<TracksCubit>();
+    final newState = cubit.stream.first;
+    cubit.loadTracks();
     await newState;
   }
 }

@@ -1,18 +1,18 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
-import '../pages/artist_page.dart';
-import '../pages/edit_playlist/playlist_edit_page.dart';
-import '../pages/library/library_page.dart';
-import '../pages/playlist_page.dart';
-import '../pages/search_page.dart';
-import '../pages/settings_page.dart';
-import '../pages/tracks_page.dart';
-import '../pages/upload/from_device/upload_from_device.dart';
-import '../pages/upload/from_youtube/extract_from_youtube.dart';
-import '../pages/upload/upload_page.dart';
-import 'app_scaffold_shell.dart';
-import 'routes.dart';
+import 'package:basement_music/pages/artist_page.dart';
+import 'package:basement_music/pages/edit_playlist/playlist_edit_page.dart';
+import 'package:basement_music/pages/library/library_page.dart';
+import 'package:basement_music/pages/playlist_page.dart';
+import 'package:basement_music/pages/search_page.dart';
+import 'package:basement_music/pages/settings_page.dart';
+import 'package:basement_music/pages/tracks_page.dart';
+import 'package:basement_music/pages/upload/from_device/upload_from_device.dart';
+import 'package:basement_music/pages/upload/from_youtube/extract_from_youtube.dart';
+import 'package:basement_music/pages/upload/upload_page.dart';
+import 'package:basement_music/routing/app_scaffold_shell.dart';
+import 'package:basement_music/routing/routes.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -24,10 +24,10 @@ class AppRouter {
     routes: <RouteBase>[
       GoRoute(
         path: RouteName.initial,
-        redirect: (_, __) => RouteName.tracks,
+        redirect: (_, _) => RouteName.tracks,
       ),
       StatefulShellRoute.indexedStack(
-        builder: (_, __, navigationShell) => AppScaffoldShell(
+        builder: (_, _, navigationShell) => AppScaffoldShell(
           navigationShell: navigationShell,
         ),
         branches: <StatefulShellBranch>[
@@ -36,7 +36,7 @@ class AppRouter {
             routes: [
               GoRoute(
                 path: RouteName.tracks,
-                pageBuilder: (_, __) => const NoTransitionPage(
+                pageBuilder: (_, _) => const NoTransitionPage(
                   child: TracksPage(),
                 ),
               ),
@@ -47,7 +47,7 @@ class AppRouter {
             routes: [
               GoRoute(
                 path: RouteName.library,
-                pageBuilder: (_, __) => const NoTransitionPage(
+                pageBuilder: (_, _) => const NoTransitionPage(
                   child: LibraryPage(initialTab: LibraryPageTab.playlists),
                 ),
                 routes: [
@@ -84,7 +84,7 @@ class AppRouter {
             routes: [
               GoRoute(
                 path: RouteName.search,
-                pageBuilder: (_, __) => const NoTransitionPage(
+                pageBuilder: (_, _) => const NoTransitionPage(
                   child: SearchPage(),
                 ),
               ),
@@ -95,19 +95,19 @@ class AppRouter {
             routes: [
               GoRoute(
                 path: RouteName.upload,
-                pageBuilder: (_, __) => const NoTransitionPage(
+                pageBuilder: (_, _) => const NoTransitionPage(
                   child: UploadPage(),
                 ),
                 routes: [
                   GoRoute(
                     path: 'fromDevice',
-                    pageBuilder: (_, __) => const NoTransitionPage(
+                    pageBuilder: (_, _) => const NoTransitionPage(
                       child: UploadFromDevicePage(),
                     ),
                   ),
                   GoRoute(
                     path: 'fromYoutube',
-                    pageBuilder: (_, __) => const NoTransitionPage(
+                    pageBuilder: (_, _) => const NoTransitionPage(
                       child: ExtractFromYoutubePage(),
                     ),
                   ),
@@ -120,7 +120,7 @@ class AppRouter {
             routes: [
               GoRoute(
                 path: RouteName.settings,
-                pageBuilder: (_, __) => const NoTransitionPage(
+                pageBuilder: (_, _) => const NoTransitionPage(
                   child: SettingsPage(),
                 ),
               ),

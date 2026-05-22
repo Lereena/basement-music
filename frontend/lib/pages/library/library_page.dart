@@ -1,14 +1,13 @@
+import 'package:basement_music/bloc/artists_cubit/artists_cubit.dart';
+import 'package:basement_music/bloc/playlists_cubit/playlists_cubit.dart';
+import 'package:basement_music/repositories/artists_repository.dart';
+import 'package:basement_music/repositories/repositories.dart';
+import 'package:basement_music/routing/routes.dart';
+import 'package:basement_music/widgets/artist_card.dart';
+import 'package:basement_music/widgets/playlist_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-
-import '../../bloc/artists_bloc/artists_cubit.dart';
-import '../../bloc/playlists_bloc/playlists_bloc.dart';
-import '../../repositories/artists_repository.dart';
-import '../../repositories/repositories.dart';
-import '../../routing/routes.dart';
-import '../../widgets/artist_card.dart';
-import '../../widgets/playlist_card.dart';
 
 part 'artists.dart';
 part 'playlists.dart';
@@ -20,19 +19,19 @@ enum LibraryPageTab {
   String get title => this == LibraryPageTab.artists ? 'Artists' : 'Playlists';
 
   Future<void> Function(BuildContext) get load => switch (this) {
-        LibraryPageTab.playlists => (context) async {
-            final playlistsCubit = context.read<PlaylistsCubit>();
-            final newState = playlistsCubit.stream.first;
-            playlistsCubit.loadPlaylists();
-            await newState;
-          },
-        LibraryPageTab.artists => (context) async {
-            final artistsCubit = context.read<ArtistsCubit>();
-            final newState = artistsCubit.stream.first;
-            artistsCubit.loadArtists();
-            await newState;
-          },
-      };
+    LibraryPageTab.playlists => (context) async {
+      final playlistsCubit = context.read<PlaylistsCubit>();
+      final newState = playlistsCubit.stream.first;
+      playlistsCubit.loadPlaylists();
+      await newState;
+    },
+    LibraryPageTab.artists => (context) async {
+      final artistsCubit = context.read<ArtistsCubit>();
+      final newState = artistsCubit.stream.first;
+      artistsCubit.loadArtists();
+      await newState;
+    },
+  };
 }
 
 class LibraryPage extends StatefulWidget {
@@ -91,9 +90,7 @@ class _LibraryPageState extends State<LibraryPage> with SingleTickerProviderStat
               child: const _Playlists(),
             ),
             BlocProvider(
-              create: (context) => ArtistsCubit(
-                artistsRepository: context.read<ArtistsRepository>(),
-              )..loadArtists(),
+              create: (context) => ArtistsCubit(artistsRepository: context.read<ArtistsRepository>())..loadArtists(),
               child: const _Artists(),
             ),
           ],

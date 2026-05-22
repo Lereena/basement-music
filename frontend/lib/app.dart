@@ -1,4 +1,17 @@
 import 'package:audio_service/audio_service.dart';
+import 'package:basement_music/adapters/theme_mode_adapter.dart';
+import 'package:basement_music/app_config.dart';
+import 'package:basement_music/audio_player_handler.dart';
+import 'package:basement_music/bloc/settings_cubit/settings_cubit.dart';
+import 'package:basement_music/firebase_options.dart';
+import 'package:basement_music/provider_wrapper.dart';
+import 'package:basement_music/repositories/artists_repository.dart';
+import 'package:basement_music/repositories/repositories.dart';
+import 'package:basement_music/rest_client.dart';
+import 'package:basement_music/routing/router.dart';
+import 'package:basement_music/shortcuts_wrapper.dart';
+import 'package:basement_music/theme/custom_theme.dart';
+import 'package:basement_music/utils/json_response_converter.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -11,20 +24,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:sizer/sizer.dart';
 import 'package:url_strategy/url_strategy.dart';
-
-import 'adapters/theme_mode_adapter.dart';
-import 'app_config.dart';
-import 'audio_player_handler.dart';
-import 'bloc/settings_bloc/settings_bloc.dart';
-import 'firebase_options.dart';
-import 'provider_wrapper.dart';
-import 'repositories/artists_repository.dart';
-import 'repositories/repositories.dart';
-import 'rest_client.dart';
-import 'routing/router.dart';
-import 'shortcuts_wrapper.dart';
-import 'theme/custom_theme.dart';
-import 'utils/json_response_converter.dart';
 
 Future<void> runBasement(AppConfig config) async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -39,16 +38,15 @@ Future<void> runBasement(AppConfig config) async {
   };
 
   HydratedBloc.storage = await HydratedStorage.build(
-    storageDirectory: kIsWeb ? HydratedStorage.webStorageDirectory : await getApplicationDocumentsDirectory(),
+    storageDirectory: kIsWeb
+        ? HydratedStorageDirectory.web
+        : HydratedStorageDirectory((await getTemporaryDirectory()).path),
   );
 
   setPathUrlStrategy();
 
   final dio = Dio(BaseOptions(baseUrl: config.baseUrl))
-    ..interceptors.addAll([
-      JsonResponseConverter(),
-      PrettyDioLogger(maxWidth: 120, responseBody: false),
-    ]);
+    ..interceptors.addAll([JsonResponseConverter(), PrettyDioLogger(maxWidth: 120, responseBody: false)]);
 
   final restClient = RestClient(dio);
 
@@ -121,9 +119,9 @@ class BasementMusic extends StatelessWidget {
       cacheRepository: cacheRepository,
       settingsRepository: settingsRepository,
       artistsRepository: artistsRepository,
-      child: BlocBuilder<SettingsBloc, SettingsState>(
+      child: BlocBuilder<SettingsCubit, SettingsState>(
         builder: (_, settingsState) => Sizer(
-          builder: (_, __, ___) => MaterialApp.router(
+          builder: (_, _, _) => MaterialApp.router(
             title: 'Basement',
             theme: CustomTheme.lightTheme,
             darkTheme: CustomTheme.darkTheme,
@@ -131,9 +129,7 @@ class BasementMusic extends StatelessWidget {
             routeInformationProvider: _router.routeInformationProvider,
             routeInformationParser: _router.routeInformationParser,
             routerDelegate: _router.routerDelegate,
-            builder: (context, child) => ShortcutsWrapper(
-              child: child ?? const SizedBox.shrink(),
-            ),
+            builder: (context, child) => ShortcutsWrapper(child: child ?? const SizedBox.shrink()),
           ),
         ),
       ),

@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
-import 'dialog.dart';
+import 'package:basement_music/widgets/dialogs/base_dialog.dart';
 
 class StatusDialog extends StatelessWidget {
   final bool success;
   final String text;
 
-  const StatusDialog({required this.success, required this.text}) : super();
+  const StatusDialog({super.key, required this.success, required this.text});
 
   @override
   Widget build(BuildContext context) {
-    return CustomDialog(
+    return BaseDialog(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
         child: Column(

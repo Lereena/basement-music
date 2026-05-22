@@ -1,8 +1,8 @@
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:hive/hive.dart';
 
-import '../app_config.dart';
-import '../tracks_cache_manager.dart';
+import 'package:basement_music/app_config.dart';
+import 'package:basement_music/tracks_cache_manager.dart';
 
 const _cacheKey = 'tracks';
 

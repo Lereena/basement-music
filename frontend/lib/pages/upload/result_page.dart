@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../widgets/icons/error_icon.dart';
-import '../../widgets/icons/success_icon.dart';
+import 'package:basement_music/widgets/icons/error_icon.dart';
+import 'package:basement_music/widgets/icons/success_icon.dart';
 
 enum Result { success, fail }
 

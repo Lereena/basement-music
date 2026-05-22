@@ -1,10 +1,10 @@
 import 'package:dio/dio.dart' hide Headers;
 import 'package:retrofit/retrofit.dart';
 
-import 'models/artist.dart';
-import 'models/playlist.dart';
-import 'models/track.dart';
-import 'models/video_info.dart';
+import 'package:basement_music/models/artist.dart';
+import 'package:basement_music/models/playlist.dart';
+import 'package:basement_music/models/track.dart';
+import 'package:basement_music/models/video_info.dart';
 
 part 'rest_client.g.dart';
 

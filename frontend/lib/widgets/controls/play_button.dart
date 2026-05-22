@@ -1,9 +1,8 @@
+import 'package:basement_music/bloc/player_cubit/player_cubit.dart';
+import 'package:basement_music/models/playlist.dart';
+import 'package:basement_music/models/track.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../bloc/player_bloc/player_bloc.dart';
-import '../../models/playlist.dart';
-import '../../models/track.dart';
 
 class PlayButton extends StatelessWidget {
   final Track track;
@@ -21,14 +20,12 @@ class PlayButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final playerBloc = context.read<PlayerBloc>();
+    final playerCubit = context.read<PlayerCubit>();
 
     return InkWell(
       onTap: () {
-        if (isBottomPlayer && state is PlayerInitial) return;
-        playerBloc.add(
-          PlayerPlayStarted(track: track, playlist: openedPlaylist),
-        );
+        if (isBottomPlayer && state.isInitial) return;
+        playerCubit.play(track: track, playlist: openedPlaylist);
       },
       child: const Icon(Icons.play_arrow_rounded, size: 30),
     );

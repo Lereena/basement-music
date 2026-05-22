@@ -1,23 +1,19 @@
+import 'package:basement_music/bloc/settings_cubit/settings_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../bloc/settings_bloc/settings_bloc.dart';
 
 class RepeatToggle extends StatelessWidget {
   const RepeatToggle({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final settingsBloc = context.read<SettingsBloc>();
+    final settingsCubit = context.read<SettingsCubit>();
 
     return InkWell(
-      onTap: () => settingsBloc.add(SetRepeat(!settingsBloc.state.repeat)),
-      child: BlocBuilder<SettingsBloc, SettingsState>(
+      onTap: () => settingsCubit.setRepeat(!settingsCubit.state.repeat),
+      child: BlocBuilder<SettingsCubit, SettingsState>(
         builder: (context, state) {
-          return Icon(
-            state.repeat ? Icons.repeat_on_outlined : Icons.repeat,
-            size: 30,
-          );
+          return Icon(state.repeat ? Icons.repeat_on_outlined : Icons.repeat, size: 30);
         },
       ),
     );

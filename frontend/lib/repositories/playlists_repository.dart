@@ -1,8 +1,8 @@
 import 'package:collection/collection.dart';
 import 'package:rxdart/rxdart.dart';
 
-import '../models/playlist.dart';
-import '../rest_client.dart';
+import 'package:basement_music/models/playlist.dart';
+import 'package:basement_music/rest_client.dart';
 
 class PlaylistsRepository {
   final _items = <Playlist>[];

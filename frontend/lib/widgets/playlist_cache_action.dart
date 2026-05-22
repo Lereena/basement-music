@@ -1,10 +1,9 @@
+import 'package:basement_music/bloc/cacher_cubit/cacher_cubit.dart';
+import 'package:basement_music/widgets/buttons/cache_button.dart';
+import 'package:basement_music/widgets/buttons/uncache_button.dart';
+import 'package:basement_music/widgets/dialogs/confirm_action_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../bloc/cacher_bloc/cacher_bloc.dart';
-import 'buttons/cache_button.dart';
-import 'buttons/uncache_button.dart';
-import 'dialogs/confirm_action_dialog.dart';
 
 class PlaylistCacheAction extends StatelessWidget {
   final List<String> trackIds;
@@ -13,9 +12,9 @@ class PlaylistCacheAction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cacherBloc = context.read<CacherBloc>();
+    final cacherCubit = context.read<CacherCubit>();
 
-    return BlocBuilder<CacherBloc, CacherState>(
+    return BlocBuilder<CacherCubit, CacherState>(
       builder: (context, state) {
         if (state.isCaching(trackIds)) {
           return Stack(
@@ -24,13 +23,11 @@ class PlaylistCacheAction extends StatelessWidget {
               CacheButton(
                 onCache: () async {
                   if (await _showCacheDialog(context)) {
-                    cacherBloc.add(CacherTracksCachingStarted(trackIds));
+                    cacherCubit.cacheTrackIds(trackIds);
                   }
                 },
               ),
-              CircularProgressIndicator(
-                color: Theme.of(context).shadowColor,
-              ),
+              CircularProgressIndicator(color: Theme.of(context).shadowColor),
             ],
           );
         }
@@ -39,7 +36,7 @@ class PlaylistCacheAction extends StatelessWidget {
           return UncacheButton(
             onUncache: () async {
               if (await _showRemoveFromCacheDialog(context)) {
-                cacherBloc.add(CacherRemoveTracksFromCacheStarted(trackIds));
+                cacherCubit.removeTrackIds(trackIds);
               }
             },
           );
@@ -48,7 +45,7 @@ class PlaylistCacheAction extends StatelessWidget {
         return CacheButton(
           onCache: () async {
             if (await _showCacheDialog(context)) {
-              cacherBloc.add(CacherTracksCachingStarted(trackIds));
+              cacherCubit.cacheTrackIds(trackIds);
             }
           },
         );
@@ -57,14 +54,8 @@ class PlaylistCacheAction extends StatelessWidget {
   }
 
   Future<bool> _showCacheDialog(BuildContext context) =>
-      ConfirmActionDialog.show(
-        context: context,
-        title: 'Do you want to cache all playlist tracks?',
-      );
+      ConfirmActionDialog.show(context: context, title: 'Do you want to cache all playlist tracks?');
 
   Future<bool> _showRemoveFromCacheDialog(BuildContext context) =>
-      ConfirmActionDialog.show(
-        context: context,
-        title: 'Do you want to remove all playlist tracks from cache?',
-      );
+      ConfirmActionDialog.show(context: context, title: 'Do you want to remove all playlist tracks from cache?');
 }

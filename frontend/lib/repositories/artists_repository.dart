@@ -1,7 +1,7 @@
 import 'package:rxdart/rxdart.dart';
 
-import '../models/artist.dart';
-import '../rest_client.dart';
+import 'package:basement_music/models/artist.dart';
+import 'package:basement_music/rest_client.dart';
 
 class ArtistsRepository {
   final _items = <Artist>[];

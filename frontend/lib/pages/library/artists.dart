@@ -6,39 +6,26 @@ class _Artists extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ArtistsCubit, ArtistsState>(
-      builder: (context, state) {
-        if (state is ArtistsLoading) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        if (state is ArtistsEmpty) {
-          return Center(
-            child: Text(
-              'No artists',
-              style: Theme.of(context).textTheme.bodyLarge,
+      builder: (context, state) => state.when(
+        initial: () => const SizedBox.shrink(),
+        loading: () => const Center(child: CircularProgressIndicator()),
+        empty: () => Center(
+          child: Text(
+            'No artists',
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
+        ),
+        loaded: (artists) => ListView.builder(
+          itemBuilder: (context, index) => ArtistCard(
+            artist: artists[index],
+            onTap: () => context.go(
+              RouteName.artist(artists[index].id),
             ),
-          );
-        }
-
-        if (state is ArtistsLoaded) {
-          return ListView.builder(
-            itemBuilder: (context, index) => ArtistCard(
-              artist: state.artists[index],
-              onTap: () => context.go(
-                RouteName.artist(state.artists[index].id),
-              ),
-            ),
-            itemCount: state.artists.length,
-          );
-        }
-
-        if (state is ArtistsError) {
-          return Center(
-            child: Text(state.message),
-          );
-        }
-        return Container();
-      },
+          ),
+          itemCount: artists.length,
+        ),
+        error: (message) => Center(child: Text(message)),
+      ),
     );
   }
 }

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../routing/routes.dart';
-import '../../widgets/app_bar.dart';
+import 'package:basement_music/routing/routes.dart';
+import 'package:basement_music/widgets/app_bar.dart';
 
 class UploadPage extends StatelessWidget {
   const UploadPage({super.key});

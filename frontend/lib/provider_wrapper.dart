@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'audio_player_handler.dart';
-import 'bloc/cacher_bloc/cacher_bloc.dart';
-import 'bloc/connectivity_status_bloc/connectivity_status_cubit.dart';
-import 'bloc/player_bloc/player_bloc.dart';
-import 'bloc/settings_bloc/settings_bloc.dart';
-import 'bloc/track_progress_cubit/track_progress_cubit.dart';
-import 'repositories/artists_repository.dart';
-import 'repositories/repositories.dart';
+import 'package:basement_music/audio_player_handler.dart';
+import 'package:basement_music/bloc/cacher_cubit/cacher_cubit.dart';
+import 'package:basement_music/bloc/connectivity_status_cubit/connectivity_status_cubit.dart';
+import 'package:basement_music/bloc/player_cubit/player_cubit.dart';
+import 'package:basement_music/bloc/settings_cubit/settings_cubit.dart';
+import 'package:basement_music/bloc/track_progress_cubit/track_progress_cubit.dart';
+import 'package:basement_music/repositories/artists_repository.dart';
+import 'package:basement_music/repositories/repositories.dart';
 
 class ProviderWrapper extends StatelessWidget {
   final Widget child;
@@ -52,16 +52,16 @@ class ProviderWrapper extends StatelessWidget {
           ),
           BlocProvider(create: (_) => TrackProgressCubit(audioHandler)),
           BlocProvider(
-            create: (_) => CacherBloc(
+            create: (_) => CacherCubit(
               cacheRepository: cacheRepository,
               tracksRepository: tracksRepository,
-            )..add(CacherInitializationStarted()),
+            )..initialize(),
           ),
           BlocProvider(
-            create: (_) => SettingsBloc(settingsRepository)..add(RetrieveSettings()),
+            create: (_) => SettingsCubit(settingsRepository)..retrieveSettings(),
           ),
           BlocProvider(
-            create: (_) => PlayerBloc(
+            create: (_) => PlayerCubit(
               audioHandler: audioHandler,
               tracksRepository: tracksRepository,
             ),

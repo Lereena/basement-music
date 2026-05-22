@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'styled_input_field.dart';
+import 'package:basement_music/widgets/inputs/styled_input_field.dart';
 
 class LinkInputField extends StatelessWidget {
   final TextEditingController controller;

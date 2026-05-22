@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:uuid/uuid.dart';
 
-import 'track.dart';
+import 'package:basement_music/models/track.dart';
 
 part 'playlist.g.dart';
 
