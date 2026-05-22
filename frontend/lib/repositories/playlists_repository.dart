@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:collection/collection.dart';
+import 'package:hive/hive.dart';
 import 'package:rxdart/rxdart.dart';
 
+import 'package:basement_music/logger.dart';
 import 'package:basement_music/models/playlist.dart';
 import 'package:basement_music/rest_client.dart';
 
@@ -8,8 +12,23 @@ class PlaylistsRepository {
   final _items = <Playlist>[];
 
   final RestClient _restClient;
+  final Box<String> _persistenceBox;
+  static const _cacheKey = 'playlists';
 
-  PlaylistsRepository(this._restClient);
+  PlaylistsRepository(this._restClient, {required Box<String> persistenceBox})
+      : _persistenceBox = persistenceBox {
+    final cached = persistenceBox.get(_cacheKey);
+    if (cached != null) {
+      try {
+        _items.addAll(
+          (jsonDecode(cached) as List).map((e) => Playlist.fromJson(e as Map<String, dynamic>)),
+        );
+      } catch (e) {
+        persistenceBox.delete(_cacheKey);
+        logger.w('Playlists cache decode failed, cleared: $e');
+      }
+    }
+  }
 
   List<Playlist> get items => _items;
 
@@ -21,7 +40,7 @@ class PlaylistsRepository {
     final result = await _restClient.getAllPlaylists();
     _items.clear();
     _items.addAll(result);
-
+    await _persistenceBox.put(_cacheKey, jsonEncode(_items.map((e) => e.toJson()).toList()));
     playlistsSubject.add(_items);
 
     return true;
