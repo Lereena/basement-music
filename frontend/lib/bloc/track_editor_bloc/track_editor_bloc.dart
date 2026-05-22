@@ -4,8 +4,8 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 
-import '../../logger.dart';
-import '../../repositories/tracks_repository.dart';
+import 'package:basement_music/logger.dart';
+import 'package:basement_music/repositories/tracks_repository.dart';
 
 part 'track_editor_event.dart';
 part 'track_editor_state.dart';
@@ -17,7 +17,7 @@ class TrackEditorBloc extends Bloc<TrackEditorEvent, TrackEditorState> {
     on<TrackEditorEdited>(_onTrackEditorEdited);
   }
 
-  FutureOr<void> _onTrackEditorEdited(
+  Future<void> _onTrackEditorEdited(
     TrackEditorEdited event,
     Emitter<TrackEditorState> emit,
   ) async {

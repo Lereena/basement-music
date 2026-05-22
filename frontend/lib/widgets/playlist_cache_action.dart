@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../bloc/cacher_bloc/cacher_bloc.dart';
-import 'buttons/cache_button.dart';
-import 'buttons/uncache_button.dart';
-import 'dialogs/confirm_action_dialog.dart';
+import 'package:basement_music/bloc/cacher_bloc/cacher_bloc.dart';
+import 'package:basement_music/widgets/buttons/cache_button.dart';
+import 'package:basement_music/widgets/buttons/uncache_button.dart';
+import 'package:basement_music/widgets/dialogs/confirm_action_dialog.dart';
 
 class PlaylistCacheAction extends StatelessWidget {
   final List<String> trackIds;

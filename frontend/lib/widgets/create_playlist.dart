@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../bloc/playlist_creation_bloc/playlist_creation_bloc.dart';
-import '../repositories/playlists_repository.dart';
-import 'dialogs/base_dialog.dart';
+import 'package:basement_music/bloc/playlist_creation_bloc/playlist_creation_bloc.dart';
+import 'package:basement_music/repositories/playlists_repository.dart';
+import 'package:basement_music/widgets/dialogs/base_dialog.dart';
 
 class CreatePlaylistDialog extends StatefulWidget {
   const CreatePlaylistDialog({super.key});

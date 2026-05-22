@@ -3,15 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../bloc/track_uploader_bloc/track_uploader_bloc.dart';
-import '../../../repositories/tracks_repository.dart';
-import '../../../routing/routes.dart';
-import '../../../utils/track_data.dart';
-import '../../../widgets/app_bar.dart';
-import '../../../widgets/dialogs/track_edit_dialog.dart';
-import '../result_page.dart';
-import '../upload_is_in_progress_page.dart';
-import 'files_input_page.dart';
+import 'package:basement_music/bloc/track_uploader_bloc/track_uploader_bloc.dart';
+import 'package:basement_music/repositories/tracks_repository.dart';
+import 'package:basement_music/routing/routes.dart';
+import 'package:basement_music/utils/track_data.dart';
+import 'package:basement_music/widgets/app_bar.dart';
+import 'package:basement_music/widgets/dialogs/track_edit_dialog.dart';
+import 'package:basement_music/pages/upload/result_page.dart';
+import 'package:basement_music/pages/upload/upload_is_in_progress_page.dart';
+import 'package:basement_music/pages/upload/from_device/files_input_page.dart';
 
 class UploadFromDevicePage extends StatelessWidget {
   const UploadFromDevicePage({super.key});

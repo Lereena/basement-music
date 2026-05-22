@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../bloc/track_to_playlist_adder_bloc/track_to_playlist_adder_bloc.dart';
-import '../../repositories/repositories.dart';
-import '../icons/error_icon.dart';
-import '../icons/success_icon.dart';
-import 'base_dialog.dart';
+import 'package:basement_music/bloc/track_to_playlist_adder_bloc/track_to_playlist_adder_bloc.dart';
+import 'package:basement_music/repositories/repositories.dart';
+import 'package:basement_music/widgets/icons/error_icon.dart';
+import 'package:basement_music/widgets/icons/success_icon.dart';
+import 'package:basement_music/widgets/dialogs/base_dialog.dart';
 
 class AddToPlaylistDialog extends StatelessWidget {
   final String trackId;

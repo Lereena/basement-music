@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'base_dialog.dart';
+import 'package:basement_music/widgets/dialogs/base_dialog.dart';
 
 class TrackEditDialog extends StatefulWidget {
   final String? artist;

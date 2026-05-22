@@ -4,10 +4,10 @@ import 'package:audio_service/audio_service.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
-import 'app_config.dart';
-import 'models/playlist.dart';
-import 'models/track.dart';
-import 'repositories/repositories.dart';
+import 'package:basement_music/app_config.dart';
+import 'package:basement_music/models/playlist.dart';
+import 'package:basement_music/models/track.dart';
+import 'package:basement_music/repositories/repositories.dart';
 
 final _random = Random();
 

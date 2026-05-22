@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../bloc/connectivity_status_bloc/connectivity_status_cubit.dart';
-import '../bloc/trackst_search_cubit/tracks_search_cubit.dart';
-import '../repositories/repositories.dart';
-import '../widgets/app_bar.dart';
-import '../widgets/search_field.dart';
-import '../widgets/track_card.dart';
+import 'package:basement_music/bloc/connectivity_status_bloc/connectivity_status_cubit.dart';
+import 'package:basement_music/bloc/trackst_search_cubit/tracks_search_cubit.dart';
+import 'package:basement_music/repositories/repositories.dart';
+import 'package:basement_music/widgets/app_bar.dart';
+import 'package:basement_music/widgets/search_field.dart';
+import 'package:basement_music/widgets/track_card.dart';
 
 class SearchPage extends StatelessWidget {
   const SearchPage({super.key});
@@ -57,7 +57,7 @@ class _SearchPage extends StatelessWidget {
                     builder: (_, connectivityState) {
                       return ListView.separated(
                         shrinkWrap: true,
-                        separatorBuilder: (_, __) => const Divider(height: 1),
+                        separatorBuilder: (_, _) => const Divider(height: 1),
                         itemCount: state.tracks.length,
                         itemBuilder: (_, index) => TrackCard(
                           track: state.tracks[index],

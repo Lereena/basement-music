@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../bloc/artists_bloc/artists_cubit.dart';
-import '../../bloc/playlists_bloc/playlists_bloc.dart';
-import '../../repositories/artists_repository.dart';
-import '../../repositories/repositories.dart';
-import '../../routing/routes.dart';
-import '../../widgets/artist_card.dart';
-import '../../widgets/playlist_card.dart';
+import 'package:basement_music/bloc/artists_bloc/artists_cubit.dart';
+import 'package:basement_music/bloc/playlists_bloc/playlists_bloc.dart';
+import 'package:basement_music/repositories/artists_repository.dart';
+import 'package:basement_music/repositories/repositories.dart';
+import 'package:basement_music/routing/routes.dart';
+import 'package:basement_music/widgets/artist_card.dart';
+import 'package:basement_music/widgets/playlist_card.dart';
 
 part 'artists.dart';
 part 'playlists.dart';

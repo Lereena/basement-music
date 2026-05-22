@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../bloc/player_bloc/player_bloc.dart';
-import '../../models/playlist.dart';
-import '../../models/track.dart';
+import 'package:basement_music/bloc/player_bloc/player_bloc.dart';
+import 'package:basement_music/models/playlist.dart';
+import 'package:basement_music/models/track.dart';
 
 class PlayButton extends StatelessWidget {
   final Track track;

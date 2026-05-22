@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-import 'base_dialog.dart';
+import 'package:basement_music/widgets/dialogs/base_dialog.dart';
 
 class StatusDialog extends StatelessWidget {
   final bool success;
   final String text;
 
-  const StatusDialog({required this.success, required this.text}) : super();
+  const StatusDialog({super.key, required this.success, required this.text});
 
   @override
   Widget build(BuildContext context) {

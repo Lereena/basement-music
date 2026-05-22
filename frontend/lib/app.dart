@@ -12,19 +12,19 @@ import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:sizer/sizer.dart';
 import 'package:url_strategy/url_strategy.dart';
 
-import 'adapters/theme_mode_adapter.dart';
-import 'app_config.dart';
-import 'audio_player_handler.dart';
-import 'bloc/settings_bloc/settings_bloc.dart';
-import 'firebase_options.dart';
-import 'provider_wrapper.dart';
-import 'repositories/artists_repository.dart';
-import 'repositories/repositories.dart';
-import 'rest_client.dart';
-import 'routing/router.dart';
-import 'shortcuts_wrapper.dart';
-import 'theme/custom_theme.dart';
-import 'utils/json_response_converter.dart';
+import 'package:basement_music/adapters/theme_mode_adapter.dart';
+import 'package:basement_music/app_config.dart';
+import 'package:basement_music/audio_player_handler.dart';
+import 'package:basement_music/bloc/settings_bloc/settings_bloc.dart';
+import 'package:basement_music/firebase_options.dart';
+import 'package:basement_music/provider_wrapper.dart';
+import 'package:basement_music/repositories/artists_repository.dart';
+import 'package:basement_music/repositories/repositories.dart';
+import 'package:basement_music/rest_client.dart';
+import 'package:basement_music/routing/router.dart';
+import 'package:basement_music/shortcuts_wrapper.dart';
+import 'package:basement_music/theme/custom_theme.dart';
+import 'package:basement_music/utils/json_response_converter.dart';
 
 Future<void> runBasement(AppConfig config) async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -123,7 +123,7 @@ class BasementMusic extends StatelessWidget {
       artistsRepository: artistsRepository,
       child: BlocBuilder<SettingsBloc, SettingsState>(
         builder: (_, settingsState) => Sizer(
-          builder: (_, __, ___) => MaterialApp.router(
+          builder: (_, _, _) => MaterialApp.router(
             title: 'Basement',
             theme: CustomTheme.lightTheme,
             darkTheme: CustomTheme.darkTheme,

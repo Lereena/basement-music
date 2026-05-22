@@ -2,7 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 
-import '../../repositories/connectivity_status_repository.dart';
+import 'package:basement_music/repositories/connectivity_status_repository.dart';
 
 part 'connectivity_status_state.dart';
 

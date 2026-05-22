@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../bloc/track_editor_bloc/track_editor_bloc.dart';
-import '../models/track.dart';
-import '../repositories/tracks_repository.dart';
-import 'dialogs/base_dialog.dart';
+import 'package:basement_music/bloc/track_editor_bloc/track_editor_bloc.dart';
+import 'package:basement_music/models/track.dart';
+import 'package:basement_music/repositories/tracks_repository.dart';
+import 'package:basement_music/widgets/dialogs/base_dialog.dart';
 
 class EditTrack extends StatefulWidget {
   final Track track;

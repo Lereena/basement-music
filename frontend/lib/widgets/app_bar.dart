@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'page_title.dart';
+import 'package:basement_music/widgets/page_title.dart';
 
 class BasementAppBar extends AppBar {
-  BasementAppBar({required String title, super.actions})
+  BasementAppBar({super.key, required String title, super.actions})
       : super(
           title: PageTitle(title),
           centerTitle: true,

@@ -2,12 +2,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../bloc/cacher_bloc/cacher_bloc.dart';
-import '../../models/playlist.dart';
-import '../../models/track.dart';
-import '../dialogs/add_to_playlist_dialog.dart';
-import '../dialogs/remove_from_playlist_dialog.dart';
-import '../edit_track.dart';
+import 'package:basement_music/bloc/cacher_bloc/cacher_bloc.dart';
+import 'package:basement_music/models/playlist.dart';
+import 'package:basement_music/models/track.dart';
+import 'package:basement_music/widgets/dialogs/add_to_playlist_dialog.dart';
+import 'package:basement_music/widgets/dialogs/remove_from_playlist_dialog.dart';
+import 'package:basement_music/widgets/edit_track.dart';
 
 class MoreButton extends StatelessWidget {
   final Track track;

@@ -4,15 +4,14 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 
-import '../../../models/playlist.dart';
-import '../../logger.dart';
-import '../../repositories/repositories.dart';
+import 'package:basement_music/models/playlist.dart';
+import 'package:basement_music/logger.dart';
+import 'package:basement_music/repositories/repositories.dart';
 
 part 'track_to_playlist_adder_event.dart';
 part 'track_to_playlist_adder_state.dart';
 
-class TrackToPlaylistAdderBloc
-    extends Bloc<TrackToPlaylistAdderEvent, TrackToPlaylistAdderState> {
+class TrackToPlaylistAdderBloc extends Bloc<TrackToPlaylistAdderEvent, TrackToPlaylistAdderState> {
   final TracksRepository tracksRepository;
   final PlaylistsRepository playlistsRepository;
   final String trackId;
@@ -31,7 +30,7 @@ class TrackToPlaylistAdderBloc
     );
   }
 
-  FutureOr<void> _onTrackToPlaylistAdderPlaylistSelected(
+  Future<void> _onTrackToPlaylistAdderPlaylistSelected(
     TrackToPlaylistAdderPlaylistSelected event,
     Emitter<TrackToPlaylistAdderState> emit,
   ) async {
@@ -47,12 +46,8 @@ class TrackToPlaylistAdderBloc
       );
       emit(TrackToPlaylistAdderLoad());
 
-      playlistsRepository.items
-          .firstWhere((element) => element.id == event.playlistId)
-          .tracks
-          .add(
-            tracksRepository.items
-                .firstWhere((element) => element.id == event.trackId),
+      playlistsRepository.items.firstWhere((element) => element.id == event.playlistId).tracks.add(
+            tracksRepository.items.firstWhere((element) => element.id == event.trackId),
           );
       emit(TrackToPlaylistAdderSuccess());
     } catch (e) {

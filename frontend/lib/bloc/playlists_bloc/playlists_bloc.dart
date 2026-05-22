@@ -4,10 +4,10 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 
-import '../../logger.dart';
-import '../../models/playlist.dart';
-import '../../repositories/repositories.dart';
-import '../connectivity_status_bloc/connectivity_status_cubit.dart';
+import 'package:basement_music/logger.dart';
+import 'package:basement_music/models/playlist.dart';
+import 'package:basement_music/repositories/repositories.dart';
+import 'package:basement_music/bloc/connectivity_status_bloc/connectivity_status_cubit.dart';
 
 part 'playlists_event.dart';
 part 'playlists_state.dart';

@@ -4,9 +4,9 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
-import '../../logger.dart';
-import '../../models/playlist.dart';
-import '../../repositories/playlists_repository.dart';
+import 'package:basement_music/logger.dart';
+import 'package:basement_music/models/playlist.dart';
+import 'package:basement_music/repositories/playlists_repository.dart';
 
 part 'playlist_event.dart';
 part 'playlist_state.dart';
@@ -15,8 +15,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
   final PlaylistsRepository playlistsRepository;
   final String playlistId;
 
-  PlaylistBloc({required this.playlistsRepository, required this.playlistId})
-      : super(PlaylistInitial()) {
+  PlaylistBloc({required this.playlistsRepository, required this.playlistId}) : super(PlaylistInitial()) {
     on<PlaylistLoadStarted>(_onLoadingStarted);
     on<PlaylistUpdated>(_onPlaylistUpdated);
 
@@ -29,7 +28,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
     );
   }
 
-  FutureOr<void> _onLoadingStarted(
+  Future<void> _onLoadingStarted(
     PlaylistLoadStarted event,
     Emitter<PlaylistState> emit,
   ) async {
@@ -49,7 +48,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
     }
   }
 
-  FutureOr<void> _onPlaylistUpdated(
+  void _onPlaylistUpdated(
     PlaylistUpdated event,
     Emitter<PlaylistState> emit,
   ) {

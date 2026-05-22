@@ -3,22 +3,20 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
 
-import '../../logger.dart';
-import '../../repositories/playlists_repository.dart';
+import 'package:basement_music/logger.dart';
+import 'package:basement_music/repositories/playlists_repository.dart';
 
 part 'playlist_creation_event.dart';
 part 'playlist_creation_state.dart';
 
-class PlaylistCreationBloc
-    extends Bloc<PlaylistCreationEvent, PlaylistCreationState> {
+class PlaylistCreationBloc extends Bloc<PlaylistCreationEvent, PlaylistCreationState> {
   final PlaylistsRepository _playlistsRepository;
 
-  PlaylistCreationBloc(this._playlistsRepository)
-      : super(PlaylistCreationInitial()) {
+  PlaylistCreationBloc(this._playlistsRepository) : super(PlaylistCreationInitial()) {
     on<PlaylistCreationLoadingStarted>(_onPlaylistCreationLoadingStarted);
   }
 
-  FutureOr<void> _onPlaylistCreationLoadingStarted(
+  Future<void> _onPlaylistCreationLoadingStarted(
     PlaylistCreationLoadingStarted event,
     Emitter<PlaylistCreationState> emit,
   ) async {

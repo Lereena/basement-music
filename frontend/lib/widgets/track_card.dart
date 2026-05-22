@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../bloc/cacher_bloc/cacher_bloc.dart';
-import '../bloc/player_bloc/player_bloc.dart';
-import '../models/playlist.dart';
-import '../models/track.dart';
-import 'buttons/more_button.dart';
-import 'controls/pause_button.dart';
-import 'controls/play_button.dart';
-import 'cover.dart';
-import 'cover_overlay.dart';
-import 'track_name.dart';
+import 'package:basement_music/bloc/cacher_bloc/cacher_bloc.dart';
+import 'package:basement_music/bloc/player_bloc/player_bloc.dart';
+import 'package:basement_music/models/playlist.dart';
+import 'package:basement_music/models/track.dart';
+import 'package:basement_music/widgets/buttons/more_button.dart';
+import 'package:basement_music/widgets/controls/pause_button.dart';
+import 'package:basement_music/widgets/controls/play_button.dart';
+import 'package:basement_music/widgets/cover.dart';
+import 'package:basement_music/widgets/cover_overlay.dart';
+import 'package:basement_music/widgets/track_name.dart';
 
 class TrackCard extends StatelessWidget {
   final Track track;

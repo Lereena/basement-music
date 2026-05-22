@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../bloc/youtube_extractor_bloc/youtube_extractor_bloc.dart';
-import '../../../repositories/tracks_repository.dart';
-import '../../../routing/routes.dart';
-import '../../../widgets/app_bar.dart';
-import '../result_page.dart';
-import '../upload_is_in_progress_page.dart';
-import 'link_input_page.dart';
-import 'track_info_page.dart';
+import 'package:basement_music/bloc/youtube_extractor_bloc/youtube_extractor_bloc.dart';
+import 'package:basement_music/repositories/tracks_repository.dart';
+import 'package:basement_music/routing/routes.dart';
+import 'package:basement_music/widgets/app_bar.dart';
+import 'package:basement_music/pages/upload/result_page.dart';
+import 'package:basement_music/pages/upload/upload_is_in_progress_page.dart';
+import 'package:basement_music/pages/upload/from_youtube/link_input_page.dart';
+import 'package:basement_music/pages/upload/from_youtube/track_info_page.dart';
 
 class ExtractFromYoutubePage extends StatelessWidget {
   const ExtractFromYoutubePage({super.key});

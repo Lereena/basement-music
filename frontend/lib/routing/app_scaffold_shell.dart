@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../widgets/leading_rail_widget.dart';
-import 'app_scaffold.dart';
-import 'breakpoints.dart';
+import 'package:basement_music/widgets/leading_rail_widget.dart';
+import 'package:basement_music/routing/app_scaffold.dart';
+import 'package:basement_music/routing/breakpoints.dart';
 
 enum _Destination {
   tracks,

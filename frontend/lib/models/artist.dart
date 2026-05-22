@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 
-import 'track.dart';
+import 'package:basement_music/models/track.dart';
 
 part 'artist.g.dart';
 

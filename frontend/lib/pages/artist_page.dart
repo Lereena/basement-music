@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../bloc/artist_bloc/artist_cubit.dart';
-import '../bloc/playlist_bloc/playlist_bloc.dart';
-import '../models/playlist.dart';
-import '../models/track.dart';
-import '../repositories/artists_repository.dart';
-import '../widgets/app_bar.dart';
-import '../widgets/track_card.dart';
+import 'package:basement_music/bloc/artist_bloc/artist_cubit.dart';
+import 'package:basement_music/bloc/playlist_bloc/playlist_bloc.dart';
+import 'package:basement_music/models/playlist.dart';
+import 'package:basement_music/models/track.dart';
+import 'package:basement_music/repositories/artists_repository.dart';
+import 'package:basement_music/widgets/app_bar.dart';
+import 'package:basement_music/widgets/track_card.dart';
 
 class ArtistPage extends StatelessWidget {
   final String artistId;

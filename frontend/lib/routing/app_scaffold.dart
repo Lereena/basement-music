@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../bloc/player_bloc/player_bloc.dart';
-import '../models/track.dart';
-import '../widgets/bottom_player.dart';
-import '../widgets/secondary_body_content.dart';
-import '../widgets/wrappers/connectivity_status_wrapper.dart';
-import 'breakpoints.dart';
+import 'package:basement_music/bloc/player_bloc/player_bloc.dart';
+import 'package:basement_music/models/track.dart';
+import 'package:basement_music/widgets/bottom_player.dart';
+import 'package:basement_music/widgets/secondary_body_content.dart';
+import 'package:basement_music/widgets/wrappers/connectivity_status_wrapper.dart';
+import 'package:basement_music/routing/breakpoints.dart';
 
 class AppScaffold extends StatelessWidget {
   final Widget child;

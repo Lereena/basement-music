@@ -7,7 +7,7 @@ class FileUploadDropzone extends StatefulWidget {
   final double height;
   final Function(String, List<int>) saveFileName;
 
-  const FileUploadDropzone({required this.width, required this.height, required this.saveFileName}) : super();
+  const FileUploadDropzone({super.key, required this.width, required this.height, required this.saveFileName});
 
   @override
   State<FileUploadDropzone> createState() => _FileUploadDropzoneState();

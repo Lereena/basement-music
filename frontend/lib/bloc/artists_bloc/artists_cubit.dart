@@ -1,9 +1,9 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 
-import '../../logger.dart';
-import '../../models/artist.dart';
-import '../../repositories/artists_repository.dart';
+import 'package:basement_music/logger.dart';
+import 'package:basement_music/models/artist.dart';
+import 'package:basement_music/repositories/artists_repository.dart';
 
 part 'artists_state.dart';
 

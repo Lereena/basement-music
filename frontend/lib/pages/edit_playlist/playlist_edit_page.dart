@@ -1,12 +1,11 @@
+import 'package:basement_music/bloc/playlist_edit_bloc/playlist_edit_bloc.dart';
+import 'package:basement_music/models/track.dart';
+import 'package:basement_music/pages/upload/result_page.dart';
+import 'package:basement_music/repositories/playlists_repository.dart';
+import 'package:basement_music/widgets/app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-
-import '../../bloc/playlist_edit_bloc/playlist_edit_bloc.dart';
-import '../../models/track.dart';
-import '../../repositories/playlists_repository.dart';
-import '../../widgets/app_bar.dart';
-import '../upload/result_page.dart';
 
 class _PlaylistData {
   String? title;
@@ -23,10 +22,9 @@ class PlaylistEditPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => PlaylistEditorBloc(
-        playilstsRepository: context.read<PlaylistsRepository>(),
-        playlistId: playlistId,
-      )..add(PlaylistEditorStarted()),
+      create: (_) =>
+          PlaylistEditorBloc(playilstsRepository: context.read<PlaylistsRepository>(), playlistId: playlistId)
+            ..add(PlaylistEditorStarted()),
       child: const _PlaylistEdit(),
     );
   }
@@ -44,12 +42,7 @@ class _PlaylistEditState extends State<_PlaylistEdit> {
 
   final _formKey = GlobalKey<FormState>();
 
-  late final _appBarActions = [
-    IconButton(
-      onPressed: _onSave,
-      icon: const Icon(Icons.save),
-    ),
-  ];
+  late final _appBarActions = [IconButton(onPressed: _onSave, icon: const Icon(Icons.save))];
 
   @override
   Widget build(BuildContext context) {
@@ -59,10 +52,7 @@ class _PlaylistEditState extends State<_PlaylistEdit> {
           _data = _PlaylistData(title: state.title, tracks: state.tracks);
 
           return Scaffold(
-            appBar: BasementAppBar(
-              title: 'Edit playlist',
-              actions: _appBarActions,
-            ),
+            appBar: BasementAppBar(title: 'Edit playlist', actions: _appBarActions),
             body: Form(
               key: _formKey,
               child: EditView(data: _data),
@@ -76,8 +66,7 @@ class _PlaylistEditState extends State<_PlaylistEdit> {
 
         if (state is PlaylistEditorSuccess || state is PlaylistEditorFail) {
           return ResultPage(
-            result:
-                state is PlaylistEditorSuccess ? Result.success : Result.fail,
+            result: state is PlaylistEditorSuccess ? Result.success : Result.fail,
             successMessage: 'Playlist was successfully edited',
             failMessage: 'Playlist editing is failed, please try again later',
             buttonText: 'OK',
@@ -96,11 +85,8 @@ class _PlaylistEditState extends State<_PlaylistEdit> {
     if (!isValid) return;
 
     context.read<PlaylistEditorBloc>().add(
-          PlaylistEditorSaved(
-            title: _data.title ?? '',
-            tracksIds: _data.tracks?.map((e) => e.id).toList() ?? [],
-          ),
-        );
+      PlaylistEditorSaved(title: _data.title ?? '', tracksIds: _data.tracks?.map((e) => e.id).toList() ?? []),
+    );
   }
 }
 
@@ -117,8 +103,7 @@ class EditView extends StatelessWidget {
         TextFormField(
           decoration: const InputDecoration(label: Text('Title')),
           initialValue: data.title,
-          validator: (value) =>
-              value?.isNotEmpty != true ? 'Field is required' : null,
+          validator: (value) => value?.isNotEmpty != true ? 'Field is required' : null,
           onChanged: (value) => data.title = value,
         ),
         const SizedBox(height: 32),

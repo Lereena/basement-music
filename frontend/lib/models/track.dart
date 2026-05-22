@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-import '../utils/time.dart';
+import 'package:basement_music/utils/time.dart';
 
 part 'track.g.dart';
 

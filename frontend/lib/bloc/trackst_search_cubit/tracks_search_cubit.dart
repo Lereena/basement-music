@@ -4,10 +4,10 @@ import 'package:bloc/bloc.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 
-import '../../logger.dart';
-import '../../models/playlist.dart';
-import '../../models/track.dart';
-import '../../repositories/repositories.dart';
+import 'package:basement_music/logger.dart';
+import 'package:basement_music/models/playlist.dart';
+import 'package:basement_music/models/track.dart';
+import 'package:basement_music/repositories/repositories.dart';
 
 part 'tracks_search_state.dart';
 
@@ -26,7 +26,7 @@ class TracksSearchCubit extends Cubit<TracksSearchState> {
 
   String lastSearch = '';
 
-  FutureOr<void> onSearch(String searchQuery) async {
+  Future<void> onSearch(String searchQuery) async {
     final query = searchQuery.trim();
     if (lastSearch == query) return;
     lastSearch = query;
@@ -39,8 +39,7 @@ class TracksSearchCubit extends Cubit<TracksSearchState> {
     emit(TracksSearchLoadInProgress(query));
 
     try {
-      if (connectivityStatusRepository.statusSubject.value ==
-          ConnectivityResult.none) {
+      if (connectivityStatusRepository.statusSubject.value == ConnectivityResult.none) {
         tracksRepository.searchTracksOffline(query);
       } else {
         await tracksRepository.searchTracksOnline(query);
@@ -49,8 +48,7 @@ class TracksSearchCubit extends Cubit<TracksSearchState> {
       if (tracksRepository.searchItems.isEmpty) {
         emit(TracksSearchSuccessEmpty(query));
       } else {
-        playlistsRepository.openedPlaylist =
-            Playlist.anonymous(tracksRepository.searchItems);
+        playlistsRepository.openedPlaylist = Playlist.anonymous(tracksRepository.searchItems);
 
         emit(TracksSearchSuccess(query, tracksRepository.searchItems));
       }

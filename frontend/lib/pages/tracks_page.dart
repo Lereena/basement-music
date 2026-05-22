@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../bloc/connectivity_status_bloc/connectivity_status_cubit.dart';
-import '../bloc/tracks_bloc/tracks_bloc.dart';
-import '../models/track.dart';
-import '../repositories/repositories.dart';
-import '../widgets/app_bar.dart';
-import '../widgets/track_card.dart';
+import 'package:basement_music/bloc/connectivity_status_bloc/connectivity_status_cubit.dart';
+import 'package:basement_music/bloc/tracks_bloc/tracks_bloc.dart';
+import 'package:basement_music/models/track.dart';
+import 'package:basement_music/repositories/repositories.dart';
+import 'package:basement_music/widgets/app_bar.dart';
+import 'package:basement_music/widgets/track_card.dart';
 
 class TracksPage extends StatelessWidget {
   const TracksPage({super.key});

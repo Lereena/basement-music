@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 
-import '../../logger.dart';
-import '../../models/track.dart';
-import '../../repositories/playlists_repository.dart';
+import 'package:basement_music/logger.dart';
+import 'package:basement_music/models/track.dart';
+import 'package:basement_music/repositories/playlists_repository.dart';
 
 part 'playlist_edit_event.dart';
 part 'playlist_edit_state.dart';
@@ -22,7 +22,7 @@ class PlaylistEditorBloc extends Bloc<PlaylistEditorEvent, PlaylistEditState> {
     on<PlaylistEditorSaved>(_onPlaylistEditorSaved);
   }
 
-  FutureOr<void> _onPlaylistEditorStarted(
+  Future<void> _onPlaylistEditorStarted(
     PlaylistEditorStarted event,
     Emitter<PlaylistEditState> emit,
   ) async {
@@ -41,7 +41,7 @@ class PlaylistEditorBloc extends Bloc<PlaylistEditorEvent, PlaylistEditState> {
     );
   }
 
-  FutureOr<void> _onPlaylistEditorSaved(
+  Future<void> _onPlaylistEditorSaved(
     PlaylistEditorSaved event,
     Emitter<PlaylistEditState> emit,
   ) async {

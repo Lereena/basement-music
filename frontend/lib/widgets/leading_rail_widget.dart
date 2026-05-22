@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'app_logo.dart';
+import 'package:basement_music/widgets/app_logo.dart';
 
 class LeadingRailWidget extends StatelessWidget {
   final bool extended;

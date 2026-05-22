@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../bloc/cacher_bloc/cacher_bloc.dart';
-import '../dialogs/confirm_action_dialog.dart';
+import 'package:basement_music/bloc/cacher_bloc/cacher_bloc.dart';
+import 'package:basement_music/widgets/dialogs/confirm_action_dialog.dart';
 
 class CacheAllTracksSettingsLine extends StatelessWidget {
   const CacheAllTracksSettingsLine({super.key});

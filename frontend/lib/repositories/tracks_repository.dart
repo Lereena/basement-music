@@ -2,9 +2,9 @@ import 'package:dio/dio.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:rxdart/rxdart.dart';
 
-import '../models/track.dart';
-import '../models/video_info.dart';
-import '../rest_client.dart';
+import 'package:basement_music/models/track.dart';
+import 'package:basement_music/models/video_info.dart';
+import 'package:basement_music/rest_client.dart';
 
 class TracksRepository {
   final _items = <Track>[];

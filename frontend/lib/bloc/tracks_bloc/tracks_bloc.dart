@@ -4,10 +4,10 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 
-import '../../logger.dart';
-import '../../models/track.dart';
-import '../../repositories/repositories.dart';
-import '../connectivity_status_bloc/connectivity_status_cubit.dart';
+import 'package:basement_music/logger.dart';
+import 'package:basement_music/models/track.dart';
+import 'package:basement_music/repositories/repositories.dart';
+import 'package:basement_music/bloc/connectivity_status_bloc/connectivity_status_cubit.dart';
 
 part 'tracks_event.dart';
 part 'tracks_state.dart';
@@ -34,7 +34,7 @@ class TracksBloc extends HydratedBloc<TracksEvent, TracksState> {
     tracksRepository.tracksSubject.listen((value) => add(TracksUpdated(value)));
   }
 
-  FutureOr<void> _onTracksLoadStarted(
+  Future<void> _onTracksLoadStarted(
     TracksLoadStarted event,
     Emitter<TracksState> emit,
   ) async {
@@ -59,7 +59,7 @@ class TracksBloc extends HydratedBloc<TracksEvent, TracksState> {
     }
   }
 
-  FutureOr<void> _onTracksUpdated(
+  void _onTracksUpdated(
     TracksUpdated event,
     Emitter<TracksState> emit,
   ) {
@@ -76,6 +76,5 @@ class TracksBloc extends HydratedBloc<TracksEvent, TracksState> {
   }
 
   @override
-  Map<String, dynamic>? toJson(TracksState state) =>
-      {_tracksInfoKey: state.toJson()};
+  Map<String, dynamic>? toJson(TracksState state) => {_tracksInfoKey: state.toJson()};
 }

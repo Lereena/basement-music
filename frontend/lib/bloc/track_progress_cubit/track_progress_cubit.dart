@@ -2,8 +2,8 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 
-import '../../audio_player_handler.dart';
-import '../../utils/time.dart';
+import 'package:basement_music/audio_player_handler.dart';
+import 'package:basement_music/utils/time.dart';
 
 part 'track_progress_state.dart';
 

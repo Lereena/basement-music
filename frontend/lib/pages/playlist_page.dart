@@ -5,12 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../bloc/playlist_bloc/playlist_bloc.dart';
-import '../repositories/playlists_repository.dart';
-import '../routing/routes.dart';
-import '../widgets/app_bar.dart';
-import '../widgets/playlist_cache_action.dart';
-import '../widgets/track_card.dart';
+import 'package:basement_music/bloc/playlist_bloc/playlist_bloc.dart';
+import 'package:basement_music/repositories/playlists_repository.dart';
+import 'package:basement_music/routing/routes.dart';
+import 'package:basement_music/widgets/app_bar.dart';
+import 'package:basement_music/widgets/playlist_cache_action.dart';
+import 'package:basement_music/widgets/track_card.dart';
 
 class PlaylistPage extends StatelessWidget {
   final String playlistId;
