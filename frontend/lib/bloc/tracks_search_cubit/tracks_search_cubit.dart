@@ -40,7 +40,7 @@ class TracksSearchCubit extends Cubit<TracksSearchState> {
     emit(TracksSearchState.loadInProgress(searchQuery: query));
 
     try {
-      if (connectivityStatusRepository.statusSubject.value == ConnectivityResult.none) {
+      if (connectivityStatusRepository.statusSubject.value.contains(ConnectivityResult.none)) {
         tracksRepository.searchTracksOffline(query);
       } else {
         await tracksRepository.searchTracksOnline(query);

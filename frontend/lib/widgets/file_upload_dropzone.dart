@@ -19,8 +19,10 @@ class _FileUploadDropzoneState extends State<FileUploadDropzone> {
   @override
   Widget build(BuildContext context) {
     return DottedBorder(
-      color: Theme.of(context).primaryColor,
-      dashPattern: const [5, 2],
+      options: RectDottedBorderOptions(
+        color: Theme.of(context).primaryColor,
+        dashPattern: const [5, 2],
+      ),
       child: Container(
         width: widget.width,
         height: widget.height,

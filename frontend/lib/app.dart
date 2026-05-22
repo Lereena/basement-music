@@ -21,7 +21,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:sizer/sizer.dart';
-import 'package:url_strategy/url_strategy.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
 
 Future<void> runBasement(AppConfig config) async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,7 +35,7 @@ Future<void> runBasement(AppConfig config) async {
     return true;
   };
 
-  setPathUrlStrategy();
+  usePathUrlStrategy();
 
   final dio = Dio(BaseOptions(baseUrl: config.baseUrl))
     ..interceptors.addAll([JsonResponseConverter(), PrettyDioLogger(maxWidth: 120, responseBody: false)]);
@@ -120,9 +120,7 @@ class BasementMusic extends StatelessWidget {
             theme: CustomTheme.lightTheme,
             darkTheme: CustomTheme.darkTheme,
             themeMode: settingsState.themeMode,
-            routeInformationProvider: _router.routeInformationProvider,
-            routeInformationParser: _router.routeInformationParser,
-            routerDelegate: _router.routerDelegate,
+            routerConfig: _router,
             builder: (context, child) => ShortcutsWrapper(child: child ?? const SizedBox.shrink()),
           ),
         ),

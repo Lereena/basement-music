@@ -22,7 +22,7 @@ class PlaylistsCubit extends Cubit<PlaylistsState> {
             : const PlaylistsState.loading(),
       ) {
     connectivityStatusRepository.statusSubject.listen((status) {
-      if (status != ConnectivityResult.none) {
+      if (!status.contains(ConnectivityResult.none)) {
         loadPlaylists();
       }
     });

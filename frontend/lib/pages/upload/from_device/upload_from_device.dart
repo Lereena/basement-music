@@ -91,7 +91,7 @@ class _UploadFromDevice extends StatelessWidget {
   }
 
   Future<void> _onSelectFiles(BuildContext context, {List<({String name, PlatformFile file})>? currentFiles}) async {
-    final FilePickerResult? result = await FilePicker.platform.pickFiles(
+    final FilePickerResult? result = await FilePicker.pickFiles(
       allowMultiple: true,
       type: FileType.custom,
       withData: true,

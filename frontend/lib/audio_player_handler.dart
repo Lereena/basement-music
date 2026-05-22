@@ -139,7 +139,7 @@ class AudioPlayerHandler extends BaseAudioHandler {
   }
 
   List<Track> _getAvailableTracks() {
-    final isOffline = connectivityStatusRepository.statusSubject.value == ConnectivityResult.none;
+    final isOffline = connectivityStatusRepository.statusSubject.value.contains(ConnectivityResult.none);
 
     return isOffline
         ? currentPlaylist.tracks.where((track) => cacheRepository.items.contains(track.id)).toList()
