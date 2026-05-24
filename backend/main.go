@@ -62,6 +62,9 @@ func main() {
 		tokenOnlyMW(http.HandlerFunc(authRepo.Register)),
 	).Methods("POST")
 
+	// Audio stream is public — audioplayers can't attach headers, IDs are non-enumerable UUIDs
+	router.HandleFunc("/track/{id}", musicRepo.GetTrack).Methods("GET")
+
 	// All other routes require a registered user
 	protected := router.PathPrefix("").Subrouter()
 	protected.Use(authMW)
