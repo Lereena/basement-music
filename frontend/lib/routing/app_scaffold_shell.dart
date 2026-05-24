@@ -9,6 +9,7 @@ enum _Destination {
   tracks,
   library,
   search,
+  favourites,
   upload,
   settings;
 
@@ -16,6 +17,7 @@ enum _Destination {
         tracks => 'All tracks',
         library => 'Library',
         search => 'Search',
+        favourites => 'Favourites',
         settings => 'Settings',
         upload => 'Upload',
       };
@@ -24,6 +26,7 @@ enum _Destination {
         tracks => const Icon(Icons.home),
         library => const Icon(Icons.library_music),
         search => const Icon(Icons.search),
+        favourites => const Icon(Icons.favorite),
         settings => const Icon(Icons.settings),
         upload => const Icon(Icons.upload),
       };

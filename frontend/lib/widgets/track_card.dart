@@ -1,4 +1,5 @@
 import 'package:basement_music/bloc/cacher_cubit/cacher_cubit.dart';
+import 'package:basement_music/bloc/favourites_cubit/favourites_cubit.dart';
 import 'package:basement_music/bloc/player_cubit/player_cubit.dart';
 import 'package:basement_music/models/playlist.dart';
 import 'package:basement_music/models/track.dart';
@@ -71,7 +72,24 @@ class TrackCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 10),
                     Text(track.durationStr, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 16)),
-                    const SizedBox(width: 15),
+                    BlocBuilder<FavouritesCubit, FavouritesState>(
+                      builder: (context, _) {
+                        final isFav =
+                            context.read<FavouritesCubit>().isFavourite(track.id);
+                        return IconButton(
+                          icon: Icon(
+                            isFav ? Icons.favorite : Icons.favorite_border,
+                            color: isFav
+                                ? Theme.of(context).colorScheme.error
+                                : null,
+                            size: 20,
+                          ),
+                          onPressed: () => context
+                              .read<FavouritesCubit>()
+                              .toggleFavourite(track.id),
+                        );
+                      },
+                    ),
                     MoreButton(track: track, playlist: containingPlaylist),
                     const SizedBox(width: 15),
                   ],
