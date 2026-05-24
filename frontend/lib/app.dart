@@ -2,15 +2,20 @@ import 'package:audio_service/audio_service.dart';
 import 'package:basement_music/adapters/theme_mode_adapter.dart';
 import 'package:basement_music/app_config.dart';
 import 'package:basement_music/audio_player_handler.dart';
+import 'package:basement_music/bloc/auth_cubit/auth_cubit.dart';
 import 'package:basement_music/bloc/settings_cubit/settings_cubit.dart';
 import 'package:basement_music/firebase_options.dart';
 import 'package:basement_music/provider_wrapper.dart';
+import 'package:basement_music/repositories/admin_repository.dart';
 import 'package:basement_music/repositories/artists_repository.dart';
+import 'package:basement_music/repositories/auth_repository.dart';
+import 'package:basement_music/repositories/favourites_repository.dart';
 import 'package:basement_music/repositories/repositories.dart';
 import 'package:basement_music/rest_client.dart';
 import 'package:basement_music/routing/router.dart';
 import 'package:basement_music/shortcuts_wrapper.dart';
 import 'package:basement_music/theme/custom_theme.dart';
+import 'package:basement_music/utils/auth_interceptor.dart';
 import 'package:basement_music/utils/json_response_converter.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -18,10 +23,11 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:sizer/sizer.dart';
-import 'package:flutter_web_plugins/url_strategy.dart';
 
 Future<void> runBasement(AppConfig config) async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,7 +44,11 @@ Future<void> runBasement(AppConfig config) async {
   usePathUrlStrategy();
 
   final dio = Dio(BaseOptions(baseUrl: config.baseUrl))
-    ..interceptors.addAll([JsonResponseConverter(), PrettyDioLogger(maxWidth: 120, responseBody: false)]);
+    ..interceptors.addAll([
+      AuthInterceptor(),
+      JsonResponseConverter(),
+      PrettyDioLogger(maxWidth: 120, responseBody: false),
+    ]);
 
   final restClient = RestClient(dio);
 
@@ -53,6 +63,12 @@ Future<void> runBasement(AppConfig config) async {
   final settingsRepository = SettingsRepository(settingsBox);
   final connectivityStatusRepository = ConnectivityStatusRepository();
   final cacheRepository = CacheRepository(config, cacheBox);
+  final authRepository = AuthRepository(restClient);
+  final favouritesRepository = FavouritesRepository(restClient);
+  final adminRepository = AdminRepository(restClient);
+
+  final authCubit = AuthCubit(authRepository);
+  final router = AppRouter.createRouter(authCubit);
 
   final audioHandler = await AudioService.init(
     builder: () => AudioPlayerHandler(
@@ -77,11 +93,14 @@ Future<void> runBasement(AppConfig config) async {
       playlistsRepository: PlaylistsRepository(restClient, persistenceBox: playlistsPersistenceBox),
       artistsRepository: ArtistsRepository(restClient),
       connectivityStatusRepository: connectivityStatusRepository,
+      authRepository: authRepository,
+      favouritesRepository: favouritesRepository,
+      adminRepository: adminRepository,
+      authCubit: authCubit,
+      router: router,
     ),
   );
 }
-
-final _router = AppRouter.router;
 
 class BasementMusic extends StatelessWidget {
   final AudioPlayerHandler audioHandler;
@@ -91,6 +110,11 @@ class BasementMusic extends StatelessWidget {
   final PlaylistsRepository playlistsRepository;
   final ArtistsRepository artistsRepository;
   final ConnectivityStatusRepository connectivityStatusRepository;
+  final AuthRepository authRepository;
+  final FavouritesRepository favouritesRepository;
+  final AdminRepository adminRepository;
+  final AuthCubit authCubit;
+  final GoRouter router;
 
   const BasementMusic({
     super.key,
@@ -101,6 +125,11 @@ class BasementMusic extends StatelessWidget {
     required this.playlistsRepository,
     required this.artistsRepository,
     required this.connectivityStatusRepository,
+    required this.authRepository,
+    required this.favouritesRepository,
+    required this.adminRepository,
+    required this.authCubit,
+    required this.router,
   });
 
   @override
@@ -113,6 +142,10 @@ class BasementMusic extends StatelessWidget {
       cacheRepository: cacheRepository,
       settingsRepository: settingsRepository,
       artistsRepository: artistsRepository,
+      authRepository: authRepository,
+      favouritesRepository: favouritesRepository,
+      adminRepository: adminRepository,
+      authCubit: authCubit,
       child: BlocBuilder<SettingsCubit, SettingsState>(
         builder: (_, settingsState) => Sizer(
           builder: (_, _, _) => MaterialApp.router(
@@ -120,7 +153,7 @@ class BasementMusic extends StatelessWidget {
             theme: CustomTheme.lightTheme,
             darkTheme: CustomTheme.darkTheme,
             themeMode: settingsState.themeMode,
-            routerConfig: _router,
+            routerConfig: router,
             builder: (context, child) => ShortcutsWrapper(child: child ?? const SizedBox.shrink()),
           ),
         ),

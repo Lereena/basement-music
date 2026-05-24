@@ -1,8 +1,10 @@
 import 'package:dio/dio.dart' hide Headers;
 import 'package:retrofit/retrofit.dart';
 
+import 'package:basement_music/models/app_user.dart';
 import 'package:basement_music/models/artist.dart';
 import 'package:basement_music/models/playlist.dart';
+import 'package:basement_music/models/registration_code.dart';
 import 'package:basement_music/models/track.dart';
 import 'package:basement_music/models/video_info.dart';
 
@@ -80,4 +82,28 @@ abstract class RestClient {
 
   @GET('/artist/{id}')
   Future<Artist> getArtist(@Path('id') String id);
+
+  // Auth
+  @POST('/auth/register')
+  Future<AppUser> register(@Body() Map<String, dynamic> body);
+
+  @GET('/auth/me')
+  Future<AppUser> getMe();
+
+  // Favourites
+  @GET('/user/favourites')
+  Future<List<Track>> getFavourites();
+
+  @POST('/user/favourites/{trackId}')
+  Future<void> addFavourite(@Path('trackId') String trackId);
+
+  @DELETE('/user/favourites/{trackId}')
+  Future<void> removeFavourite(@Path('trackId') String trackId);
+
+  // Admin
+  @POST('/admin/registration-codes')
+  Future<RegistrationCode> generateRegistrationCode();
+
+  @GET('/admin/registration-codes')
+  Future<List<RegistrationCode>> getRegistrationCodes();
 }

@@ -10,6 +10,7 @@ import (
 	"github.com/rs/cors"
 
 	"github.com/Lereena/server_basement_music/config"
+	"github.com/Lereena/server_basement_music/middleware"
 	"github.com/Lereena/server_basement_music/repositories"
 )
 
@@ -18,6 +19,7 @@ func main() {
 	log.Printf("Config: %+v", cfg)
 
 	db := cfg.InitDB()
+	firebaseApp := config.InitFirebase()
 
 	musicRepo := &repositories.TracksRepository{
 		DB:  db,
@@ -31,6 +33,12 @@ func main() {
 	artistsRepo := &repositories.ArtistsRepository{DB: db}
 	artistsRepo.Init()
 
+	authRepo := &repositories.AuthRepository{DB: db}
+	authRepo.Init()
+
+	adminRepo := &repositories.AdminRepository{DB: db}
+	favsRepo := &repositories.FavouritesRepository{DB: db}
+
 	localDirectoryWorker := &LocalDirectoryWorker{
 		musicRepo:   musicRepo,
 		artistsRepo: artistsRepo,
@@ -43,29 +51,62 @@ func main() {
 		Cfg:       &cfg,
 	}
 
+	authMW := middleware.AuthMiddleware(firebaseApp, db)
+	tokenOnlyMW := middleware.TokenOnlyMiddleware(firebaseApp)
+
 	router := mux.NewRouter().PathPrefix("/api").Subrouter()
-	router.HandleFunc("/tracks", musicRepo.GetTracks).Methods("GET")
-	router.HandleFunc("/tracks/search", musicRepo.SearchTracks).Methods("GET")
 
-	router.HandleFunc("/track/{id}", musicRepo.GetTrack).Methods("GET")
-	router.HandleFunc("/track/{id}", musicRepo.EditTrack).Methods("PATCH")
-	router.HandleFunc("/track/upload", localDirectoryWorker.UploadFile).Methods("POST")
+	// Public auth route — token verified but user need not exist in DB yet
+	router.Handle(
+		"/auth/register",
+		tokenOnlyMW(http.HandlerFunc(authRepo.Register)),
+	).Methods("POST")
 
-	router.HandleFunc("/yt/fetchVideoInfo", youtubeWorker.FetchVideoInfo).Methods("GET")
-	router.HandleFunc("/yt/download", youtubeWorker.FetchFromYoutube).Methods("GET")
+	// All other routes require a registered user
+	protected := router.PathPrefix("").Subrouter()
+	protected.Use(authMW)
 
-	router.HandleFunc("/playlists", playlistsRepo.GetAllPlaylists).Methods("GET")
-	router.HandleFunc("/playlist/{id}", playlistsRepo.GetPlaylist).Methods("GET")
-	router.HandleFunc("/playlist/create/{title}", playlistsRepo.CreatePlaylist).Methods("POST")
-	router.HandleFunc("/playlist/{id}", playlistsRepo.EditPlaylist).Methods("PATCH")
-	router.HandleFunc("/playlist/{id}", playlistsRepo.DeletePlaylist).Methods("DELETE")
-	router.HandleFunc("/playlist/{playlistId}/track/{trackId}", playlistsRepo.AddTrackToPlaylist).Methods("POST")
-	router.HandleFunc("/playlist/{playlistId}/track/{trackId}", playlistsRepo.DeleteTrackFromPlaylist).Methods("DELETE")
+	protected.HandleFunc("/auth/me", authRepo.Me).Methods("GET")
 
-	router.HandleFunc("/artists", artistsRepo.GetAllArtists).Methods("GET")
-	router.HandleFunc("/artist/{id}", artistsRepo.GetArtist).Methods("GET")
+	// User routes
+	protected.HandleFunc("/user/favourites", favsRepo.GetFavourites).Methods("GET")
+	protected.HandleFunc("/user/favourites/{trackId}", favsRepo.AddFavourite).Methods("POST")
+	protected.HandleFunc("/user/favourites/{trackId}", favsRepo.RemoveFavourite).Methods("DELETE")
 
-	handler := cors.Default().Handler(router)
+	// Admin routes
+	admin := protected.PathPrefix("/admin").Subrouter()
+	admin.Use(middleware.AdminMiddleware)
+	admin.HandleFunc("/registration-codes", adminRepo.GenerateCode).Methods("POST")
+	admin.HandleFunc("/registration-codes", adminRepo.ListCodes).Methods("GET")
+
+	protected.HandleFunc("/tracks", musicRepo.GetTracks).Methods("GET")
+	protected.HandleFunc("/tracks/search", musicRepo.SearchTracks).Methods("GET")
+
+	protected.HandleFunc("/track/{id}", musicRepo.GetTrack).Methods("GET")
+	protected.HandleFunc("/track/{id}", musicRepo.EditTrack).Methods("PATCH")
+	protected.HandleFunc("/track/upload", localDirectoryWorker.UploadFile).Methods("POST")
+
+	protected.HandleFunc("/yt/fetchVideoInfo", youtubeWorker.FetchVideoInfo).Methods("GET")
+	protected.HandleFunc("/yt/download", youtubeWorker.FetchFromYoutube).Methods("GET")
+
+	protected.HandleFunc("/playlists", playlistsRepo.GetAllPlaylists).Methods("GET")
+	protected.HandleFunc("/playlist/{id}", playlistsRepo.GetPlaylist).Methods("GET")
+	protected.HandleFunc("/playlist/create/{title}", playlistsRepo.CreatePlaylist).Methods("POST")
+	protected.HandleFunc("/playlist/{id}", playlistsRepo.EditPlaylist).Methods("PATCH")
+	protected.HandleFunc("/playlist/{id}", playlistsRepo.DeletePlaylist).Methods("DELETE")
+	protected.HandleFunc("/playlist/{playlistId}/track/{trackId}", playlistsRepo.AddTrackToPlaylist).Methods("POST")
+	protected.HandleFunc("/playlist/{playlistId}/track/{trackId}", playlistsRepo.DeleteTrackFromPlaylist).Methods("DELETE")
+
+	protected.HandleFunc("/artists", artistsRepo.GetAllArtists).Methods("GET")
+	protected.HandleFunc("/artist/{id}", artistsRepo.GetArtist).Methods("GET")
+
+	c := cors.New(cors.Options{
+		AllowedOrigins:   []string{"*"},
+		AllowedMethods:   []string{"GET", "POST", "PATCH", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Authorization", "Content-Type"},
+		AllowCredentials: false,
+	})
+	handler := c.Handler(router)
 
 	log.Fatal(http.ListenAndServe(fmt.Sprintf("%s:%s", cfg.ListenHost, cfg.ListenPort), handler))
 }
