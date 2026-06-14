@@ -4,6 +4,7 @@ import 'package:basement_music/bloc/playlists_cubit/playlists_cubit.dart';
 import 'package:basement_music/repositories/artists_repository.dart';
 import 'package:basement_music/repositories/repositories.dart';
 import 'package:basement_music/routing/routes.dart';
+import 'package:basement_music/utils/horizontal_space_reducer.dart';
 import 'package:basement_music/widgets/artist_card.dart';
 import 'package:basement_music/widgets/playlist_card.dart';
 import 'package:basement_music/widgets/track_card.dart';
@@ -94,22 +95,24 @@ class _LibraryPageState extends State<LibraryPage> with SingleTickerProviderStat
       ),
       body: RefreshIndicator(
         onRefresh: () => tab.load(context),
-        child: TabBarView(
-          controller: tabController,
-          children: [
-            const _Favourites(),
-            BlocProvider(
-              create: (context) => PlaylistsCubit(
-                playlistsRepository: context.read<PlaylistsRepository>(),
-                connectivityStatusRepository: context.read<ConnectivityStatusRepository>(),
-              )..loadPlaylists(),
-              child: const _Playlists(),
-            ),
-            BlocProvider(
-              create: (context) => ArtistsCubit(artistsRepository: context.read<ArtistsRepository>())..loadArtists(),
-              child: const _Artists(),
-            ),
-          ],
+        child: HorizontalSpaceReducer(
+          child: TabBarView(
+            controller: tabController,
+            children: [
+              const _Favourites(),
+              BlocProvider(
+                create: (context) => PlaylistsCubit(
+                  playlistsRepository: context.read<PlaylistsRepository>(),
+                  connectivityStatusRepository: context.read<ConnectivityStatusRepository>(),
+                )..loadPlaylists(),
+                child: const _Playlists(),
+              ),
+              BlocProvider(
+                create: (context) => ArtistsCubit(artistsRepository: context.read<ArtistsRepository>())..loadArtists(),
+                child: const _Artists(),
+              ),
+            ],
+          ),
         ),
       ),
     );

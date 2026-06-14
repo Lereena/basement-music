@@ -1,12 +1,12 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:basement_music/bloc/artist_cubit/artist_cubit.dart';
 import 'package:basement_music/models/playlist.dart';
 import 'package:basement_music/models/track.dart';
 import 'package:basement_music/repositories/artists_repository.dart';
+import 'package:basement_music/utils/horizontal_space_reducer.dart';
 import 'package:basement_music/widgets/app_bar.dart';
 import 'package:basement_music/widgets/track_card.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ArtistPage extends StatelessWidget {
   final String artistId;
@@ -16,10 +16,8 @@ class ArtistPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => ArtistCubit(
-        artistsRepository: context.read<ArtistsRepository>(),
-        artistId: artistId,
-      )..loadArtist(),
+      create: (_) =>
+          ArtistCubit(artistsRepository: context.read<ArtistsRepository>(), artistId: artistId)..loadArtist(),
       child: _ArtistPage(artistId: artistId),
     );
   }
@@ -41,12 +39,7 @@ class _ArtistPage extends StatelessWidget {
             title: name,
             // actions: _appBarActions(),
           ),
-          body: Center(
-            child: Text(
-              'No tracks',
-              style: Theme.of(context).textTheme.bodyLarge,
-            ),
-          ),
+          body: Center(child: Text('No tracks', style: Theme.of(context).textTheme.bodyLarge)),
         ),
         loaded: (artist) => Scaffold(
           appBar: BasementAppBar(
@@ -55,20 +48,22 @@ class _ArtistPage extends StatelessWidget {
             //     tracksIds: state.playlist.tracks.map((e) => e.id).toList(),
             //   ),
           ),
-          body: Column(
-            children: [
-              Expanded(
-                child: ListView.separated(
-                  separatorBuilder: (context, _) => const Divider(height: 1),
-                  itemCount: artist.tracks?.length ?? 0,
-                  itemBuilder: (context, index) => TrackCard(
-                    track: artist.tracks?[index] ?? Track.empty(),
-                    containingPlaylist: Playlist.anonymous(artist.tracks ?? []),
-                    openedPlaylist: Playlist.anonymous(artist.tracks ?? []),
+          body: HorizontalSpaceReducer(
+            child: Column(
+              children: [
+                Expanded(
+                  child: ListView.separated(
+                    separatorBuilder: (context, _) => const Divider(height: 1),
+                    itemCount: artist.tracks?.length ?? 0,
+                    itemBuilder: (context, index) => TrackCard(
+                      track: artist.tracks?[index] ?? Track.empty(),
+                      containingPlaylist: Playlist.anonymous(artist.tracks ?? []),
+                      openedPlaylist: Playlist.anonymous(artist.tracks ?? []),
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
         error: () => Scaffold(

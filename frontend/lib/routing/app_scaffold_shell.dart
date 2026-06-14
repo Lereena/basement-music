@@ -1,9 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-
-import 'package:basement_music/widgets/leading_rail_widget.dart';
 import 'package:basement_music/routing/app_scaffold.dart';
 import 'package:basement_music/routing/breakpoints.dart';
+import 'package:basement_music/widgets/leading_rail_widget.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 enum _Destination {
   tracks,
@@ -13,68 +12,64 @@ enum _Destination {
   settings;
 
   String get title => switch (this) {
-        tracks => 'All tracks',
-        library => 'Library',
-        search => 'Search',
-        settings => 'Settings',
-        upload => 'Upload',
-      };
+    tracks => 'All tracks',
+    library => 'Library',
+    search => 'Search',
+    settings => 'Settings',
+    upload => 'Upload',
+  };
 
   Widget get icon => switch (this) {
-        tracks => const Icon(Icons.home),
-        library => const Icon(Icons.library_music),
-        search => const Icon(Icons.search),
-        settings => const Icon(Icons.settings),
-        upload => const Icon(Icons.upload),
-      };
+    tracks => const Icon(Icons.home),
+    library => const Icon(Icons.library_music),
+    search => const Icon(Icons.search),
+    settings => const Icon(Icons.settings),
+    upload => const Icon(Icons.upload),
+  };
 }
 
 class AppScaffoldShell extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
 
-  const AppScaffoldShell({
-    super.key,
-    required this.navigationShell,
-  });
+  const AppScaffoldShell({super.key, required this.navigationShell});
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(builder: (context, constraints) {
-      final isSmall = constraints.maxWidth < kSmallBreakpoint;
-      final isLarge = constraints.maxWidth >= kLargeBreakpoint;
-      final body = AppScaffold(child: navigationShell);
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isSmall = constraints.maxWidth < kSmallBreakpoint;
+        final isLarge = constraints.maxWidth >= kLargeBreakpoint;
+        final body = AppScaffold(child: navigationShell);
 
-      if (isSmall) {
-        return Scaffold(
-          body: body,
-          bottomNavigationBar: _NavigationBottomBar(
-            selectedIndex: navigationShell.currentIndex,
-            onDestinationSelected: (i) => onNavigationEvent(context, i),
-          ),
-        );
-      }
-
-      return Scaffold(
-        body: Row(
-          children: [
-            _NavigationSidebar(
-              extended: isLarge,
+        if (isSmall) {
+          return Scaffold(
+            body: body,
+            bottomNavigationBar: _NavigationBottomBar(
               selectedIndex: navigationShell.currentIndex,
               onDestinationSelected: (i) => onNavigationEvent(context, i),
             ),
-            const VerticalDivider(thickness: 1, width: 1),
-            Expanded(child: body),
-          ],
-        ),
-      );
-    });
+          );
+        }
+
+        return Scaffold(
+          body: Row(
+            children: [
+              _NavigationSidebar(
+                extended: isLarge,
+                selectedIndex: navigationShell.currentIndex,
+                onDestinationSelected: (i) => onNavigationEvent(context, i),
+              ),
+              const VerticalDivider(thickness: 1, width: 1),
+              Expanded(child: body),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   void onNavigationEvent(BuildContext context, int index) {
-    navigationShell.goBranch(
-      index,
-      initialLocation: index == navigationShell.currentIndex,
-    );
+    navigationShell.goBranch(index, initialLocation: index == navigationShell.currentIndex);
   }
 }
 
@@ -83,11 +78,7 @@ class _NavigationSidebar extends StatelessWidget {
   final int selectedIndex;
   final ValueChanged<int> onDestinationSelected;
 
-  const _NavigationSidebar({
-    required this.extended,
-    required this.selectedIndex,
-    required this.onDestinationSelected,
-  });
+  const _NavigationSidebar({required this.extended, required this.selectedIndex, required this.onDestinationSelected});
 
   @override
   Widget build(BuildContext context) {
@@ -124,7 +115,10 @@ class _NavigationSidebar extends StatelessWidget {
                     child: extended
                         ? Row(
                             children: [
-                              IconTheme.merge(data: IconThemeData(color: iconColor), child: dest.icon),
+                              IconTheme.merge(
+                                data: IconThemeData(color: iconColor),
+                                child: dest.icon,
+                              ),
                               const SizedBox(width: 12),
                               Text(dest.title, style: TextStyle(color: iconColor)),
                             ],
@@ -132,7 +126,10 @@ class _NavigationSidebar extends StatelessWidget {
                         : Tooltip(
                             message: dest.title,
                             child: Center(
-                              child: IconTheme.merge(data: IconThemeData(color: iconColor), child: dest.icon),
+                              child: IconTheme.merge(
+                                data: IconThemeData(color: iconColor),
+                                child: dest.icon,
+                              ),
                             ),
                           ),
                   ),
@@ -150,10 +147,7 @@ class _NavigationBottomBar extends StatelessWidget {
   final int selectedIndex;
   final ValueChanged<int> onDestinationSelected;
 
-  const _NavigationBottomBar({
-    required this.selectedIndex,
-    required this.onDestinationSelected,
-  });
+  const _NavigationBottomBar({required this.selectedIndex, required this.onDestinationSelected});
 
   @override
   Widget build(BuildContext context) {

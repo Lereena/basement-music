@@ -15,7 +15,7 @@ import 'package:basement_music/pages/upload/from_youtube/extract_from_youtube.da
 import 'package:basement_music/pages/upload/upload_page.dart';
 import 'package:basement_music/routing/app_scaffold_shell.dart';
 import 'package:basement_music/routing/routes.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -42,11 +42,11 @@ class AppRouter {
       routes: <RouteBase>[
         GoRoute(
           path: RouteName.login,
-          pageBuilder: (_, _) => const NoTransitionPage(child: LoginPage()),
+          pageBuilder: (_, _) => const MaterialPage(child: LoginPage()),
         ),
         GoRoute(
           path: RouteName.registerCode,
-          pageBuilder: (_, _) => const NoTransitionPage(child: RegisterCodePage()),
+          pageBuilder: (_, _) => const MaterialPage(child: RegisterCodePage()),
         ),
         GoRoute(path: RouteName.initial, redirect: (_, _) => RouteName.tracks),
         StatefulShellRoute.indexedStack(
@@ -57,7 +57,7 @@ class AppRouter {
               routes: [
                 GoRoute(
                   path: RouteName.tracks,
-                  pageBuilder: (_, _) => const NoTransitionPage(child: TracksPage()),
+                  pageBuilder: (_, _) => const MaterialPage(child: TracksPage()),
                 ),
               ],
             ),
@@ -66,23 +66,21 @@ class AppRouter {
               routes: [
                 GoRoute(
                   path: RouteName.library,
-                  pageBuilder: (_, _) =>
-                      const NoTransitionPage(child: LibraryPage(initialTab: LibraryPageTab.favourites)),
+                  pageBuilder: (_, _) => const MaterialPage(child: LibraryPage(initialTab: LibraryPageTab.favourites)),
                   routes: [
                     GoRoute(
                       path: "playlist/:id",
                       pageBuilder: (_, state) =>
-                          NoTransitionPage(child: PlaylistPage(playlistId: state.pathParameters['id']!)),
+                          MaterialPage(child: PlaylistPage(playlistId: state.pathParameters['id']!)),
                     ),
                     GoRoute(
                       path: "playlist/:id/edit",
                       pageBuilder: (_, state) =>
-                          NoTransitionPage(child: PlaylistEditPage(playlistId: state.pathParameters['id']!)),
+                          MaterialPage(child: PlaylistEditPage(playlistId: state.pathParameters['id']!)),
                     ),
                     GoRoute(
                       path: "artist/:id",
-                      pageBuilder: (_, state) =>
-                          NoTransitionPage(child: ArtistPage(artistId: state.pathParameters['id']!)),
+                      pageBuilder: (_, state) => MaterialPage(child: ArtistPage(artistId: state.pathParameters['id']!)),
                     ),
                   ],
                 ),
@@ -93,7 +91,7 @@ class AppRouter {
               routes: [
                 GoRoute(
                   path: RouteName.search,
-                  pageBuilder: (_, _) => const NoTransitionPage(child: SearchPage()),
+                  pageBuilder: (_, _) => const MaterialPage(child: SearchPage()),
                 ),
               ],
             ),
@@ -102,15 +100,15 @@ class AppRouter {
               routes: [
                 GoRoute(
                   path: RouteName.upload,
-                  pageBuilder: (_, _) => const NoTransitionPage(child: UploadPage()),
+                  pageBuilder: (_, _) => const MaterialPage(child: UploadPage()),
                   routes: [
                     GoRoute(
                       path: 'fromDevice',
-                      pageBuilder: (_, _) => const NoTransitionPage(child: UploadFromDevicePage()),
+                      pageBuilder: (_, _) => const MaterialPage(child: UploadFromDevicePage()),
                     ),
                     GoRoute(
                       path: 'fromYoutube',
-                      pageBuilder: (_, _) => const NoTransitionPage(child: ExtractFromYoutubePage()),
+                      pageBuilder: (_, _) => const MaterialPage(child: ExtractFromYoutubePage()),
                     ),
                   ],
                 ),
@@ -121,7 +119,7 @@ class AppRouter {
               routes: [
                 GoRoute(
                   path: RouteName.settings,
-                  pageBuilder: (_, _) => const NoTransitionPage(child: SettingsPage()),
+                  pageBuilder: (_, _) => const MaterialPage(child: SettingsPage()),
                 ),
               ],
             ),

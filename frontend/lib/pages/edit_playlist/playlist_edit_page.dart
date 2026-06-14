@@ -2,6 +2,7 @@ import 'package:basement_music/bloc/playlist_edit_cubit/playlist_edit_cubit.dart
 import 'package:basement_music/models/track.dart';
 import 'package:basement_music/pages/upload/result_page.dart';
 import 'package:basement_music/repositories/playlists_repository.dart';
+import 'package:basement_music/utils/horizontal_space_reducer.dart';
 import 'package:basement_music/widgets/app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -53,9 +54,11 @@ class _PlaylistEditState extends State<_PlaylistEdit> {
           _data = _PlaylistData(title: title, tracks: tracks);
           return Scaffold(
             appBar: BasementAppBar(title: 'Edit playlist', actions: _appBarActions),
-            body: Form(
-              key: _formKey,
-              child: EditView(data: _data),
+            body: HorizontalSpaceReducer(
+              child: Form(
+                key: _formKey,
+                child: EditView(data: _data),
+              ),
             ),
           );
         },

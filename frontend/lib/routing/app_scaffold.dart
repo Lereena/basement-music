@@ -20,17 +20,8 @@ class AppScaffold extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final isLarge = constraints.maxWidth >= kLargeBreakpoint;
-        final narrow = isLarge && !hasCurrentTrack;
-        final horizontalPadding = narrow ? 100.0 : 10.0;
 
-        final bodyWidget = ConnectivityStatusWrapper(
-          child: SelectionArea(
-            child: Padding(
-              padding: EdgeInsets.only(left: horizontalPadding, right: horizontalPadding, top: 10),
-              child: child,
-            ),
-          ),
-        );
+        final bodyWidget = ConnectivityStatusWrapper(child: SelectionArea(child: child));
 
         return Column(
           children: [
