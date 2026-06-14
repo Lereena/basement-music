@@ -1,13 +1,9 @@
 import 'dart:async';
 
-import 'package:flutter/widgets.dart';
-import 'package:go_router/go_router.dart';
-
 import 'package:basement_music/bloc/auth_cubit/auth_cubit.dart';
 import 'package:basement_music/pages/artist_page.dart';
 import 'package:basement_music/pages/edit_playlist/playlist_edit_page.dart';
 import 'package:basement_music/pages/library/library_page.dart';
-import 'package:basement_music/pages/favourites_page.dart';
 import 'package:basement_music/pages/login_page.dart';
 import 'package:basement_music/pages/playlist_page.dart';
 import 'package:basement_music/pages/register_code_page.dart';
@@ -19,6 +15,8 @@ import 'package:basement_music/pages/upload/from_youtube/extract_from_youtube.da
 import 'package:basement_music/pages/upload/upload_page.dart';
 import 'package:basement_music/routing/app_scaffold_shell.dart';
 import 'package:basement_music/routing/routes.dart';
+import 'package:flutter/widgets.dart';
+import 'package:go_router/go_router.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -35,45 +33,31 @@ class AppRouter {
 
         return authState.when(
           loading: () => null,
-          unauthenticated: () =>
-              loc == RouteName.login ? null : RouteName.login,
-          pendingRegistration: () =>
-              loc == RouteName.registerCode ? null : RouteName.registerCode,
-          authenticated: (_) =>
-              (loc == RouteName.login || loc == RouteName.registerCode)
-                  ? RouteName.tracks
-                  : null,
+          unauthenticated: () => loc == RouteName.login ? null : RouteName.login,
+          pendingRegistration: () => loc == RouteName.registerCode ? null : RouteName.registerCode,
+          authenticated: (_) => (loc == RouteName.login || loc == RouteName.registerCode) ? RouteName.tracks : null,
           error: (_) => loc == RouteName.login ? null : RouteName.login,
         );
       },
       routes: <RouteBase>[
         GoRoute(
           path: RouteName.login,
-          pageBuilder: (_, _) =>
-              const NoTransitionPage(child: LoginPage()),
+          pageBuilder: (_, _) => const NoTransitionPage(child: LoginPage()),
         ),
         GoRoute(
           path: RouteName.registerCode,
-          pageBuilder: (_, _) =>
-              const NoTransitionPage(child: RegisterCodePage()),
+          pageBuilder: (_, _) => const NoTransitionPage(child: RegisterCodePage()),
         ),
-        GoRoute(
-          path: RouteName.initial,
-          redirect: (_, _) => RouteName.tracks,
-        ),
+        GoRoute(path: RouteName.initial, redirect: (_, _) => RouteName.tracks),
         StatefulShellRoute.indexedStack(
-          builder: (_, _, navigationShell) => AppScaffoldShell(
-            navigationShell: navigationShell,
-          ),
+          builder: (_, _, navigationShell) => AppScaffoldShell(navigationShell: navigationShell),
           branches: <StatefulShellBranch>[
             StatefulShellBranch(
               initialLocation: RouteName.tracks,
               routes: [
                 GoRoute(
                   path: RouteName.tracks,
-                  pageBuilder: (_, _) => const NoTransitionPage(
-                    child: TracksPage(),
-                  ),
+                  pageBuilder: (_, _) => const NoTransitionPage(child: TracksPage()),
                 ),
               ],
             ),
@@ -82,33 +66,23 @@ class AppRouter {
               routes: [
                 GoRoute(
                   path: RouteName.library,
-                  pageBuilder: (_, _) => const NoTransitionPage(
-                    child: LibraryPage(initialTab: LibraryPageTab.playlists),
-                  ),
+                  pageBuilder: (_, _) =>
+                      const NoTransitionPage(child: LibraryPage(initialTab: LibraryPageTab.favourites)),
                   routes: [
                     GoRoute(
                       path: "playlist/:id",
-                      pageBuilder: (_, state) => NoTransitionPage(
-                        child: PlaylistPage(
-                          playlistId: state.pathParameters['id']!,
-                        ),
-                      ),
+                      pageBuilder: (_, state) =>
+                          NoTransitionPage(child: PlaylistPage(playlistId: state.pathParameters['id']!)),
                     ),
                     GoRoute(
                       path: "playlist/:id/edit",
-                      pageBuilder: (_, state) => NoTransitionPage(
-                        child: PlaylistEditPage(
-                          playlistId: state.pathParameters['id']!,
-                        ),
-                      ),
+                      pageBuilder: (_, state) =>
+                          NoTransitionPage(child: PlaylistEditPage(playlistId: state.pathParameters['id']!)),
                     ),
                     GoRoute(
                       path: "artist/:id",
-                      pageBuilder: (_, state) => NoTransitionPage(
-                        child: ArtistPage(
-                          artistId: state.pathParameters['id']!,
-                        ),
-                      ),
+                      pageBuilder: (_, state) =>
+                          NoTransitionPage(child: ArtistPage(artistId: state.pathParameters['id']!)),
                     ),
                   ],
                 ),
@@ -119,20 +93,7 @@ class AppRouter {
               routes: [
                 GoRoute(
                   path: RouteName.search,
-                  pageBuilder: (_, _) => const NoTransitionPage(
-                    child: SearchPage(),
-                  ),
-                ),
-              ],
-            ),
-            StatefulShellBranch(
-              initialLocation: RouteName.favourites,
-              routes: [
-                GoRoute(
-                  path: RouteName.favourites,
-                  pageBuilder: (_, _) => const NoTransitionPage(
-                    child: FavouritesPage(),
-                  ),
+                  pageBuilder: (_, _) => const NoTransitionPage(child: SearchPage()),
                 ),
               ],
             ),
@@ -141,21 +102,15 @@ class AppRouter {
               routes: [
                 GoRoute(
                   path: RouteName.upload,
-                  pageBuilder: (_, _) => const NoTransitionPage(
-                    child: UploadPage(),
-                  ),
+                  pageBuilder: (_, _) => const NoTransitionPage(child: UploadPage()),
                   routes: [
                     GoRoute(
                       path: 'fromDevice',
-                      pageBuilder: (_, _) => const NoTransitionPage(
-                        child: UploadFromDevicePage(),
-                      ),
+                      pageBuilder: (_, _) => const NoTransitionPage(child: UploadFromDevicePage()),
                     ),
                     GoRoute(
                       path: 'fromYoutube',
-                      pageBuilder: (_, _) => const NoTransitionPage(
-                        child: ExtractFromYoutubePage(),
-                      ),
+                      pageBuilder: (_, _) => const NoTransitionPage(child: ExtractFromYoutubePage()),
                     ),
                   ],
                 ),
@@ -166,9 +121,7 @@ class AppRouter {
               routes: [
                 GoRoute(
                   path: RouteName.settings,
-                  pageBuilder: (_, _) => const NoTransitionPage(
-                    child: SettingsPage(),
-                  ),
+                  pageBuilder: (_, _) => const NoTransitionPage(child: SettingsPage()),
                 ),
               ],
             ),
