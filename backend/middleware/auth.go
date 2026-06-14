@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strings"
 
-	firebase "firebase.google.com/go/v4"
+	"firebase.google.com/go/v4/auth"
 	"github.com/Lereena/server_basement_music/models"
 	"github.com/Lereena/server_basement_music/respond"
 	"gorm.io/gorm"
@@ -22,7 +22,7 @@ const (
 // TokenOnlyMiddleware verifies the Firebase ID token and puts firebase_uid + email
 // in context, but does NOT require the user to exist in the DB.
 // Use for /auth/register only.
-func TokenOnlyMiddleware(firebaseApp *firebase.App) func(http.Handler) http.Handler {
+func TokenOnlyMiddleware(authClient *auth.Client) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			idToken, ok := extractBearerToken(r)
@@ -31,13 +31,7 @@ func TokenOnlyMiddleware(firebaseApp *firebase.App) func(http.Handler) http.Hand
 				return
 			}
 
-			client, err := firebaseApp.Auth(r.Context())
-			if err != nil {
-				respond.RespondError(w, http.StatusInternalServerError, "firebase auth unavailable")
-				return
-			}
-
-			token, err := client.VerifyIDToken(r.Context(), idToken)
+			token, err := authClient.VerifyIDToken(r.Context(), idToken)
 			if err != nil {
 				respond.RespondError(w, http.StatusUnauthorized, "invalid token")
 				return
@@ -53,7 +47,7 @@ func TokenOnlyMiddleware(firebaseApp *firebase.App) func(http.Handler) http.Hand
 
 // AuthMiddleware verifies the Firebase ID token and loads the user from the DB.
 // Returns 403 if the user is not registered.
-func AuthMiddleware(firebaseApp *firebase.App, db *gorm.DB) func(http.Handler) http.Handler {
+func AuthMiddleware(authClient *auth.Client, db *gorm.DB) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			idToken, ok := extractBearerToken(r)
@@ -62,13 +56,7 @@ func AuthMiddleware(firebaseApp *firebase.App, db *gorm.DB) func(http.Handler) h
 				return
 			}
 
-			client, err := firebaseApp.Auth(r.Context())
-			if err != nil {
-				respond.RespondError(w, http.StatusInternalServerError, "firebase auth unavailable")
-				return
-			}
-
-			token, err := client.VerifyIDToken(r.Context(), idToken)
+			token, err := authClient.VerifyIDToken(r.Context(), idToken)
 			if err != nil {
 				respond.RespondError(w, http.StatusUnauthorized, "invalid token")
 				return

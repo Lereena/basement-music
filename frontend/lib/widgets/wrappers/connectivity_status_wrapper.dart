@@ -1,35 +1,24 @@
-import 'dart:async';
-
 import 'package:another_flushbar/flushbar.dart';
+import 'package:basement_music/bloc/connectivity_status_cubit/connectivity_status_cubit.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:basement_music/bloc/connectivity_status_cubit/connectivity_status_cubit.dart';
-
 class ConnectivityStatusWrapper extends StatefulWidget {
   final Widget child;
 
-  const ConnectivityStatusWrapper({
-    super.key,
-    required this.child,
-  });
+  const ConnectivityStatusWrapper({super.key, required this.child});
 
   @override
-  State<ConnectivityStatusWrapper> createState() =>
-      _ConnectivityStatusWrapperState();
+  State<ConnectivityStatusWrapper> createState() => _ConnectivityStatusWrapperState();
 }
 
 class _ConnectivityStatusWrapperState extends State<ConnectivityStatusWrapper> {
-  late final StreamSubscription _subscription;
-
   late final _theme = Theme.of(context);
 
   late final _flushbar = Flushbar(
     title: 'You are offline',
-    message: kIsWeb
-        ? 'Please check your network connection'
-        : 'Cached tracks are available to listen',
+    message: kIsWeb ? 'Please check your network connection' : 'Cached tracks are available to listen',
     icon: const Icon(Icons.wifi_off, size: 32),
     margin: const EdgeInsets.all(8),
     borderRadius: BorderRadius.circular(16),
@@ -47,12 +36,6 @@ class _ConnectivityStatusWrapperState extends State<ConnectivityStatusWrapper> {
     super.initState();
 
     context.read<ConnectivityStatusCubit>().stream.listen(_handleFlushbar);
-  }
-
-  @override
-  void dispose() {
-    _subscription.cancel();
-    super.dispose();
   }
 
   void _handleFlushbar(ConnectivityStatusState status) {

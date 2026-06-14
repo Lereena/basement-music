@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/http"
@@ -20,6 +21,13 @@ func main() {
 
 	db := cfg.InitDB()
 	firebaseApp := config.InitFirebase()
+
+	authClient, err := firebaseApp.Auth(context.Background())
+	if err != nil {
+		log.Fatalf("firebase auth client: %v", err)
+	}
+	// Pre-warm JWKS cache so first real request doesn't block on key fetch.
+	go authClient.VerifyIDToken(context.Background(), "warmup") //nolint:errcheck
 
 	musicRepo := &repositories.TracksRepository{
 		DB:  db,
@@ -51,8 +59,8 @@ func main() {
 		Cfg:       &cfg,
 	}
 
-	authMW := middleware.AuthMiddleware(firebaseApp, db)
-	tokenOnlyMW := middleware.TokenOnlyMiddleware(firebaseApp)
+	authMW := middleware.AuthMiddleware(authClient, db)
+	tokenOnlyMW := middleware.TokenOnlyMiddleware(authClient)
 
 	router := mux.NewRouter().PathPrefix("/api").Subrouter()
 

@@ -43,12 +43,14 @@ Future<void> runBasement(AppConfig config) async {
 
   usePathUrlStrategy();
 
+  final authInterceptor = AuthInterceptor();
   final dio = Dio(BaseOptions(baseUrl: config.baseUrl))
     ..interceptors.addAll([
-      AuthInterceptor(),
+      authInterceptor,
       JsonResponseConverter(),
       PrettyDioLogger(maxWidth: 120, responseBody: false),
     ]);
+  authInterceptor.attach(dio);
 
   final restClient = RestClient(dio);
 

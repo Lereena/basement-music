@@ -22,12 +22,16 @@ class TracksCubit extends Cubit<TracksState> {
             : const TracksState.loadInProgress(),
       ) {
     connectivityStatusRepository.statusSubject.listen((status) {
-      if (!status.contains(ConnectivityResult.none)) {
+      if (!status.contains(ConnectivityResult.none) && state is! _LoadInProgress) {
         loadTracks();
       }
     });
 
     tracksRepository.tracksSubject.listen((value) => _updateTracks(value));
+
+    if (tracksRepository.items.isEmpty) {
+      loadTracks();
+    }
   }
 
   Future<void> loadTracks() async {
