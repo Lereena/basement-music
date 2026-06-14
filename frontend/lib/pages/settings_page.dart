@@ -14,6 +14,8 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
       appBar: BasementAppBar(title: 'Settings'),
       body: ListView(
@@ -23,17 +25,22 @@ class SettingsPage extends StatelessWidget {
           const Divider(),
           if (!kIsWeb) ...[const CacheAllTracksSettingsLine(), const Divider()],
           ListTile(
-            leading: const Icon(Icons.logout),
-            title: const Text('Sign out'),
+            leading: Icon(Icons.logout, color: theme.colorScheme.error),
+            title: Text('Sign out', style: theme.textTheme.titleMedium?.copyWith(color: theme.colorScheme.error)),
             onTap: () => context.read<AuthCubit>().signOut(),
           ),
           const Divider(),
           BlocBuilder<AuthCubit, AuthState>(
             builder: (context, state) => state.maybeWhen(
               authenticated: (user) => user.isAdmin
-                  ? BlocProvider(
-                      create: (_) => AdminCubit(context.read<AdminRepository>())..loadCodes(),
-                      child: const AdminSection(),
+                  ? Column(
+                      children: [
+                        const SizedBox(height: 16),
+                        BlocProvider(
+                          create: (_) => AdminCubit(context.read<AdminRepository>())..loadCodes(),
+                          child: const AdminSection(),
+                        ),
+                      ],
                     )
                   : const SizedBox.shrink(),
               orElse: () => const SizedBox.shrink(),
