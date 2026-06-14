@@ -32,7 +32,17 @@ import 'package:sizer/sizer.dart';
 Future<void> runBasement(AppConfig config) async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  // On mobile, Firebase auto-initializes the default app natively from
+  // GoogleService-Info.plist / google-services.json. Passing options here would
+  // try to create [DEFAULT] again and throw `duplicate-app`. Web has no native
+  // init, so it needs the explicit options.
+  if (kIsWeb) {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } else {
+    await Firebase.initializeApp();
+  }
   FlutterError.onError = (errorDetails) {
     FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
   };

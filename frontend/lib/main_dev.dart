@@ -9,7 +9,7 @@ const _localhost = 'http://localhost:9000';
 void main() {
   String baseUrl = _localhost;
 
-  if (!kIsWeb) {
+  if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
     baseUrl = _mobileBackend;
   }
 
