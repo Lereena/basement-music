@@ -58,6 +58,7 @@ class TracksCubit extends Cubit<TracksState> {
   }
 
   void _updateTracks(List<Track> tracks) {
+    if (isClosed) return;
     emit(TracksState.loaded(tracks: tracks));
   }
 }

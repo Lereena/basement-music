@@ -1,4 +1,5 @@
 import 'package:basement_music/bloc/auth_cubit/auth_cubit.dart';
+import 'package:basement_music/widgets/app_logo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -14,28 +15,31 @@ class LoginPage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.library_music, size: 80),
+              const AppLogo(size: 80),
               const SizedBox(height: 16),
-              Text('Basement Music', style: Theme.of(context).textTheme.headlineMedium),
+              Text('Basement', style: Theme.of(context).textTheme.headlineMedium),
               const SizedBox(height: 48),
-              BlocConsumer<AuthCubit, AuthState>(
-                listener: (context, state) {
-                  state.maybeWhen(
-                    error: (msg) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg))),
-                    orElse: () {},
-                  );
-                },
-                builder: (context, state) {
-                  final isLoading = state.maybeWhen(loading: () => true, orElse: () => false);
-                  if (isLoading) {
-                    return const CircularProgressIndicator();
-                  }
-                  return FilledButton.icon(
-                    icon: const Icon(Icons.login),
-                    label: const Text('Sign in with Google'),
-                    onPressed: () => context.read<AuthCubit>().signInWithGoogle(),
-                  );
-                },
+              SizedBox(
+                height: 40,
+                child: BlocConsumer<AuthCubit, AuthState>(
+                  listener: (context, state) {
+                    state.maybeWhen(
+                      error: (msg) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg))),
+                      orElse: () {},
+                    );
+                  },
+                  builder: (context, state) {
+                    final isLoading = state.maybeWhen(loading: () => true, orElse: () => false);
+                    if (isLoading) {
+                      return const CircularProgressIndicator();
+                    }
+                    return FilledButton.icon(
+                      icon: const Icon(Icons.login),
+                      label: const Text('Sign in with Google'),
+                      onPressed: () => context.read<AuthCubit>().signInWithGoogle(),
+                    );
+                  },
+                ),
               ),
             ],
           ),
