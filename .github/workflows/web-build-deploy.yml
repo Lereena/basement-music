@@ -80,7 +80,7 @@ jobs:
         key: ${{ secrets.KEY }}
         envs: GITHUB_TOKEN
         script: |
-          echo $GITHUB_TOKEN | docker login ghcr.io -u lereena --password-stdin
+          printf '%s' "$GITHUB_TOKEN" | docker login ghcr.io -u lereena --password-stdin
           cd basement-music
-          docker compose pull
-          docker compose up -d --no-build
+          docker-compose pull
+          docker-compose up -d --no-build
