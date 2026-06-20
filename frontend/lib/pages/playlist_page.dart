@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:basement_music/bloc/playlist_cubit/playlist_cubit.dart';
 import 'package:basement_music/repositories/playlists_repository.dart';
 import 'package:basement_music/routing/routes.dart';
+import 'package:basement_music/utils/horizontal_space_reducer.dart';
 import 'package:basement_music/widgets/app_bar.dart';
 import 'package:basement_music/widgets/playlist_cache_action.dart';
 import 'package:basement_music/widgets/track_card.dart';
@@ -46,17 +47,22 @@ class _PlaylistPage extends StatelessWidget {
             title: playlist.title,
             actions: _appBarActions(tracksIds: playlist.tracks.map((e) => e.id).toList()),
           ),
-          body: Column(
-            children: [
-              Expanded(
-                child: ListView.separated(
-                  separatorBuilder: (context, _) => const Divider(height: 1),
-                  itemCount: playlist.tracks.length,
-                  itemBuilder: (context, index) =>
-                      TrackCard(track: playlist.tracks[index], containingPlaylist: playlist, openedPlaylist: playlist),
+          body: HorizontalSpaceReducer(
+            child: Column(
+              children: [
+                Expanded(
+                  child: ListView.separated(
+                    separatorBuilder: (context, _) => const Divider(height: 1),
+                    itemCount: playlist.tracks.length,
+                    itemBuilder: (context, index) => TrackCard(
+                      track: playlist.tracks[index],
+                      containingPlaylist: playlist,
+                      openedPlaylist: playlist,
+                    ),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
         error: () => Scaffold(

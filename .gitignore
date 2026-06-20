@@ -31,6 +31,7 @@ frontend/.pub-cache/
 frontend/.pub/
 frontend/.fvm/
 frontend/build/
+frontend/ios/build/
 
 # Web related
 frontend/lib/generated_plugin_registrant.dart
@@ -49,6 +50,7 @@ frontend/android/app/release
 
 .env
 backend/.work
+backend/secrets/
 
 docker-compose-dev.yaml
 backend/music

@@ -1,22 +1,31 @@
 import 'package:basement_music/bloc/artists_cubit/artists_cubit.dart';
+import 'package:basement_music/bloc/favourites_cubit/favourites_cubit.dart';
 import 'package:basement_music/bloc/playlists_cubit/playlists_cubit.dart';
 import 'package:basement_music/repositories/artists_repository.dart';
 import 'package:basement_music/repositories/repositories.dart';
 import 'package:basement_music/routing/routes.dart';
+import 'package:basement_music/utils/horizontal_space_reducer.dart';
 import 'package:basement_music/widgets/artist_card.dart';
 import 'package:basement_music/widgets/playlist_card.dart';
+import 'package:basement_music/widgets/track_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 part 'artists.dart';
+part 'favourites.dart';
 part 'playlists.dart';
 
 enum LibraryPageTab {
+  favourites,
   playlists,
   artists;
 
-  String get title => this == LibraryPageTab.artists ? 'Artists' : 'Playlists';
+  String get title => switch (this) {
+    LibraryPageTab.playlists => 'Playlists',
+    LibraryPageTab.artists => 'Artists',
+    LibraryPageTab.favourites => 'Favourites',
+  };
 
   Future<void> Function(BuildContext) get load => switch (this) {
     LibraryPageTab.playlists => (context) async {
@@ -29,6 +38,12 @@ enum LibraryPageTab {
       final artistsCubit = context.read<ArtistsCubit>();
       final newState = artistsCubit.stream.first;
       artistsCubit.loadArtists();
+      await newState;
+    },
+    LibraryPageTab.favourites => (context) async {
+      final favouritesCubit = context.read<FavouritesCubit>();
+      final newState = favouritesCubit.stream.first;
+      favouritesCubit.loadFavourites();
       await newState;
     },
   };
@@ -45,6 +60,7 @@ class LibraryPage extends StatefulWidget {
 
 class _LibraryPageState extends State<LibraryPage> with SingleTickerProviderStateMixin {
   late LibraryPageTab tab = widget.initialTab;
+
   late final TabController tabController = TabController(
     length: LibraryPageTab.values.length,
     vsync: this,
@@ -79,21 +95,24 @@ class _LibraryPageState extends State<LibraryPage> with SingleTickerProviderStat
       ),
       body: RefreshIndicator(
         onRefresh: () => tab.load(context),
-        child: TabBarView(
-          controller: tabController,
-          children: [
-            BlocProvider(
-              create: (context) => PlaylistsCubit(
-                playlistsRepository: context.read<PlaylistsRepository>(),
-                connectivityStatusRepository: context.read<ConnectivityStatusRepository>(),
-              )..loadPlaylists(),
-              child: const _Playlists(),
-            ),
-            BlocProvider(
-              create: (context) => ArtistsCubit(artistsRepository: context.read<ArtistsRepository>())..loadArtists(),
-              child: const _Artists(),
-            ),
-          ],
+        child: HorizontalSpaceReducer(
+          child: TabBarView(
+            controller: tabController,
+            children: [
+              const _Favourites(),
+              BlocProvider(
+                create: (context) => PlaylistsCubit(
+                  playlistsRepository: context.read<PlaylistsRepository>(),
+                  connectivityStatusRepository: context.read<ConnectivityStatusRepository>(),
+                )..loadPlaylists(),
+                child: const _Playlists(),
+              ),
+              BlocProvider(
+                create: (context) => ArtistsCubit(artistsRepository: context.read<ArtistsRepository>())..loadArtists(),
+                child: const _Artists(),
+              ),
+            ],
+          ),
         ),
       ),
     );

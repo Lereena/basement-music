@@ -24,10 +24,12 @@ services:
       LISTEN_PORT: $LISTEN_PORT
       LISTEN_HOST: $LISTEN_HOST
       MUSIC_PATH: /server/music
+      GOOGLE_APPLICATION_CREDENTIALS: /server/secrets/firebase-service-account.json
     container_name: backend
     hostname: backend
     volumes:
       - ./backend/music:/server/music
+      - ./backend/secrets:/server/secrets:ro
     ports:
       - $LISTEN_PORT:$LISTEN_PORT
     depends_on:

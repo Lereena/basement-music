@@ -2,6 +2,7 @@ import 'package:basement_music/bloc/connectivity_status_cubit/connectivity_statu
 import 'package:basement_music/bloc/tracks_cubit/tracks_cubit.dart';
 import 'package:basement_music/models/track.dart';
 import 'package:basement_music/repositories/repositories.dart';
+import 'package:basement_music/utils/horizontal_space_reducer.dart';
 import 'package:basement_music/widgets/app_bar.dart';
 import 'package:basement_music/widgets/track_card.dart';
 import 'package:flutter/material.dart';
@@ -31,42 +32,44 @@ class _TracksPage extends StatelessWidget {
         builder: (context, connectivityStatus) {
           return Scaffold(
             appBar: BasementAppBar(title: 'All tracks'),
-            body: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                BlocBuilder<TracksCubit, TracksState>(
-                  builder: (context, state) => state.when(
-                    loadInProgress: () => const Center(child: CircularProgressIndicator()),
-                    empty: () => const Center(child: Text('No tracks')),
-                    loaded: (tracks) => Expanded(
-                      child: ListView.builder(
-                        itemCount: tracks.length + 1,
-                        itemBuilder: (context, index) {
-                          if (index == tracks.length) {
-                            return const SizedBox(height: 40);
-                          }
-                          return Column(
+            body: HorizontalSpaceReducer(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  BlocBuilder<TracksCubit, TracksState>(
+                    builder: (context, state) => state.when(
+                      loadInProgress: () => const Center(child: CircularProgressIndicator()),
+                      empty: () => const Center(child: Text('No tracks')),
+                      loaded: (tracks) => Expanded(
+                        child: ListView.builder(
+                          itemCount: tracks.length + 1,
+                          itemBuilder: (context, index) {
+                            if (index == tracks.length) {
+                              return const SizedBox(height: 40);
+                            }
+                            return Column(
+                              children: [
+                                TrackCard(
+                                  track: tracks[index],
+                                  active: connectivityStatus.maybeWhen(hasConnection: () => true, orElse: () => false),
+                                ),
+                                const Divider(height: 1),
+                              ],
+                            );
+                          },
+                          prototypeItem: Column(
                             children: [
-                              TrackCard(
-                                track: tracks[index],
-                                active: connectivityStatus.maybeWhen(hasConnection: () => true, orElse: () => false),
-                              ),
+                              TrackCard(track: Track.empty()),
                               const Divider(height: 1),
                             ],
-                          );
-                        },
-                        prototypeItem: Column(
-                          children: [
-                            TrackCard(track: Track.empty()),
-                            const Divider(height: 1),
-                          ],
+                          ),
                         ),
                       ),
+                      error: () => const Center(child: Text('Error loading tracks')),
                     ),
-                    error: () => const Center(child: Text('Error loading tracks')),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         },

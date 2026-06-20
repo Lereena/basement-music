@@ -2,6 +2,7 @@ package config
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"os"
 	"os/exec"
@@ -9,6 +10,8 @@ import (
 	"strconv"
 	"strings"
 
+	firebase "firebase.google.com/go/v4"
+	"google.golang.org/api/option"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -54,6 +57,21 @@ func (cfg *Config) InitDB() *gorm.DB {
 	}
 
 	return db
+}
+
+func InitFirebase() *firebase.App {
+	credFile := os.Getenv("GOOGLE_APPLICATION_CREDENTIALS")
+	var app *firebase.App
+	var err error
+	if credFile != "" {
+		app, err = firebase.NewApp(context.Background(), nil, option.WithCredentialsFile(credFile))
+	} else {
+		app, err = firebase.NewApp(context.Background(), nil)
+	}
+	if err != nil {
+		panic(fmt.Sprintf("firebase.NewApp: %v", err))
+	}
+	return app
 }
 
 func (cfg *Config) GetTrackDuration(name string) int {

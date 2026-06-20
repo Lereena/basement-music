@@ -1,5 +1,7 @@
 abstract class RouteName {
   static String get initial => '/';
+  static String get login => '/login';
+  static String get registerCode => '/register-code';
   static String get tracks => '/tracks';
   static String get library => '/library';
   static String playlist(String id) => '/library/playlist/$id';
