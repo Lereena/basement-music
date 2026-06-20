@@ -1,11 +1,13 @@
 import 'package:basement_music/bloc/artists_cubit/artists_cubit.dart';
 import 'package:basement_music/bloc/favourites_cubit/favourites_cubit.dart';
 import 'package:basement_music/bloc/playlists_cubit/playlists_cubit.dart';
+import 'package:basement_music/models/playlist.dart';
 import 'package:basement_music/repositories/artists_repository.dart';
 import 'package:basement_music/repositories/repositories.dart';
 import 'package:basement_music/routing/routes.dart';
 import 'package:basement_music/utils/horizontal_space_reducer.dart';
 import 'package:basement_music/widgets/artist_card.dart';
+import 'package:basement_music/widgets/create_playlist.dart';
 import 'package:basement_music/widgets/playlist_card.dart';
 import 'package:basement_music/widgets/track_card.dart';
 import 'package:flutter/material.dart';
@@ -93,6 +95,12 @@ class _LibraryPageState extends State<LibraryPage> with SingleTickerProviderStat
           onTap: (index) => setState(() => tab = LibraryPageTab.values[index]),
         ),
       ),
+      floatingActionButton: tab == LibraryPageTab.playlists
+          ? FloatingActionButton(
+              onPressed: () => CreatePlaylistDialog.show(context: context),
+              child: const Icon(Icons.add),
+            )
+          : null,
       body: RefreshIndicator(
         onRefresh: () => tab.load(context),
         child: HorizontalSpaceReducer(

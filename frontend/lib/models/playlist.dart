@@ -44,4 +44,8 @@ class Playlist extends Equatable {
   factory Playlist.anonymous(List<Track> tracks) {
     return Playlist(id: const Uuid().v1(), title: '', tracks: tracks);
   }
+
+  factory Playlist.favourites(List<Track> tracks) {
+    return Playlist(id: 'favourites', title: 'Favourites', tracks: tracks);
+  }
 }
