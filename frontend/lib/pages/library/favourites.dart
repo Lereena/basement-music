@@ -14,7 +14,10 @@ class _Favourites extends StatelessWidget {
             : ListView.separated(
                 separatorBuilder: (_, _) => const Divider(height: 1),
                 itemCount: tracks.length,
-                itemBuilder: (_, i) => TrackCard(track: tracks[i]),
+                itemBuilder: (_, i) => TrackCard(
+                  track: tracks[i],
+                  openedPlaylist: Playlist.favourites(tracks),
+                ),
               ),
         error: () => const Center(child: Text('Failed to load favourites')),
       ),

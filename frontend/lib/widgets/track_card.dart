@@ -73,20 +73,23 @@ class TrackCard extends StatelessWidget {
                     const SizedBox(width: 10),
                     Text(track.durationStr, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 16)),
                     BlocBuilder<FavouritesCubit, FavouritesState>(
+                      buildWhen: (previous, current) {
+                        bool favOf(FavouritesState s) =>
+                            s.maybeWhen(loaded: (tracks) => tracks.any((t) => t.id == track.id), orElse: () => false);
+
+                        // Ignore transient loadInProgress/error so cards don't flash; only react when this track's status changes.
+                        final isResolved = current.maybeWhen(loaded: (_) => true, orElse: () => false);
+                        return isResolved && favOf(previous) != favOf(current);
+                      },
                       builder: (context, _) {
-                        final isFav =
-                            context.read<FavouritesCubit>().isFavourite(track.id);
+                        final isFav = context.read<FavouritesCubit>().isFavourite(track.id);
                         return IconButton(
                           icon: Icon(
                             isFav ? Icons.favorite : Icons.favorite_border,
-                            color: isFav
-                                ? Theme.of(context).colorScheme.error
-                                : null,
+                            color: isFav ? Theme.of(context).colorScheme.error : null,
                             size: 20,
                           ),
-                          onPressed: () => context
-                              .read<FavouritesCubit>()
-                              .toggleFavourite(track.id),
+                          onPressed: () => context.read<FavouritesCubit>().toggleFavourite(track.id),
                         );
                       },
                     ),

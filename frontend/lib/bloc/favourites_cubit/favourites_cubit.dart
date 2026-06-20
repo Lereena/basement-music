@@ -13,6 +13,10 @@ class FavouritesCubit extends Cubit<FavouritesState> {
 
   Future<void> loadFavourites() async {
     emit(const FavouritesState.loadInProgress());
+    await _refresh();
+  }
+
+  Future<void> _refresh() async {
     try {
       final tracks = await _repo.getFavourites();
       emit(FavouritesState.loaded(tracks: tracks));
@@ -30,6 +34,6 @@ class FavouritesCubit extends Cubit<FavouritesState> {
     } else {
       await _repo.addFavourite(trackId);
     }
-    await loadFavourites();
+    await _refresh();
   }
 }

@@ -29,55 +29,52 @@ class _CreatePlaylistDialogState extends State<CreatePlaylistDialog> {
   Widget build(BuildContext context) {
     return Form(
       key: _formKey,
-      child: Center(
-        child: BlocBuilder<PlaylistCreationCubit, PlaylistCreationState>(
-          builder: (context, state) => state.when(
-            inProgress: () => const CircularProgressIndicator(),
-            success: () {
-              Future.delayed(const Duration(seconds: 2), () {
-                if (context.mounted) {
-                  Navigator.of(context).pop();
-                }
-              });
+      child: BlocBuilder<PlaylistCreationCubit, PlaylistCreationState>(
+        builder: (context, state) => state.when(
+          inProgress: () => const CircularProgressIndicator(),
+          success: () {
+            Future.delayed(const Duration(seconds: 2), () {
+              if (context.mounted) {
+                Navigator.of(context).pop();
+              }
+            });
 
-              return const Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.check_circle, color: Colors.green, size: 30),
-                  SizedBox(height: 16),
-                  Text('Playlist was successfully created'),
-                ],
-              );
-            },
-            error: () => const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text('Playlist was not created, please try again later'),
-            ),
-            initial: () => Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text('Create new playlist', style: TextStyle(fontSize: 24)),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    decoration: const InputDecoration(label: Text('Title')),
-                    controller: _titleController,
-                    autofocus: true,
-                    validator: (value) => value?.isNotEmpty != true ? 'Title must not be empty' : null,
+            return const Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.check_circle, color: Colors.green, size: 30),
+                SizedBox(height: 16),
+                Text('Playlist was successfully created'),
+              ],
+            );
+          },
+          error: () => const Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Text('Playlist was not created, please try again later'),
+          ),
+          initial: () => Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text('Create new playlist', style: TextStyle(fontSize: 18)),
+                TextFormField(
+                  decoration: const InputDecoration(label: Text('Title')),
+                  controller: _titleController,
+                  autofocus: true,
+                  validator: (value) => value?.isNotEmpty != true ? 'Title must not be empty' : null,
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  height: 40,
+                  child: ElevatedButton(
+                    onPressed: _onCreate,
+                    child: const Text('Create', style: TextStyle(fontSize: 18)),
                   ),
-                  const SizedBox(height: 16),
-                  SizedBox(
-                    width: 100,
-                    height: 40,
-                    child: ElevatedButton(
-                      onPressed: _onCreate,
-                      child: const Text('Create', style: TextStyle(fontSize: 18)),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
