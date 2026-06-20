@@ -81,7 +81,7 @@ class _LibraryPageState extends State<LibraryPage> with SingleTickerProviderStat
           indicatorColor: theme.primaryColor,
           labelColor: theme.primaryColor,
           padding: EdgeInsets.zero,
-          labelPadding: EdgeInsets.zero,
+          labelPadding: EdgeInsets.symmetric(vertical: 8),
           overlayColor: WidgetStateProperty.all(Colors.transparent),
           labelStyle: TextStyle(
             color: theme.primaryColor,
