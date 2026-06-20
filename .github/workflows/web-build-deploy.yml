@@ -80,6 +80,8 @@ jobs:
         key: ${{ secrets.KEY }}
         envs: GITHUB_TOKEN
         script: |
+          mkdir -p ~/.docker
+          echo '{"credsStore":""}' > ~/.docker/config.json
           printf '%s' "$GITHUB_TOKEN" | docker login ghcr.io -u lereena --password-stdin
           cd basement-music
           docker-compose pull
