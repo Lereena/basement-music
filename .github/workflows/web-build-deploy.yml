@@ -1,51 +1,79 @@
 name: Web build and deploy
 
-on: 
+on:
   workflow_dispatch:
   push:
     tags:
       - '*'
 
 jobs:
-  build-and-deploy:
+  build-and-push:
     runs-on: ubuntu-latest
-    
+
     permissions:
       packages: write
 
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    outputs:
+      version: ${{ steps.version.outputs.version }}
 
     steps:
-    - uses: actions/checkout@v2
-    - uses: KengoTODA/actions-setup-docker-compose@main
-      with:
-        version: '1.29.2'
-    - name: Create .env
-      run: |
-        tag_version=$(echo "${GITHUB_REF}" | cut -d'/' -f3)
-        echo "${{ secrets.DOT_ENV_FILE }}" > .env
-        echo "VERSION=${tag_version}" >> .env
+    - uses: actions/checkout@v4
+
+    - name: Get version
+      id: version
+      run: echo "version=$(echo "${GITHUB_REF}" | cut -d'/' -f3)" >> "$GITHUB_OUTPUT"
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
     - name: Login to GitHub Container Registry
-      uses: docker/login-action@v2
+      uses: docker/login-action@v3
       with:
         registry: ghcr.io
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
-    - name: Build the Docker images
-      run: docker-compose build
-    - name: Publish images
-      run: docker-compose push
+
+    - name: Build and push backend
+      uses: docker/build-push-action@v5
+      with:
+        context: ./backend
+        push: true
+        tags: ghcr.io/lereena/basement-music/backend:${{ steps.version.outputs.version }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+    - name: Build and push frontend
+      uses: docker/build-push-action@v5
+      with:
+        context: ./frontend
+        push: true
+        tags: ghcr.io/lereena/basement-music/frontend:${{ steps.version.outputs.version }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build-and-push
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Create .env
+      run: |
+        echo "${{ secrets.DOT_ENV_FILE }}" > .env
+        echo "VERSION=${{ needs.build-and-push.outputs.version }}" >> .env
+
     - name: Copy docker-compose.yml
-      uses: appleboy/scp-action@master
+      uses: appleboy/scp-action@v0.1.7
       with:
         host: ${{ secrets.HOST_IP }}
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.KEY }}
         source: "docker-compose.yml,.env"
         target: "basement-music"
-    - name: Set up SSH
-      uses: appleboy/ssh-action@master
+
+    - name: Deploy
+      uses: appleboy/ssh-action@v1.0.3
       with:
         host: ${{ secrets.HOST_IP }}
         username: ${{ secrets.USERNAME }}
@@ -54,5 +82,5 @@ jobs:
         script: |
           echo $GITHUB_TOKEN | docker login ghcr.io -u lereena --password-stdin
           cd basement-music
-          docker-compose pull
-          docker-compose up -d --no-build
+          docker compose pull
+          docker compose up -d --no-build
