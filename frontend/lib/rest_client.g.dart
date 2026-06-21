@@ -414,7 +414,10 @@ class _RestClient implements RestClient {
   }
 
   @override
-  Future<void> updateArtistImage({required String id, required MultipartFile image}) async {
+  Future<void> updateArtistImage({
+    required String id,
+    required MultipartFile image,
+  }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -430,6 +433,34 @@ class _RestClient implements RestClient {
           .compose(
             _dio.options,
             '/admin/artist/${id}/image',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    await _dio.fetch<void>(_options);
+  }
+
+  @override
+  Future<void> updatePlaylistImage({
+    required String id,
+    required MultipartFile image,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    _data.files.add(MapEntry('image', image));
+    final _options = _setStreamType<void>(
+      Options(
+            method: 'PATCH',
+            headers: _headers,
+            extra: _extra,
+            contentType: 'multipart/form-data',
+          )
+          .compose(
+            _dio.options,
+            '/admin/playlist/${id}/image',
             queryParameters: queryParameters,
             data: _data,
           )

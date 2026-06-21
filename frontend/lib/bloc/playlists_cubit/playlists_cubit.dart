@@ -56,6 +56,11 @@ class PlaylistsCubit extends Cubit<PlaylistsState> {
     }
   }
 
+  Future<void> uploadPlaylistImage(String playlistId, List<int> bytes, String filename) async {
+    await playlistsRepository.updatePlaylistImage(playlistId, bytes, filename);
+    await loadPlaylists();
+  }
+
   void _updatePlaylists(List<Playlist> playlists) {
     if (isClosed) return;
     emit(PlaylistsState.loaded(playlists: playlists));

@@ -5,41 +5,94 @@ import 'package:basement_music/models/playlist.dart';
 class PlaylistCard extends StatelessWidget {
   final Playlist playlist;
   final void Function() onTap;
+  final void Function()? onImageEdit;
 
   const PlaylistCard({
     super.key,
     required this.playlist,
     required this.onTap,
+    this.onImageEdit,
   });
 
   @override
   Widget build(BuildContext context) {
-    final tracksCount = playlist.tracks.length;
+    final theme = Theme.of(context);
+    final trackCount = playlist.tracks.length;
 
     return Card(
       child: InkWell(
         onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.all(8),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                playlist.title,
-                style: Theme.of(context).textTheme.bodyMedium,
+        child: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: AspectRatio(
+                aspectRatio: 1,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(2),
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      playlist.image != null
+                          ? Image.network(
+                              playlist.image!,
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, _, _) => const _Placeholder(),
+                            )
+                          : const _Placeholder(),
+                      if (onImageEdit != null)
+                        Positioned(
+                          right: 0,
+                          bottom: 0,
+                          child: GestureDetector(
+                            onTap: onImageEdit,
+                            child: Container(
+                              padding: const EdgeInsets.all(2),
+                              color: Colors.black54,
+                              child: const Icon(Icons.edit, size: 14, color: Colors.white),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
               ),
-              Text(
-                "$tracksCount ${_tracksForm(tracksCount)}",
-                style: Theme.of(context).textTheme.bodySmall,
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    playlist.title,
+                    style: theme.textTheme.bodyLarge?.copyWith(height: 1.2),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Text(
+                    '$trackCount ${trackCount == 1 ? 'track' : 'tracks'}',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.64),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
+}
 
-  String _tracksForm(int count) {
-    return count == 1 ? 'track' : 'tracks';
+class _Placeholder extends StatelessWidget {
+  const _Placeholder();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Theme.of(context).colorScheme.surfaceContainerHighest,
+      child: const Icon(Icons.queue_music, size: 48),
+    );
   }
 }
