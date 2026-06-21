@@ -41,6 +41,8 @@ func (repo *FavouritesRepository) GetFavourites(w http.ResponseWriter, r *http.R
 				tracks = append(tracks, t)
 			}
 		}
+	} else {
+		tracks = []models.Track{}
 	}
 
 	json.NewEncoder(w).Encode(tracks)
