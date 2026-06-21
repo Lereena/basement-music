@@ -22,6 +22,11 @@ class ArtistCubit extends Cubit<ArtistState> {
     );
   }
 
+  Future<void> uploadImage(List<int> bytes, String filename) async {
+    await artistsRepository.updateArtistImage(artistId, bytes, filename);
+    await artistsRepository.getArtist(artistId);
+  }
+
   Future<void> loadArtist() async {
     emit(const ArtistState.loadInProgress());
 

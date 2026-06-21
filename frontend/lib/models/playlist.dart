@@ -10,11 +10,13 @@ part 'playlist.g.dart';
 class Playlist extends Equatable {
   final String id;
   final String title;
+  final String? image;
   final List<Track> tracks;
 
   const Playlist({
     required this.id,
     required this.title,
+    this.image,
     required this.tracks,
   });
 
@@ -24,15 +26,17 @@ class Playlist extends Equatable {
   Map<String, dynamic> toJson() => _$PlaylistToJson(this);
 
   @override
-  List<Object> get props => [id, title, tracks];
+  List<Object?> get props => [id, title, image, tracks];
 
   Playlist copyWith({
     String? title,
+    String? image,
     List<Track>? tracks,
   }) {
     return Playlist(
       id: id,
       title: title ?? this.title,
+      image: image ?? this.image,
       tracks: tracks ?? this.tracks,
     );
   }

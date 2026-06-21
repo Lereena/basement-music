@@ -1,12 +1,15 @@
 import 'package:basement_music/bloc/artist_cubit/artist_cubit.dart';
+import 'package:basement_music/bloc/auth_cubit/auth_cubit.dart';
 import 'package:basement_music/models/playlist.dart';
 import 'package:basement_music/models/track.dart';
 import 'package:basement_music/repositories/artists_repository.dart';
+import 'package:basement_music/routing/routes.dart';
 import 'package:basement_music/utils/horizontal_space_reducer.dart';
 import 'package:basement_music/widgets/app_bar.dart';
 import 'package:basement_music/widgets/track_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class ArtistPage extends StatelessWidget {
   final String artistId;
@@ -30,6 +33,11 @@ class _ArtistPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isAdmin = context.read<AuthCubit>().state.maybeWhen(
+      authenticated: (user) => user.isAdmin,
+      orElse: () => false,
+    );
+
     return BlocBuilder<ArtistCubit, ArtistState>(
       builder: (context, state) => state.when(
         initial: () => const SizedBox.shrink(),
@@ -37,16 +45,18 @@ class _ArtistPage extends StatelessWidget {
         loadedEmpty: (name) => Scaffold(
           appBar: BasementAppBar(
             title: name,
-            // actions: _appBarActions(),
+            actions: isAdmin
+                ? [IconButton(icon: const Icon(Icons.edit_outlined), onPressed: () => context.go(RouteName.artistEdit(artistId)))]
+                : null,
           ),
           body: Center(child: Text('No tracks', style: Theme.of(context).textTheme.bodyLarge)),
         ),
         loaded: (artist) => Scaffold(
           appBar: BasementAppBar(
             title: artist.name,
-            //   actions: _appBarActions(
-            //     tracksIds: state.playlist.tracks.map((e) => e.id).toList(),
-            //   ),
+            actions: isAdmin
+                ? [IconButton(icon: const Icon(Icons.edit_outlined), onPressed: () => context.go(RouteName.artistEdit(artistId)))]
+                : null,
           ),
           body: HorizontalSpaceReducer(
             child: Column(
@@ -73,16 +83,4 @@ class _ArtistPage extends StatelessWidget {
       ),
     );
   }
-
-  // List<Widget> _appBarActions({List<String>? tracksIds}) => [
-  //       if (!kIsWeb && Platform.isAndroid && tracksIds != null) PlaylistCacheAction(trackIds: tracksIds),
-  //       Builder(
-  //         builder: (context) {
-  //           return IconButton(
-  //             onPressed: () => context.go(RouteName.playlistEdit(playlistId)),
-  //             icon: const Icon(Icons.edit_outlined),
-  //           );
-  //         },
-  //       ),
-  //     ];
 }

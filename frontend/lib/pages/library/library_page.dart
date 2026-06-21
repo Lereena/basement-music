@@ -7,6 +7,7 @@ import 'package:basement_music/bloc/tracks_cubit/tracks_cubit.dart';
 import 'package:basement_music/models/playlist.dart';
 import 'package:basement_music/repositories/artists_repository.dart';
 import 'package:basement_music/repositories/repositories.dart';
+import 'package:basement_music/routing/breakpoints.dart';
 import 'package:basement_music/routing/routes.dart';
 import 'package:basement_music/utils/horizontal_space_reducer.dart';
 import 'package:basement_music/widgets/artist_card.dart';
@@ -125,9 +126,7 @@ class _LibraryPageContentState extends State<_LibraryPageContent> with SingleTic
             fontSize: 18,
             letterSpacing: 1.1,
           ),
-          tabs: widget.tabs
-              .map((tab) => Tab(text: tab.title, height: 28, iconMargin: EdgeInsets.zero))
-              .toList(),
+          tabs: widget.tabs.map((tab) => Tab(text: tab.title, height: 28, iconMargin: EdgeInsets.zero)).toList(),
           onTap: (index) => setState(() => tab = widget.tabs[index]),
         ),
       ),
@@ -140,10 +139,7 @@ class _LibraryPageContentState extends State<_LibraryPageContent> with SingleTic
       body: RefreshIndicator(
         onRefresh: () => tab.load(context),
         child: HorizontalSpaceReducer(
-          child: TabBarView(
-            controller: tabController,
-            children: widget.tabs.map(_buildTabView).toList(),
-          ),
+          child: TabBarView(controller: tabController, children: widget.tabs.map(_buildTabView).toList()),
         ),
       ),
     );

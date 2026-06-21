@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:collection/collection.dart';
+import 'package:dio/dio.dart';
 import 'package:hive/hive.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -13,10 +14,12 @@ class PlaylistsRepository {
 
   final RestClient _restClient;
   final Box<String> _persistenceBox;
+  final String _baseUrl;
   static const _cacheKey = 'playlists';
 
-  PlaylistsRepository(this._restClient, {required Box<String> persistenceBox})
-      : _persistenceBox = persistenceBox {
+  PlaylistsRepository(this._restClient, {required Box<String> persistenceBox, required String baseUrl})
+      : _persistenceBox = persistenceBox,
+        _baseUrl = baseUrl {
     final cached = persistenceBox.get(_cacheKey);
     if (cached != null) {
       try {
@@ -39,7 +42,7 @@ class PlaylistsRepository {
   Future<bool> getAllPlaylists() async {
     final result = await _restClient.getAllPlaylists();
     _items.clear();
-    _items.addAll(result);
+    _items.addAll(result.map(_resolveImageUrl));
     await _persistenceBox.put(_cacheKey, jsonEncode(_items.map((e) => e.toJson()).toList()));
     playlistsSubject.add(_items);
 
@@ -50,7 +53,7 @@ class PlaylistsRepository {
     final playlist = _items.firstWhereOrNull((item) => item.id == playlistId);
 
     if (playlist == null) {
-      return _restClient.getPlaylist(playlistId);
+      return _resolveImageUrl(await _restClient.getPlaylist(playlistId));
     }
 
     return playlist;
@@ -58,7 +61,7 @@ class PlaylistsRepository {
 
   Future<void> createPlaylist(String title) async {
     final result = await _restClient.createPlaylist(title);
-    _items.add(result);
+    _items.add(_resolveImageUrl(result));
 
     playlistsSubject.add(_items);
   }
@@ -74,7 +77,7 @@ class PlaylistsRepository {
       tracks: tracksIds,
     );
 
-    final playlist = await _restClient.getPlaylist(id);
+    final playlist = _resolveImageUrl(await _restClient.getPlaylist(id));
     final playlistIndex = _items.indexWhere((item) => item.id == id);
     _items[playlistIndex] = playlist;
 
@@ -103,5 +106,17 @@ class PlaylistsRepository {
       playlistId: playlistId,
       trackId: trackId,
     );
+  }
+
+  Future<void> updatePlaylistImage(String playlistId, List<int> bytes, String filename) {
+    return _restClient.updatePlaylistImage(
+      id: playlistId,
+      image: MultipartFile.fromBytes(bytes, filename: filename),
+    );
+  }
+
+  Playlist _resolveImageUrl(Playlist p) {
+    if (p.image == null || p.image!.startsWith('http')) return p;
+    return p.copyWith(image: '$_baseUrl${p.image!}');
   }
 }

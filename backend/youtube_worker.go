@@ -100,6 +100,9 @@ func (yw *YoutubeWorker) FetchFromYoutube(w http.ResponseWriter, r *http.Request
 	// Create artist-track entries in the database
 	for _, artistName := range artistNames {
 		name := strings.TrimSpace(artistName)
+		if name == "" {
+			continue
+		}
 		artistId := yw.artistsRepo.CreateArtist(name)
 
 		err := yw.artistsRepo.AssociateTrackWithArtist(artistId, trackId)

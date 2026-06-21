@@ -37,9 +37,7 @@ Future<void> runBasement(AppConfig config) async {
   // try to create [DEFAULT] again and throw `duplicate-app`. Web has no native
   // init, so it needs the explicit options.
   if (kIsWeb) {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   } else {
     await Firebase.initializeApp();
   }
@@ -102,8 +100,12 @@ Future<void> runBasement(AppConfig config) async {
       cacheRepository: cacheRepository,
       tracksRepository: TracksRepository(restClient, persistenceBox: tracksPersistenceBox),
       settingsRepository: settingsRepository,
-      playlistsRepository: PlaylistsRepository(restClient, persistenceBox: playlistsPersistenceBox),
-      artistsRepository: ArtistsRepository(restClient),
+      playlistsRepository: PlaylistsRepository(
+        restClient,
+        persistenceBox: playlistsPersistenceBox,
+        baseUrl: config.baseUrl,
+      ),
+      artistsRepository: ArtistsRepository(restClient, baseUrl: config.baseUrl),
       connectivityStatusRepository: connectivityStatusRepository,
       authRepository: authRepository,
       favouritesRepository: favouritesRepository,

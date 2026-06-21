@@ -27,6 +27,7 @@ class PlaylistEditorCubit extends Cubit<PlaylistEditState> {
     emit(PlaylistEditState.editInProgress(
       playlistId: playlist.id,
       title: playlist.title,
+      image: playlist.image,
       tracks: playlist.tracks,
     ));
   }
@@ -34,10 +35,15 @@ class PlaylistEditorCubit extends Cubit<PlaylistEditState> {
   Future<void> save({
     required String title,
     required List<String> tracksIds,
+    List<int>? imageBytes,
+    String? imageFilename,
   }) async {
     emit(const PlaylistEditState.saveInProgress());
 
     try {
+      if (imageBytes != null && imageFilename != null) {
+        await playlistsRepository.updatePlaylistImage(playlistId, imageBytes, imageFilename);
+      }
       await playlistsRepository.editPlaylist(
         id: playlistId,
         title: title,
