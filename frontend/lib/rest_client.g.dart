@@ -358,6 +358,29 @@ class _RestClient implements RestClient {
   }
 
   @override
+  Future<void> reorderPlaylistTracks({
+    required String playlistId,
+    required Map<String, dynamic> body,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(body);
+    final _options = _setStreamType<void>(
+      Options(method: 'PATCH', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/playlist/${playlistId}/tracks/order',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    await _dio.fetch<void>(_options);
+  }
+
+  @override
   Future<List<Artist>> getAllArtists() async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};

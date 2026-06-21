@@ -74,7 +74,12 @@ class _PlaylistEditState extends State<_PlaylistEdit> {
             body: HorizontalSpaceReducer(
               child: Form(
                 key: _formKey,
-                child: _EditView(data: _data, currentImageUrl: image, onPickImage: _pickImage),
+                child: _EditView(
+                  data: _data,
+                  currentImageUrl: image,
+                  onPickImage: _pickImage,
+                  onReorder: (oldIndex, newIndex) => context.read<PlaylistEditorCubit>().reorder(oldIndex, newIndex),
+                ),
               ),
             ),
           );
@@ -115,27 +120,62 @@ class _EditView extends StatelessWidget {
   final _PlaylistData data;
   final String? currentImageUrl;
   final VoidCallback onPickImage;
+  final void Function(int oldIndex, int newIndex) onReorder;
 
-  const _EditView({required this.data, required this.currentImageUrl, required this.onPickImage});
+  const _EditView({
+    required this.data,
+    required this.currentImageUrl,
+    required this.onPickImage,
+    required this.onReorder,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 16),
-        ConstrainedBox(
-          constraints: BoxConstraints(maxWidth: 164, maxHeight: 164),
-          child: _ImagePicker(currentImageUrl: currentImageUrl, pickedBytes: data.imageBytes, onTap: onPickImage),
+    final tracks = data.tracks ?? [];
+
+    return CustomScrollView(
+      slivers: [
+        SliverToBoxAdapter(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 16),
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 164, maxHeight: 164),
+                child: _ImagePicker(currentImageUrl: currentImageUrl, pickedBytes: data.imageBytes, onTap: onPickImage),
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                decoration: const InputDecoration(label: Text('Title')),
+                initialValue: data.title,
+                validator: (value) => value?.isNotEmpty != true ? 'Field is required' : null,
+                onChanged: (value) => data.title = value,
+              ),
+              const SizedBox(height: 24),
+              if (tracks.isNotEmpty) Text('Tracks', style: Theme.of(context).textTheme.titleMedium),
+            ],
+          ),
         ),
-        const SizedBox(height: 16),
-        TextFormField(
-          decoration: const InputDecoration(label: Text('Title')),
-          initialValue: data.title,
-          validator: (value) => value?.isNotEmpty != true ? 'Field is required' : null,
-          onChanged: (value) => data.title = value,
+        SliverReorderableList(
+          itemCount: tracks.length,
+          onReorderItem: onReorder,
+          itemBuilder: (context, index) {
+            final track = tracks[index];
+            return ReorderableDragStartListener(
+              key: ValueKey(track.id),
+              index: index,
+              child: SelectionContainer.disabled(
+                child: ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: const Icon(Icons.drag_handle),
+                  title: Text(track.title, maxLines: 1, overflow: TextOverflow.ellipsis),
+                  subtitle: Text(track.artist, maxLines: 1, overflow: TextOverflow.ellipsis),
+                ),
+              ),
+            );
+          },
         ),
-        const SizedBox(height: 32),
+        const SliverToBoxAdapter(child: SizedBox(height: 32)),
       ],
     );
   }
