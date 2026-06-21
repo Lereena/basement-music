@@ -58,13 +58,16 @@ class _UploadFromDevice extends StatelessWidget {
                       artist: artist,
                       title: title,
                       onSubmit: (result) {
-                        final fileIndex = files.indexWhere((element) => element.file == fileInfo.file);
-                        files.removeAt(fileIndex);
-                        files.insert(fileIndex, (
+                        final modifiableFiles = files
+                            .map((element) => (name: element.name, file: element.file))
+                            .toList();
+                        final fileIndex = modifiableFiles.indexWhere((element) => element.file == fileInfo.file);
+                        modifiableFiles.removeAt(fileIndex);
+                        modifiableFiles.insert(fileIndex, (
                           file: fileInfo.file,
                           name: constructFilename(result.artist, result.title),
                         ));
-                        cubit.selectFiles(files);
+                        cubit.selectFiles(modifiableFiles);
                       },
                     );
                   },
