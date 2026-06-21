@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$SettingsState {
 
- bool get repeat; bool get shuffle; ThemeMode get themeMode;
+ bool get repeat; bool get shuffle; ThemeMode get themeMode; HomePage get homePage;
 /// Create a copy of SettingsState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $SettingsStateCopyWith<SettingsState> get copyWith => _$SettingsStateCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SettingsState&&(identical(other.repeat, repeat) || other.repeat == repeat)&&(identical(other.shuffle, shuffle) || other.shuffle == shuffle)&&(identical(other.themeMode, themeMode) || other.themeMode == themeMode));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SettingsState&&(identical(other.repeat, repeat) || other.repeat == repeat)&&(identical(other.shuffle, shuffle) || other.shuffle == shuffle)&&(identical(other.themeMode, themeMode) || other.themeMode == themeMode)&&(identical(other.homePage, homePage) || other.homePage == homePage));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,repeat,shuffle,themeMode);
+int get hashCode => Object.hash(runtimeType,repeat,shuffle,themeMode,homePage);
 
 @override
 String toString() {
-  return 'SettingsState(repeat: $repeat, shuffle: $shuffle, themeMode: $themeMode)';
+  return 'SettingsState(repeat: $repeat, shuffle: $shuffle, themeMode: $themeMode, homePage: $homePage)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $SettingsStateCopyWith<$Res>  {
   factory $SettingsStateCopyWith(SettingsState value, $Res Function(SettingsState) _then) = _$SettingsStateCopyWithImpl;
 @useResult
 $Res call({
- bool repeat, bool shuffle, ThemeMode themeMode
+ bool repeat, bool shuffle, ThemeMode themeMode, HomePage homePage
 });
 
 
@@ -62,12 +62,13 @@ class _$SettingsStateCopyWithImpl<$Res>
 
 /// Create a copy of SettingsState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? repeat = null,Object? shuffle = null,Object? themeMode = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? repeat = null,Object? shuffle = null,Object? themeMode = null,Object? homePage = null,}) {
   return _then(_self.copyWith(
 repeat: null == repeat ? _self.repeat : repeat // ignore: cast_nullable_to_non_nullable
 as bool,shuffle: null == shuffle ? _self.shuffle : shuffle // ignore: cast_nullable_to_non_nullable
 as bool,themeMode: null == themeMode ? _self.themeMode : themeMode // ignore: cast_nullable_to_non_nullable
-as ThemeMode,
+as ThemeMode,homePage: null == homePage ? _self.homePage : homePage // ignore: cast_nullable_to_non_nullable
+as HomePage,
   ));
 }
 
@@ -152,10 +153,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool repeat,  bool shuffle,  ThemeMode themeMode)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool repeat,  bool shuffle,  ThemeMode themeMode,  HomePage homePage)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SettingsState() when $default != null:
-return $default(_that.repeat,_that.shuffle,_that.themeMode);case _:
+return $default(_that.repeat,_that.shuffle,_that.themeMode,_that.homePage);case _:
   return orElse();
 
 }
@@ -173,10 +174,10 @@ return $default(_that.repeat,_that.shuffle,_that.themeMode);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool repeat,  bool shuffle,  ThemeMode themeMode)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool repeat,  bool shuffle,  ThemeMode themeMode,  HomePage homePage)  $default,) {final _that = this;
 switch (_that) {
 case _SettingsState():
-return $default(_that.repeat,_that.shuffle,_that.themeMode);case _:
+return $default(_that.repeat,_that.shuffle,_that.themeMode,_that.homePage);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -193,10 +194,10 @@ return $default(_that.repeat,_that.shuffle,_that.themeMode);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool repeat,  bool shuffle,  ThemeMode themeMode)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool repeat,  bool shuffle,  ThemeMode themeMode,  HomePage homePage)?  $default,) {final _that = this;
 switch (_that) {
 case _SettingsState() when $default != null:
-return $default(_that.repeat,_that.shuffle,_that.themeMode);case _:
+return $default(_that.repeat,_that.shuffle,_that.themeMode,_that.homePage);case _:
   return null;
 
 }
@@ -208,12 +209,13 @@ return $default(_that.repeat,_that.shuffle,_that.themeMode);case _:
 
 
 class _SettingsState implements SettingsState {
-  const _SettingsState({this.repeat = false, this.shuffle = false, this.themeMode = ThemeMode.system});
+  const _SettingsState({this.repeat = false, this.shuffle = false, this.themeMode = ThemeMode.system, this.homePage = HomePage.allTracks});
   
 
 @override@JsonKey() final  bool repeat;
 @override@JsonKey() final  bool shuffle;
 @override@JsonKey() final  ThemeMode themeMode;
+@override@JsonKey() final  HomePage homePage;
 
 /// Create a copy of SettingsState
 /// with the given fields replaced by the non-null parameter values.
@@ -225,16 +227,16 @@ _$SettingsStateCopyWith<_SettingsState> get copyWith => __$SettingsStateCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SettingsState&&(identical(other.repeat, repeat) || other.repeat == repeat)&&(identical(other.shuffle, shuffle) || other.shuffle == shuffle)&&(identical(other.themeMode, themeMode) || other.themeMode == themeMode));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SettingsState&&(identical(other.repeat, repeat) || other.repeat == repeat)&&(identical(other.shuffle, shuffle) || other.shuffle == shuffle)&&(identical(other.themeMode, themeMode) || other.themeMode == themeMode)&&(identical(other.homePage, homePage) || other.homePage == homePage));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,repeat,shuffle,themeMode);
+int get hashCode => Object.hash(runtimeType,repeat,shuffle,themeMode,homePage);
 
 @override
 String toString() {
-  return 'SettingsState(repeat: $repeat, shuffle: $shuffle, themeMode: $themeMode)';
+  return 'SettingsState(repeat: $repeat, shuffle: $shuffle, themeMode: $themeMode, homePage: $homePage)';
 }
 
 
@@ -245,7 +247,7 @@ abstract mixin class _$SettingsStateCopyWith<$Res> implements $SettingsStateCopy
   factory _$SettingsStateCopyWith(_SettingsState value, $Res Function(_SettingsState) _then) = __$SettingsStateCopyWithImpl;
 @override @useResult
 $Res call({
- bool repeat, bool shuffle, ThemeMode themeMode
+ bool repeat, bool shuffle, ThemeMode themeMode, HomePage homePage
 });
 
 
@@ -262,12 +264,13 @@ class __$SettingsStateCopyWithImpl<$Res>
 
 /// Create a copy of SettingsState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? repeat = null,Object? shuffle = null,Object? themeMode = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? repeat = null,Object? shuffle = null,Object? themeMode = null,Object? homePage = null,}) {
   return _then(_SettingsState(
 repeat: null == repeat ? _self.repeat : repeat // ignore: cast_nullable_to_non_nullable
 as bool,shuffle: null == shuffle ? _self.shuffle : shuffle // ignore: cast_nullable_to_non_nullable
 as bool,themeMode: null == themeMode ? _self.themeMode : themeMode // ignore: cast_nullable_to_non_nullable
-as ThemeMode,
+as ThemeMode,homePage: null == homePage ? _self.homePage : homePage // ignore: cast_nullable_to_non_nullable
+as HomePage,
   ));
 }
 

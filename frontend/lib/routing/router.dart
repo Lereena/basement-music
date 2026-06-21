@@ -9,7 +9,7 @@ import 'package:basement_music/pages/playlist_page.dart';
 import 'package:basement_music/pages/register_code_page.dart';
 import 'package:basement_music/pages/search_page.dart';
 import 'package:basement_music/pages/settings_page.dart';
-import 'package:basement_music/pages/tracks_page.dart';
+import 'package:basement_music/pages/home_page_wrapper.dart';
 import 'package:basement_music/pages/upload/from_device/upload_from_device.dart';
 import 'package:basement_music/pages/upload/from_youtube/extract_from_youtube.dart';
 import 'package:basement_music/pages/upload/upload_page.dart';
@@ -57,7 +57,7 @@ class AppRouter {
               routes: [
                 GoRoute(
                   path: RouteName.tracks,
-                  pageBuilder: (_, _) => const MaterialPage(child: TracksPage()),
+                  pageBuilder: (_, _) => const MaterialPage(child: HomePageWrapper()),
                 ),
               ],
             ),

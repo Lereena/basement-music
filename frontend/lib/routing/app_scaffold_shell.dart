@@ -1,7 +1,9 @@
+import 'package:basement_music/bloc/settings_cubit/settings_cubit.dart';
 import 'package:basement_music/routing/app_scaffold.dart';
 import 'package:basement_music/routing/breakpoints.dart';
 import 'package:basement_music/widgets/leading_rail_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 enum _Destination {
@@ -11,16 +13,16 @@ enum _Destination {
   upload,
   settings;
 
-  String get title => switch (this) {
-    tracks => 'All tracks',
+  String title(HomePage homePage) => switch (this) {
+    tracks => homePage == HomePage.favourites ? 'Favourites' : 'All tracks',
     library => 'Library',
     search => 'Search',
     settings => 'Settings',
     upload => 'Upload',
   };
 
-  Widget get icon => switch (this) {
-    tracks => const Icon(Icons.home),
+  Widget icon(HomePage homePage) => switch (this) {
+    tracks => homePage == HomePage.favourites ? const Icon(Icons.favorite) : const Icon(Icons.home),
     library => const Icon(Icons.library_music),
     search => const Icon(Icons.search),
     settings => const Icon(Icons.settings),
@@ -35,34 +37,43 @@ class AppScaffoldShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final isSmall = constraints.maxWidth < kSmallBreakpoint;
-        final isLarge = constraints.maxWidth >= kLargeBreakpoint;
-        final body = AppScaffold(child: navigationShell);
+    return BlocBuilder<SettingsCubit, SettingsState>(
+      buildWhen: (prev, curr) => prev.homePage != curr.homePage,
+      builder: (context, settings) {
+        final homePage = settings.homePage;
 
-        if (isSmall) {
-          return Scaffold(
-            body: body,
-            bottomNavigationBar: _NavigationBottomBar(
-              selectedIndex: navigationShell.currentIndex,
-              onDestinationSelected: (i) => onNavigationEvent(context, i),
-            ),
-          );
-        }
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final isSmall = constraints.maxWidth < kSmallBreakpoint;
+            final isLarge = constraints.maxWidth >= kLargeBreakpoint;
+            final body = AppScaffold(child: navigationShell);
 
-        return Scaffold(
-          body: Row(
-            children: [
-              _NavigationSidebar(
-                extended: isLarge,
-                selectedIndex: navigationShell.currentIndex,
-                onDestinationSelected: (i) => onNavigationEvent(context, i),
+            if (isSmall) {
+              return Scaffold(
+                body: body,
+                bottomNavigationBar: _NavigationBottomBar(
+                  homePage: homePage,
+                  selectedIndex: navigationShell.currentIndex,
+                  onDestinationSelected: (i) => onNavigationEvent(context, i),
+                ),
+              );
+            }
+
+            return Scaffold(
+              body: Row(
+                children: [
+                  _NavigationSidebar(
+                    homePage: homePage,
+                    extended: isLarge,
+                    selectedIndex: navigationShell.currentIndex,
+                    onDestinationSelected: (i) => onNavigationEvent(context, i),
+                  ),
+                  const VerticalDivider(thickness: 1, width: 1),
+                  Expanded(child: body),
+                ],
               ),
-              const VerticalDivider(thickness: 1, width: 1),
-              Expanded(child: body),
-            ],
-          ),
+            );
+          },
         );
       },
     );
@@ -74,11 +85,17 @@ class AppScaffoldShell extends StatelessWidget {
 }
 
 class _NavigationSidebar extends StatelessWidget {
+  final HomePage homePage;
   final bool extended;
   final int selectedIndex;
   final ValueChanged<int> onDestinationSelected;
 
-  const _NavigationSidebar({required this.extended, required this.selectedIndex, required this.onDestinationSelected});
+  const _NavigationSidebar({
+    required this.homePage,
+    required this.extended,
+    required this.selectedIndex,
+    required this.onDestinationSelected,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -117,18 +134,18 @@ class _NavigationSidebar extends StatelessWidget {
                             children: [
                               IconTheme.merge(
                                 data: IconThemeData(color: iconColor),
-                                child: dest.icon,
+                                child: dest.icon(homePage),
                               ),
                               const SizedBox(width: 12),
-                              Text(dest.title, style: TextStyle(color: iconColor)),
+                              Text(dest.title(homePage), style: TextStyle(color: iconColor)),
                             ],
                           )
                         : Tooltip(
-                            message: dest.title,
+                            message: dest.title(homePage),
                             child: Center(
                               child: IconTheme.merge(
                                 data: IconThemeData(color: iconColor),
-                                child: dest.icon,
+                                child: dest.icon(homePage),
                               ),
                             ),
                           ),
@@ -144,10 +161,15 @@ class _NavigationSidebar extends StatelessWidget {
 }
 
 class _NavigationBottomBar extends StatelessWidget {
+  final HomePage homePage;
   final int selectedIndex;
   final ValueChanged<int> onDestinationSelected;
 
-  const _NavigationBottomBar({required this.selectedIndex, required this.onDestinationSelected});
+  const _NavigationBottomBar({
+    required this.homePage,
+    required this.selectedIndex,
+    required this.onDestinationSelected,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -177,7 +199,9 @@ class _NavigationBottomBar extends StatelessWidget {
       child: NavigationBar(
         selectedIndex: selectedIndex,
         onDestinationSelected: onDestinationSelected,
-        destinations: _Destination.values.map((e) => NavigationDestination(icon: e.icon, label: e.title)).toList(),
+        destinations: _Destination.values
+            .map((e) => NavigationDestination(icon: e.icon(homePage), label: e.title(homePage)))
+            .toList(),
       ),
     );
   }

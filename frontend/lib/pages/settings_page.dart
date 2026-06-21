@@ -5,6 +5,7 @@ import 'package:basement_music/utils/horizontal_space_reducer.dart';
 import 'package:basement_music/widgets/app_bar.dart';
 import 'package:basement_music/widgets/settings/admin_section.dart';
 import 'package:basement_music/widgets/settings/cache_all_tracks_settings_line.dart';
+import 'package:basement_music/widgets/settings/home_page_setting_line.dart';
 import 'package:basement_music/widgets/settings/theme_setting_line.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +25,8 @@ class SettingsPage extends StatelessWidget {
           children: [
             const Divider(),
             const ThemeSettingLine(),
+            const Divider(),
+            const HomePageSettingLine(),
             const Divider(),
             if (!kIsWeb) ...[const CacheAllTracksSettingsLine(), const Divider()],
             ListTile(
