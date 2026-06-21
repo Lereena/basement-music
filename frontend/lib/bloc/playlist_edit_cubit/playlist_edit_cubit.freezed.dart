@@ -131,11 +131,11 @@ return fail(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function( String playlistId,  String title,  List<Track> tracks)?  editInProgress,TResult Function()?  saveInProgress,TResult Function()?  success,TResult Function()?  fail,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function( String playlistId,  String title,  String? image,  List<Track> tracks)?  editInProgress,TResult Function()?  saveInProgress,TResult Function()?  success,TResult Function()?  fail,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial();case _EditInProgress() when editInProgress != null:
-return editInProgress(_that.playlistId,_that.title,_that.tracks);case _SaveInProgress() when saveInProgress != null:
+return editInProgress(_that.playlistId,_that.title,_that.image,_that.tracks);case _SaveInProgress() when saveInProgress != null:
 return saveInProgress();case _Success() when success != null:
 return success();case _Fail() when fail != null:
 return fail();case _:
@@ -156,11 +156,11 @@ return fail();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function( String playlistId,  String title,  List<Track> tracks)  editInProgress,required TResult Function()  saveInProgress,required TResult Function()  success,required TResult Function()  fail,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function( String playlistId,  String title,  String? image,  List<Track> tracks)  editInProgress,required TResult Function()  saveInProgress,required TResult Function()  success,required TResult Function()  fail,}) {final _that = this;
 switch (_that) {
 case _Initial():
 return initial();case _EditInProgress():
-return editInProgress(_that.playlistId,_that.title,_that.tracks);case _SaveInProgress():
+return editInProgress(_that.playlistId,_that.title,_that.image,_that.tracks);case _SaveInProgress():
 return saveInProgress();case _Success():
 return success();case _Fail():
 return fail();case _:
@@ -180,11 +180,11 @@ return fail();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function( String playlistId,  String title,  List<Track> tracks)?  editInProgress,TResult? Function()?  saveInProgress,TResult? Function()?  success,TResult? Function()?  fail,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function( String playlistId,  String title,  String? image,  List<Track> tracks)?  editInProgress,TResult? Function()?  saveInProgress,TResult? Function()?  success,TResult? Function()?  fail,}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial();case _EditInProgress() when editInProgress != null:
-return editInProgress(_that.playlistId,_that.title,_that.tracks);case _SaveInProgress() when saveInProgress != null:
+return editInProgress(_that.playlistId,_that.title,_that.image,_that.tracks);case _SaveInProgress() when saveInProgress != null:
 return saveInProgress();case _Success() when success != null:
 return success();case _Fail() when fail != null:
 return fail();case _:
@@ -231,11 +231,12 @@ String toString() {
 
 
 class _EditInProgress implements PlaylistEditState {
-  const _EditInProgress({required this.playlistId, required this.title, required final  List<Track> tracks}): _tracks = tracks;
+  const _EditInProgress({required this.playlistId, required this.title, this.image, required final  List<Track> tracks}): _tracks = tracks;
   
 
  final  String playlistId;
  final  String title;
+ final  String? image;
  final  List<Track> _tracks;
  List<Track> get tracks {
   if (_tracks is EqualUnmodifiableListView) return _tracks;
@@ -254,16 +255,16 @@ _$EditInProgressCopyWith<_EditInProgress> get copyWith => __$EditInProgressCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _EditInProgress&&(identical(other.playlistId, playlistId) || other.playlistId == playlistId)&&(identical(other.title, title) || other.title == title)&&const DeepCollectionEquality().equals(other._tracks, _tracks));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _EditInProgress&&(identical(other.playlistId, playlistId) || other.playlistId == playlistId)&&(identical(other.title, title) || other.title == title)&&(identical(other.image, image) || other.image == image)&&const DeepCollectionEquality().equals(other._tracks, _tracks));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,playlistId,title,const DeepCollectionEquality().hash(_tracks));
+int get hashCode => Object.hash(runtimeType,playlistId,title,image,const DeepCollectionEquality().hash(_tracks));
 
 @override
 String toString() {
-  return 'PlaylistEditState.editInProgress(playlistId: $playlistId, title: $title, tracks: $tracks)';
+  return 'PlaylistEditState.editInProgress(playlistId: $playlistId, title: $title, image: $image, tracks: $tracks)';
 }
 
 
@@ -274,7 +275,7 @@ abstract mixin class _$EditInProgressCopyWith<$Res> implements $PlaylistEditStat
   factory _$EditInProgressCopyWith(_EditInProgress value, $Res Function(_EditInProgress) _then) = __$EditInProgressCopyWithImpl;
 @useResult
 $Res call({
- String playlistId, String title, List<Track> tracks
+ String playlistId, String title, String? image, List<Track> tracks
 });
 
 
@@ -291,11 +292,12 @@ class __$EditInProgressCopyWithImpl<$Res>
 
 /// Create a copy of PlaylistEditState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? playlistId = null,Object? title = null,Object? tracks = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? playlistId = null,Object? title = null,Object? image = freezed,Object? tracks = null,}) {
   return _then(_EditInProgress(
 playlistId: null == playlistId ? _self.playlistId : playlistId // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
-as String,tracks: null == tracks ? _self._tracks : tracks // ignore: cast_nullable_to_non_nullable
+as String,image: freezed == image ? _self.image : image // ignore: cast_nullable_to_non_nullable
+as String?,tracks: null == tracks ? _self._tracks : tracks // ignore: cast_nullable_to_non_nullable
 as List<Track>,
   ));
 }

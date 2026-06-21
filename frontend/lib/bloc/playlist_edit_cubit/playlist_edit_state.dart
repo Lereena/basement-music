@@ -6,6 +6,7 @@ abstract class PlaylistEditState with _$PlaylistEditState {
   const factory PlaylistEditState.editInProgress({
     required String playlistId,
     required String title,
+    String? image,
     required List<Track> tracks,
   }) = _EditInProgress;
   const factory PlaylistEditState.saveInProgress() = _SaveInProgress;

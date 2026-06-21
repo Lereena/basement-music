@@ -4,9 +4,8 @@ import 'package:flutter/material.dart';
 class ArtistCard extends StatelessWidget {
   final Artist artist;
   final void Function() onTap;
-  final void Function()? onImageEdit;
 
-  const ArtistCard({super.key, required this.artist, required this.onTap, this.onImageEdit});
+  const ArtistCard({super.key, required this.artist, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -35,19 +34,6 @@ class ArtistCard extends StatelessWidget {
                               errorBuilder: (_, _, _) => const _Placeholder(),
                             )
                           : const _Placeholder(),
-                      if (onImageEdit != null)
-                        Positioned(
-                          right: 0,
-                          bottom: 0,
-                          child: GestureDetector(
-                            onTap: onImageEdit,
-                            child: Container(
-                              padding: const EdgeInsets.all(2),
-                              color: Colors.black54,
-                              child: const Icon(Icons.edit, size: 14, color: Colors.white),
-                            ),
-                          ),
-                        ),
                     ],
                   ),
                 ),

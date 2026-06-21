@@ -9,26 +9,8 @@ class _Artists extends StatelessWidget {
     return 1;
   }
 
-  void _pickAndUploadImage(BuildContext context, String artistId) async {
-    final result = await FilePicker.pickFiles(type: FileType.image, withData: true);
-    if (result == null || result.files.isEmpty) return;
-
-    final file = result.files.first;
-
-    if (file.bytes == null) return;
-
-    if (context.mounted) {
-      await context.read<ArtistsCubit>().uploadArtistImage(artistId, file.bytes!, file.name);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    final isAdmin = context.read<AuthCubit>().state.maybeWhen(
-      authenticated: (user) => user.isAdmin,
-      orElse: () => false,
-    );
-
     return BlocBuilder<ArtistsCubit, ArtistsState>(
       builder: (context, state) => state.when(
         initial: () => const SizedBox.shrink(),
@@ -46,7 +28,6 @@ class _Artists extends StatelessWidget {
             itemBuilder: (context, index) => ArtistCard(
               artist: artists[index],
               onTap: () => context.go(RouteName.artist(artists[index].id)),
-              onImageEdit: isAdmin ? () => _pickAndUploadImage(context, artists[index].id) : null,
             ),
           ),
         ),

@@ -9,25 +9,8 @@ class _Playlists extends StatelessWidget {
     return 1;
   }
 
-  void _pickAndUploadImage(BuildContext context, String playlistId) async {
-    final result = await FilePicker.pickFiles(type: FileType.image, withData: true);
-    if (result == null || result.files.isEmpty) return;
-
-    final file = result.files.first;
-    if (file.bytes == null) return;
-
-    if (context.mounted) {
-      await context.read<PlaylistsCubit>().uploadPlaylistImage(playlistId, file.bytes!, file.name);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    final isAdmin = context.read<AuthCubit>().state.maybeWhen(
-      authenticated: (user) => user.isAdmin,
-      orElse: () => false,
-    );
-
     return BlocBuilder<PlaylistsCubit, PlaylistsState>(
       builder: (context, state) => state.when(
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -44,7 +27,6 @@ class _Playlists extends StatelessWidget {
             itemBuilder: (context, index) => PlaylistCard(
               playlist: playlists[index],
               onTap: () => context.go(RouteName.playlist(playlists[index].id)),
-              onImageEdit: isAdmin ? () => _pickAndUploadImage(context, playlists[index].id) : null,
             ),
           ),
         ),
