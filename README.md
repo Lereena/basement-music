@@ -1,4 +1,4 @@
-[![style: lint](https://img.shields.io/badge/style-lint-4BC0F5.svg)](https://pub.dev/packages/lint) 
+[![style: lint](https://img.shields.io/badge/style-lint-4BC0F5.svg)](https://pub.dev/packages/lint)
 [![Web build and deploy](https://github.com/Lereena/basement-music/actions/workflows/web-build-deploy.yml/badge.svg)](https://github.com/Lereena/basement-music/actions/workflows/web-build-deploy.yml)
 
 # Basement
@@ -23,5 +23,5 @@ POSTGRES_EXTERNAL_PORT=<port on which postgres will be available from outer worl
 Then run following command in project directory:
 
 ```
-sudo docker-compose build && sudo docker-compose up -d
+docker-compose build && docker-compose up -d
 ```
