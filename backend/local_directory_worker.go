@@ -121,6 +121,9 @@ func (ldw *LocalDirectoryWorker) handleArtists(artists string, trackId string) {
 	// Create artist-track entries in the database
 	for _, artistName := range artistNames {
 		name := strings.TrimSpace(artistName)
+		if name == "" {
+			continue
+		}
 		artistId := ldw.artistsRepo.CreateArtist(name)
 
 		err := ldw.artistsRepo.AssociateTrackWithArtist(artistId, trackId)
