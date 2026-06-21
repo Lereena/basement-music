@@ -17,6 +17,7 @@ class SettingsCubit extends Cubit<SettingsState> {
         repeat: settingsRepository.repeat,
         shuffle: settingsRepository.shuffle,
         themeMode: settingsRepository.themeMode,
+        homePage: settingsRepository.homePage,
       ),
     );
   }
@@ -34,5 +35,10 @@ class SettingsCubit extends Cubit<SettingsState> {
   void setThemeMode(ThemeMode value) {
     settingsRepository.themeMode = value;
     emit(state.copyWith(themeMode: value));
+  }
+
+  void setHomePage(HomePage value) {
+    settingsRepository.homePage = value;
+    emit(state.copyWith(homePage: value));
   }
 }

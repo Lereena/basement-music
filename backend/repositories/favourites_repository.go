@@ -20,7 +20,7 @@ func (repo *FavouritesRepository) GetFavourites(w http.ResponseWriter, r *http.R
 	user, _ := middleware.UserFromContext(r.Context())
 
 	var favs []models.Favourite
-	repo.DB.Where("user_id = ?", user.ID).Find(&favs)
+	repo.DB.Where("user_id = ?", user.ID).Order("created_at DESC").Find(&favs)
 
 	trackIDs := make([]string, len(favs))
 	for i, f := range favs {
@@ -30,6 +30,19 @@ func (repo *FavouritesRepository) GetFavourites(w http.ResponseWriter, r *http.R
 	var tracks []models.Track
 	if len(trackIDs) > 0 {
 		repo.DB.Where("id IN ?", trackIDs).Find(&tracks)
+
+		trackMap := make(map[string]models.Track, len(tracks))
+		for _, t := range tracks {
+			trackMap[t.Id] = t
+		}
+		tracks = make([]models.Track, 0, len(trackIDs))
+		for _, id := range trackIDs {
+			if t, ok := trackMap[id]; ok {
+				tracks = append(tracks, t)
+			}
+		}
+	} else {
+		tracks = []models.Track{}
 	}
 
 	json.NewEncoder(w).Encode(tracks)
