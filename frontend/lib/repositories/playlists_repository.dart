@@ -1,13 +1,12 @@
 import 'dart:convert';
 
+import 'package:basement_music/logger.dart';
+import 'package:basement_music/models/playlist.dart';
+import 'package:basement_music/rest_client.dart';
 import 'package:collection/collection.dart';
 import 'package:dio/dio.dart';
 import 'package:hive/hive.dart';
 import 'package:rxdart/rxdart.dart';
-
-import 'package:basement_music/logger.dart';
-import 'package:basement_music/models/playlist.dart';
-import 'package:basement_music/rest_client.dart';
 
 class PlaylistsRepository {
   final _items = <Playlist>[];
@@ -18,14 +17,12 @@ class PlaylistsRepository {
   static const _cacheKey = 'playlists';
 
   PlaylistsRepository(this._restClient, {required Box<String> persistenceBox, required String baseUrl})
-      : _persistenceBox = persistenceBox,
-        _baseUrl = baseUrl {
+    : _persistenceBox = persistenceBox,
+      _baseUrl = baseUrl {
     final cached = persistenceBox.get(_cacheKey);
     if (cached != null) {
       try {
-        _items.addAll(
-          (jsonDecode(cached) as List).map((e) => Playlist.fromJson(e as Map<String, dynamic>)),
-        );
+        _items.addAll((jsonDecode(cached) as List).map((e) => Playlist.fromJson(e as Map<String, dynamic>)));
       } catch (e) {
         persistenceBox.delete(_cacheKey);
         logger.w('Playlists cache decode failed, cleared: $e');
@@ -66,16 +63,8 @@ class PlaylistsRepository {
     playlistsSubject.add(_items);
   }
 
-  Future<void> editPlaylist({
-    required String id,
-    required String title,
-    required List<String> tracksIds,
-  }) async {
-    await _restClient.editPlaylist(
-      id: id,
-      title: title,
-      tracks: tracksIds,
-    );
+  Future<void> editPlaylist({required String id, required String title, required List<String> tracksIds}) async {
+    await _restClient.editPlaylist(id: id, title: title, tracks: tracksIds);
 
     final playlist = _resolveImageUrl(await _restClient.getPlaylist(id));
     final playlistIndex = _items.indexWhere((item) => item.id == id);
@@ -92,20 +81,15 @@ class PlaylistsRepository {
   }
 
   Future<void> addTrackToPlaylist(String playlistId, String trackId) {
-    return _restClient.addTrackToPlaylist(
-      playlistId: playlistId,
-      trackId: trackId,
-    );
+    return _restClient.addTrackToPlaylist(playlistId: playlistId, trackId: trackId);
   }
 
-  Future<void> removeTrackFromPlaylist(
-    String playlistId,
-    String trackId,
-  ) {
-    return _restClient.removeTrackFromPlaylist(
-      playlistId: playlistId,
-      trackId: trackId,
-    );
+  Future<void> removeTrackFromPlaylist(String playlistId, String trackId) {
+    return _restClient.removeTrackFromPlaylist(playlistId: playlistId, trackId: trackId);
+  }
+
+  Future<void> reorderTracks(String playlistId, List<String> trackIds) {
+    return _restClient.reorderPlaylistTracks(playlistId: playlistId, body: {'trackIds': trackIds});
   }
 
   Future<void> updatePlaylistImage(String playlistId, List<int> bytes, String filename) {

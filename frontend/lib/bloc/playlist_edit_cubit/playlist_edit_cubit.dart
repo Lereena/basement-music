@@ -1,11 +1,10 @@
 import 'dart:async';
 
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
-
 import 'package:basement_music/logger.dart';
 import 'package:basement_music/models/track.dart';
 import 'package:basement_music/repositories/playlists_repository.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'playlist_edit_cubit.freezed.dart';
 part 'playlist_edit_state.dart';
@@ -14,22 +13,34 @@ class PlaylistEditorCubit extends Cubit<PlaylistEditState> {
   final PlaylistsRepository playlistsRepository;
   final String playlistId;
 
-  PlaylistEditorCubit({
-    required this.playlistsRepository,
-    required this.playlistId,
-  }) : super(const PlaylistEditState.initial());
+  PlaylistEditorCubit({required this.playlistsRepository, required this.playlistId})
+    : super(const PlaylistEditState.initial());
 
   Future<void> startEditing() async {
     emit(const PlaylistEditState.saveInProgress());
 
     final playlist = await playlistsRepository.getPlaylist(playlistId);
 
-    emit(PlaylistEditState.editInProgress(
-      playlistId: playlist.id,
-      title: playlist.title,
-      image: playlist.image,
-      tracks: playlist.tracks,
-    ));
+    emit(
+      PlaylistEditState.editInProgress(
+        playlistId: playlist.id,
+        title: playlist.title,
+        image: playlist.image,
+        tracks: playlist.tracks,
+      ),
+    );
+  }
+
+  void reorder(int oldIndex, int newIndex) {
+    state.whenOrNull(
+      editInProgress: (playlistId, title, image, tracks) {
+        final list = List<Track>.from(tracks);
+        list.insert(newIndex, list.removeAt(oldIndex));
+
+        emit(PlaylistEditState.editInProgress(playlistId: playlistId, title: title, image: image, tracks: list));
+        playlistsRepository.reorderTracks(playlistId, list.map((t) => t.id).toList());
+      },
+    );
   }
 
   Future<void> save({
@@ -44,11 +55,7 @@ class PlaylistEditorCubit extends Cubit<PlaylistEditState> {
       if (imageBytes != null && imageFilename != null) {
         await playlistsRepository.updatePlaylistImage(playlistId, imageBytes, imageFilename);
       }
-      await playlistsRepository.editPlaylist(
-        id: playlistId,
-        title: title,
-        tracksIds: tracksIds,
-      );
+      await playlistsRepository.editPlaylist(id: playlistId, title: title, tracksIds: tracksIds);
       emit(const PlaylistEditState.success());
     } catch (e) {
       emit(const PlaylistEditState.fail());

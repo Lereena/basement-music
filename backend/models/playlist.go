@@ -7,5 +7,11 @@ type Playlist struct {
 	Id     string
 	Title  string
 	Image  string
-	Tracks []Track `gorm:"many2many:playlist_tracks"`
+	Tracks []Track `gorm:"-"`
+}
+
+type PlaylistTrack struct {
+	PlaylistID string `gorm:"primaryKey;column:playlist_id"`
+	TrackID    string `gorm:"primaryKey;column:track_id"`
+	Position   int
 }

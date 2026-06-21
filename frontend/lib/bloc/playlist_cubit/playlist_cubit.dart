@@ -37,6 +37,7 @@ class PlaylistCubit extends Cubit<PlaylistState> {
   }
 
   void _updatePlaylist(Playlist playlist) {
+    if (isClosed) return;
     emit(PlaylistState.loaded(playlist: playlist));
   }
 }

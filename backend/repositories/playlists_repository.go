@@ -26,7 +26,8 @@ func (repo *PlaylistsRepository) imagesDir() string {
 }
 
 func (repo *PlaylistsRepository) Init() {
-	repo.DB.AutoMigrate(&models.Playlist{})
+	repo.DB.AutoMigrate(&models.Playlist{}, &models.PlaylistTrack{})
+
 	if err := os.MkdirAll(repo.imagesDir(), 0755); err != nil {
 		log.Printf("Failed to create playlist_images dir: %v", err)
 	}
@@ -94,9 +95,27 @@ func (repo *PlaylistsRepository) UpdatePlaylistImage(w http.ResponseWriter, r *h
 	w.WriteHeader(http.StatusNoContent)
 }
 
+func (repo *PlaylistsRepository) loadOrderedTracks(playlistId string) []models.Track {
+	var tracks []models.Track
+	repo.DB.Raw(`
+		SELECT t.id, t.created_at, t.updated_at, t.deleted_at, t.title, t.artist, t.duration, t.cover, t.url
+		FROM tracks t
+		JOIN playlist_tracks pt ON pt.track_id = t.id
+		WHERE pt.playlist_id = ?
+		ORDER BY pt.position ASC, pt.track_id ASC
+	`, playlistId).Scan(&tracks)
+	if tracks == nil {
+		tracks = []models.Track{}
+	}
+	return tracks
+}
+
 func (repo *PlaylistsRepository) GetAllPlaylists(w http.ResponseWriter, r *http.Request) {
 	var playlists []models.Playlist
-	repo.DB.Model(&models.Playlist{}).Preload("Tracks").Order("created_at").Find(&playlists)
+	repo.DB.Model(&models.Playlist{}).Order("created_at").Find(&playlists)
+	for i := range playlists {
+		playlists[i].Tracks = repo.loadOrderedTracks(playlists[i].Id)
+	}
 	json.NewEncoder(w).Encode(playlists)
 }
 
@@ -156,10 +175,12 @@ func (repo *PlaylistsRepository) GetPlaylist(w http.ResponseWriter, r *http.Requ
 	playlistId := params["id"]
 
 	var playlist models.Playlist
-	err := repo.DB.Where(&models.Playlist{Id: playlistId}).Preload("Tracks").First(&playlist).Error
+	err := repo.DB.Where(&models.Playlist{Id: playlistId}).First(&playlist).Error
 	if err != nil {
 		respond.RespondError(w, http.StatusNotFound, "Playlist not found")
+		return
 	}
+	playlist.Tracks = repo.loadOrderedTracks(playlistId)
 
 	respond.RespondJSON(w, http.StatusOK, playlist)
 }
@@ -174,16 +195,30 @@ func (repo *PlaylistsRepository) AddTrackToPlaylist(w http.ResponseWriter, r *ht
 	err := repo.DB.Where(&models.Playlist{Id: playlistId}).First(&playlist).Error
 	if err != nil {
 		respond.RespondError(w, http.StatusNotFound, "Playlist not found")
+		return
 	}
 
 	var track models.Track
 	err = repo.DB.Where(&models.Track{Id: trackId}).First(&track).Error
 	if err != nil {
 		respond.RespondError(w, http.StatusNotFound, "Track not found")
+		return
 	}
 
-	repo.DB.Model(&playlist).Association("Tracks").Append([]models.Track{track})
+	var maxPos int
 
+	repo.DB.Model(&models.PlaylistTrack{}).
+		Where("playlist_id = ?", playlist.Id).
+		Select("COALESCE(MAX(position), -1)").
+		Scan(&maxPos)
+
+	repo.DB.Create(&models.PlaylistTrack{
+		PlaylistID: playlist.Id,
+		TrackID:    track.Id,
+		Position:   maxPos + 1,
+	})
+
+	playlist.Tracks = repo.loadOrderedTracks(playlist.Id)
 	respond.RespondJSON(w, http.StatusOK, playlist)
 }
 
@@ -197,15 +232,49 @@ func (repo *PlaylistsRepository) DeleteTrackFromPlaylist(w http.ResponseWriter, 
 	err := repo.DB.Where(&models.Playlist{Id: playlistId}).First(&playlist).Error
 	if err != nil {
 		respond.RespondError(w, http.StatusNotFound, "Playlist not found")
+		return
 	}
 
 	var track models.Track
 	err = repo.DB.Where(&models.Track{Id: trackId}).First(&track).Error
 	if err != nil {
 		respond.RespondError(w, http.StatusNotFound, "Track not found")
+		return
 	}
 
-	repo.DB.Model(&playlist).Association("Tracks").Delete([]models.Track{track})
+	repo.DB.Where("playlist_id = ? AND track_id = ?", playlist.Id, track.Id).
+		Delete(&models.PlaylistTrack{})
 
+	playlist.Tracks = repo.loadOrderedTracks(playlist.Id)
 	respond.RespondJSON(w, http.StatusOK, playlist)
+}
+
+func (repo *PlaylistsRepository) ReorderPlaylistTracks(w http.ResponseWriter, r *http.Request) {
+	playlistId := mux.Vars(r)["playlistId"]
+
+	var playlist models.Playlist
+	if err := repo.DB.Where(&models.Playlist{Id: playlistId}).First(&playlist).Error; err != nil {
+		respond.RespondError(w, http.StatusNotFound, "Playlist not found")
+		return
+	}
+
+	var body struct {
+		TrackIds []string `json:"trackIds"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		respond.RespondError(w, http.StatusBadRequest, "Invalid request body")
+		return
+	}
+
+	for i, trackStringId := range body.TrackIds {
+		var track models.Track
+		if err := repo.DB.Where(&models.Track{Id: trackStringId}).First(&track).Error; err != nil {
+			continue
+		}
+		repo.DB.Model(&models.PlaylistTrack{}).
+			Where("playlist_id = ? AND track_id = ?", playlist.Id, track.Id).
+			Update("position", i)
+	}
+
+	w.WriteHeader(http.StatusNoContent)
 }

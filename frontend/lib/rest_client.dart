@@ -77,6 +77,12 @@ abstract class RestClient {
     @Path('trackId') required String trackId,
   });
 
+  @PATCH('/playlist/{playlistId}/tracks/order')
+  Future<void> reorderPlaylistTracks({
+    @Path('playlistId') required String playlistId,
+    @Body() required Map<String, dynamic> body,
+  });
+
   @GET('/artists')
   Future<List<Artist>> getAllArtists();
 

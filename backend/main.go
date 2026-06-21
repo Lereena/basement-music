@@ -111,6 +111,7 @@ func main() {
 	protected.HandleFunc("/playlist/{id}", playlistsRepo.DeletePlaylist).Methods("DELETE")
 	protected.HandleFunc("/playlist/{playlistId}/track/{trackId}", playlistsRepo.AddTrackToPlaylist).Methods("POST")
 	protected.HandleFunc("/playlist/{playlistId}/track/{trackId}", playlistsRepo.DeleteTrackFromPlaylist).Methods("DELETE")
+	protected.HandleFunc("/playlist/{playlistId}/tracks/order", playlistsRepo.ReorderPlaylistTracks).Methods("PATCH")
 
 	protected.HandleFunc("/artists", artistsRepo.GetAllArtists).Methods("GET")
 	protected.HandleFunc("/artist/{id}", artistsRepo.GetArtist).Methods("GET")
