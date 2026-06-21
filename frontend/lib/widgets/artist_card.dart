@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 class ArtistCard extends StatelessWidget {
   final Artist artist;
   final void Function() onTap;
+  final void Function()? onImageEdit;
 
-  const ArtistCard({super.key, required this.artist, required this.onTap});
+  const ArtistCard({super.key, required this.artist, required this.onTap, this.onImageEdit});
 
   @override
   Widget build(BuildContext context) {
@@ -18,24 +19,54 @@ class ArtistCard extends StatelessWidget {
         onTap: onTap,
         child: Row(
           children: [
-            const SizedBox(width: 12),
-            SizedBox(
-              width: 56,
-              height: 56,
-              child: artist.image != null
-                  ? Image.network(artist.image!, fit: BoxFit.cover, errorBuilder: (_, _, _) => const _Placeholder())
-                  : const _Placeholder(),
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: AspectRatio(
+                aspectRatio: 1,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(2),
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      artist.image != null
+                          ? Image.network(
+                              artist.image!,
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, _, _) => const _Placeholder(),
+                            )
+                          : const _Placeholder(),
+                      if (onImageEdit != null)
+                        Positioned(
+                          right: 0,
+                          bottom: 0,
+                          child: GestureDetector(
+                            onTap: onImageEdit,
+                            child: Container(
+                              padding: const EdgeInsets.all(2),
+                              color: Colors.black54,
+                              child: const Icon(Icons.edit, size: 14, color: Colors.white),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
             ),
-            const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(artist.name, style: theme.textTheme.bodyMedium, maxLines: 2, overflow: TextOverflow.ellipsis),
+                  Text(
+                    artist.name,
+                    style: theme.textTheme.bodyLarge?.copyWith(height: 1.2),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                   Text(
                     '$trackCount ${trackCount == 1 ? 'track' : 'tracks'}',
-                    style: theme.textTheme.bodySmall?.copyWith(
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       color: theme.colorScheme.onSurface.withValues(alpha: 0.64),
                     ),
                   ),

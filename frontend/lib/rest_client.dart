@@ -83,6 +83,13 @@ abstract class RestClient {
   @GET('/artist/{id}')
   Future<Artist> getArtist(@Path('id') String id);
 
+  @PATCH('/admin/artist/{id}/image')
+  @MultiPart()
+  Future<void> updateArtistImage({
+    @Path('id') required String id,
+    @Part(name: 'image') required MultipartFile image,
+  });
+
   // Auth
   @POST('/auth/register')
   Future<AppUser> register(@Body() Map<String, dynamic> body);

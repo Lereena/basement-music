@@ -38,7 +38,7 @@ func main() {
 	playlistsRepo := &repositories.PlaylistsRepository{DB: db}
 	playlistsRepo.Init()
 
-	artistsRepo := &repositories.ArtistsRepository{DB: db}
+	artistsRepo := &repositories.ArtistsRepository{DB: db, Cfg: &cfg}
 	artistsRepo.Init()
 
 	authRepo := &repositories.AuthRepository{DB: db}
@@ -72,6 +72,9 @@ func main() {
 
 	// Audio stream is public — audioplayers can't attach headers, IDs are non-enumerable UUIDs
 	router.HandleFunc("/track/{id}", musicRepo.GetTrack).Methods("GET")
+
+	// Artist image is public — Image.network can't attach auth headers
+	router.HandleFunc("/artist/{id}/image", artistsRepo.GetArtistImage).Methods("GET")
 
 	// All other routes require a registered user
 	protected := router.PathPrefix("").Subrouter()
@@ -110,6 +113,7 @@ func main() {
 
 	protected.HandleFunc("/artists", artistsRepo.GetAllArtists).Methods("GET")
 	protected.HandleFunc("/artist/{id}", artistsRepo.GetArtist).Methods("GET")
+	admin.HandleFunc("/artist/{id}/image", artistsRepo.UpdateArtistImage).Methods("PATCH")
 
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"*"},

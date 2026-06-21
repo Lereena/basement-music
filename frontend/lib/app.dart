@@ -103,7 +103,7 @@ Future<void> runBasement(AppConfig config) async {
       tracksRepository: TracksRepository(restClient, persistenceBox: tracksPersistenceBox),
       settingsRepository: settingsRepository,
       playlistsRepository: PlaylistsRepository(restClient, persistenceBox: playlistsPersistenceBox),
-      artistsRepository: ArtistsRepository(restClient),
+      artistsRepository: ArtistsRepository(restClient, baseUrl: config.baseUrl),
       connectivityStatusRepository: connectivityStatusRepository,
       authRepository: authRepository,
       favouritesRepository: favouritesRepository,
