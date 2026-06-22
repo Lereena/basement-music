@@ -4,6 +4,7 @@ import 'package:basement_music/repositories/admin_repository.dart';
 import 'package:basement_music/utils/horizontal_space_reducer.dart';
 import 'package:basement_music/widgets/app_bar.dart';
 import 'package:basement_music/widgets/settings/admin_section.dart';
+import 'package:basement_music/widgets/settings/soulseek_admin_section.dart';
 import 'package:basement_music/widgets/settings/cache_all_tracks_settings_line.dart';
 import 'package:basement_music/widgets/settings/home_page_setting_line.dart';
 import 'package:basement_music/widgets/settings/theme_setting_line.dart';
@@ -45,6 +46,8 @@ class SettingsPage extends StatelessWidget {
                             create: (_) => AdminCubit(context.read<AdminRepository>())..loadCodes(),
                             child: const AdminSection(),
                           ),
+                          const Divider(),
+                          const SoulseekAdminSection(),
                         ],
                       )
                     : const SizedBox.shrink(),

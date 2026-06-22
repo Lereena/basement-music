@@ -13,4 +13,5 @@ abstract class RouteName {
   static String get upload => '/upload';
   static String get uploadFromDevice => '/upload/fromDevice';
   static String get uploadFromYoutube => '/upload/fromYoutube';
+  static String get uploadFromSoulseek => '/upload/fromSoulseek';
 }

@@ -32,13 +32,16 @@ class AudioPlayerHandler extends BaseAudioHandler {
 
   Playlist currentPlaylist = Playlist.empty();
 
-  void addMediaItem(Track track) {
+  void addMediaItem(Track track, {String? streamUrl}) {
     mediaItem.add(
       MediaItem(
         id: track.id,
         title: track.title,
         artist: track.artist,
         duration: Duration(seconds: track.duration),
+        // streamUrl overrides the default /api/track/{id} source. Used for
+        // Soulseek temp previews, which are not regular library tracks.
+        extras: streamUrl != null ? {'streamUrl': streamUrl} : null,
       ),
     );
   }
@@ -46,6 +49,20 @@ class AudioPlayerHandler extends BaseAudioHandler {
   @override
   Future<void> play() async {
     if (!mediaItem.hasValue) return;
+
+    final streamUrl = mediaItem.value!.extras?['streamUrl'] as String?;
+    if (streamUrl != null) {
+      await _audioPlayer.play(UrlSource(streamUrl));
+      playbackState.add(
+        playbackState.value.copyWith(
+          playing: true,
+          controls: [MediaControl.pause],
+          updatePosition: await _audioPlayer.getCurrentPosition() ?? Duration.zero,
+          processingState: AudioProcessingState.ready,
+        ),
+      );
+      return;
+    }
 
     final trackId = mediaItem.value!.id;
     final cachedFile = await cacheRepository.retrieveTrack(trackId);

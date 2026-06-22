@@ -5,6 +5,9 @@ import 'package:basement_music/models/app_user.dart';
 import 'package:basement_music/models/artist.dart';
 import 'package:basement_music/models/playlist.dart';
 import 'package:basement_music/models/registration_code.dart';
+import 'package:basement_music/models/soulseek_search_result.dart';
+import 'package:basement_music/models/soulseek_status.dart';
+import 'package:basement_music/models/soulseek_temp_track.dart';
 import 'package:basement_music/models/track.dart';
 import 'package:basement_music/models/video_info.dart';
 
@@ -126,4 +129,35 @@ abstract class RestClient {
 
   @GET('/admin/registration-codes')
   Future<List<RegistrationCode>> getRegistrationCodes();
+
+  // Soulseek
+  @POST('/admin/soulseek/credentials')
+  @FormUrlEncoded()
+  Future<void> setSoulseekCredentials({
+    @Field('username') required String username,
+    @Field('password') required String password,
+  });
+
+  @GET('/admin/soulseek/status')
+  Future<SoulseekStatus> getSoulseekStatus();
+
+  @POST('/admin/soulseek/disconnect')
+  Future<void> disconnectSoulseek();
+
+  @GET('/soulseek/search')
+  Future<List<SoulseekSearchResult>> searchSoulseek(@Query('q') String query);
+
+  @POST('/soulseek/preload')
+  @FormUrlEncoded()
+  Future<SoulseekTempTrack> preloadSoulseekTrack({
+    @Field('username') required String username,
+    @Field('filename') required String filename,
+  });
+
+  @POST('/soulseek/save')
+  @FormUrlEncoded()
+  Future<Track> saveSoulseekTrack({@Field('id') required String id});
+
+  @DELETE('/soulseek/temp')
+  Future<void> cleanupSoulseekSession();
 }

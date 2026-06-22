@@ -40,10 +40,10 @@ class PlayerCubit extends Cubit<PlayerState> {
     });
   }
 
-  Future<void> play({required Track track, Playlist? playlist}) async {
+  Future<void> play({required Track track, Playlist? playlist, String? streamUrl}) async {
     audioHandler.currentPlaylist =
         playlist ?? Playlist.anonymous(tracksRepository.items);
-    audioHandler.addMediaItem(track);
+    audioHandler.addMediaItem(track, streamUrl: streamUrl);
     await audioHandler.play();
     emit(PlayerState.play(currentTrack: track));
   }
@@ -83,6 +83,8 @@ class PlayerCubit extends Cubit<PlayerState> {
     );
   }
 
-  Track get _currentTrack => tracksRepository.items
-      .firstWhere((track) => track.id == audioHandler.mediaItem.value?.id);
+  Track get _currentTrack => tracksRepository.items.firstWhere(
+        (track) => track.id == audioHandler.mediaItem.value?.id,
+        orElse: () => state.currentTrack,
+      );
 }

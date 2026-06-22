@@ -13,6 +13,7 @@ import 'package:basement_music/pages/settings_page.dart';
 import 'package:basement_music/pages/home_page_wrapper.dart';
 import 'package:basement_music/pages/upload/from_device/upload_from_device.dart';
 import 'package:basement_music/pages/upload/from_youtube/extract_from_youtube.dart';
+import 'package:basement_music/pages/upload/from_soulseek/soulseek_search_page.dart';
 import 'package:basement_music/pages/upload/upload_page.dart';
 import 'package:basement_music/routing/app_scaffold_shell.dart';
 import 'package:basement_music/routing/routes.dart';
@@ -114,6 +115,10 @@ class AppRouter {
                     GoRoute(
                       path: 'fromYoutube',
                       pageBuilder: (_, _) => const MaterialPage(child: ExtractFromYoutubePage()),
+                    ),
+                    GoRoute(
+                      path: 'fromSoulseek',
+                      pageBuilder: (_, _) => const MaterialPage(child: SoulseekSearchPage()),
                     ),
                   ],
                 ),
