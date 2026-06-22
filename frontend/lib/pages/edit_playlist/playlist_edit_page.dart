@@ -161,16 +161,16 @@ class _EditView extends StatelessWidget {
           onReorderItem: onReorder,
           itemBuilder: (context, index) {
             final track = tracks[index];
-            return ReorderableDragStartListener(
+            return SelectionContainer.disabled(
               key: ValueKey(track.id),
-              index: index,
-              child: SelectionContainer.disabled(
-                child: ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  leading: const Icon(Icons.drag_handle),
-                  title: Text(track.title, maxLines: 1, overflow: TextOverflow.ellipsis),
-                  subtitle: Text(track.artist, maxLines: 1, overflow: TextOverflow.ellipsis),
+              child: ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: ReorderableDragStartListener(
+                  index: index,
+                  child: const Icon(Icons.drag_handle),
                 ),
+                title: Text(track.title, maxLines: 1, overflow: TextOverflow.ellipsis),
+                subtitle: Text(track.artist, maxLines: 1, overflow: TextOverflow.ellipsis),
               ),
             );
           },
