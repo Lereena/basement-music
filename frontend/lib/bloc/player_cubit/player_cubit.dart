@@ -17,7 +17,16 @@ class PlayerCubit extends Cubit<PlayerState> {
 
   PlayerCubit({required this.tracksRepository, required this.audioHandler})
     : super(PlayerState.initial(currentTrack: Track.empty())) {
-    audioHandler.onPlayerComplete.listen((_) => next());
+    audioHandler.onPlayerComplete.listen((_) {
+      // Previews (Soulseek temp tracks) pause back at the start for replay
+      // instead of advancing to a next track.
+      if (audioHandler.isPreview) {
+        audioHandler.pausePreviewAtStart();
+        emit(PlayerState.pause(currentTrack: state.currentTrack));
+      } else {
+        next();
+      }
+    });
 
     audioHandler.playbackState.listen((playbackState) {
       if (playbackState.playing) {

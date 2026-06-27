@@ -32,6 +32,24 @@ class AudioPlayerHandler extends BaseAudioHandler {
 
   Playlist currentPlaylist = Playlist.empty();
 
+  // A preview is a one-off stream (e.g. a Soulseek temp track) rather than a
+  // library track, so it should not advance to a "next" track on completion.
+  bool get isPreview => mediaItem.valueOrNull?.extras?['streamUrl'] != null;
+
+  // Mark a finished preview as paused at its start so it can be replayed.
+  // Don't touch _audioPlayer here: on iOS the item is already released after
+  // natural completion and re-poking it throws. Replay re-sets a fresh source.
+  void pausePreviewAtStart() {
+    playbackState.add(
+      playbackState.value.copyWith(
+        playing: false,
+        controls: [MediaControl.play],
+        updatePosition: Duration.zero,
+        processingState: AudioProcessingState.ready,
+      ),
+    );
+  }
+
   void addMediaItem(Track track, {String? streamUrl}) {
     mediaItem.add(
       MediaItem(
@@ -48,9 +66,10 @@ class AudioPlayerHandler extends BaseAudioHandler {
 
   @override
   Future<void> play() async {
-    if (!mediaItem.hasValue) return;
+    final item = mediaItem.valueOrNull;
+    if (item == null) return;
 
-    final streamUrl = mediaItem.value!.extras?['streamUrl'] as String?;
+    final streamUrl = item.extras?['streamUrl'] as String?;
     if (streamUrl != null) {
       await _audioPlayer.play(UrlSource(streamUrl));
       playbackState.add(
@@ -64,7 +83,7 @@ class AudioPlayerHandler extends BaseAudioHandler {
       return;
     }
 
-    final trackId = mediaItem.value!.id;
+    final trackId = item.id;
     final cachedFile = await cacheRepository.retrieveTrack(trackId);
 
     if (cachedFile == null) {
