@@ -4,6 +4,7 @@ import 'package:basement_music/audio_player_handler.dart';
 import 'package:basement_music/models/playlist.dart';
 import 'package:basement_music/models/track.dart';
 import 'package:basement_music/repositories/repositories.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -27,8 +28,11 @@ class PlayerCubit extends Cubit<PlayerState> {
     });
 
     tracksRepository.tracksSubject.listen((tracks) {
-      if (state.currentTrack != Track.empty() && tracks.isNotEmpty) {
-        _updateTrack(tracks.firstWhere((track) => track.id == state.currentTrack.id));
+      if (state.currentTrack != Track.empty()) {
+        final currentTrack = tracks.firstWhereOrNull((track) => track.id == state.currentTrack.id);
+        if (currentTrack != null) {
+          _updateTrack(currentTrack);
+        }
       }
     });
   }
