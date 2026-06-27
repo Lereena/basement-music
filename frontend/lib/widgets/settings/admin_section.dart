@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class AdminSection extends StatelessWidget {
-  const AdminSection({super.key});
+class UserManagementSection extends StatelessWidget {
+  const UserManagementSection({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +16,7 @@ class AdminSection extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Text(
-            'Admin',
+            'User management',
             style: theme.textTheme.titleMedium?.copyWith(color: theme.colorScheme.primary, fontWeight: FontWeight.bold),
           ),
         ),
@@ -25,7 +25,6 @@ class AdminSection extends StatelessWidget {
           title: const Text('Generate registration code'),
           onTap: () => context.read<AdminCubit>().generateCode(),
         ),
-        const Divider(),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
           child: Text('Registration codes', style: theme.textTheme.labelLarge),
@@ -38,13 +37,14 @@ class AdminSection extends StatelessWidget {
               child: Center(child: CircularProgressIndicator()),
             ),
             loaded: (codes) => codes.isEmpty
-                ? const Padding(padding: EdgeInsets.all(16), child: Text('No codes yet.'))
+                ? const Padding(padding: EdgeInsets.all(16), child: Text('No codes yet'))
                 : ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: codes.length,
                     itemBuilder: (_, i) {
                       final code = codes[i];
+
                       return ListTile(
                         dense: true,
                         leading: Icon(
@@ -54,16 +54,23 @@ class AdminSection extends StatelessWidget {
                         ),
                         title: Text(code.code, style: const TextStyle(fontFamily: 'monospace', fontSize: 13)),
                         subtitle: code.isUsed ? Text('Used by: ${code.usedByEmail}') : const Text('Unused'),
-                        trailing: IconButton(
-                          icon: const Icon(Icons.copy, size: 18),
-                          tooltip: 'Copy code',
-                          onPressed: () async {
-                            await Clipboard.setData(ClipboardData(text: code.code));
-                            if (!context.mounted) return;
-                            ScaffoldMessenger.of(
-                              context,
-                            ).showSnackBar(const SnackBar(content: Text('Code copied to clipboard')));
-                          },
+                        trailing: Opacity(
+                          opacity: code.isUsed ? 0 : 1,
+                          child: IconButton(
+                            icon: const Icon(Icons.copy, size: 18),
+                            tooltip: 'Copy code',
+                            onPressed: code.isUsed
+                                ? null
+                                : () async {
+                                    await Clipboard.setData(ClipboardData(text: code.code));
+
+                                    if (!context.mounted) return;
+
+                                    ScaffoldMessenger.of(
+                                      context,
+                                    ).showSnackBar(const SnackBar(content: Text('Code copied to clipboard')));
+                                  },
+                          ),
                         ),
                       );
                     },
