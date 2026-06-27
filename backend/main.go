@@ -12,6 +12,7 @@ import (
 
 	"github.com/Lereena/server_basement_music/config"
 	"github.com/Lereena/server_basement_music/middleware"
+	"github.com/Lereena/server_basement_music/models"
 	"github.com/Lereena/server_basement_music/repositories"
 )
 
@@ -59,6 +60,18 @@ func main() {
 		Cfg:       &cfg,
 	}
 
+	soulseekWorker := NewSoulseekWorker(&cfg)
+	slskRepo := &SoulseekRepository{
+		DB:          db,
+		Cfg:         &cfg,
+		Worker:      soulseekWorker,
+		musicRepo:   musicRepo,
+		artistsRepo: artistsRepo,
+	}
+	db.AutoMigrate(&models.SoulseekCredentials{}, &models.SoulseekSettings{})
+	// Auto-reconnect using stored credentials, if any.
+	go slskRepo.Connect()
+
 	authMW := middleware.AuthMiddleware(authClient, db)
 	tokenOnlyMW := middleware.TokenOnlyMiddleware(authClient)
 
@@ -77,6 +90,9 @@ func main() {
 	router.HandleFunc("/artist/{id}/image", artistsRepo.GetArtistImage).Methods("GET")
 	router.HandleFunc("/playlist/{id}/image", playlistsRepo.GetPlaylistImage).Methods("GET")
 
+	// Temp Soulseek audio is public — audioplayers can't attach headers, IDs are non-enumerable UUIDs
+	router.HandleFunc("/soulseek/temp/{id}", slskRepo.ServeTemp).Methods("GET")
+
 	// All other routes require a registered user
 	protected := router.PathPrefix("").Subrouter()
 	protected.Use(authMW)
@@ -93,6 +109,11 @@ func main() {
 	admin.Use(middleware.AdminMiddleware)
 	admin.HandleFunc("/registration-codes", adminRepo.GenerateCode).Methods("POST")
 	admin.HandleFunc("/registration-codes", adminRepo.ListCodes).Methods("GET")
+	admin.HandleFunc("/soulseek/credentials", slskRepo.SetCredentials).Methods("POST")
+	admin.HandleFunc("/soulseek/status", slskRepo.GetStatus).Methods("GET")
+	admin.HandleFunc("/soulseek/disconnect", slskRepo.Disconnect).Methods("POST")
+	admin.HandleFunc("/soulseek/settings", slskRepo.GetSettings).Methods("GET")
+	admin.HandleFunc("/soulseek/settings", slskRepo.SetSettings).Methods("POST")
 
 	protected.HandleFunc("/tracks", musicRepo.GetTracks).Methods("GET")
 	protected.HandleFunc("/tracks/search", musicRepo.SearchTracks).Methods("GET")
@@ -103,6 +124,13 @@ func main() {
 
 	protected.HandleFunc("/yt/fetchVideoInfo", youtubeWorker.FetchVideoInfo).Methods("GET")
 	protected.HandleFunc("/yt/download", youtubeWorker.FetchFromYoutube).Methods("GET")
+
+	protected.HandleFunc("/soulseek/connection", slskRepo.GetConnection).Methods("GET")
+	protected.HandleFunc("/soulseek/search", slskRepo.Search).Methods("GET")
+	protected.HandleFunc("/soulseek/search/results", slskRepo.SearchResults).Methods("GET")
+	protected.HandleFunc("/soulseek/preload", slskRepo.Preload).Methods("POST")
+	protected.HandleFunc("/soulseek/save", slskRepo.SaveTrack).Methods("POST")
+	protected.HandleFunc("/soulseek/temp", slskRepo.CleanupSession).Methods("DELETE")
 
 	protected.HandleFunc("/playlists", playlistsRepo.GetAllPlaylists).Methods("GET")
 	protected.HandleFunc("/playlist/{id}", playlistsRepo.GetPlaylist).Methods("GET")

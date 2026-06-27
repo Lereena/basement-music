@@ -1,12 +1,12 @@
 import 'dart:async';
 
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
-
 import 'package:basement_music/audio_player_handler.dart';
 import 'package:basement_music/models/playlist.dart';
 import 'package:basement_music/models/track.dart';
 import 'package:basement_music/repositories/repositories.dart';
+import 'package:collection/collection.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'player_cubit.freezed.dart';
 part 'player_state.dart';
@@ -15,35 +15,40 @@ class PlayerCubit extends Cubit<PlayerState> {
   final TracksRepository tracksRepository;
   final AudioPlayerHandler audioHandler;
 
-  PlayerCubit({
-    required this.tracksRepository,
-    required this.audioHandler,
-  }) : super(PlayerState.initial(currentTrack: Track.empty())) {
-    audioHandler.onPlayerComplete.listen((_) => next());
+  PlayerCubit({required this.tracksRepository, required this.audioHandler})
+    : super(PlayerState.initial(currentTrack: Track.empty())) {
+    audioHandler.onPlayerComplete.listen((_) {
+      // Previews (Soulseek temp tracks) pause back at the start for replay
+      // instead of advancing to a next track.
+      if (audioHandler.isPreview) {
+        audioHandler.pausePreviewAtStart();
+        emit(PlayerState.pause(currentTrack: state.currentTrack));
+      } else {
+        next();
+      }
+    });
 
-    audioHandler.playbackState.listen(
-      (playbackState) {
-        if (playbackState.playing) {
-          _playByExternalControls();
-        } else {
-          _pauseExternally();
-        }
-      },
-    );
+    audioHandler.playbackState.listen((playbackState) {
+      if (playbackState.playing) {
+        _playByExternalControls();
+      } else {
+        _pauseExternally();
+      }
+    });
 
     tracksRepository.tracksSubject.listen((tracks) {
       if (state.currentTrack != Track.empty()) {
-        _updateTrack(
-          tracks.firstWhere((track) => track.id == state.currentTrack.id),
-        );
+        final currentTrack = tracks.firstWhereOrNull((track) => track.id == state.currentTrack.id);
+        if (currentTrack != null) {
+          _updateTrack(currentTrack);
+        }
       }
     });
   }
 
-  Future<void> play({required Track track, Playlist? playlist}) async {
-    audioHandler.currentPlaylist =
-        playlist ?? Playlist.anonymous(tracksRepository.items);
-    audioHandler.addMediaItem(track);
+  Future<void> play({required Track track, Playlist? playlist, String? streamUrl}) async {
+    audioHandler.currentPlaylist = playlist ?? Playlist.anonymous(tracksRepository.items);
+    audioHandler.addMediaItem(track, streamUrl: streamUrl);
     await audioHandler.play();
     emit(PlayerState.play(currentTrack: track));
   }
@@ -83,6 +88,8 @@ class PlayerCubit extends Cubit<PlayerState> {
     );
   }
 
-  Track get _currentTrack => tracksRepository.items
-      .firstWhere((track) => track.id == audioHandler.mediaItem.value?.id);
+  Track get _currentTrack => tracksRepository.items.firstWhere(
+    (track) => track.id == audioHandler.mediaItem.value?.id,
+    orElse: () => state.currentTrack,
+  );
 }

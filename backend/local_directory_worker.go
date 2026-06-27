@@ -40,6 +40,9 @@ func (ldw *LocalDirectoryWorker) ScanMusicDirectory() {
 	}
 
 	for _, f := range files {
+		if f.IsDir() {
+			continue
+		}
 		result := ldw.musicRepo.DB.Where("Url = ?", f.Name()).Limit(1).Find(&models.Track{})
 		if result.RowsAffected == 0 {
 			ldw.saveTrack(f.Name())

@@ -5,12 +5,15 @@ import 'package:basement_music/bloc/connectivity_status_cubit/connectivity_statu
 import 'package:basement_music/bloc/favourites_cubit/favourites_cubit.dart';
 import 'package:basement_music/bloc/player_cubit/player_cubit.dart';
 import 'package:basement_music/bloc/settings_cubit/settings_cubit.dart';
+import 'package:basement_music/bloc/soulseek_login_cubit/soulseek_login_cubit.dart';
+import 'package:basement_music/bloc/soulseek_settings_cubit/soulseek_settings_cubit.dart';
 import 'package:basement_music/bloc/track_progress_cubit/track_progress_cubit.dart';
 import 'package:basement_music/repositories/admin_repository.dart';
 import 'package:basement_music/repositories/artists_repository.dart';
 import 'package:basement_music/repositories/auth_repository.dart';
 import 'package:basement_music/repositories/favourites_repository.dart';
 import 'package:basement_music/repositories/repositories.dart';
+import 'package:basement_music/repositories/soulseek_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -28,6 +31,7 @@ class ProviderWrapper extends StatelessWidget {
     required this.authRepository,
     required this.favouritesRepository,
     required this.adminRepository,
+    required this.soulseekRepository,
     required this.authCubit,
   });
 
@@ -42,6 +46,7 @@ class ProviderWrapper extends StatelessWidget {
   final AuthRepository authRepository;
   final FavouritesRepository favouritesRepository;
   final AdminRepository adminRepository;
+  final SoulseekRepository soulseekRepository;
   final AuthCubit authCubit;
 
   @override
@@ -58,10 +63,13 @@ class ProviderWrapper extends StatelessWidget {
         RepositoryProvider.value(value: authRepository),
         RepositoryProvider.value(value: favouritesRepository),
         RepositoryProvider.value(value: adminRepository),
+        RepositoryProvider.value(value: soulseekRepository),
       ],
       child: MultiBlocProvider(
         providers: [
           BlocProvider.value(value: authCubit),
+          BlocProvider(create: (_) => SoulseekLoginCubit(soulseekRepository)..loadStatus()),
+          BlocProvider(create: (_) => SoulseekSettingsCubit(soulseekRepository)..load()),
           BlocProvider(create: (_) => FavouritesCubit(favouritesRepository)..loadFavourites()),
           BlocProvider(create: (_) => ConnectivityStatusCubit(connectivityStatusRepository)),
           BlocProvider(create: (_) => TrackProgressCubit(audioHandler)),

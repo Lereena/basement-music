@@ -30,7 +30,7 @@ class _SearchPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: BasementAppBar(title: 'Search tracks'),
+      appBar: BasementAppBar(title: 'Search tracks', scrolledUnderElevation: 0),
       body: HorizontalSpaceReducer(
         child: Column(
           children: [

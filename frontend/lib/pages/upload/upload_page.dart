@@ -21,6 +21,12 @@ class UploadPage extends StatelessWidget {
                 icon: const Icon(Icons.upload_file_outlined),
                 label: const Text('Upload from device'),
               ),
+              const SizedBox(height: 16),
+              ElevatedButton.icon(
+                onPressed: () => context.go(RouteName.uploadFromSoulseek),
+                icon: const Icon(Icons.travel_explore),
+                label: const Text('Search Soulseek'),
+              ),
               // const SizedBox(height: 16),
               // ElevatedButton.icon(
               //   onPressed: () => context.go(RouteName.uploadFromYoutube),
