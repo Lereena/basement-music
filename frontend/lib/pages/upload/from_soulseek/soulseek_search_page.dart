@@ -44,7 +44,7 @@ class _SoulseekSearchViewState extends State<_SoulseekSearchView> {
     final cubit = context.read<SoulseekSearchCubit>();
 
     return Scaffold(
-      appBar: BasementAppBar(title: 'Search Soulseek'),
+      appBar: BasementAppBar(title: 'Search Soulseek', scrolledUnderElevation: 0),
       body: HorizontalSpaceReducer(
         child: Column(
           children: [
