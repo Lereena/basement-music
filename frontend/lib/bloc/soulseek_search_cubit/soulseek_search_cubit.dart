@@ -23,7 +23,8 @@ class SoulseekSearchCubit extends Cubit<SoulseekSearchState> {
     emit(const SoulseekSearchState.loading());
     try {
       final results = await _repo.search(query);
-      emit(SoulseekSearchState.loaded(results: results, preloaded: const []));
+
+      emit(SoulseekSearchState.loaded(results: results));
     } on DioException catch (e) {
       // 503 means the daemon isn't connected yet -- the backend kicked off a
       // background connect. Surface "connecting" and wait, or report the failure.
@@ -79,30 +80,39 @@ class SoulseekSearchCubit extends Cubit<SoulseekSearchState> {
 
   Future<void> retry() => search(_lastQuery);
 
-  Future<void> preload(SoulseekSearchResult result) async {
+  void _updatePreload(String key, SoulseekPreload entry) {
     final current = state.mapOrNull(loaded: (s) => s);
     if (current == null) return;
+    emit(current.copyWith(preloads: {...current.preloads, key: entry}));
+  }
 
-    emit(current.copyWith(preloadInProgress: true, preloadError: null));
+  Future<void> preload(SoulseekSearchResult result) async {
+    final key = resultKey(result);
+
+    _updatePreload(key, const SoulseekPreload.loading());
+
     try {
       final temp = await _repo.preload(result);
-      emit(current.copyWith(preloaded: [...current.preloaded, temp], preloadInProgress: false));
+
+      _updatePreload(key, SoulseekPreload.ready(temp));
     } catch (e) {
       logger.e('Soulseek preload failed: $e');
-      emit(current.copyWith(preloadInProgress: false, preloadError: 'Peer refused — try another'));
+
+      _updatePreload(key, const SoulseekPreload.error(message: 'Peer refused — try another'));
     }
   }
 
-  Future<void> save(String tempId) async {
-    final current = state.mapOrNull(loaded: (s) => s);
-    if (current == null) return;
+  Future<void> save(SoulseekSearchResult result, String tempId) async {
+    final key = resultKey(result);
 
     try {
       await _repo.save(tempId);
-      emit(current.copyWith(preloaded: current.preloaded.where((t) => t.id != tempId).toList()));
+
+      _updatePreload(key, const SoulseekPreload.saved());
     } catch (e) {
       logger.e('Soulseek save failed: $e');
-      emit(current.copyWith(preloadError: 'Failed to save track'));
+
+      _updatePreload(key, const SoulseekPreload.error(message: 'Failed to save track'));
     }
   }
 

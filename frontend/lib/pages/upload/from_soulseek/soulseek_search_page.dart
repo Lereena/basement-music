@@ -48,19 +48,7 @@ class _SoulseekSearchViewState extends State<_SoulseekSearchView> {
           children: [
             SearchField(autofocus: true, onSearch: cubit.search),
             Expanded(
-              child: BlocConsumer<SoulseekSearchCubit, SoulseekSearchState>(
-                listenWhen: (prev, curr) =>
-                    curr.maybeWhen(loaded: (_, _, _, error) => error != null, orElse: () => false),
-                listener: (context, state) {
-                  state.maybeWhen(
-                    loaded: (_, _, _, error) {
-                      if (error != null) {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error)));
-                      }
-                    },
-                    orElse: () {},
-                  );
-                },
+              child: BlocBuilder<SoulseekSearchCubit, SoulseekSearchState>(
                 builder: (context, state) => state.when(
                   initial: () => const Center(child: Text('Search the Soulseek network')),
                   loading: () => const Center(child: CircularProgressIndicator()),
@@ -90,8 +78,7 @@ class _SoulseekSearchViewState extends State<_SoulseekSearchView> {
                     ),
                   ),
                   error: () => const Center(child: Text('Search failed. Try again.')),
-                  loaded: (results, preloaded, preloadInProgress, _) =>
-                      _LoadedView(results: results, preloaded: preloaded, preloadInProgress: preloadInProgress),
+                  loaded: (results, preloads) => _LoadedView(results: results, preloads: preloads),
                 ),
               ),
             ),
@@ -103,55 +90,37 @@ class _SoulseekSearchViewState extends State<_SoulseekSearchView> {
 }
 
 class _LoadedView extends StatelessWidget {
-  const _LoadedView({required this.results, required this.preloaded, required this.preloadInProgress});
+  const _LoadedView({required this.results, required this.preloads});
 
   final List<SoulseekSearchResult> results;
-  final List<SoulseekTempTrack> preloaded;
-  final bool preloadInProgress;
+  final Map<String, SoulseekPreload> preloads;
 
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<SoulseekSearchCubit>();
 
-    return Column(
-      children: [
-        const SizedBox(height: 12),
-        Expanded(
-          child: results.isEmpty
-              ? const Center(child: Text('No results'))
-              : ListView.builder(
-                  itemCount: results.length,
-                  itemBuilder: (_, i) => _ResultCard(result: results[i], onPreview: () => cubit.preload(results[i])),
-                ),
-        ),
-        if (preloaded.isNotEmpty) ...[
-          const Divider(),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text('Preloaded', style: Theme.of(context).textTheme.titleSmall),
+    return results.isEmpty
+        ? const Center(child: Text('No results'))
+        : ListView.builder(
+            padding: const EdgeInsets.only(top: 12),
+            itemCount: results.length,
+            itemBuilder: (_, i) => _ResultCard(
+              result: results[i],
+              preload: preloads[resultKey(results[i])],
+              onPreload: () => cubit.preload(results[i]),
+              onSave: (temp) => cubit.save(results[i], temp.id),
             ),
-          ),
-          ConstrainedBox(
-            constraints: const BoxConstraints(maxHeight: 200),
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: preloaded.length,
-              itemBuilder: (_, i) => _PreloadedCard(temp: preloaded[i]),
-            ),
-          ),
-        ],
-      ],
-    );
+          );
   }
 }
 
 class _ResultCard extends StatefulWidget {
-  const _ResultCard({required this.result, required this.onPreview});
+  const _ResultCard({required this.result, required this.preload, required this.onPreload, required this.onSave});
 
   final SoulseekSearchResult result;
-  final VoidCallback onPreview;
+  final SoulseekPreload? preload;
+  final VoidCallback onPreload;
+  final void Function(SoulseekTempTrack temp) onSave;
 
   @override
   State<_ResultCard> createState() => _ResultCardState();
@@ -178,9 +147,70 @@ class _ResultCardState extends State<_ResultCard> {
     return parts.join(' · ');
   }
 
+  void _play(SoulseekTempTrack temp) {
+    final playerCubit = context.read<PlayerCubit>();
+    final baseUrl = playerCubit.audioHandler.appConfig.baseUrl;
+    final track = Track(
+      id: temp.id,
+      title: temp.title.isEmpty ? 'Unknown title' : temp.title,
+      artist: temp.artist,
+      duration: temp.duration,
+    );
+    playerCubit.play(
+      track: track,
+      streamUrl: '$baseUrl/api/soulseek/temp/${temp.id}',
+      playlist: Playlist.anonymous([track]),
+    );
+  }
+
+  // In-place leading control: preload → loading → play / saved / retry.
+  Widget _leading() {
+    final preload = widget.preload;
+
+    if (preload == null) {
+      return IconButton(
+        icon: const Icon(Icons.download_for_offline_outlined),
+        tooltip: 'Preload',
+        onPressed: widget.onPreload,
+      );
+    }
+
+    return preload.when(
+      loading: () => const Padding(
+        padding: EdgeInsets.all(14),
+        child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)),
+      ),
+      ready: (temp) => BlocBuilder<PlayerCubit, PlayerState>(
+        builder: (context, playerState) {
+          final isCurrent = playerState.currentTrack.id == temp.id;
+
+          if (isCurrent && playerState.isPlay) {
+            return IconButton(
+              icon: const Icon(Icons.pause),
+              tooltip: 'Pause',
+              onPressed: () => context.read<PlayerCubit>().pause(),
+            );
+          }
+
+          return IconButton(icon: const Icon(Icons.play_arrow), tooltip: 'Play', onPressed: () => _play(temp));
+        },
+      ),
+      saved: () => const Padding(
+        padding: EdgeInsets.all(8),
+        child: Icon(Icons.check_circle, color: Colors.green),
+      ),
+      error: (_) => IconButton(
+        icon: Icon(Icons.error_outline, color: Theme.of(context).colorScheme.error),
+        tooltip: 'Retry',
+        onPressed: widget.onPreload,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final ready = widget.preload?.mapOrNull(ready: (s) => s.temp);
 
     return Column(
       children: [
@@ -188,11 +218,7 @@ class _ResultCardState extends State<_ResultCard> {
           onTap: () => setState(() => _expanded = !_expanded),
           child: Row(
             children: [
-              IconButton(
-                icon: const Icon(Icons.download_for_offline_outlined),
-                tooltip: 'Preload',
-                onPressed: widget.onPreview,
-              ),
+              _leading(),
               Expanded(
                 child: Text(
                   _basename,
@@ -201,7 +227,12 @@ class _ResultCardState extends State<_ResultCard> {
                   style: const TextStyle(fontSize: 16),
                 ),
               ),
-
+              if (ready != null)
+                TextButton.icon(
+                  icon: const Icon(Icons.library_add_outlined, size: 18),
+                  label: const Text('Save'),
+                  onPressed: () => widget.onSave(ready),
+                ),
               AnimatedRotation(
                 turns: _expanded ? 0.5 : 0,
                 duration: const Duration(milliseconds: 150),
@@ -251,46 +282,6 @@ class _DetailRow extends StatelessWidget {
           ),
           Expanded(child: Text(value, style: theme.textTheme.bodyMedium)),
         ],
-      ),
-    );
-  }
-}
-
-class _PreloadedCard extends StatelessWidget {
-  const _PreloadedCard({required this.temp});
-
-  final SoulseekTempTrack temp;
-
-  @override
-  Widget build(BuildContext context) {
-    final cubit = context.read<SoulseekSearchCubit>();
-    final playerCubit = context.read<PlayerCubit>();
-    final baseUrl = playerCubit.audioHandler.appConfig.baseUrl;
-
-    final track = Track(
-      id: temp.id,
-      title: temp.title.isEmpty ? 'Unknown title' : temp.title,
-      artist: temp.artist,
-      duration: temp.duration,
-    );
-
-    return ListTile(
-      dense: true,
-      leading: IconButton(
-        icon: const Icon(Icons.play_arrow),
-        tooltip: 'Play',
-        onPressed: () => playerCubit.play(
-          track: track,
-          streamUrl: '$baseUrl/api/soulseek/temp/${temp.id}',
-          playlist: Playlist.anonymous([track]),
-        ),
-      ),
-      title: Text(track.title, maxLines: 1, overflow: TextOverflow.ellipsis),
-      subtitle: Text(temp.artist),
-      trailing: TextButton.icon(
-        icon: const Icon(Icons.library_add_outlined, size: 18),
-        label: const Text('Save'),
-        onPressed: () => cubit.save(temp.id),
       ),
     );
   }

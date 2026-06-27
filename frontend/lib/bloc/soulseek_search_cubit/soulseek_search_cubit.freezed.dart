@@ -134,14 +134,14 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function()?  connecting,TResult Function( String reason)?  connectionFailed,TResult Function( List<SoulseekSearchResult> results,  List<SoulseekTempTrack> preloaded,  bool preloadInProgress,  String? preloadError)?  loaded,TResult Function()?  error,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function()?  connecting,TResult Function( String reason)?  connectionFailed,TResult Function( List<SoulseekSearchResult> results,  Map<String, SoulseekPreload> preloads)?  loaded,TResult Function()?  error,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial();case _Loading() when loading != null:
 return loading();case _Connecting() when connecting != null:
 return connecting();case _ConnectionFailed() when connectionFailed != null:
 return connectionFailed(_that.reason);case _Loaded() when loaded != null:
-return loaded(_that.results,_that.preloaded,_that.preloadInProgress,_that.preloadError);case _Error() when error != null:
+return loaded(_that.results,_that.preloads);case _Error() when error != null:
 return error();case _:
   return orElse();
 
@@ -160,14 +160,14 @@ return error();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function()  connecting,required TResult Function( String reason)  connectionFailed,required TResult Function( List<SoulseekSearchResult> results,  List<SoulseekTempTrack> preloaded,  bool preloadInProgress,  String? preloadError)  loaded,required TResult Function()  error,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function()  connecting,required TResult Function( String reason)  connectionFailed,required TResult Function( List<SoulseekSearchResult> results,  Map<String, SoulseekPreload> preloads)  loaded,required TResult Function()  error,}) {final _that = this;
 switch (_that) {
 case _Initial():
 return initial();case _Loading():
 return loading();case _Connecting():
 return connecting();case _ConnectionFailed():
 return connectionFailed(_that.reason);case _Loaded():
-return loaded(_that.results,_that.preloaded,_that.preloadInProgress,_that.preloadError);case _Error():
+return loaded(_that.results,_that.preloads);case _Error():
 return error();case _:
   throw StateError('Unexpected subclass');
 
@@ -185,14 +185,14 @@ return error();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function()?  connecting,TResult? Function( String reason)?  connectionFailed,TResult? Function( List<SoulseekSearchResult> results,  List<SoulseekTempTrack> preloaded,  bool preloadInProgress,  String? preloadError)?  loaded,TResult? Function()?  error,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function()?  connecting,TResult? Function( String reason)?  connectionFailed,TResult? Function( List<SoulseekSearchResult> results,  Map<String, SoulseekPreload> preloads)?  loaded,TResult? Function()?  error,}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial();case _Loading() when loading != null:
 return loading();case _Connecting() when connecting != null:
 return connecting();case _ConnectionFailed() when connectionFailed != null:
 return connectionFailed(_that.reason);case _Loaded() when loaded != null:
-return loaded(_that.results,_that.preloaded,_that.preloadInProgress,_that.preloadError);case _Error() when error != null:
+return loaded(_that.results,_that.preloads);case _Error() when error != null:
 return error();case _:
   return null;
 
@@ -367,7 +367,7 @@ as String,
 
 
 class _Loaded implements SoulseekSearchState {
-  const _Loaded({required final  List<SoulseekSearchResult> results, required final  List<SoulseekTempTrack> preloaded, this.preloadInProgress = false, this.preloadError}): _results = results,_preloaded = preloaded;
+  const _Loaded({required final  List<SoulseekSearchResult> results, final  Map<String, SoulseekPreload> preloads = const {}}): _results = results,_preloads = preloads;
   
 
  final  List<SoulseekSearchResult> _results;
@@ -377,15 +377,15 @@ class _Loaded implements SoulseekSearchState {
   return EqualUnmodifiableListView(_results);
 }
 
- final  List<SoulseekTempTrack> _preloaded;
- List<SoulseekTempTrack> get preloaded {
-  if (_preloaded is EqualUnmodifiableListView) return _preloaded;
+// Keyed by resultKey(result): per-card preload lifecycle.
+ final  Map<String, SoulseekPreload> _preloads;
+// Keyed by resultKey(result): per-card preload lifecycle.
+@JsonKey() Map<String, SoulseekPreload> get preloads {
+  if (_preloads is EqualUnmodifiableMapView) return _preloads;
   // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_preloaded);
+  return EqualUnmodifiableMapView(_preloads);
 }
 
-@JsonKey() final  bool preloadInProgress;
- final  String? preloadError;
 
 /// Create a copy of SoulseekSearchState
 /// with the given fields replaced by the non-null parameter values.
@@ -397,16 +397,16 @@ _$LoadedCopyWith<_Loaded> get copyWith => __$LoadedCopyWithImpl<_Loaded>(this, _
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Loaded&&const DeepCollectionEquality().equals(other._results, _results)&&const DeepCollectionEquality().equals(other._preloaded, _preloaded)&&(identical(other.preloadInProgress, preloadInProgress) || other.preloadInProgress == preloadInProgress)&&(identical(other.preloadError, preloadError) || other.preloadError == preloadError));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Loaded&&const DeepCollectionEquality().equals(other._results, _results)&&const DeepCollectionEquality().equals(other._preloads, _preloads));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_results),const DeepCollectionEquality().hash(_preloaded),preloadInProgress,preloadError);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_results),const DeepCollectionEquality().hash(_preloads));
 
 @override
 String toString() {
-  return 'SoulseekSearchState.loaded(results: $results, preloaded: $preloaded, preloadInProgress: $preloadInProgress, preloadError: $preloadError)';
+  return 'SoulseekSearchState.loaded(results: $results, preloads: $preloads)';
 }
 
 
@@ -417,7 +417,7 @@ abstract mixin class _$LoadedCopyWith<$Res> implements $SoulseekSearchStateCopyW
   factory _$LoadedCopyWith(_Loaded value, $Res Function(_Loaded) _then) = __$LoadedCopyWithImpl;
 @useResult
 $Res call({
- List<SoulseekSearchResult> results, List<SoulseekTempTrack> preloaded, bool preloadInProgress, String? preloadError
+ List<SoulseekSearchResult> results, Map<String, SoulseekPreload> preloads
 });
 
 
@@ -434,13 +434,11 @@ class __$LoadedCopyWithImpl<$Res>
 
 /// Create a copy of SoulseekSearchState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? results = null,Object? preloaded = null,Object? preloadInProgress = null,Object? preloadError = freezed,}) {
+@pragma('vm:prefer-inline') $Res call({Object? results = null,Object? preloads = null,}) {
   return _then(_Loaded(
 results: null == results ? _self._results : results // ignore: cast_nullable_to_non_nullable
-as List<SoulseekSearchResult>,preloaded: null == preloaded ? _self._preloaded : preloaded // ignore: cast_nullable_to_non_nullable
-as List<SoulseekTempTrack>,preloadInProgress: null == preloadInProgress ? _self.preloadInProgress : preloadInProgress // ignore: cast_nullable_to_non_nullable
-as bool,preloadError: freezed == preloadError ? _self.preloadError : preloadError // ignore: cast_nullable_to_non_nullable
-as String?,
+as List<SoulseekSearchResult>,preloads: null == preloads ? _self._preloads : preloads // ignore: cast_nullable_to_non_nullable
+as Map<String, SoulseekPreload>,
   ));
 }
 
@@ -478,5 +476,379 @@ String toString() {
 
 
 
+
+/// @nodoc
+mixin _$SoulseekPreload {
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SoulseekPreload);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'SoulseekPreload()';
+}
+
+
+}
+
+/// @nodoc
+class $SoulseekPreloadCopyWith<$Res>  {
+$SoulseekPreloadCopyWith(SoulseekPreload _, $Res Function(SoulseekPreload) __);
+}
+
+
+/// Adds pattern-matching-related methods to [SoulseekPreload].
+extension SoulseekPreloadPatterns on SoulseekPreload {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _PreloadLoading value)?  loading,TResult Function( _PreloadReady value)?  ready,TResult Function( _PreloadSaved value)?  saved,TResult Function( _PreloadError value)?  error,required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _PreloadLoading() when loading != null:
+return loading(_that);case _PreloadReady() when ready != null:
+return ready(_that);case _PreloadSaved() when saved != null:
+return saved(_that);case _PreloadError() when error != null:
+return error(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _PreloadLoading value)  loading,required TResult Function( _PreloadReady value)  ready,required TResult Function( _PreloadSaved value)  saved,required TResult Function( _PreloadError value)  error,}){
+final _that = this;
+switch (_that) {
+case _PreloadLoading():
+return loading(_that);case _PreloadReady():
+return ready(_that);case _PreloadSaved():
+return saved(_that);case _PreloadError():
+return error(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _PreloadLoading value)?  loading,TResult? Function( _PreloadReady value)?  ready,TResult? Function( _PreloadSaved value)?  saved,TResult? Function( _PreloadError value)?  error,}){
+final _that = this;
+switch (_that) {
+case _PreloadLoading() when loading != null:
+return loading(_that);case _PreloadReady() when ready != null:
+return ready(_that);case _PreloadSaved() when saved != null:
+return saved(_that);case _PreloadError() when error != null:
+return error(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  loading,TResult Function( SoulseekTempTrack temp)?  ready,TResult Function()?  saved,TResult Function( String message)?  error,required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _PreloadLoading() when loading != null:
+return loading();case _PreloadReady() when ready != null:
+return ready(_that.temp);case _PreloadSaved() when saved != null:
+return saved();case _PreloadError() when error != null:
+return error(_that.message);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  loading,required TResult Function( SoulseekTempTrack temp)  ready,required TResult Function()  saved,required TResult Function( String message)  error,}) {final _that = this;
+switch (_that) {
+case _PreloadLoading():
+return loading();case _PreloadReady():
+return ready(_that.temp);case _PreloadSaved():
+return saved();case _PreloadError():
+return error(_that.message);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  loading,TResult? Function( SoulseekTempTrack temp)?  ready,TResult? Function()?  saved,TResult? Function( String message)?  error,}) {final _that = this;
+switch (_that) {
+case _PreloadLoading() when loading != null:
+return loading();case _PreloadReady() when ready != null:
+return ready(_that.temp);case _PreloadSaved() when saved != null:
+return saved();case _PreloadError() when error != null:
+return error(_that.message);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+
+
+class _PreloadLoading implements SoulseekPreload {
+  const _PreloadLoading();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PreloadLoading);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'SoulseekPreload.loading()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class _PreloadReady implements SoulseekPreload {
+  const _PreloadReady(this.temp);
+  
+
+ final  SoulseekTempTrack temp;
+
+/// Create a copy of SoulseekPreload
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$PreloadReadyCopyWith<_PreloadReady> get copyWith => __$PreloadReadyCopyWithImpl<_PreloadReady>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PreloadReady&&(identical(other.temp, temp) || other.temp == temp));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,temp);
+
+@override
+String toString() {
+  return 'SoulseekPreload.ready(temp: $temp)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$PreloadReadyCopyWith<$Res> implements $SoulseekPreloadCopyWith<$Res> {
+  factory _$PreloadReadyCopyWith(_PreloadReady value, $Res Function(_PreloadReady) _then) = __$PreloadReadyCopyWithImpl;
+@useResult
+$Res call({
+ SoulseekTempTrack temp
+});
+
+
+
+
+}
+/// @nodoc
+class __$PreloadReadyCopyWithImpl<$Res>
+    implements _$PreloadReadyCopyWith<$Res> {
+  __$PreloadReadyCopyWithImpl(this._self, this._then);
+
+  final _PreloadReady _self;
+  final $Res Function(_PreloadReady) _then;
+
+/// Create a copy of SoulseekPreload
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? temp = null,}) {
+  return _then(_PreloadReady(
+null == temp ? _self.temp : temp // ignore: cast_nullable_to_non_nullable
+as SoulseekTempTrack,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class _PreloadSaved implements SoulseekPreload {
+  const _PreloadSaved();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PreloadSaved);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'SoulseekPreload.saved()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class _PreloadError implements SoulseekPreload {
+  const _PreloadError({required this.message});
+  
+
+ final  String message;
+
+/// Create a copy of SoulseekPreload
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$PreloadErrorCopyWith<_PreloadError> get copyWith => __$PreloadErrorCopyWithImpl<_PreloadError>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PreloadError&&(identical(other.message, message) || other.message == message));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,message);
+
+@override
+String toString() {
+  return 'SoulseekPreload.error(message: $message)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$PreloadErrorCopyWith<$Res> implements $SoulseekPreloadCopyWith<$Res> {
+  factory _$PreloadErrorCopyWith(_PreloadError value, $Res Function(_PreloadError) _then) = __$PreloadErrorCopyWithImpl;
+@useResult
+$Res call({
+ String message
+});
+
+
+
+
+}
+/// @nodoc
+class __$PreloadErrorCopyWithImpl<$Res>
+    implements _$PreloadErrorCopyWith<$Res> {
+  __$PreloadErrorCopyWithImpl(this._self, this._then);
+
+  final _PreloadError _self;
+  final $Res Function(_PreloadError) _then;
+
+/// Create a copy of SoulseekPreload
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? message = null,}) {
+  return _then(_PreloadError(
+message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
 
 // dart format on
