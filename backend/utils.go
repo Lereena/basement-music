@@ -1,3 +1,3 @@
 package main
 
-const splitSymbols = "[−‐‑ー一-]"
+const splitSymbols = `[-−‐‑‒–—―]`
