@@ -1,10 +1,85 @@
+import 'dart:async';
+
 import 'package:basement_music/bloc/soulseek_login_cubit/soulseek_login_cubit.dart';
 import 'package:basement_music/bloc/soulseek_settings_cubit/soulseek_settings_cubit.dart';
+import 'package:basement_music/routing/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
-class SoulseekAdminSection extends StatelessWidget {
+class SoulseekAdminSection extends StatefulWidget {
   const SoulseekAdminSection({super.key});
+
+  @override
+  State<SoulseekAdminSection> createState() => _SoulseekAdminSectionState();
+}
+
+class _SoulseekAdminSectionState extends State<SoulseekAdminSection> {
+  Timer? _pollTimer;
+  GoRouter? _router;
+
+  bool _wasOnSettings = false;
+
+  // The settings page lives in an indexedStack and stays mounted, so initState
+  // fires only once. Listen to route changes to detect each (re)entry instead.
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final router = GoRouter.of(context);
+
+    if (_router != router) {
+      _router?.routerDelegate.removeListener(_onRouteChanged);
+      _router = router;
+      _router!.routerDelegate.addListener(_onRouteChanged);
+      _onRouteChanged();
+    }
+  }
+
+  @override
+  void dispose() {
+    _router?.routerDelegate.removeListener(_onRouteChanged);
+    _pollTimer?.cancel();
+    super.dispose();
+  }
+
+  bool get _onSettings => _router?.routerDelegate.currentConfiguration.uri.path == RouteName.settings;
+
+  void _onRouteChanged() {
+    final onSettings = _onSettings;
+
+    if (onSettings && !_wasOnSettings) {
+      // Entered the settings page: refresh now and start polling.
+      _refresh();
+      _restartPoll();
+    } else if (!onSettings && _wasOnSettings) {
+      _pollTimer?.cancel();
+    }
+
+    _wasOnSettings = onSettings;
+  }
+
+  void _refresh() {
+    context.read<SoulseekLoginCubit>().loadStatus();
+    context.read<SoulseekSettingsCubit>().load();
+  }
+
+  void _restartPoll() {
+    _pollTimer?.cancel();
+    _scheduleNextPoll();
+  }
+
+  // Poll once per disconnect window; reschedule each tick so changes to the
+  // setting take effect. Falls back to 10 min when auto-disconnect is off.
+  void _scheduleNextPoll() {
+    final minutes = context.read<SoulseekSettingsCubit>().state.minutes;
+    if (minutes <= 0) return;
+
+    _pollTimer = Timer(Duration(minutes: minutes), () {
+      if (!mounted || !_onSettings) return;
+      _refresh();
+      _scheduleNextPoll();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
