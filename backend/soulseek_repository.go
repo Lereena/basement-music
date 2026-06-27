@@ -295,6 +295,14 @@ func (repo *SoulseekRepository) SaveTrack(w http.ResponseWriter, r *http.Request
 	}
 	repo.Worker.MarkUsage()
 
+	// Client may override the server-parsed artist/title via the edit dialog.
+	if artist := strings.TrimSpace(r.FormValue("artist")); artist != "" {
+		temp.Artist = artist
+	}
+	if title := strings.TrimSpace(r.FormValue("title")); title != "" {
+		temp.Title = title
+	}
+
 	ext := filepath.Ext(temp.Path)
 	trackFileName := temp.Artist + " - " + temp.Title + ext
 	permanentPath := filepath.Join(repo.Cfg.MusicPath, trackFileName)

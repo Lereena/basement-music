@@ -168,7 +168,11 @@ abstract class RestClient {
 
   @POST('/soulseek/save')
   @FormUrlEncoded()
-  Future<Track> saveSoulseekTrack({@Field('id') required String id});
+  Future<Track> saveSoulseekTrack({
+    @Field('id') required String id,
+    @Field('artist') required String artist,
+    @Field('title') required String title,
+  });
 
   @DELETE('/soulseek/temp')
   Future<void> cleanupSoulseekSession();

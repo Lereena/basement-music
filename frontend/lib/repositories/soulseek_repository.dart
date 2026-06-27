@@ -21,7 +21,8 @@ class SoulseekRepository {
   Future<SoulseekTempTrack> preload(SoulseekSearchResult result) =>
       _restClient.preloadSoulseekTrack(username: result.peerUsername, filename: result.filename);
 
-  Future<Track> save(String tempId) => _restClient.saveSoulseekTrack(id: tempId);
+  Future<Track> save(String tempId, String artist, String title) =>
+      _restClient.saveSoulseekTrack(id: tempId, artist: artist, title: title);
 
   Future<void> cleanup() => _restClient.cleanupSoulseekSession();
 

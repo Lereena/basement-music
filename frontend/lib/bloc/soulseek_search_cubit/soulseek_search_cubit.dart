@@ -102,11 +102,11 @@ class SoulseekSearchCubit extends Cubit<SoulseekSearchState> {
     }
   }
 
-  Future<void> save(SoulseekSearchResult result, String tempId) async {
+  Future<void> save(SoulseekSearchResult result, String tempId, String artist, String title) async {
     final key = resultKey(result);
 
     try {
-      await _repo.save(tempId);
+      await _repo.save(tempId, artist, title);
 
       _updatePreload(key, const SoulseekPreload.saved());
     } catch (e) {

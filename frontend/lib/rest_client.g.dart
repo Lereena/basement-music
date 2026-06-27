@@ -891,11 +891,15 @@ class _RestClient implements RestClient {
   }
 
   @override
-  Future<Track> saveSoulseekTrack({required String id}) async {
+  Future<Track> saveSoulseekTrack({
+    required String id,
+    required String artist,
+    required String title,
+  }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final _data = {'id': id};
+    final _data = {'id': id, 'artist': artist, 'title': title};
     final _options = _setStreamType<Track>(
       Options(
             method: 'POST',

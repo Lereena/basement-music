@@ -6,7 +6,9 @@ import 'package:basement_music/models/soulseek_temp_track.dart';
 import 'package:basement_music/models/track.dart';
 import 'package:basement_music/repositories/soulseek_repository.dart';
 import 'package:basement_music/utils/horizontal_space_reducer.dart';
+import 'package:basement_music/utils/track_data.dart';
 import 'package:basement_music/widgets/app_bar.dart';
+import 'package:basement_music/widgets/dialogs/track_edit_dialog.dart';
 import 'package:basement_music/widgets/search_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -108,7 +110,7 @@ class _LoadedView extends StatelessWidget {
               result: results[i],
               preload: preloads[resultKey(results[i])],
               onPreload: () => cubit.preload(results[i]),
-              onSave: (temp) => cubit.save(results[i], temp.id),
+              onSave: (temp, artist, title) => cubit.save(results[i], temp.id, artist, title),
             ),
           );
   }
@@ -120,7 +122,7 @@ class _ResultCard extends StatefulWidget {
   final SoulseekSearchResult result;
   final SoulseekPreload? preload;
   final VoidCallback onPreload;
-  final void Function(SoulseekTempTrack temp) onSave;
+  final void Function(SoulseekTempTrack temp, String artist, String title) onSave;
 
   @override
   State<_ResultCard> createState() => _ResultCardState();
@@ -145,6 +147,18 @@ class _ResultCardState extends State<_ResultCard> {
     final parts = [result.extension.toUpperCase(), if (result.bitrate > 0) '${result.bitrate} kbps'];
 
     return parts.join(' · ');
+  }
+
+  // Open the edit dialog pre-parsed from the displayed name (same parsing as
+  // device uploads), then save with the chosen artist/title.
+  void _onSavePressed(SoulseekTempTrack temp) {
+    final (artist, title) = getArtistAndTitle(_basename);
+    TrackEditDialog.show(
+      context: context,
+      artist: artist,
+      title: title,
+      onSubmit: (result) => widget.onSave(temp, result.artist, result.title),
+    );
   }
 
   void _play(SoulseekTempTrack temp) {
@@ -196,7 +210,7 @@ class _ResultCardState extends State<_ResultCard> {
         },
       ),
       saved: () => const Padding(
-        padding: EdgeInsets.all(8),
+        padding: EdgeInsets.all(12),
         child: Icon(Icons.check_circle, color: Colors.green),
       ),
       error: (_) => IconButton(
@@ -231,7 +245,7 @@ class _ResultCardState extends State<_ResultCard> {
                 TextButton.icon(
                   icon: const Icon(Icons.library_add_outlined, size: 18),
                   label: const Text('Save'),
-                  onPressed: () => widget.onSave(ready),
+                  onPressed: () => _onSavePressed(ready),
                 ),
               AnimatedRotation(
                 turns: _expanded ? 0.5 : 0,
