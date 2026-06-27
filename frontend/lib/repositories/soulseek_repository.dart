@@ -1,5 +1,6 @@
 import 'package:basement_music/models/soulseek_connection.dart';
 import 'package:basement_music/models/soulseek_search_result.dart';
+import 'package:basement_music/models/soulseek_search_results.dart';
 import 'package:basement_music/models/soulseek_settings.dart';
 import 'package:basement_music/models/soulseek_status.dart';
 import 'package:basement_music/models/soulseek_temp_track.dart';
@@ -16,7 +17,13 @@ class SoulseekRepository {
 
   Future<SoulseekStatus> getStatus() => _restClient.getSoulseekStatus();
 
-  Future<List<SoulseekSearchResult>> search(String query) => _restClient.searchSoulseek(query);
+  /// Starts a search and returns its ticket; results stream in via [searchResults].
+  Future<int> startSearch(String query) async {
+    final response = await _restClient.startSoulseekSearch(query);
+    return response.ticket;
+  }
+
+  Future<SoulseekSearchResults> searchResults(int ticket) => _restClient.getSoulseekSearchResults(ticket);
 
   Future<SoulseekTempTrack> preload(SoulseekSearchResult result) =>
       _restClient.preloadSoulseekTrack(username: result.peerUsername, filename: result.filename);

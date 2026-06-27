@@ -127,6 +127,7 @@ func main() {
 
 	protected.HandleFunc("/soulseek/connection", slskRepo.GetConnection).Methods("GET")
 	protected.HandleFunc("/soulseek/search", slskRepo.Search).Methods("GET")
+	protected.HandleFunc("/soulseek/search/results", slskRepo.SearchResults).Methods("GET")
 	protected.HandleFunc("/soulseek/preload", slskRepo.Preload).Methods("POST")
 	protected.HandleFunc("/soulseek/save", slskRepo.SaveTrack).Methods("POST")
 	protected.HandleFunc("/soulseek/temp", slskRepo.CleanupSession).Methods("DELETE")

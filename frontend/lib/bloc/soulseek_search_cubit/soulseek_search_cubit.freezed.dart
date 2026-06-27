@@ -134,14 +134,14 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function()?  connecting,TResult Function( String reason)?  connectionFailed,TResult Function( List<SoulseekSearchResult> results,  Map<String, SoulseekPreload> preloads)?  loaded,TResult Function()?  error,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function()?  connecting,TResult Function( String reason)?  connectionFailed,TResult Function( List<SoulseekSearchResult> results,  Map<String, SoulseekPreload> preloads,  bool searching)?  loaded,TResult Function()?  error,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial();case _Loading() when loading != null:
 return loading();case _Connecting() when connecting != null:
 return connecting();case _ConnectionFailed() when connectionFailed != null:
 return connectionFailed(_that.reason);case _Loaded() when loaded != null:
-return loaded(_that.results,_that.preloads);case _Error() when error != null:
+return loaded(_that.results,_that.preloads,_that.searching);case _Error() when error != null:
 return error();case _:
   return orElse();
 
@@ -160,14 +160,14 @@ return error();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function()  connecting,required TResult Function( String reason)  connectionFailed,required TResult Function( List<SoulseekSearchResult> results,  Map<String, SoulseekPreload> preloads)  loaded,required TResult Function()  error,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function()  connecting,required TResult Function( String reason)  connectionFailed,required TResult Function( List<SoulseekSearchResult> results,  Map<String, SoulseekPreload> preloads,  bool searching)  loaded,required TResult Function()  error,}) {final _that = this;
 switch (_that) {
 case _Initial():
 return initial();case _Loading():
 return loading();case _Connecting():
 return connecting();case _ConnectionFailed():
 return connectionFailed(_that.reason);case _Loaded():
-return loaded(_that.results,_that.preloads);case _Error():
+return loaded(_that.results,_that.preloads,_that.searching);case _Error():
 return error();case _:
   throw StateError('Unexpected subclass');
 
@@ -185,14 +185,14 @@ return error();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function()?  connecting,TResult? Function( String reason)?  connectionFailed,TResult? Function( List<SoulseekSearchResult> results,  Map<String, SoulseekPreload> preloads)?  loaded,TResult? Function()?  error,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function()?  connecting,TResult? Function( String reason)?  connectionFailed,TResult? Function( List<SoulseekSearchResult> results,  Map<String, SoulseekPreload> preloads,  bool searching)?  loaded,TResult? Function()?  error,}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial();case _Loading() when loading != null:
 return loading();case _Connecting() when connecting != null:
 return connecting();case _ConnectionFailed() when connectionFailed != null:
 return connectionFailed(_that.reason);case _Loaded() when loaded != null:
-return loaded(_that.results,_that.preloads);case _Error() when error != null:
+return loaded(_that.results,_that.preloads,_that.searching);case _Error() when error != null:
 return error();case _:
   return null;
 
@@ -367,7 +367,7 @@ as String,
 
 
 class _Loaded implements SoulseekSearchState {
-  const _Loaded({required final  List<SoulseekSearchResult> results, final  Map<String, SoulseekPreload> preloads = const {}}): _results = results,_preloads = preloads;
+  const _Loaded({required final  List<SoulseekSearchResult> results, final  Map<String, SoulseekPreload> preloads = const {}, this.searching = false}): _results = results,_preloads = preloads;
   
 
  final  List<SoulseekSearchResult> _results;
@@ -386,6 +386,8 @@ class _Loaded implements SoulseekSearchState {
   return EqualUnmodifiableMapView(_preloads);
 }
 
+// True while peers are still responding (incremental polling in progress).
+@JsonKey() final  bool searching;
 
 /// Create a copy of SoulseekSearchState
 /// with the given fields replaced by the non-null parameter values.
@@ -397,16 +399,16 @@ _$LoadedCopyWith<_Loaded> get copyWith => __$LoadedCopyWithImpl<_Loaded>(this, _
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Loaded&&const DeepCollectionEquality().equals(other._results, _results)&&const DeepCollectionEquality().equals(other._preloads, _preloads));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Loaded&&const DeepCollectionEquality().equals(other._results, _results)&&const DeepCollectionEquality().equals(other._preloads, _preloads)&&(identical(other.searching, searching) || other.searching == searching));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_results),const DeepCollectionEquality().hash(_preloads));
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_results),const DeepCollectionEquality().hash(_preloads),searching);
 
 @override
 String toString() {
-  return 'SoulseekSearchState.loaded(results: $results, preloads: $preloads)';
+  return 'SoulseekSearchState.loaded(results: $results, preloads: $preloads, searching: $searching)';
 }
 
 
@@ -417,7 +419,7 @@ abstract mixin class _$LoadedCopyWith<$Res> implements $SoulseekSearchStateCopyW
   factory _$LoadedCopyWith(_Loaded value, $Res Function(_Loaded) _then) = __$LoadedCopyWithImpl;
 @useResult
 $Res call({
- List<SoulseekSearchResult> results, Map<String, SoulseekPreload> preloads
+ List<SoulseekSearchResult> results, Map<String, SoulseekPreload> preloads, bool searching
 });
 
 
@@ -434,11 +436,12 @@ class __$LoadedCopyWithImpl<$Res>
 
 /// Create a copy of SoulseekSearchState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? results = null,Object? preloads = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? results = null,Object? preloads = null,Object? searching = null,}) {
   return _then(_Loaded(
 results: null == results ? _self._results : results // ignore: cast_nullable_to_non_nullable
 as List<SoulseekSearchResult>,preloads: null == preloads ? _self._preloads : preloads // ignore: cast_nullable_to_non_nullable
-as Map<String, SoulseekPreload>,
+as Map<String, SoulseekPreload>,searching: null == searching ? _self.searching : searching // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 

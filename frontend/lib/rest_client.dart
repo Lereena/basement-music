@@ -6,7 +6,7 @@ import 'package:basement_music/models/artist.dart';
 import 'package:basement_music/models/playlist.dart';
 import 'package:basement_music/models/registration_code.dart';
 import 'package:basement_music/models/soulseek_connection.dart';
-import 'package:basement_music/models/soulseek_search_result.dart';
+import 'package:basement_music/models/soulseek_search_results.dart';
 import 'package:basement_music/models/soulseek_settings.dart';
 import 'package:basement_music/models/soulseek_status.dart';
 import 'package:basement_music/models/soulseek_temp_track.dart';
@@ -157,7 +157,10 @@ abstract class RestClient {
   Future<SoulseekConnection> getSoulseekConnection();
 
   @GET('/soulseek/search')
-  Future<List<SoulseekSearchResult>> searchSoulseek(@Query('q') String query);
+  Future<SoulseekSearchTicket> startSoulseekSearch(@Query('q') String query);
+
+  @GET('/soulseek/search/results')
+  Future<SoulseekSearchResults> getSoulseekSearchResults(@Query('ticket') int ticket);
 
   @POST('/soulseek/preload')
   @FormUrlEncoded()

@@ -80,7 +80,8 @@ class _SoulseekSearchViewState extends State<_SoulseekSearchView> {
                     ),
                   ),
                   error: () => const Center(child: Text('Search failed. Try again.')),
-                  loaded: (results, preloads) => _LoadedView(results: results, preloads: preloads),
+                  loaded: (results, preloads, searching) =>
+                      _LoadedView(results: results, preloads: preloads, searching: searching),
                 ),
               ),
             ),
@@ -92,32 +93,65 @@ class _SoulseekSearchViewState extends State<_SoulseekSearchView> {
 }
 
 class _LoadedView extends StatelessWidget {
-  const _LoadedView({required this.results, required this.preloads});
+  const _LoadedView({required this.results, required this.preloads, required this.searching});
 
   final List<SoulseekSearchResult> results;
   final Map<String, SoulseekPreload> preloads;
+  final bool searching;
 
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<SoulseekSearchCubit>();
 
-    return results.isEmpty
-        ? const Center(child: Text('No results'))
-        : ListView.builder(
-            padding: const EdgeInsets.only(top: 12),
-            itemCount: results.length,
-            itemBuilder: (_, i) => _ResultCard(
-              result: results[i],
-              preload: preloads[resultKey(results[i])],
-              onPreload: () => cubit.preload(results[i]),
-              onSave: (temp, artist, title) => cubit.save(results[i], temp.id, artist, title),
+    if (results.isEmpty) {
+      // Still collecting peer responses -- show a spinner instead of "No results".
+      if (searching) {
+        return const Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [CircularProgressIndicator(), SizedBox(height: 12), Text('Searching…')],
+          ),
+        );
+      }
+      return const Center(child: Text('No results'));
+    }
+
+    // While more peers may still respond, append a trailing progress row.
+    final itemCount = results.length + (searching ? 1 : 0);
+
+    return ListView.builder(
+      padding: const EdgeInsets.only(top: 12),
+      itemCount: itemCount,
+      itemBuilder: (_, i) {
+        if (i >= results.length) {
+          return const Padding(
+            padding: EdgeInsets.symmetric(vertical: 16),
+            child: Center(
+              child: SizedBox(width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2)),
             ),
           );
+        }
+
+        return _ResultCard(
+          key: ValueKey(resultKey(results[i])),
+          result: results[i],
+          preload: preloads[resultKey(results[i])],
+          onPreload: () => cubit.preload(results[i]),
+          onSave: (temp, artist, title) => cubit.save(results[i], temp.id, artist, title),
+        );
+      },
+    );
   }
 }
 
 class _ResultCard extends StatefulWidget {
-  const _ResultCard({required this.result, required this.preload, required this.onPreload, required this.onSave});
+  const _ResultCard({
+    super.key,
+    required this.result,
+    required this.preload,
+    required this.onPreload,
+    required this.onSave,
+  });
 
   final SoulseekSearchResult result;
   final SoulseekPreload? preload;

@@ -1,5 +1,6 @@
 import 'package:basement_music/logger.dart';
 import 'package:basement_music/models/soulseek_search_result.dart';
+import 'package:basement_music/models/soulseek_search_results.dart';
 import 'package:basement_music/models/soulseek_temp_track.dart';
 import 'package:basement_music/repositories/soulseek_repository.dart';
 import 'package:dio/dio.dart';
@@ -16,31 +17,22 @@ class SoulseekSearchCubit extends Cubit<SoulseekSearchState> {
 
   String _lastQuery = '';
 
+  // Bumped on every new search; lets in-flight poll loops detect they're stale.
+  int _searchToken = 0;
+
   Future<void> search(String query) async {
     if (query.trim().isEmpty) return;
     _lastQuery = query;
+    final token = ++_searchToken;
 
     emit(const SoulseekSearchState.loading());
     try {
-      final results = await _repo.search(query);
+      final ticket = await _repo.startSearch(query);
+      if (token != _searchToken) return;
 
-      emit(SoulseekSearchState.loaded(results: results));
+      await _pollResults(ticket, token);
     } on DioException catch (e) {
-      // 503 means the daemon isn't connected yet -- the backend kicked off a
-      // background connect. Surface "connecting" and wait, or report the failure.
-      if (e.response?.statusCode == 503) {
-        final data = e.response?.data;
-        final state = (data is Map ? data['state'] : null) as String?;
-        final reason = (data is Map ? data['reason'] : null) as String?;
-
-        if (state == 'failed') {
-          emit(SoulseekSearchState.connectionFailed(reason: _reasonText(reason)));
-        } else {
-          await _awaitConnection();
-        }
-
-        return;
-      }
+      if (await _handleConnectionError(e)) return;
 
       logger.e('Soulseek search failed: $e');
       emit(const SoulseekSearchState.error());
@@ -48,6 +40,49 @@ class SoulseekSearchCubit extends Cubit<SoulseekSearchState> {
       logger.e('Soulseek search failed: $e');
       emit(const SoulseekSearchState.error());
     }
+  }
+
+  /// Polls the daemon for results as peers respond, emitting a growing list each
+  /// tick until the collection window closes (done) or the search is superseded.
+  Future<void> _pollResults(int ticket, int token) async {
+    // Start with an empty in-progress list so the UI shows "searching" at once.
+    emit(const SoulseekSearchState.loaded(results: [], searching: true));
+
+    for (var i = 0; i < 20; i++) {
+      late final SoulseekSearchResults page;
+      try {
+        page = await _repo.searchResults(ticket);
+      } on DioException catch (e) {
+        if (await _handleConnectionError(e)) return;
+        rethrow;
+      }
+
+      if (token != _searchToken) return;
+
+      final preloads = state.mapOrNull(loaded: (s) => s.preloads) ?? const {};
+      emit(SoulseekSearchState.loaded(results: page.results, preloads: preloads, searching: !page.done));
+
+      if (page.done) return;
+      await Future.delayed(const Duration(seconds: 1));
+      if (token != _searchToken) return;
+    }
+  }
+
+  /// Handles a 503 from the backend (daemon not connected): surfaces "connecting"
+  /// and waits, or reports the failure. Returns true if it handled the error.
+  Future<bool> _handleConnectionError(DioException e) async {
+    if (e.response?.statusCode != 503) return false;
+
+    final data = e.response?.data;
+    final state = (data is Map ? data['state'] : null) as String?;
+    final reason = (data is Map ? data['reason'] : null) as String?;
+
+    if (state == 'failed') {
+      emit(SoulseekSearchState.connectionFailed(reason: _reasonText(reason)));
+    } else {
+      await _awaitConnection();
+    }
+    return true;
   }
 
   /// Polls the connection endpoint while the backend connects, then re-runs the

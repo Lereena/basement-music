@@ -824,12 +824,12 @@ class _RestClient implements RestClient {
   }
 
   @override
-  Future<List<SoulseekSearchResult>> searchSoulseek(String query) async {
+  Future<SoulseekSearchTicket> startSoulseekSearch(String query) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{r'q': query};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<List<SoulseekSearchResult>>(
+    final _options = _setStreamType<SoulseekSearchTicket>(
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -839,15 +839,37 @@ class _RestClient implements RestClient {
           )
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
-    final _result = await _dio.fetch<List<dynamic>>(_options);
-    late List<SoulseekSearchResult> _value;
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late SoulseekSearchTicket _value;
     try {
-      _value = _result.data!
-          .map(
-            (dynamic i) =>
-                SoulseekSearchResult.fromJson(i as Map<String, dynamic>),
+      _value = SoulseekSearchTicket.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options, response: _result);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<SoulseekSearchResults> getSoulseekSearchResults(int ticket) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'ticket': ticket};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<SoulseekSearchResults>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/soulseek/search/results',
+            queryParameters: queryParameters,
+            data: _data,
           )
-          .toList();
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late SoulseekSearchResults _value;
+    try {
+      _value = SoulseekSearchResults.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options, response: _result);
       rethrow;

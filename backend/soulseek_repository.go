@@ -7,7 +7,6 @@ import (
 	"os/exec"
 	"path/filepath"
 	"regexp"
-	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -165,7 +164,7 @@ func (repo *SoulseekRepository) Search(w http.ResponseWriter, r *http.Request) {
 	}
 
 	repo.Worker.MarkUsage()
-	results, err := repo.Worker.Search(query)
+	ticket, err := repo.Worker.StartSearch(query)
 	if err != nil {
 		// Daemon may have died mid-request -- reconnect in the background and ask
 		// the client to retry once we're up again.
@@ -174,8 +173,37 @@ func (repo *SoulseekRepository) Search(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sortResults(results)
-	respond.RespondJSON(w, http.StatusOK, results)
+	respond.RespondJSON(w, http.StatusOK, map[string]any{"ticket": ticket})
+}
+
+// GET /api/soulseek/search/results?ticket=N
+// Returns results collected so far plus a done flag, so the client can render
+// peers as they respond instead of waiting for the full collection window.
+func (repo *SoulseekRepository) SearchResults(w http.ResponseWriter, r *http.Request) {
+	ticket, err := strconv.Atoi(strings.TrimSpace(r.URL.Query().Get("ticket")))
+	if err != nil {
+		respond.RespondError(w, http.StatusBadRequest, "ticket required")
+		return
+	}
+
+	state, _, username := repo.Worker.ConnectionState()
+	if state != StateConnected {
+		newState, reason := repo.triggerConnect()
+		respond.RespondJSON(w, http.StatusServiceUnavailable, connectionPayload(newState, username, reason))
+		return
+	}
+
+	repo.Worker.MarkUsage()
+	results, done, err := repo.Worker.SearchResults(ticket)
+	if err != nil {
+		newState, reason := repo.triggerConnect()
+		respond.RespondJSON(w, http.StatusServiceUnavailable, connectionPayload(newState, username, reason))
+		return
+	}
+
+	// Preserve daemon arrival order (found time) so cards only ever append and
+	// never reorder between polls.
+	respond.RespondJSON(w, http.StatusOK, map[string]any{"results": results, "done": done})
 }
 
 // GET /api/soulseek/connection
@@ -337,23 +365,6 @@ func (repo *SoulseekRepository) SaveTrack(w http.ResponseWriter, r *http.Request
 func (repo *SoulseekRepository) CleanupSession(w http.ResponseWriter, r *http.Request) {
 	repo.Worker.CleanupTemp()
 	w.WriteHeader(http.StatusNoContent)
-}
-
-// sortResults orders results best-first: FLAC bonus + bitrate + free slots + speed.
-func sortResults(results []SearchResult) {
-	score := func(r SearchResult) int {
-		s := r.Bitrate + r.Speed/1000
-		if strings.EqualFold(r.Extension, "flac") {
-			s += 2000
-		}
-		if r.FreeSlots {
-			s += 500
-		}
-		return s
-	}
-	sort.SliceStable(results, func(i, j int) bool {
-		return score(results[i]) > score(results[j])
-	})
 }
 
 var slskSplitRegexp = regexp.MustCompile(splitSymbols)

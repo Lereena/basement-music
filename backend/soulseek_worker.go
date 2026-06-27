@@ -270,24 +270,51 @@ func (sw *SoulseekWorker) Status() (connected bool, username string) {
 	return st.Connected, st.Username
 }
 
-// Search proxies a search request to the daemon and returns a flat result list.
-func (sw *SoulseekWorker) Search(query string) ([]SearchResult, error) {
+// StartSearch fires a search on the daemon and returns a ticket. Results are
+// collected in the background and fetched incrementally via SearchResults.
+func (sw *SoulseekWorker) StartSearch(query string) (int, error) {
 	payload, _ := json.Marshal(map[string]string{"query": query})
 	resp, err := sw.httpClient.Post(sw.daemonURL+"/search", "application/json", bytes.NewReader(payload))
 	if err != nil {
-		return nil, err
+		return 0, err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("daemon search returned %d", resp.StatusCode)
+		return 0, fmt.Errorf("daemon search returned %d", resp.StatusCode)
 	}
 
-	var results []SearchResult
-	if err := json.NewDecoder(resp.Body).Decode(&results); err != nil {
-		return nil, err
+	var body struct {
+		Ticket int `json:"ticket"`
 	}
-	return results, nil
+	if err := json.NewDecoder(resp.Body).Decode(&body); err != nil {
+		return 0, err
+	}
+	return body.Ticket, nil
+}
+
+// SearchResults returns the results collected so far for a ticket plus a done
+// flag (true once the peer-response window has elapsed).
+func (sw *SoulseekWorker) SearchResults(ticket int) ([]SearchResult, bool, error) {
+	url := fmt.Sprintf("%s/search/results?ticket=%d", sw.daemonURL, ticket)
+	resp, err := sw.httpClient.Get(url)
+	if err != nil {
+		return nil, false, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, false, fmt.Errorf("daemon results returned %d", resp.StatusCode)
+	}
+
+	var body struct {
+		Results []SearchResult `json:"results"`
+		Done    bool           `json:"done"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&body); err != nil {
+		return nil, false, err
+	}
+	return body.Results, body.Done, nil
 }
 
 // Download asks the daemon to download exactly (peer, filename) to outPath.

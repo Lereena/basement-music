@@ -10,6 +10,8 @@ abstract class SoulseekSearchState with _$SoulseekSearchState {
     required List<SoulseekSearchResult> results,
     // Keyed by resultKey(result): per-card preload lifecycle.
     @Default({}) Map<String, SoulseekPreload> preloads,
+    // True while peers are still responding (incremental polling in progress).
+    @Default(false) bool searching,
   }) = _Loaded;
   const factory SoulseekSearchState.error() = _Error;
 }

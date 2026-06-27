@@ -17,7 +17,8 @@ Env vars:
 
 Endpoints:
   GET  /status          -> {"connected": bool, "connecting": bool, "error": str, "username": str, "shared_files": int}
-  POST /search          {"query": "..."} -> [ {result}, ... ]
+  POST /search          {"query": "..."} -> {"ticket": int}
+  GET  /search/results?ticket=N -> {"results": [ {result}, ... ], "done": bool}
   POST /download        {"username","filename","output"} -> {"ok": true}
   POST /refresh-shares  -> {"ok": true, "shared_files": int}
 """
@@ -27,6 +28,7 @@ import logging
 import os
 import shutil
 import sys
+import time
 
 from aiohttp import web
 
@@ -61,6 +63,9 @@ class Daemon:
         self.connecting = False
         self.error = ""
         self._lock = asyncio.Lock()
+        # Active search sessions keyed by ticket: {ticket: {"request", "started"}}.
+        self._searches: dict[int, dict] = {}
+        self._search_seq = 0
 
     def _share_entries(self):
         """Build shared-directory entries in whatever shape this aioslsk wants."""
@@ -145,47 +150,76 @@ class Daemon:
             log.warning("Share rescan failed: %s", exc)
         return await self.shared_file_count()
 
-    async def search(self, query: str) -> list[dict]:
-        """Try a few query variants, return a flat list of files across peers."""
-        if self.client is None:
-            return []
-
+    @staticmethod
+    def _flatten(request: SearchRequest) -> list[dict]:
+        """Flatten a SearchRequest's accumulated peer responses into file rows."""
         results: list[dict] = []
+        for peer_result in request.results:
+            username = getattr(peer_result, "username", "")
+            free_slots = bool(getattr(peer_result, "has_free_slots", False))
+            speed = int(getattr(peer_result, "avg_speed", 0) or 0)
+
+            shared = getattr(peer_result, "shared_items", None) or getattr(
+                peer_result, "results", []
+            )
+            for item in shared:
+                filename = getattr(item, "filename", "") or ""
+                ext = filename.rsplit(".", 1)[-1].lower() if "." in filename else ""
+                if ext not in ("flac", "mp3"):
+                    continue
+                bitrate = 0
+                attrs = getattr(item, "attributes", None) or []
+                for attr in attrs:
+                    # attribute 0 is bitrate in the Soulseek protocol
+                    if getattr(attr, "key", None) in (0, "bitrate"):
+                        bitrate = int(getattr(attr, "value", 0) or 0)
+                results.append(
+                    {
+                        "username": username,
+                        "filename": filename,
+                        "extension": ext,
+                        "bitrate": bitrate,
+                        "size": int(getattr(item, "filesize", 0) or 0),
+                        "free_slots": free_slots,
+                        "speed": speed,
+                    }
+                )
+        return results
+
+    def _prune_searches(self) -> None:
+        """Drop search sessions older than twice the collection window."""
+        cutoff = time.monotonic() - SEARCH_TIMEOUT * 2
+        stale = [t for t, e in self._searches.items() if e["started"] < cutoff]
+        for t in stale:
+            self._searches.pop(t, None)
+
+    async def start_search(self, query: str) -> int:
+        """Fire a search and return a ticket; results accumulate in the background."""
+        if self.client is None:
+            raise RuntimeError("not connected")
+
         async with self._lock:
             request: SearchRequest = await self.client.searches.search(query)
-            await asyncio.sleep(SEARCH_TIMEOUT)
+            self._search_seq += 1
+            ticket = self._search_seq
+            self._searches[ticket] = {"request": request, "started": time.monotonic()}
+            self._prune_searches()
 
-            for peer_result in request.results:
-                username = getattr(peer_result, "username", "")
-                free_slots = bool(getattr(peer_result, "has_free_slots", False))
-                speed = int(getattr(peer_result, "avg_speed", 0) or 0)
+        log.info("Search '%s' started -> ticket %d", query, ticket)
+        return ticket
 
-                shared = getattr(peer_result, "shared_items", None) or getattr(
-                    peer_result, "results", []
-                )
-                for item in shared:
-                    filename = getattr(item, "filename", "") or ""
-                    ext = filename.rsplit(".", 1)[-1].lower() if "." in filename else ""
-                    bitrate = 0
-                    attrs = getattr(item, "attributes", None) or []
-                    for attr in attrs:
-                        # attribute 0 is bitrate in the Soulseek protocol
-                        if getattr(attr, "key", None) in (0, "bitrate"):
-                            bitrate = int(getattr(attr, "value", 0) or 0)
-                    results.append(
-                        {
-                            "username": username,
-                            "filename": filename,
-                            "extension": ext,
-                            "bitrate": bitrate,
-                            "size": int(getattr(item, "filesize", 0) or 0),
-                            "free_slots": free_slots,
-                            "speed": speed,
-                        }
-                    )
+    def search_results(self, ticket: int) -> dict:
+        """Snapshot of results collected so far for a ticket, plus a done flag."""
+        entry = self._searches.get(ticket)
+        if entry is None:
+            return {"results": [], "done": True}
 
-        log.info("Search '%s' -> %d files", query, len(results))
-        return results
+        results = self._flatten(entry["request"])
+        done = (time.monotonic() - entry["started"]) >= SEARCH_TIMEOUT
+        if done:
+            # Peers stop responding after the window -- free the session.
+            self._searches.pop(ticket, None)
+        return {"results": results, "done": done}
 
     async def download(self, username: str, filename: str, output: str, timeout: int = 120):
         if self.client is None:
@@ -231,11 +265,19 @@ def make_app(daemon: Daemon) -> web.Application:
         if not query:
             return web.json_response({"error": "empty query"}, status=400)
         try:
-            results = await daemon.search(query)
+            ticket = await daemon.start_search(query)
         except Exception as exc:
             log.exception("search failed")
             return web.json_response({"error": str(exc)}, status=500)
-        return web.json_response(results)
+        return web.json_response({"ticket": ticket})
+
+    async def search_results(request):
+        raw = request.query.get("ticket", "")
+        try:
+            ticket = int(raw)
+        except (TypeError, ValueError):
+            return web.json_response({"error": "invalid ticket"}, status=400)
+        return web.json_response(daemon.search_results(ticket))
 
     async def download(request):
         body = await request.json()
@@ -257,6 +299,7 @@ def make_app(daemon: Daemon) -> web.Application:
 
     app.router.add_get("/status", status)
     app.router.add_post("/search", search)
+    app.router.add_get("/search/results", search_results)
     app.router.add_post("/download", download)
     app.router.add_post("/refresh-shares", refresh_shares)
     return app
