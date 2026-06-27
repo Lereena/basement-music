@@ -3,14 +3,86 @@ import 'package:basement_music/bloc/soulseek_settings_cubit/soulseek_settings_cu
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class SoulseekAdminSection extends StatefulWidget {
+class SoulseekAdminSection extends StatelessWidget {
   const SoulseekAdminSection({super.key});
 
   @override
-  State<SoulseekAdminSection> createState() => _SoulseekAdminSectionState();
+  Widget build(BuildContext context) {
+    final cubit = context.watch<SoulseekLoginCubit>();
+    final isConnected = cubit.state.maybeWhen(connected: (_) => true, orElse: () => false);
+
+    final theme = Theme.of(context);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Row(
+            children: [
+              Text(
+                'Soulseek',
+                style: theme.textTheme.titleMedium?.copyWith(
+                  color: theme.colorScheme.primary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(width: 12),
+              _StatusChip(state: cubit.state),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (isConnected) ...[
+                ElevatedButton.icon(
+                  onPressed: () => cubit.disconnect(),
+                  style: OutlinedButton.styleFrom(
+                    backgroundColor: theme.colorScheme.error.withValues(alpha: 0.8),
+                    foregroundColor: theme.colorScheme.surface,
+                    side: BorderSide(color: theme.colorScheme.error, width: 2),
+                  ),
+                  icon: const Icon(Icons.link_off),
+                  label: const Text('Disconnect'),
+                ),
+              ],
+              Row(
+                children: [
+                  ElevatedButton.icon(
+                    onPressed: () => _openCredentialsDialog(context, cubit),
+                    icon: const Icon(Icons.key),
+                    label: const Text('Update credentials'),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              const _DisconnectAfterField(),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _openCredentialsDialog(BuildContext context, SoulseekLoginCubit cubit) {
+    showDialog<void>(
+      context: context,
+      builder: (_) => BlocProvider.value(value: cubit, child: const _CredentialsDialog()),
+    );
+  }
 }
 
-class _SoulseekAdminSectionState extends State<SoulseekAdminSection> {
+class _CredentialsDialog extends StatefulWidget {
+  const _CredentialsDialog();
+
+  @override
+  State<_CredentialsDialog> createState() => _CredentialsDialogState();
+}
+
+class _CredentialsDialogState extends State<_CredentialsDialog> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
 
@@ -23,80 +95,55 @@ class _SoulseekAdminSectionState extends State<SoulseekAdminSection> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Text(
-            'Soulseek',
-            style: theme.textTheme.titleMedium?.copyWith(color: theme.colorScheme.primary, fontWeight: FontWeight.bold),
-          ),
+    return BlocListener<SoulseekLoginCubit, SoulseekLoginState>(
+      listenWhen: (prev, curr) => curr.maybeWhen(connected: (_) => true, orElse: () => false),
+      listener: (context, state) => Navigator.of(context).pop(),
+      child: AlertDialog(
+        title: const Text('Soulseek credentials'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextFormField(
+              controller: _usernameController,
+              decoration: const InputDecoration(labelText: 'Username'),
+            ),
+            const SizedBox(height: 8),
+            TextFormField(
+              controller: _passwordController,
+              obscureText: true,
+              decoration: const InputDecoration(labelText: 'Password'),
+            ),
+            BlocBuilder<SoulseekLoginCubit, SoulseekLoginState>(
+              builder: (context, state) => state.maybeWhen(
+                error: (message) => Padding(
+                  padding: const EdgeInsets.only(top: 12),
+                  child: Text(message, style: const TextStyle(color: Colors.red)),
+                ),
+                orElse: () => const SizedBox.shrink(),
+              ),
+            ),
+          ],
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextFormField(
-                controller: _usernameController,
-                decoration: const InputDecoration(labelText: 'Username'),
-              ),
-              const SizedBox(height: 8),
-              TextFormField(
-                controller: _passwordController,
-                obscureText: true,
-                decoration: const InputDecoration(labelText: 'Password'),
-              ),
-              const SizedBox(height: 12),
-              BlocBuilder<SoulseekLoginCubit, SoulseekLoginState>(
-                builder: (context, state) {
-                  final isLoading = state.maybeWhen(loading: () => true, orElse: () => false);
-                  final isConnected = state.maybeWhen(connected: (_) => true, orElse: () => false);
-                  final cubit = context.read<SoulseekLoginCubit>();
+        actions: [
+          TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Cancel')),
+          BlocBuilder<SoulseekLoginCubit, SoulseekLoginState>(
+            builder: (context, state) {
+              final isLoading = state.maybeWhen(loading: () => true, orElse: () => false);
+              final cubit = context.read<SoulseekLoginCubit>();
 
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          ElevatedButton.icon(
-                            onPressed: isLoading
-                                ? null
-                                : () => cubit.setCredentials(_usernameController.text.trim(), _passwordController.text),
-                            icon: isLoading
-                                ? const SizedBox(
-                                    width: 16,
-                                    height: 16,
-                                    child: CircularProgressIndicator(strokeWidth: 2),
-                                  )
-                                : const Icon(Icons.link),
-                            label: const Text('Connect'),
-                          ),
-                          if (isConnected) ...[
-                            const SizedBox(width: 8),
-                            OutlinedButton.icon(
-                              onPressed: () => cubit.disconnect(),
-                              icon: const Icon(Icons.link_off),
-                              label: const Text('Disconnect'),
-                            ),
-                          ],
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      _StatusChip(state: state),
-                    ],
-                  );
-                },
-              ),
-              const SizedBox(height: 16),
-              const _DisconnectAfterField(),
-            ],
+              return ElevatedButton.icon(
+                onPressed: isLoading
+                    ? null
+                    : () => cubit.setCredentials(_usernameController.text.trim(), _passwordController.text),
+                icon: isLoading
+                    ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+                    : const Icon(Icons.link),
+                label: const Text('Connect'),
+              );
+            },
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -120,36 +167,39 @@ class _DisconnectAfterFieldState extends State<_DisconnectAfterField> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<SoulseekSettingsCubit, SoulseekSettingsState>(
-      builder: (context, state) {
-        // Keep the field in sync with the fetched value without clobbering edits.
-        if (_lastSyncedMinutes != state.minutes) {
-          _lastSyncedMinutes = state.minutes;
-          _controller.text = state.minutes.toString();
-        }
-        final cubit = context.read<SoulseekSettingsCubit>();
-        return Row(
-          children: [
-            Expanded(
-              child: TextFormField(
-                controller: _controller,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(labelText: 'Disconnect after (minutes)', helperText: '0 = never'),
-              ),
+    final cubit = context.watch<SoulseekSettingsCubit>();
+
+    final theme = Theme.of(context);
+
+    // Keep the field in sync with the fetched value without clobbering edits.
+    if (_lastSyncedMinutes != cubit.state.minutes) {
+      _lastSyncedMinutes = cubit.state.minutes;
+      _controller.text = cubit.state.minutes.toString();
+    }
+
+    return Row(
+      children: [
+        Expanded(
+          child: TextFormField(
+            controller: _controller,
+            keyboardType: TextInputType.number,
+            decoration: InputDecoration(
+              label: Text('Disconnect after inactivity (in minutes)', style: theme.textTheme.bodyLarge),
+              helperText: '0 = never',
             ),
-            const SizedBox(width: 12),
-            ElevatedButton(
-              onPressed: state.loading
-                  ? null
-                  : () {
-                      final minutes = int.tryParse(_controller.text.trim());
-                      if (minutes != null && minutes >= 0) cubit.save(minutes);
-                    },
-              child: const Text('Save'),
-            ),
-          ],
-        );
-      },
+          ),
+        ),
+        const SizedBox(width: 12),
+        ElevatedButton(
+          onPressed: cubit.state.loading
+              ? null
+              : () {
+                  final minutes = int.tryParse(_controller.text.trim());
+                  if (minutes != null && minutes >= 0) cubit.save(minutes);
+                },
+          child: const Text('Save'),
+        ),
+      ],
     );
   }
 }

@@ -41,15 +41,15 @@ class SettingsPage extends StatelessWidget {
                 authenticated: (user) => user.isAdmin
                     ? Container(
                         decoration: BoxDecoration(
-                          color: theme.colorScheme.errorContainer.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: theme.colorScheme.error),
+                          border: Border.all(color: theme.colorScheme.error, width: 2),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const SizedBox(height: 8),
                             const SoulseekAdminSection(),
+                            const SizedBox(height: 8),
                             const Divider(indent: 16, endIndent: 16),
                             BlocProvider(
                               create: (_) => AdminCubit(context.read<AdminRepository>())..loadCodes(),
@@ -63,6 +63,7 @@ class SettingsPage extends StatelessWidget {
                 orElse: () => const SizedBox.shrink(),
               ),
             ),
+            const SizedBox(height: 16),
           ],
         ),
       ),
