@@ -24,7 +24,21 @@ class AudioPlayerHandler extends BaseAudioHandler {
     required this.cacheRepository,
   });
 
-  final _audioPlayer = AudioPlayer();
+  final _audioPlayer = AudioPlayer()..setAudioContext(
+    AudioContext(
+      iOS: AudioContextIOS(
+        category: AVAudioSessionCategory.playback,
+        options: {},
+      ),
+      android: AudioContextAndroid(
+        isSpeakerphoneOn: false,
+        stayAwake: true,
+        contentType: AndroidContentType.music,
+        usageType: AndroidUsageType.media,
+        audioFocus: AndroidAudioFocus.gain,
+      ),
+    ),
+  );
 
   Stream<void> get onPlayerComplete => _audioPlayer.onPlayerComplete;
   Stream<Duration> get onPositionChanged => _audioPlayer.onPositionChanged;
