@@ -22,6 +22,16 @@ const (
 	tempDirName  = "slsk_temp"
 )
 
+// ConnState is the worker's view of the Soulseek connection lifecycle.
+type ConnState string
+
+const (
+	StateDisconnected ConnState = "disconnected"
+	StateConnecting   ConnState = "connecting"
+	StateConnected    ConnState = "connected"
+	StateFailed       ConnState = "failed"
+)
+
 // TempTrack is a previewed (downloaded-to-temp) track not yet saved to the library.
 type TempTrack struct {
 	ID       string `json:"id"`
@@ -50,6 +60,14 @@ type SoulseekWorker struct {
 	tempTracks map[string]TempTrack
 	mu         sync.Mutex
 	Cfg        *config.Config
+
+	// Connection lifecycle state, guarded by stateMu.
+	stateMu    sync.Mutex
+	connState  ConnState
+	connReason string
+	connUser   string
+	lastUsage  time.Time
+	idleWindow time.Duration // 0 = never auto-disconnect
 }
 
 func NewSoulseekWorker(cfg *config.Config) *SoulseekWorker {
@@ -58,7 +76,80 @@ func NewSoulseekWorker(cfg *config.Config) *SoulseekWorker {
 		daemonURL:  "http://127.0.0.1:" + daemonPort,
 		tempTracks: make(map[string]TempTrack),
 		Cfg:        cfg,
+		connState:  StateDisconnected,
 	}
+}
+
+// ConnectionState returns a snapshot of the connection lifecycle.
+func (sw *SoulseekWorker) ConnectionState() (state ConnState, reason, username string) {
+	sw.stateMu.Lock()
+	defer sw.stateMu.Unlock()
+	return sw.connState, sw.connReason, sw.connUser
+}
+
+func (sw *SoulseekWorker) setState(state ConnState, reason, username string) {
+	sw.stateMu.Lock()
+	sw.connState = state
+	sw.connReason = reason
+	sw.connUser = username
+	sw.stateMu.Unlock()
+}
+
+// MarkUsage records the latest UTC time the daemon was used (search/preload/save).
+func (sw *SoulseekWorker) MarkUsage() {
+	sw.stateMu.Lock()
+	sw.lastUsage = time.Now().UTC()
+	sw.stateMu.Unlock()
+}
+
+// SetIdleWindow sets the auto-disconnect window (0 disables it).
+func (sw *SoulseekWorker) SetIdleWindow(d time.Duration) {
+	sw.stateMu.Lock()
+	sw.idleWindow = d
+	sw.stateMu.Unlock()
+}
+
+// EnsureConnecting connects in the background if not already connected/connecting.
+// Returns the current state immediately without blocking.
+func (sw *SoulseekWorker) EnsureConnecting(username, password string) ConnState {
+	sw.stateMu.Lock()
+	if sw.connState == StateConnected || sw.connState == StateConnecting {
+		state := sw.connState
+		sw.stateMu.Unlock()
+		return state
+	}
+	sw.connState = StateConnecting
+	sw.connReason = ""
+	sw.connUser = username
+	sw.stateMu.Unlock()
+
+	go func() {
+		if err := sw.Start(username, password); err != nil {
+			sw.setState(StateFailed, err.Error(), username)
+		}
+	}()
+	return StateConnecting
+}
+
+// StartIdleMonitor launches a background loop that disconnects the daemon once it
+// has been idle longer than the configured window. Call once at startup.
+func (sw *SoulseekWorker) StartIdleMonitor() {
+	go func() {
+		ticker := time.NewTicker(time.Minute)
+		defer ticker.Stop()
+		for range ticker.C {
+			sw.stateMu.Lock()
+			idle := sw.idleWindow
+			connected := sw.connState == StateConnected
+			last := sw.lastUsage
+			sw.stateMu.Unlock()
+
+			if connected && idle > 0 && !last.IsZero() && time.Since(last) > idle {
+				log.Printf("Soulseek idle for %s, disconnecting", idle)
+				sw.Stop()
+			}
+		}
+	}()
 }
 
 func (sw *SoulseekWorker) tempDir() string {
@@ -92,17 +183,31 @@ func (sw *SoulseekWorker) Start(username, password string) error {
 	sw.cmd = cmd
 	sw.mu.Unlock()
 
-	// Poll /status until connected (or timeout).
+	sw.setState(StateConnecting, "", username)
+
+	// Poll /status until connected, the daemon reports a login error, or we time out.
 	deadline := time.Now().Add(45 * time.Second)
 	for time.Now().Before(deadline) {
-		if connected, _, err := sw.status(); err == nil && connected {
-			log.Println("Soulseek daemon connected")
-			return nil
+		st, err := sw.status()
+		if err == nil {
+			if st.Connected {
+				log.Println("Soulseek daemon connected")
+				sw.setState(StateConnected, "", username)
+				sw.MarkUsage()
+				return nil
+			}
+			if st.Error != "" {
+				sw.Stop()
+				sw.setState(StateFailed, st.Error, username)
+				return fmt.Errorf("%s", st.Error)
+			}
 		}
 		time.Sleep(time.Second)
 	}
 	sw.Stop()
-	return fmt.Errorf("daemon did not connect within timeout")
+	err := fmt.Errorf("daemon did not connect within timeout")
+	sw.setState(StateFailed, err.Error(), username)
+	return err
 }
 
 // Stop kills the daemon process if running.
@@ -116,6 +221,10 @@ func (sw *SoulseekWorker) Stop() {
 		_ = cmd.Process.Kill()
 		_, _ = cmd.Process.Wait()
 	}
+
+	sw.setState(StateDisconnected, "", "")
+	// Preloaded temp tracks only make sense while connected -- drop them on disconnect.
+	sw.CleanupTemp()
 }
 
 // IsAlive reports whether the daemon process is running and the HTTP API responds.
@@ -126,34 +235,39 @@ func (sw *SoulseekWorker) IsAlive() bool {
 	if !running {
 		return false
 	}
-	_, _, err := sw.status()
-	return err == nil
+	st, err := sw.status()
+	return err == nil && st.Connected
 }
 
-func (sw *SoulseekWorker) status() (connected bool, username string, err error) {
+// daemonStatus mirrors the daemon's /status response.
+type daemonStatus struct {
+	Connected  bool   `json:"connected"`
+	Connecting bool   `json:"connecting"`
+	Error      string `json:"error"`
+	Username   string `json:"username"`
+}
+
+func (sw *SoulseekWorker) status() (daemonStatus, error) {
+	var body daemonStatus
 	resp, err := sw.httpClient.Get(sw.daemonURL + "/status")
 	if err != nil {
-		return false, "", err
+		return body, err
 	}
 	defer resp.Body.Close()
 
-	var body struct {
-		Connected bool   `json:"connected"`
-		Username  string `json:"username"`
-	}
 	if err := json.NewDecoder(resp.Body).Decode(&body); err != nil {
-		return false, "", err
+		return body, err
 	}
-	return body.Connected, body.Username, nil
+	return body, nil
 }
 
 // Status returns the daemon connection state.
 func (sw *SoulseekWorker) Status() (connected bool, username string) {
-	c, u, err := sw.status()
+	st, err := sw.status()
 	if err != nil {
 		return false, ""
 	}
-	return c, u
+	return st.Connected, st.Username
 }
 
 // Search proxies a search request to the daemon and returns a flat result list.

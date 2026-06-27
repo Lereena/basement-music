@@ -16,7 +16,7 @@ Env vars:
   SLSK_PORT       HTTP port to listen on (default 19876)
 
 Endpoints:
-  GET  /status          -> {"connected": bool, "username": str, "shared_files": int}
+  GET  /status          -> {"connected": bool, "connecting": bool, "error": str, "username": str, "shared_files": int}
   POST /search          {"query": "..."} -> [ {result}, ... ]
   POST /download        {"username","filename","output"} -> {"ok": true}
   POST /refresh-shares  -> {"ok": true, "shared_files": int}
@@ -58,6 +58,8 @@ class Daemon:
         self.music_path = music_path
         self.client: SoulSeekClient | None = None
         self.connected = False
+        self.connecting = False
+        self.error = ""
         self._lock = asyncio.Lock()
 
     def _share_entries(self):
@@ -97,13 +99,23 @@ class Daemon:
         return settings
 
     async def start(self):
-        settings = self._build_settings()
-        self.client = SoulSeekClient(settings)
-        await self.client.start()
-        await self.client.login()
-        self.connected = True
-        log.info("Connected to Soulseek as %s", self.username)
-        await self.refresh_shares()
+        self.connecting = True
+        self.error = ""
+        try:
+            settings = self._build_settings()
+            self.client = SoulSeekClient(settings)
+            await self.client.start()
+            await self.client.login()
+            self.connected = True
+            log.info("Connected to Soulseek as %s", self.username)
+            await self.refresh_shares()
+        except Exception as exc:
+            self.error = str(exc)
+            self.connected = False
+            log.error("Failed to connect to Soulseek: %s", exc)
+            raise
+        finally:
+            self.connecting = False
 
     async def stop(self):
         if self.client is not None:
@@ -206,6 +218,8 @@ def make_app(daemon: Daemon) -> web.Application:
         return web.json_response(
             {
                 "connected": daemon.connected,
+                "connecting": daemon.connecting,
+                "error": daemon.error,
                 "username": daemon.username,
                 "shared_files": await daemon.shared_file_count(),
             }
@@ -259,18 +273,20 @@ async def main():
         sys.exit(1)
 
     daemon = Daemon(username, password, music_path)
-    try:
-        await daemon.start()
-    except Exception as exc:
-        log.error("Failed to connect to Soulseek: %s", exc)
-        sys.exit(1)
 
+    # Start the HTTP API first so the Go worker can poll /status (including the
+    # error reason) even while the connection attempt is still in flight or fails.
     app = make_app(daemon)
     runner = web.AppRunner(app)
     await runner.setup()
     site = web.TCPSite(runner, "127.0.0.1", port)
     await site.start()
     log.info("HTTP API listening on 127.0.0.1:%d", port)
+
+    try:
+        await daemon.start()
+    except Exception:
+        pass  # error captured in daemon.error and reported via /status
 
     try:
         await asyncio.Event().wait()  # run forever

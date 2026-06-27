@@ -69,6 +69,35 @@ class _SoulseekSearchViewState extends State<_SoulseekSearchView> {
                 builder: (context, state) => state.when(
                   initial: () => const Center(child: Text('Search the Soulseek network')),
                   loading: () => const Center(child: CircularProgressIndicator()),
+                  connecting: () => const Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        CircularProgressIndicator(),
+                        SizedBox(height: 12),
+                        Text('Connecting to Soulseek…'),
+                      ],
+                    ),
+                  ),
+                  connectionFailed: (reason) => Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.error_outline, color: Colors.red, size: 40),
+                        const SizedBox(height: 8),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 24),
+                          child: Text(reason, textAlign: TextAlign.center),
+                        ),
+                        const SizedBox(height: 12),
+                        ElevatedButton.icon(
+                          onPressed: () => cubit.retry(),
+                          icon: const Icon(Icons.refresh),
+                          label: const Text('Retry'),
+                        ),
+                      ],
+                    ),
+                  ),
                   error: () => const Center(child: Text('Search failed. Try again.')),
                   loaded: (results, preloaded, preloadInProgress, _) => _LoadedView(
                     results: results,

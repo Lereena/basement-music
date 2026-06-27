@@ -1,4 +1,5 @@
 import 'package:basement_music/bloc/soulseek_login_cubit/soulseek_login_cubit.dart';
+import 'package:basement_music/bloc/soulseek_settings_cubit/soulseek_settings_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -55,42 +56,100 @@ class _SoulseekAdminSectionState extends State<SoulseekAdminSection> {
                   final isLoading = state.maybeWhen(loading: () => true, orElse: () => false);
                   final isConnected = state.maybeWhen(connected: (_) => true, orElse: () => false);
                   final cubit = context.read<SoulseekLoginCubit>();
-                  return Row(
+
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      ElevatedButton.icon(
-                        onPressed: isLoading
-                            ? null
-                            : () => cubit.setCredentials(
-                                  _usernameController.text.trim(),
-                                  _passwordController.text,
-                                ),
-                        icon: isLoading
-                            ? const SizedBox(
-                                width: 16,
-                                height: 16,
-                                child: CircularProgressIndicator(strokeWidth: 2),
-                              )
-                            : const Icon(Icons.link),
-                        label: const Text('Connect'),
+                      Row(
+                        children: [
+                          ElevatedButton.icon(
+                            onPressed: isLoading
+                                ? null
+                                : () => cubit.setCredentials(_usernameController.text.trim(), _passwordController.text),
+                            icon: isLoading
+                                ? const SizedBox(
+                                    width: 16,
+                                    height: 16,
+                                    child: CircularProgressIndicator(strokeWidth: 2),
+                                  )
+                                : const Icon(Icons.link),
+                            label: const Text('Connect'),
+                          ),
+                          if (isConnected) ...[
+                            const SizedBox(width: 8),
+                            OutlinedButton.icon(
+                              onPressed: () => cubit.disconnect(),
+                              icon: const Icon(Icons.link_off),
+                              label: const Text('Disconnect'),
+                            ),
+                          ],
+                        ],
                       ),
-                      if (isConnected) ...[
-                        const SizedBox(width: 8),
-                        OutlinedButton.icon(
-                          onPressed: () => cubit.disconnect(),
-                          icon: const Icon(Icons.link_off),
-                          label: const Text('Disconnect'),
-                        ),
-                      ],
-                      const SizedBox(width: 12),
-                      Expanded(child: _StatusChip(state: state)),
+                      const SizedBox(height: 8),
+                      _StatusChip(state: state),
                     ],
                   );
                 },
               ),
+              const SizedBox(height: 16),
+              const _DisconnectAfterField(),
             ],
           ),
         ),
       ],
+    );
+  }
+}
+
+class _DisconnectAfterField extends StatefulWidget {
+  const _DisconnectAfterField();
+
+  @override
+  State<_DisconnectAfterField> createState() => _DisconnectAfterFieldState();
+}
+
+class _DisconnectAfterFieldState extends State<_DisconnectAfterField> {
+  final _controller = TextEditingController();
+  int? _lastSyncedMinutes;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<SoulseekSettingsCubit, SoulseekSettingsState>(
+      builder: (context, state) {
+        // Keep the field in sync with the fetched value without clobbering edits.
+        if (_lastSyncedMinutes != state.minutes) {
+          _lastSyncedMinutes = state.minutes;
+          _controller.text = state.minutes.toString();
+        }
+        final cubit = context.read<SoulseekSettingsCubit>();
+        return Row(
+          children: [
+            Expanded(
+              child: TextFormField(
+                controller: _controller,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(labelText: 'Disconnect after (minutes)', helperText: '0 = never'),
+              ),
+            ),
+            const SizedBox(width: 12),
+            ElevatedButton(
+              onPressed: state.loading
+                  ? null
+                  : () {
+                      final minutes = int.tryParse(_controller.text.trim());
+                      if (minutes != null && minutes >= 0) cubit.save(minutes);
+                    },
+              child: const Text('Save'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
@@ -116,7 +175,13 @@ class _StatusChip extends StatelessWidget {
       children: [
         Icon(icon, color: color, size: 18),
         const SizedBox(width: 6),
-        Flexible(child: Text(label, style: TextStyle(color: color), overflow: TextOverflow.ellipsis)),
+        Flexible(
+          child: Text(
+            label,
+            style: TextStyle(color: color),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
       ],
     );
   }

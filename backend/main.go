@@ -68,7 +68,7 @@ func main() {
 		musicRepo:   musicRepo,
 		artistsRepo: artistsRepo,
 	}
-	db.AutoMigrate(&models.SoulseekCredentials{})
+	db.AutoMigrate(&models.SoulseekCredentials{}, &models.SoulseekSettings{})
 	// Auto-reconnect using stored credentials, if any.
 	go slskRepo.Connect()
 
@@ -112,6 +112,8 @@ func main() {
 	admin.HandleFunc("/soulseek/credentials", slskRepo.SetCredentials).Methods("POST")
 	admin.HandleFunc("/soulseek/status", slskRepo.GetStatus).Methods("GET")
 	admin.HandleFunc("/soulseek/disconnect", slskRepo.Disconnect).Methods("POST")
+	admin.HandleFunc("/soulseek/settings", slskRepo.GetSettings).Methods("GET")
+	admin.HandleFunc("/soulseek/settings", slskRepo.SetSettings).Methods("POST")
 
 	protected.HandleFunc("/tracks", musicRepo.GetTracks).Methods("GET")
 	protected.HandleFunc("/tracks/search", musicRepo.SearchTracks).Methods("GET")
@@ -123,6 +125,7 @@ func main() {
 	protected.HandleFunc("/yt/fetchVideoInfo", youtubeWorker.FetchVideoInfo).Methods("GET")
 	protected.HandleFunc("/yt/download", youtubeWorker.FetchFromYoutube).Methods("GET")
 
+	protected.HandleFunc("/soulseek/connection", slskRepo.GetConnection).Methods("GET")
 	protected.HandleFunc("/soulseek/search", slskRepo.Search).Methods("GET")
 	protected.HandleFunc("/soulseek/preload", slskRepo.Preload).Methods("POST")
 	protected.HandleFunc("/soulseek/save", slskRepo.SaveTrack).Methods("POST")

@@ -1,4 +1,6 @@
+import 'package:basement_music/models/soulseek_connection.dart';
 import 'package:basement_music/models/soulseek_search_result.dart';
+import 'package:basement_music/models/soulseek_settings.dart';
 import 'package:basement_music/models/soulseek_status.dart';
 import 'package:basement_music/models/soulseek_temp_track.dart';
 import 'package:basement_music/models/track.dart';
@@ -24,4 +26,10 @@ class SoulseekRepository {
   Future<void> cleanup() => _restClient.cleanupSoulseekSession();
 
   Future<void> disconnect() => _restClient.disconnectSoulseek();
+
+  Future<SoulseekConnection> getConnection() => _restClient.getSoulseekConnection();
+
+  Future<SoulseekSettings> getSettings() => _restClient.getSoulseekSettings();
+
+  Future<void> setDisconnectMinutes(int minutes) => _restClient.setSoulseekSettings(minutes: minutes);
 }

@@ -8,7 +8,9 @@ import (
 	"path/filepath"
 	"regexp"
 	"sort"
+	"strconv"
 	"strings"
+	"time"
 
 	"github.com/Lereena/server_basement_music/config"
 	"github.com/Lereena/server_basement_music/models"
@@ -19,6 +21,8 @@ import (
 	"gorm.io/gorm"
 )
 
+const defaultDisconnectAfterMinutes = 10
+
 type SoulseekRepository struct {
 	DB          *gorm.DB
 	Cfg         *config.Config
@@ -27,30 +31,56 @@ type SoulseekRepository struct {
 	artistsRepo *repositories.ArtistsRepository
 }
 
-// loadCredentials returns the most recently stored Soulseek credentials.
+// loadIdleMinutes returns the configured idle-disconnect window in minutes,
+// falling back to the default when no row exists.
+func (repo *SoulseekRepository) loadIdleMinutes() int {
+	var settings models.SoulseekSettings
+	if err := repo.DB.First(&settings).Error; err != nil {
+		return defaultDisconnectAfterMinutes
+	}
+	return settings.DisconnectAfterMinutes
+}
+
+// loadCredentials returns the stored Soulseek credentials with the password decrypted.
 func (repo *SoulseekRepository) loadCredentials() (models.SoulseekCredentials, bool) {
 	var creds models.SoulseekCredentials
 	err := repo.DB.Order("created_at DESC").First(&creds).Error
 	if err != nil {
 		return creds, false
 	}
+	password, err := config.Decrypt(creds.Password)
+	if err != nil {
+		log.Printf("Failed to decrypt Soulseek credentials: %v", err)
+		return creds, false
+	}
+	creds.Password = password
 	return creds, true
 }
 
-// ensureAlive restarts the daemon from stored credentials if it has died.
-func (repo *SoulseekRepository) ensureAlive() error {
-	if repo.Worker.IsAlive() {
-		return nil
+// connectionPayload is the shared shape for connection-state responses.
+func connectionPayload(state ConnState, username, reason string) map[string]any {
+	return map[string]any{"state": string(state), "username": username, "reason": reason}
+}
+
+// triggerConnect starts a background connect from stored credentials and returns
+// the resulting connection state. Reports failed when prerequisites are missing.
+func (repo *SoulseekRepository) triggerConnect() (ConnState, string) {
+	if !config.SecretConfigured() {
+		return StateFailed, "SLSK_SECRET not configured"
 	}
 	creds, ok := repo.loadCredentials()
 	if !ok {
-		return os.ErrNotExist
+		return StateFailed, "no stored Soulseek credentials"
 	}
-	return repo.Worker.Start(creds.Username, creds.Password)
+	return repo.Worker.EnsureConnecting(creds.Username, creds.Password), ""
 }
 
-// Connect starts the daemon using stored credentials, if any. Called on startup.
+// Connect applies the idle-disconnect setting, starts the idle monitor, and
+// connects the daemon using stored credentials, if any. Called on startup.
 func (repo *SoulseekRepository) Connect() {
+	repo.Worker.SetIdleWindow(time.Duration(repo.loadIdleMinutes()) * time.Minute)
+	repo.Worker.StartIdleMonitor()
+
 	creds, ok := repo.loadCredentials()
 	if !ok {
 		return
@@ -69,10 +99,33 @@ func (repo *SoulseekRepository) SetCredentials(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	creds := models.SoulseekCredentials{Username: username, Password: password}
-	if err := repo.DB.Create(&creds).Error; err != nil {
-		respond.RespondError(w, http.StatusInternalServerError, "failed to save credentials")
+	if !config.SecretConfigured() {
+		respond.RespondError(w, http.StatusInternalServerError, "SLSK_SECRET not configured")
 		return
+	}
+
+	encrypted, err := config.Encrypt(password)
+	if err != nil {
+		respond.RespondError(w, http.StatusInternalServerError, "failed to encrypt credentials")
+		return
+	}
+
+	// Keep exactly one credentials row: update in place if present, else create.
+	// Use the same ordering as loadCredentials so we operate on the same row.
+	var creds models.SoulseekCredentials
+	if err := repo.DB.Order("created_at DESC").First(&creds).Error; err != nil {
+		creds = models.SoulseekCredentials{Username: username, Password: encrypted}
+		if err := repo.DB.Create(&creds).Error; err != nil {
+			respond.RespondError(w, http.StatusInternalServerError, "failed to save credentials")
+			return
+		}
+	} else {
+		creds.Username = username
+		creds.Password = encrypted
+		if err := repo.DB.Save(&creds).Error; err != nil {
+			respond.RespondError(w, http.StatusInternalServerError, "failed to save credentials")
+			return
+		}
 	}
 
 	if err := repo.Worker.Start(username, password); err != nil {
@@ -103,25 +156,67 @@ func (repo *SoulseekRepository) Search(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := repo.ensureAlive(); err != nil {
-		respond.RespondError(w, http.StatusServiceUnavailable, "Soulseek not connected")
+	// If not connected, kick off a background connect and tell the client to wait.
+	state, _, username := repo.Worker.ConnectionState()
+	if state != StateConnected {
+		newState, reason := repo.triggerConnect()
+		respond.RespondJSON(w, http.StatusServiceUnavailable, connectionPayload(newState, username, reason))
 		return
 	}
 
+	repo.Worker.MarkUsage()
 	results, err := repo.Worker.Search(query)
 	if err != nil {
-		// daemon may have died mid-request -- restart and retry once
-		if restartErr := repo.ensureAlive(); restartErr == nil {
-			results, err = repo.Worker.Search(query)
-		}
-		if err != nil {
-			respond.RespondError(w, http.StatusBadGateway, "search failed")
-			return
-		}
+		// Daemon may have died mid-request -- reconnect in the background and ask
+		// the client to retry once we're up again.
+		newState, reason := repo.triggerConnect()
+		respond.RespondJSON(w, http.StatusServiceUnavailable, connectionPayload(newState, username, reason))
+		return
 	}
 
 	sortResults(results)
 	respond.RespondJSON(w, http.StatusOK, results)
+}
+
+// GET /api/soulseek/connection
+func (repo *SoulseekRepository) GetConnection(w http.ResponseWriter, r *http.Request) {
+	state, reason, username := repo.Worker.ConnectionState()
+	respond.RespondJSON(w, http.StatusOK, connectionPayload(state, username, reason))
+}
+
+// GET /api/admin/soulseek/settings
+func (repo *SoulseekRepository) GetSettings(w http.ResponseWriter, r *http.Request) {
+	respond.RespondJSON(w, http.StatusOK, map[string]any{
+		"disconnect_after_minutes": repo.loadIdleMinutes(),
+	})
+}
+
+// POST /api/admin/soulseek/settings  body: {minutes}
+func (repo *SoulseekRepository) SetSettings(w http.ResponseWriter, r *http.Request) {
+	minutes, err := strconv.Atoi(strings.TrimSpace(r.FormValue("minutes")))
+	if err != nil || minutes < 0 {
+		respond.RespondError(w, http.StatusBadRequest, "minutes must be a non-negative integer")
+		return
+	}
+
+	// Keep exactly one settings row.
+	var settings models.SoulseekSettings
+	if err := repo.DB.First(&settings).Error; err != nil {
+		settings = models.SoulseekSettings{DisconnectAfterMinutes: minutes}
+		if err := repo.DB.Create(&settings).Error; err != nil {
+			respond.RespondError(w, http.StatusInternalServerError, "failed to save settings")
+			return
+		}
+	} else {
+		settings.DisconnectAfterMinutes = minutes
+		if err := repo.DB.Save(&settings).Error; err != nil {
+			respond.RespondError(w, http.StatusInternalServerError, "failed to save settings")
+			return
+		}
+	}
+
+	repo.Worker.SetIdleWindow(time.Duration(minutes) * time.Minute)
+	respond.RespondJSON(w, http.StatusOK, map[string]any{"disconnect_after_minutes": minutes})
 }
 
 // POST /api/soulseek/preload  body: {username, filename}
@@ -133,10 +228,11 @@ func (repo *SoulseekRepository) Preload(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	if err := repo.ensureAlive(); err != nil {
+	if state, _, _ := repo.Worker.ConnectionState(); state != StateConnected {
 		respond.RespondError(w, http.StatusServiceUnavailable, "Soulseek not connected")
 		return
 	}
+	repo.Worker.MarkUsage()
 
 	id := uuid.New().String()
 	ext := filepath.Ext(filename)
@@ -197,6 +293,7 @@ func (repo *SoulseekRepository) SaveTrack(w http.ResponseWriter, r *http.Request
 		respond.RespondError(w, http.StatusNotFound, "temp track not found")
 		return
 	}
+	repo.Worker.MarkUsage()
 
 	ext := filepath.Ext(temp.Path)
 	trackFileName := temp.Artist + " - " + temp.Title + ext

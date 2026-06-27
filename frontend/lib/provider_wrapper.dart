@@ -6,6 +6,7 @@ import 'package:basement_music/bloc/favourites_cubit/favourites_cubit.dart';
 import 'package:basement_music/bloc/player_cubit/player_cubit.dart';
 import 'package:basement_music/bloc/settings_cubit/settings_cubit.dart';
 import 'package:basement_music/bloc/soulseek_login_cubit/soulseek_login_cubit.dart';
+import 'package:basement_music/bloc/soulseek_settings_cubit/soulseek_settings_cubit.dart';
 import 'package:basement_music/bloc/track_progress_cubit/track_progress_cubit.dart';
 import 'package:basement_music/repositories/admin_repository.dart';
 import 'package:basement_music/repositories/artists_repository.dart';
@@ -68,6 +69,7 @@ class ProviderWrapper extends StatelessWidget {
         providers: [
           BlocProvider.value(value: authCubit),
           BlocProvider(create: (_) => SoulseekLoginCubit(soulseekRepository)..loadStatus()),
+          BlocProvider(create: (_) => SoulseekSettingsCubit(soulseekRepository)..load()),
           BlocProvider(create: (_) => FavouritesCubit(favouritesRepository)..loadFavourites()),
           BlocProvider(create: (_) => ConnectivityStatusCubit(connectivityStatusRepository)),
           BlocProvider(create: (_) => TrackProgressCubit(audioHandler)),
