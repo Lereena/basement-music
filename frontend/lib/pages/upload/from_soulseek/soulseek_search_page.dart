@@ -46,16 +46,11 @@ class _SoulseekSearchViewState extends State<_SoulseekSearchView> {
       body: HorizontalSpaceReducer(
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(8),
-              child: SearchField(autofocus: true, onSearch: cubit.search),
-            ),
+            SearchField(autofocus: true, onSearch: cubit.search),
             Expanded(
               child: BlocConsumer<SoulseekSearchCubit, SoulseekSearchState>(
-                listenWhen: (prev, curr) => curr.maybeWhen(
-                  loaded: (_, _, _, error) => error != null,
-                  orElse: () => false,
-                ),
+                listenWhen: (prev, curr) =>
+                    curr.maybeWhen(loaded: (_, _, _, error) => error != null, orElse: () => false),
                 listener: (context, state) {
                   state.maybeWhen(
                     loaded: (_, _, _, error) {
@@ -72,11 +67,7 @@ class _SoulseekSearchViewState extends State<_SoulseekSearchView> {
                   connecting: () => const Center(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
-                      children: [
-                        CircularProgressIndicator(),
-                        SizedBox(height: 12),
-                        Text('Connecting to Soulseek…'),
-                      ],
+                      children: [CircularProgressIndicator(), SizedBox(height: 12), Text('Connecting to Soulseek…')],
                     ),
                   ),
                   connectionFailed: (reason) => Center(
@@ -99,11 +90,8 @@ class _SoulseekSearchViewState extends State<_SoulseekSearchView> {
                     ),
                   ),
                   error: () => const Center(child: Text('Search failed. Try again.')),
-                  loaded: (results, preloaded, preloadInProgress, _) => _LoadedView(
-                    results: results,
-                    preloaded: preloaded,
-                    preloadInProgress: preloadInProgress,
-                  ),
+                  loaded: (results, preloaded, preloadInProgress, _) =>
+                      _LoadedView(results: results, preloaded: preloaded, preloadInProgress: preloadInProgress),
                 ),
               ),
             ),
@@ -127,16 +115,13 @@ class _LoadedView extends StatelessWidget {
 
     return Column(
       children: [
-        if (preloadInProgress) const LinearProgressIndicator(),
+        const SizedBox(height: 12),
         Expanded(
           child: results.isEmpty
               ? const Center(child: Text('No results'))
               : ListView.builder(
                   itemCount: results.length,
-                  itemBuilder: (_, i) => _ResultCard(
-                    result: results[i],
-                    onPreview: () => cubit.preload(results[i]),
-                  ),
+                  itemBuilder: (_, i) => _ResultCard(result: results[i], onPreview: () => cubit.preload(results[i])),
                 ),
         ),
         if (preloaded.isNotEmpty) ...[
@@ -162,34 +147,110 @@ class _LoadedView extends StatelessWidget {
   }
 }
 
-class _ResultCard extends StatelessWidget {
+class _ResultCard extends StatefulWidget {
   const _ResultCard({required this.result, required this.onPreview});
 
   final SoulseekSearchResult result;
   final VoidCallback onPreview;
 
+  @override
+  State<_ResultCard> createState() => _ResultCardState();
+}
+
+class _ResultCardState extends State<_ResultCard> {
+  bool _expanded = false;
+
+  String get _basename {
+    final path = widget.result.filename;
+    final idx = path.lastIndexOf(RegExp(r'[\\/]'));
+    return idx >= 0 ? path.substring(idx + 1) : path;
+  }
+
   String get _sizeLabel {
-    final mb = result.size / (1024 * 1024);
+    final mb = widget.result.size / (1024 * 1024);
     return '${mb.toStringAsFixed(1)} MB';
+  }
+
+  String get _formatLabel {
+    final result = widget.result;
+    final parts = [result.extension.toUpperCase(), if (result.bitrate > 0) '${result.bitrate} kbps'];
+
+    return parts.join(' · ');
   }
 
   @override
   Widget build(BuildContext context) {
-    final subtitle = [
-      result.peerUsername,
-      result.extension.toUpperCase(),
-      if (result.bitrate > 0) '${result.bitrate} kbps',
-      _sizeLabel,
-    ].join(' · ');
+    final theme = Theme.of(context);
 
-    return ListTile(
-      dense: true,
-      title: Text(result.filename, maxLines: 2, overflow: TextOverflow.ellipsis),
-      subtitle: Text(subtitle),
-      trailing: IconButton(
-        icon: const Icon(Icons.download_for_offline_outlined),
-        tooltip: 'Preview',
-        onPressed: onPreview,
+    return Column(
+      children: [
+        InkWell(
+          onTap: () => setState(() => _expanded = !_expanded),
+          child: Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.download_for_offline_outlined),
+                tooltip: 'Preload',
+                onPressed: widget.onPreview,
+              ),
+              Expanded(
+                child: Text(
+                  _basename,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontSize: 16),
+                ),
+              ),
+
+              AnimatedRotation(
+                turns: _expanded ? 0.5 : 0,
+                duration: const Duration(milliseconds: 150),
+                child: const Icon(Icons.expand_more),
+              ),
+              const SizedBox(width: 10),
+            ],
+          ),
+        ),
+        if (_expanded)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _DetailRow(label: 'Full name', value: widget.result.filename),
+                _DetailRow(label: 'Uploader', value: widget.result.peerUsername),
+                _DetailRow(label: 'Format', value: _formatLabel.isEmpty ? '—' : _formatLabel),
+                _DetailRow(label: 'Size', value: _sizeLabel),
+              ],
+            ),
+          ),
+        Divider(height: 1, color: theme.dividerColor.withValues(alpha: 0.4)),
+      ],
+    );
+  }
+}
+
+class _DetailRow extends StatelessWidget {
+  const _DetailRow({required this.label, required this.value});
+
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 90,
+            child: Text(label, style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.primary)),
+          ),
+          Expanded(child: Text(value, style: theme.textTheme.bodyMedium)),
+        ],
       ),
     );
   }
