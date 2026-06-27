@@ -13,6 +13,7 @@ import 'package:basement_music/utils/horizontal_space_reducer.dart';
 import 'package:basement_music/widgets/artist_card.dart';
 import 'package:basement_music/widgets/create_playlist.dart';
 import 'package:basement_music/widgets/playlist_card.dart';
+import 'package:basement_music/widgets/scrollable_placeholder.dart';
 import 'package:basement_music/widgets/track_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -136,11 +137,8 @@ class _LibraryPageContentState extends State<_LibraryPageContent> with SingleTic
               child: const Icon(Icons.add),
             )
           : null,
-      body: RefreshIndicator(
-        onRefresh: () => tab.load(context),
-        child: HorizontalSpaceReducer(
-          child: TabBarView(controller: tabController, children: widget.tabs.map(_buildTabView).toList()),
-        ),
+      body: HorizontalSpaceReducer(
+        child: TabBarView(controller: tabController, children: widget.tabs.map(_buildTabView).toList()),
       ),
     );
   }

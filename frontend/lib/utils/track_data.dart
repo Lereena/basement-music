@@ -1,4 +1,4 @@
-final _splitRegexp = RegExp('[−‐‑ー一-]');
+final _splitRegexp = RegExp('[-−‐‑‒–—―]');
 
 (String? artist, String title) getArtistAndTitle(String? filename) {
   if (filename == null) return (null, '');

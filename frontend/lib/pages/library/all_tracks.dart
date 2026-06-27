@@ -14,15 +14,19 @@ class _AllTracks extends StatelessWidget {
         builder: (context, connectivityStatus) {
           final active = connectivityStatus.maybeWhen(hasConnection: () => true, orElse: () => false);
           return BlocBuilder<TracksCubit, TracksState>(
-            builder: (context, state) => state.when(
-              loadInProgress: () => const Center(child: CircularProgressIndicator()),
-              empty: () => const Center(child: Text('No tracks')),
-              loaded: (tracks) => ListView.separated(
-                separatorBuilder: (_, _) => const Divider(height: 1),
-                itemCount: tracks.length,
-                itemBuilder: (_, i) => TrackCard(track: tracks[i], active: active),
+            builder: (context, state) => RefreshIndicator(
+              onRefresh: () => context.read<TracksCubit>().loadTracks(),
+              child: state.when(
+                loadInProgress: () => const ScrollablePlaceholder(child: CircularProgressIndicator()),
+                empty: () => const ScrollablePlaceholder(child: Text('No tracks')),
+                loaded: (tracks) => ListView.separated(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  separatorBuilder: (_, _) => const Divider(height: 1),
+                  itemCount: tracks.length,
+                  itemBuilder: (_, i) => TrackCard(track: tracks[i], active: active),
+                ),
+                error: () => const ScrollablePlaceholder(child: Text('Error loading tracks')),
               ),
-              error: () => const Center(child: Text('Error loading tracks')),
             ),
           );
         },
