@@ -7,6 +7,7 @@ import 'package:basement_music/widgets/controls/play_button.dart';
 import 'package:basement_music/widgets/controls/previous_button.dart';
 import 'package:basement_music/widgets/controls/repeat_toggle.dart';
 import 'package:basement_music/widgets/controls/shuffle_toggle.dart';
+import 'package:basement_music/widgets/current_track_sheet.dart';
 import 'package:basement_music/widgets/track_name.dart';
 import 'package:basement_music/widgets/track_progress_indicator.dart';
 import 'package:flutter/material.dart';
@@ -23,55 +24,59 @@ class BottomPlayer extends StatelessWidget {
       builder: (context, state) {
         if (state.currentTrack == Track.empty()) return Container(height: 0);
 
-        return ColoredBox(
-          color: Theme.of(context).colorScheme.surface,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TrackProgressIndicator(percentProgress: progress.percentProgress),
-              Container(
-                height: 70,
-                padding: const EdgeInsets.all(10),
-                child: Row(
-                  children: [
-                    const PreviousButton(),
-                    if (state.isPlay)
-                      const PauseButton()
-                    else if (state.isPause || state.isInitial)
-                      PlayButton(track: state.currentTrack, state: state, isBottomPlayer: true),
-                    const NextButton(),
-                    const SizedBox(width: 15),
-                    if (state.isPause || state.isPlay) Image.asset(state.currentTrack.cover, height: 40, width: 40),
-                    const SizedBox(width: 10),
-                    if (state.isPlay || state.isPause) ...[
-                      Expanded(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            TrackName(track: state.currentTrack, moving: true),
-                            Text(
-                              state.currentTrack.artist,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(fontSize: 16),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 20),
-                      Text(
-                        progress.stringProgress,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(fontSize: 16),
-                      ),
+        return GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () => showCurrentTrackSheet(context),
+          child: ColoredBox(
+            color: Theme.of(context).colorScheme.surface,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TrackProgressIndicator(percentProgress: progress.percentProgress),
+                Container(
+                  height: 70,
+                  padding: const EdgeInsets.all(10),
+                  child: Row(
+                    children: [
+                      const PreviousButton(),
+                      if (state.isPlay)
+                        const PauseButton()
+                      else if (state.isPause || state.isInitial)
+                        PlayButton(track: state.currentTrack, state: state, isBottomPlayer: true),
+                      const NextButton(),
+                      const SizedBox(width: 15),
+                      if (state.isPause || state.isPlay) Image.asset(state.currentTrack.cover, height: 40, width: 40),
                       const SizedBox(width: 10),
-                      const ShuffleToggle(),
-                      const RepeatToggle(),
+                      if (state.isPlay || state.isPause) ...[
+                        Expanded(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              TrackName(track: state.currentTrack, moving: true),
+                              Text(
+                                state.currentTrack.artist,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 20),
+                        Text(
+                          progress.stringProgress,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                        const SizedBox(width: 10),
+                        const ShuffleToggle(),
+                        const RepeatToggle(),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },
