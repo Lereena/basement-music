@@ -32,6 +32,7 @@ class ProviderWrapper extends StatelessWidget {
     required this.favouritesRepository,
     required this.adminRepository,
     required this.soulseekRepository,
+    required this.statsRepository,
     required this.authCubit,
   });
 
@@ -47,6 +48,7 @@ class ProviderWrapper extends StatelessWidget {
   final FavouritesRepository favouritesRepository;
   final AdminRepository adminRepository;
   final SoulseekRepository soulseekRepository;
+  final StatsRepository statsRepository;
   final AuthCubit authCubit;
 
   @override
@@ -64,6 +66,7 @@ class ProviderWrapper extends StatelessWidget {
         RepositoryProvider.value(value: favouritesRepository),
         RepositoryProvider.value(value: adminRepository),
         RepositoryProvider.value(value: soulseekRepository),
+        RepositoryProvider.value(value: statsRepository),
       ],
       child: MultiBlocProvider(
         providers: [

@@ -125,6 +125,10 @@ abstract class RestClient {
   @DELETE('/user/favourites/{trackId}')
   Future<void> removeFavourite(@Path('trackId') String trackId);
 
+  // Stats
+  @POST('/user/listens')
+  Future<void> postListens(@Body() List<Map<String, dynamic>> events);
+
   // Admin
   @POST('/admin/registration-codes')
   Future<RegistrationCode> generateRegistrationCode();

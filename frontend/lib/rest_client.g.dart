@@ -615,6 +615,25 @@ class _RestClient implements RestClient {
   }
 
   @override
+  Future<void> postListens(List<Map<String, dynamic>> events) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = events.map((e) => e.toJson()).toList();
+    final _options = _setStreamType<void>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/user/listens',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    await _dio.fetch<void>(_options);
+  }
+
+  @override
   Future<RegistrationCode> generateRegistrationCode() async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};

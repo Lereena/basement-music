@@ -14,6 +14,7 @@ import 'package:basement_music/repositories/repositories.dart';
 import 'package:basement_music/repositories/soulseek_repository.dart';
 import 'package:basement_music/rest_client.dart';
 import 'package:basement_music/routing/router.dart';
+import 'package:basement_music/services/listen_tracker.dart';
 import 'package:basement_music/shortcuts_wrapper.dart';
 import 'package:basement_music/theme/custom_theme.dart';
 import 'package:basement_music/utils/auth_interceptor.dart';
@@ -70,6 +71,7 @@ Future<void> runBasement(AppConfig config) async {
   final settingsBox = await Hive.openBox<Object>('settings');
   final tracksPersistenceBox = await Hive.openBox<String>('tracks_persistent');
   final playlistsPersistenceBox = await Hive.openBox<String>('playlists_persistent');
+  final statsBox = await Hive.openBox<String>('listen_stats');
 
   final settingsRepository = SettingsRepository(settingsBox);
   final connectivityStatusRepository = ConnectivityStatusRepository();
@@ -78,8 +80,13 @@ Future<void> runBasement(AppConfig config) async {
   final favouritesRepository = FavouritesRepository(restClient);
   final adminRepository = AdminRepository(restClient);
   final soulseekRepository = SoulseekRepository(restClient);
+  final statsRepository = StatsRepository(
+    restClient,
+    connectivityStatusRepository,
+    persistenceBox: statsBox,
+  );
 
-  final authCubit = AuthCubit(authRepository);
+  final authCubit = AuthCubit(authRepository, statsRepository);
   final router = AppRouter.createRouter(authCubit);
 
   final audioHandler = await AudioService.init(
@@ -95,6 +102,8 @@ Future<void> runBasement(AppConfig config) async {
       androidNotificationOngoing: true,
     ),
   );
+
+  final listenTracker = ListenTracker(audioHandler, statsRepository);
 
   runApp(
     BasementMusic(
@@ -113,6 +122,8 @@ Future<void> runBasement(AppConfig config) async {
       favouritesRepository: favouritesRepository,
       adminRepository: adminRepository,
       soulseekRepository: soulseekRepository,
+      statsRepository: statsRepository,
+      listenTracker: listenTracker,
       authCubit: authCubit,
       router: router,
     ),
@@ -131,6 +142,8 @@ class BasementMusic extends StatelessWidget {
   final FavouritesRepository favouritesRepository;
   final AdminRepository adminRepository;
   final SoulseekRepository soulseekRepository;
+  final StatsRepository statsRepository;
+  final ListenTracker listenTracker;
   final AuthCubit authCubit;
   final GoRouter router;
 
@@ -147,6 +160,8 @@ class BasementMusic extends StatelessWidget {
     required this.favouritesRepository,
     required this.adminRepository,
     required this.soulseekRepository,
+    required this.statsRepository,
+    required this.listenTracker,
     required this.authCubit,
     required this.router,
   });
@@ -165,6 +180,7 @@ class BasementMusic extends StatelessWidget {
       favouritesRepository: favouritesRepository,
       adminRepository: adminRepository,
       soulseekRepository: soulseekRepository,
+      statsRepository: statsRepository,
       authCubit: authCubit,
       child: BlocBuilder<SettingsCubit, SettingsState>(
         builder: (_, settingsState) => Sizer(
