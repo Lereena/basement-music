@@ -1,6 +1,7 @@
 import 'package:basement_music/bloc/player_cubit/player_cubit.dart';
 import 'package:basement_music/bloc/track_progress_cubit/track_progress_cubit.dart';
 import 'package:basement_music/models/track.dart';
+import 'package:basement_music/widgets/controls/lyrics_toggle.dart';
 import 'package:basement_music/widgets/controls/next_button.dart';
 import 'package:basement_music/widgets/controls/pause_button.dart';
 import 'package:basement_music/widgets/controls/play_button.dart';
@@ -8,12 +9,13 @@ import 'package:basement_music/widgets/controls/previous_button.dart';
 import 'package:basement_music/widgets/controls/repeat_toggle.dart';
 import 'package:basement_music/widgets/controls/shuffle_toggle.dart';
 import 'package:basement_music/widgets/cover.dart';
+import 'package:basement_music/widgets/lyrics_view.dart';
 import 'package:basement_music/widgets/track_name.dart';
 import 'package:basement_music/widgets/track_seek_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class CurrentTrackView extends StatelessWidget {
+class CurrentTrackView extends StatefulWidget {
   final double coverSize;
 
   /// Expanded is the full-screen (sheet) presentation: bigger typography
@@ -21,6 +23,17 @@ class CurrentTrackView extends StatelessWidget {
   final bool expanded;
 
   const CurrentTrackView({super.key, required this.coverSize, this.expanded = false});
+
+  @override
+  State<CurrentTrackView> createState() => _CurrentTrackViewState();
+}
+
+class _CurrentTrackViewState extends State<CurrentTrackView> {
+  var _showLyrics = false;
+
+  double get coverSize => widget.coverSize;
+
+  bool get expanded => widget.expanded;
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +46,27 @@ class CurrentTrackView extends StatelessWidget {
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Cover(key: const Key('album_cover'), cover: track.cover, size: coverSize),
+            SizedBox(
+              width: coverSize,
+              height: coverSize,
+              child: Stack(
+                children: [
+                  if (_showLyrics)
+                    LyricsView(track: track, size: coverSize)
+                  else
+                    Cover(key: const Key('album_cover'), cover: track.cover, size: coverSize),
+                  Positioned(
+                    top: 4,
+                    right: 4,
+                    child: LyricsToggle(
+                      active: _showLyrics,
+                      size: expanded ? 24 : 20,
+                      onToggle: () => setState(() => _showLyrics = !_showLyrics),
+                    ),
+                  ),
+                ],
+              ),
+            ),
             SizedBox(height: expanded ? 30 : 20),
             TrackName(track: track, moving: true, fontSize: expanded ? 24 : 18),
             Text(
