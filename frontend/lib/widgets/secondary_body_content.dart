@@ -13,7 +13,7 @@ class SecondaryBodyContent extends StatelessWidget {
       ),
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 3.w),
-        child: CurrentTrackView(coverSize: 27.w),
+        child: const CurrentTrackView(),
       ),
     );
   }

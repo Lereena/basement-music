@@ -16,13 +16,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CurrentTrackView extends StatefulWidget {
-  final double coverSize;
-
   /// Expanded is the full-screen (sheet) presentation: bigger typography
   /// and controls. Compact is the large-screen side panel.
   final bool expanded;
 
-  const CurrentTrackView({super.key, required this.coverSize, this.expanded = false});
+  final Widget? leading;
+
+  const CurrentTrackView({super.key, this.expanded = false, this.leading});
 
   @override
   State<CurrentTrackView> createState() => _CurrentTrackViewState();
@@ -30,8 +30,6 @@ class CurrentTrackView extends StatefulWidget {
 
 class _CurrentTrackViewState extends State<CurrentTrackView> {
   var _showLyrics = false;
-
-  double get coverSize => widget.coverSize;
 
   bool get expanded => widget.expanded;
 
@@ -43,79 +41,87 @@ class _CurrentTrackViewState extends State<CurrentTrackView> {
 
         final track = state.currentTrack;
 
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: coverSize,
-              height: coverSize,
-              child: Stack(
+        return Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  if (_showLyrics)
-                    LyricsView(track: track, size: coverSize)
-                  else
-                    Cover(key: const Key('album_cover'), cover: track.cover, size: coverSize),
-                  Positioned(
-                    top: 4,
-                    right: 4,
-                    child: LyricsToggle(
-                      active: _showLyrics,
-                      size: expanded ? 24 : 20,
-                      onToggle: () => setState(() => _showLyrics = !_showLyrics),
-                    ),
+                  widget.leading ?? const SizedBox.shrink(),
+                  LyricsToggle(
+                    active: _showLyrics,
+                    size: expanded ? 24 : 20,
+                    onToggle: () => setState(() => _showLyrics = !_showLyrics),
                   ),
                 ],
               ),
-            ),
-            SizedBox(height: expanded ? 30 : 20),
-            TrackName(track: track, moving: true, fontSize: expanded ? 24 : 18),
-            Text(
-              track.artist,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontSize: expanded ? 18 : 16,
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
-              ),
-            ),
-            SizedBox(height: expanded ? 30 : 20),
-            // Scoped so position ticks don't rebuild the cover/marquee/controls
-            // above — keeps drag frames cheap.
-            BlocBuilder<TrackProgressCubit, TrackProgressState>(
-              builder: (context, progress) {
-                final progressCubit = context.read<TrackProgressCubit>();
+              Spacer(),
+              Expanded(
+                flex: 6,
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final size = constraints.biggest.shortestSide;
 
-                return Column(
-                  children: [
-                    TrackSeekBar(
-                      percentProgress: progress.percentProgress,
-                      enabled: progressCubit.canSeek,
-                      onSeek: progressCubit.seek,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          progress.stringProgress,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontSize: 16),
-                        ),
-                        Text(
-                          progress.stringDuration,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontSize: 16),
-                        ),
-                      ],
-                    ),
-                  ],
-                );
-              },
-            ),
-            const SizedBox(height: 20),
-            if (expanded)
-              _ExpandedControls(track: track, state: state)
-            else
-              _CompactControls(track: track, state: state),
-          ],
+                    return Center(
+                      child: _showLyrics
+                          ? LyricsView(track: track, size: size)
+                          : Cover(key: const Key('album_cover'), cover: track.cover, size: size),
+                    );
+                  },
+                ),
+              ),
+              SizedBox(height: expanded ? 30 : 20),
+              TrackName(track: track, moving: true, fontSize: expanded ? 24 : 18),
+              Text(
+                track.artist,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: expanded ? 18 : 16,
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+                ),
+              ),
+              SizedBox(height: expanded ? 30 : 20),
+              // Scoped so position ticks don't rebuild the cover/marquee/controls
+              // above — keeps drag frames cheap.
+              BlocBuilder<TrackProgressCubit, TrackProgressState>(
+                builder: (context, progress) {
+                  final progressCubit = context.read<TrackProgressCubit>();
+
+                  return Column(
+                    children: [
+                      TrackSeekBar(
+                        percentProgress: progress.percentProgress,
+                        enabled: progressCubit.canSeek,
+                        onSeek: progressCubit.seek,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            progress.stringProgress,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                          Text(
+                            progress.stringDuration,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                        ],
+                      ),
+                    ],
+                  );
+                },
+              ),
+              const SizedBox(height: 16),
+              if (expanded)
+                _ExpandedControls(track: track, state: state)
+              else
+                _CompactControls(track: track, state: state),
+              Spacer(),
+            ],
+          ),
         );
       },
     );

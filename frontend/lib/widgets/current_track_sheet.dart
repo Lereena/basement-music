@@ -1,12 +1,9 @@
-import 'dart:math';
-
 import 'package:basement_music/bloc/player_cubit/player_cubit.dart';
 import 'package:basement_music/models/track.dart';
 import 'package:basement_music/routing/breakpoints.dart';
 import 'package:basement_music/widgets/current_track_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sizer/sizer.dart';
 
 Future<void> showCurrentTrackSheet(BuildContext context) {
   // The sheet's own MediaQuery has its top padding stripped by
@@ -48,18 +45,14 @@ class _CurrentTrackSheetBody extends StatelessWidget {
         padding: EdgeInsets.only(top: safeInsets.top, bottom: safeInsets.bottom),
         child: Column(
           children: [
-            Align(
-              alignment: Alignment.centerLeft,
-              child: IconButton(
-                icon: const Icon(Icons.expand_more, size: 36),
-                tooltip: 'Collapse',
-                onPressed: () => Navigator.of(context).pop(),
-              ),
-            ),
             Expanded(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 6.w),
-                child: Center(child: CurrentTrackView(expanded: true, coverSize: min(75.w, 42.h))),
+              child: CurrentTrackView(
+                expanded: true,
+                leading: IconButton(
+                  icon: const Icon(Icons.expand_more, size: 36),
+                  tooltip: 'Collapse',
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
               ),
             ),
             const SizedBox(height: 20),

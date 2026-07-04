@@ -1,7 +1,6 @@
+import 'package:basement_music/models/track.dart';
 import 'package:flutter/material.dart';
 import 'package:marquee_text/marquee_text.dart';
-
-import 'package:basement_music/models/track.dart';
 
 class TrackName extends StatelessWidget {
   final Track track;
@@ -13,7 +12,7 @@ class TrackName extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: MediaQuery.of(context).textScaler.scale(fontSize + 4),
+      height: MediaQuery.of(context).textScaler.scale(fontSize * 1.25),
       child: moving
           ? MarqueeText(
               text: TextSpan(text: track.title),
