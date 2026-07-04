@@ -7,10 +7,11 @@ import (
 
 type Track struct {
 	gorm.Model
-	Id       string
-	Title    string
-	Artist   string
-	Duration int
-	Cover    string
-	Url      string
+	Id        string
+	Title     string
+	Artist    string
+	Duration  int
+	Cover     string
+	Url       string
+	HasLyrics bool `gorm:"not null;default:false"`
 }

@@ -1,7 +1,8 @@
 import 'package:basement_music/bloc/player_cubit/player_cubit.dart';
 import 'package:basement_music/bloc/track_progress_cubit/track_progress_cubit.dart';
 import 'package:basement_music/models/track.dart';
-import 'package:basement_music/widgets/controls/lyrics_toggle.dart';
+import 'package:basement_music/repositories/lyrics_repository.dart';
+import 'package:basement_music/widgets/controls/lyrics_menu_button.dart';
 import 'package:basement_music/widgets/controls/next_button.dart';
 import 'package:basement_music/widgets/controls/pause_button.dart';
 import 'package:basement_music/widgets/controls/play_button.dart';
@@ -30,6 +31,8 @@ class CurrentTrackView extends StatefulWidget {
 
 class _CurrentTrackViewState extends State<CurrentTrackView> {
   var _showLyrics = false;
+  var _lyricsSource = LyricsSource.server;
+  String? _lastTrackId;
 
   bool get expanded => widget.expanded;
 
@@ -41,6 +44,14 @@ class _CurrentTrackViewState extends State<CurrentTrackView> {
 
         final track = state.currentTrack;
 
+        // On track change, default the source per the new track (file if it
+        // already has confirmed lyrics). Field mutation during rebuild is safe
+        // here — the rebuild was already triggered by this state change.
+        if (_lastTrackId != track.id) {
+          _lastTrackId = track.id;
+          _lyricsSource = track.hasLyrics ? LyricsSource.file : LyricsSource.server;
+        }
+
         return Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -49,10 +60,15 @@ class _CurrentTrackViewState extends State<CurrentTrackView> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   widget.leading ?? const SizedBox.shrink(),
-                  LyricsToggle(
-                    active: _showLyrics,
+                  LyricsMenuButton(
+                    track: track,
+                    lyricsShown: _showLyrics,
                     size: expanded ? 24 : 20,
-                    onToggle: () => setState(() => _showLyrics = !_showLyrics),
+                    onShowLyrics: (source) => setState(() {
+                      _showLyrics = true;
+                      _lyricsSource = source;
+                    }),
+                    onHideLyrics: () => setState(() => _showLyrics = false),
                   ),
                 ],
               ),
@@ -65,7 +81,7 @@ class _CurrentTrackViewState extends State<CurrentTrackView> {
 
                     return Center(
                       child: _showLyrics
-                          ? LyricsView(track: track, size: size)
+                          ? LyricsView(track: track, size: size, source: _lyricsSource)
                           : Cover(key: const Key('album_cover'), cover: track.cover, size: size),
                     );
                   },

@@ -78,14 +78,18 @@ class ProviderWrapper extends StatelessWidget {
           BlocProvider(create: (_) => FavouritesCubit(favouritesRepository)..loadFavourites()),
           BlocProvider(create: (_) => ConnectivityStatusCubit(connectivityStatusRepository)),
           BlocProvider(create: (_) => TrackProgressCubit(audioHandler)),
-          BlocProvider(create: (_) => LyricsCubit(lyricsRepository)),
+          BlocProvider(create: (_) => LyricsCubit(lyricsRepository, tracksRepository)),
           BlocProvider(
             create: (_) =>
                 CacherCubit(cacheRepository: cacheRepository, tracksRepository: tracksRepository)..initialize(),
           ),
           BlocProvider(create: (_) => SettingsCubit(settingsRepository)..retrieveSettings()),
           BlocProvider(
-            create: (_) => PlayerCubit(audioHandler: audioHandler, tracksRepository: tracksRepository),
+            create: (_) => PlayerCubit(
+              audioHandler: audioHandler,
+              tracksRepository: tracksRepository,
+              lyricsRepository: lyricsRepository,
+            ),
           ),
         ],
         child: child,

@@ -131,12 +131,12 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( Lyrics lyrics)?  loaded,TResult Function()?  notFound,TResult Function()?  error,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( Lyrics lyrics,  LyricsSource source,  bool canSave,  bool saving)?  loaded,TResult Function()?  notFound,TResult Function()?  error,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial();case _Loading() when loading != null:
 return loading();case _Loaded() when loaded != null:
-return loaded(_that.lyrics);case _NotFound() when notFound != null:
+return loaded(_that.lyrics,_that.source,_that.canSave,_that.saving);case _NotFound() when notFound != null:
 return notFound();case _Error() when error != null:
 return error();case _:
   return orElse();
@@ -156,12 +156,12 @@ return error();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( Lyrics lyrics)  loaded,required TResult Function()  notFound,required TResult Function()  error,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( Lyrics lyrics,  LyricsSource source,  bool canSave,  bool saving)  loaded,required TResult Function()  notFound,required TResult Function()  error,}) {final _that = this;
 switch (_that) {
 case _Initial():
 return initial();case _Loading():
 return loading();case _Loaded():
-return loaded(_that.lyrics);case _NotFound():
+return loaded(_that.lyrics,_that.source,_that.canSave,_that.saving);case _NotFound():
 return notFound();case _Error():
 return error();case _:
   throw StateError('Unexpected subclass');
@@ -180,12 +180,12 @@ return error();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( Lyrics lyrics)?  loaded,TResult? Function()?  notFound,TResult? Function()?  error,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( Lyrics lyrics,  LyricsSource source,  bool canSave,  bool saving)?  loaded,TResult? Function()?  notFound,TResult? Function()?  error,}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial();case _Loading() when loading != null:
 return loading();case _Loaded() when loaded != null:
-return loaded(_that.lyrics);case _NotFound() when notFound != null:
+return loaded(_that.lyrics,_that.source,_that.canSave,_that.saving);case _NotFound() when notFound != null:
 return notFound();case _Error() when error != null:
 return error();case _:
   return null;
@@ -263,10 +263,13 @@ String toString() {
 
 
 class _Loaded implements LyricsState {
-  const _Loaded({required this.lyrics});
+  const _Loaded({required this.lyrics, required this.source, required this.canSave, this.saving = false});
   
 
  final  Lyrics lyrics;
+ final  LyricsSource source;
+ final  bool canSave;
+@JsonKey() final  bool saving;
 
 /// Create a copy of LyricsState
 /// with the given fields replaced by the non-null parameter values.
@@ -278,16 +281,16 @@ _$LoadedCopyWith<_Loaded> get copyWith => __$LoadedCopyWithImpl<_Loaded>(this, _
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Loaded&&(identical(other.lyrics, lyrics) || other.lyrics == lyrics));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Loaded&&(identical(other.lyrics, lyrics) || other.lyrics == lyrics)&&(identical(other.source, source) || other.source == source)&&(identical(other.canSave, canSave) || other.canSave == canSave)&&(identical(other.saving, saving) || other.saving == saving));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,lyrics);
+int get hashCode => Object.hash(runtimeType,lyrics,source,canSave,saving);
 
 @override
 String toString() {
-  return 'LyricsState.loaded(lyrics: $lyrics)';
+  return 'LyricsState.loaded(lyrics: $lyrics, source: $source, canSave: $canSave, saving: $saving)';
 }
 
 
@@ -298,7 +301,7 @@ abstract mixin class _$LoadedCopyWith<$Res> implements $LyricsStateCopyWith<$Res
   factory _$LoadedCopyWith(_Loaded value, $Res Function(_Loaded) _then) = __$LoadedCopyWithImpl;
 @useResult
 $Res call({
- Lyrics lyrics
+ Lyrics lyrics, LyricsSource source, bool canSave, bool saving
 });
 
 
@@ -315,10 +318,13 @@ class __$LoadedCopyWithImpl<$Res>
 
 /// Create a copy of LyricsState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? lyrics = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? lyrics = null,Object? source = null,Object? canSave = null,Object? saving = null,}) {
   return _then(_Loaded(
 lyrics: null == lyrics ? _self.lyrics : lyrics // ignore: cast_nullable_to_non_nullable
-as Lyrics,
+as Lyrics,source: null == source ? _self.source : source // ignore: cast_nullable_to_non_nullable
+as LyricsSource,canSave: null == canSave ? _self.canSave : canSave // ignore: cast_nullable_to_non_nullable
+as bool,saving: null == saving ? _self.saving : saving // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 

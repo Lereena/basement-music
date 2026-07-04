@@ -4,7 +4,12 @@ part of 'lyrics_cubit.dart';
 abstract class LyricsState with _$LyricsState {
   const factory LyricsState.initial() = _Initial;
   const factory LyricsState.loading() = _Loading;
-  const factory LyricsState.loaded({required Lyrics lyrics}) = _Loaded;
+  const factory LyricsState.loaded({
+    required Lyrics lyrics,
+    required LyricsSource source,
+    required bool canSave,
+    @Default(false) bool saving,
+  }) = _Loaded;
   const factory LyricsState.notFound() = _NotFound;
   const factory LyricsState.error() = _Error;
 }

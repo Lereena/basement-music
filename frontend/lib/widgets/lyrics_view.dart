@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:basement_music/audio_player_handler.dart';
 import 'package:basement_music/bloc/lyrics_cubit/lyrics_cubit.dart';
 import 'package:basement_music/models/track.dart';
+import 'package:basement_music/repositories/lyrics_repository.dart';
+import 'package:basement_music/widgets/dialogs/confirm_action_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lyric/flutter_lyric.dart';
@@ -12,8 +14,9 @@ import 'package:flutter_lyric/flutter_lyric.dart';
 class LyricsView extends StatefulWidget {
   final Track track;
   final double size;
+  final LyricsSource source;
 
-  const LyricsView({super.key, required this.track, required this.size});
+  const LyricsView({super.key, required this.track, required this.size, required this.source});
 
   @override
   State<LyricsView> createState() => _LyricsViewState();
@@ -23,14 +26,29 @@ class _LyricsViewState extends State<LyricsView> {
   @override
   void initState() {
     super.initState();
-    context.read<LyricsCubit>().load(widget.track);
+    context.read<LyricsCubit>().load(widget.track, widget.source);
   }
 
   @override
   void didUpdateWidget(LyricsView oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.track.id != widget.track.id) {
-      context.read<LyricsCubit>().load(widget.track);
+    if (oldWidget.track.id != widget.track.id || oldWidget.source != widget.source) {
+      context.read<LyricsCubit>().load(widget.track, widget.source);
+    }
+  }
+
+  Future<void> _onSave() async {
+    final confirmed = await ConfirmActionDialog.show(
+      context: context,
+      title: 'Save these lyrics into the track file?',
+    );
+    if (!confirmed || !mounted) return;
+
+    final ok = await context.read<LyricsCubit>().save(widget.track);
+    if (!ok && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to save lyrics')),
+      );
     }
   }
 
@@ -50,17 +68,33 @@ class _LyricsViewState extends State<LyricsView> {
               child: const Text('Failed to load lyrics — retry'),
             ),
           ),
-          loaded: (lyrics) {
-            if (lyrics.hasSynced) {
-              return _SyncedLyrics(lrc: lyrics.syncedLyrics!, size: widget.size);
-            }
-            if (lyrics.hasPlain) {
-              return SingleChildScrollView(
-                child: Text(lyrics.plainLyrics!, textAlign: TextAlign.center),
-              );
-            }
-            return const Center(child: Text('Instrumental'));
-          },
+          loaded: (lyrics, source, canSave, saving) => Column(
+            children: [
+              Expanded(
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    if (lyrics.hasSynced) {
+                      return _SyncedLyrics(lrc: lyrics.syncedLyrics!, width: widget.size, height: constraints.maxHeight);
+                    }
+                    if (lyrics.hasPlain) {
+                      return SingleChildScrollView(
+                        child: Text(lyrics.plainLyrics!, textAlign: TextAlign.center),
+                      );
+                    }
+                    return const Center(child: Text('Instrumental'));
+                  },
+                ),
+              ),
+              if (canSave)
+                TextButton.icon(
+                  icon: saving
+                      ? const SizedBox.square(dimension: 16, child: CircularProgressIndicator(strokeWidth: 2))
+                      : const Icon(Icons.save_outlined),
+                  label: const Text('Save to track'),
+                  onPressed: saving ? null : _onSave,
+                ),
+            ],
+          ),
         ),
       ),
     );
@@ -69,9 +103,10 @@ class _LyricsViewState extends State<LyricsView> {
 
 class _SyncedLyrics extends StatefulWidget {
   final String lrc;
-  final double size;
+  final double width;
+  final double height;
 
-  const _SyncedLyrics({required this.lrc, required this.size});
+  const _SyncedLyrics({required this.lrc, required this.width, required this.height});
 
   @override
   State<_SyncedLyrics> createState() => _SyncedLyricsState();
@@ -112,8 +147,8 @@ class _SyncedLyricsState extends State<_SyncedLyrics> {
 
     return LyricView(
       controller: _controller,
-      width: widget.size,
-      height: widget.size,
+      width: widget.width,
+      height: widget.height,
       style: LyricStyle(
         textStyle: TextStyle(fontSize: 14, color: colorScheme.onSurface.withValues(alpha: 0.6)),
         activeStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: colorScheme.primary),

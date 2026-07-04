@@ -79,7 +79,7 @@ Future<void> runBasement(AppConfig config) async {
   final favouritesRepository = FavouritesRepository(restClient);
   final adminRepository = AdminRepository(restClient);
   final soulseekRepository = SoulseekRepository(restClient);
-  final lyricsRepository = LyricsRepository();
+  final lyricsRepository = LyricsRepository(restClient, dio);
 
   final authCubit = AuthCubit(authRepository);
   final router = AppRouter.createRouter(authCubit);

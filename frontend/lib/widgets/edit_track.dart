@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:basement_music/bloc/track_editor_cubit/track_editor_cubit.dart';
 import 'package:basement_music/models/track.dart';
+import 'package:basement_music/repositories/lyrics_repository.dart';
 import 'package:basement_music/repositories/tracks_repository.dart';
 import 'package:basement_music/widgets/dialogs/base_dialog.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -13,7 +17,7 @@ class EditTrack extends StatefulWidget {
   static Future<void> show({required BuildContext context, required Track track}) => showDialog(
     context: context,
     builder: (_) => BlocProvider(
-      create: (_) => TrackEditorCubit(context.read<TracksRepository>()),
+      create: (_) => TrackEditorCubit(context.read<TracksRepository>(), context.read<LyricsRepository>()),
       child: BaseDialog(child: EditTrack._(track: track)),
     ),
   );
@@ -35,7 +39,7 @@ class _EditTrackState extends State<EditTrack> {
     return BlocBuilder<TrackEditorCubit, TrackEditorState>(
       builder: (context, state) => state.when(
         loadInProgress: () => const CircularProgressIndicator(),
-        success: () => const Padding(padding: EdgeInsets.all(8.0), child: Text('Track was successfully edited')),
+        success: (message) => Padding(padding: const EdgeInsets.all(8.0), child: Text(message)),
         error: () =>
             const Padding(padding: EdgeInsets.all(8.0), child: Text('Track was not edited, please try again later')),
         initial: () => Form(
@@ -63,10 +67,32 @@ class _EditTrackState extends State<EditTrack> {
               ),
               const SizedBox(height: 16),
               FilledButton(onPressed: _onSave, child: const Text('Submit')),
+              const SizedBox(height: 8),
+              OutlinedButton.icon(
+                icon: const Icon(Icons.lyrics_outlined),
+                label: const Text('Upload lyrics file'),
+                onPressed: _onUploadLyrics,
+              ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Future<void> _onUploadLyrics() async {
+    final result = await FilePicker.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['lrc', 'txt'],
+      withData: true,
+    );
+
+    final bytes = result?.files.single.bytes;
+    if (bytes == null || !mounted) return;
+
+    context.read<TrackEditorCubit>().uploadLyrics(
+      track: widget.track,
+      lyricsText: utf8.decode(bytes, allowMalformed: true),
     );
   }
 
