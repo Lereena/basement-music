@@ -11,6 +11,7 @@ import (
 	"github.com/rs/cors"
 
 	"github.com/Lereena/server_basement_music/config"
+	"github.com/Lereena/server_basement_music/lrclib"
 	"github.com/Lereena/server_basement_music/middleware"
 	"github.com/Lereena/server_basement_music/models"
 	"github.com/Lereena/server_basement_music/repositories"
@@ -47,6 +48,7 @@ func main() {
 
 	adminRepo := &repositories.AdminRepository{DB: db}
 	favsRepo := &repositories.FavouritesRepository{DB: db}
+	lyricsRepo := &repositories.LyricsRepository{DB: db, Cfg: &cfg, Lrclib: lrclib.NewClient()}
 
 	localDirectoryWorker := &LocalDirectoryWorker{
 		musicRepo:   musicRepo,
@@ -121,6 +123,10 @@ func main() {
 	protected.HandleFunc("/track/{id}", musicRepo.GetTrack).Methods("GET")
 	protected.HandleFunc("/track/{id}", musicRepo.EditTrack).Methods("PATCH")
 	protected.HandleFunc("/track/upload", localDirectoryWorker.UploadFile).Methods("POST")
+
+	protected.HandleFunc("/track/{id}/lyrics/file", lyricsRepo.GetFileLyrics).Methods("GET")
+	protected.HandleFunc("/track/{id}/lyrics/search", lyricsRepo.SearchLyrics).Methods("GET")
+	protected.HandleFunc("/track/{id}/lyrics", lyricsRepo.SaveLyrics).Methods("POST")
 
 	protected.HandleFunc("/yt/fetchVideoInfo", youtubeWorker.FetchVideoInfo).Methods("GET")
 	protected.HandleFunc("/yt/download", youtubeWorker.FetchFromYoutube).Methods("GET")

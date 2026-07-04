@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$TrackProgressState {
 
- double get percentProgress; String get stringProgress;
+ double get percentProgress; String get stringProgress; String get stringDuration;
 /// Create a copy of TrackProgressState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $TrackProgressStateCopyWith<TrackProgressState> get copyWith => _$TrackProgressS
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TrackProgressState&&(identical(other.percentProgress, percentProgress) || other.percentProgress == percentProgress)&&(identical(other.stringProgress, stringProgress) || other.stringProgress == stringProgress));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TrackProgressState&&(identical(other.percentProgress, percentProgress) || other.percentProgress == percentProgress)&&(identical(other.stringProgress, stringProgress) || other.stringProgress == stringProgress)&&(identical(other.stringDuration, stringDuration) || other.stringDuration == stringDuration));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,percentProgress,stringProgress);
+int get hashCode => Object.hash(runtimeType,percentProgress,stringProgress,stringDuration);
 
 @override
 String toString() {
-  return 'TrackProgressState(percentProgress: $percentProgress, stringProgress: $stringProgress)';
+  return 'TrackProgressState(percentProgress: $percentProgress, stringProgress: $stringProgress, stringDuration: $stringDuration)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $TrackProgressStateCopyWith<$Res>  {
   factory $TrackProgressStateCopyWith(TrackProgressState value, $Res Function(TrackProgressState) _then) = _$TrackProgressStateCopyWithImpl;
 @useResult
 $Res call({
- double percentProgress, String stringProgress
+ double percentProgress, String stringProgress, String stringDuration
 });
 
 
@@ -62,10 +62,11 @@ class _$TrackProgressStateCopyWithImpl<$Res>
 
 /// Create a copy of TrackProgressState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? percentProgress = null,Object? stringProgress = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? percentProgress = null,Object? stringProgress = null,Object? stringDuration = null,}) {
   return _then(_self.copyWith(
 percentProgress: null == percentProgress ? _self.percentProgress : percentProgress // ignore: cast_nullable_to_non_nullable
 as double,stringProgress: null == stringProgress ? _self.stringProgress : stringProgress // ignore: cast_nullable_to_non_nullable
+as String,stringDuration: null == stringDuration ? _self.stringDuration : stringDuration // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }
@@ -151,10 +152,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( double percentProgress,  String stringProgress)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( double percentProgress,  String stringProgress,  String stringDuration)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TrackProgressState() when $default != null:
-return $default(_that.percentProgress,_that.stringProgress);case _:
+return $default(_that.percentProgress,_that.stringProgress,_that.stringDuration);case _:
   return orElse();
 
 }
@@ -172,10 +173,10 @@ return $default(_that.percentProgress,_that.stringProgress);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( double percentProgress,  String stringProgress)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( double percentProgress,  String stringProgress,  String stringDuration)  $default,) {final _that = this;
 switch (_that) {
 case _TrackProgressState():
-return $default(_that.percentProgress,_that.stringProgress);case _:
+return $default(_that.percentProgress,_that.stringProgress,_that.stringDuration);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -192,10 +193,10 @@ return $default(_that.percentProgress,_that.stringProgress);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( double percentProgress,  String stringProgress)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( double percentProgress,  String stringProgress,  String stringDuration)?  $default,) {final _that = this;
 switch (_that) {
 case _TrackProgressState() when $default != null:
-return $default(_that.percentProgress,_that.stringProgress);case _:
+return $default(_that.percentProgress,_that.stringProgress,_that.stringDuration);case _:
   return null;
 
 }
@@ -207,11 +208,12 @@ return $default(_that.percentProgress,_that.stringProgress);case _:
 
 
 class _TrackProgressState implements TrackProgressState {
-  const _TrackProgressState({this.percentProgress = 0.0, this.stringProgress = '00:00'});
+  const _TrackProgressState({this.percentProgress = 0.0, this.stringProgress = '00:00', this.stringDuration = '00:00'});
   
 
 @override@JsonKey() final  double percentProgress;
 @override@JsonKey() final  String stringProgress;
+@override@JsonKey() final  String stringDuration;
 
 /// Create a copy of TrackProgressState
 /// with the given fields replaced by the non-null parameter values.
@@ -223,16 +225,16 @@ _$TrackProgressStateCopyWith<_TrackProgressState> get copyWith => __$TrackProgre
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TrackProgressState&&(identical(other.percentProgress, percentProgress) || other.percentProgress == percentProgress)&&(identical(other.stringProgress, stringProgress) || other.stringProgress == stringProgress));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TrackProgressState&&(identical(other.percentProgress, percentProgress) || other.percentProgress == percentProgress)&&(identical(other.stringProgress, stringProgress) || other.stringProgress == stringProgress)&&(identical(other.stringDuration, stringDuration) || other.stringDuration == stringDuration));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,percentProgress,stringProgress);
+int get hashCode => Object.hash(runtimeType,percentProgress,stringProgress,stringDuration);
 
 @override
 String toString() {
-  return 'TrackProgressState(percentProgress: $percentProgress, stringProgress: $stringProgress)';
+  return 'TrackProgressState(percentProgress: $percentProgress, stringProgress: $stringProgress, stringDuration: $stringDuration)';
 }
 
 
@@ -243,7 +245,7 @@ abstract mixin class _$TrackProgressStateCopyWith<$Res> implements $TrackProgres
   factory _$TrackProgressStateCopyWith(_TrackProgressState value, $Res Function(_TrackProgressState) _then) = __$TrackProgressStateCopyWithImpl;
 @override @useResult
 $Res call({
- double percentProgress, String stringProgress
+ double percentProgress, String stringProgress, String stringDuration
 });
 
 
@@ -260,10 +262,11 @@ class __$TrackProgressStateCopyWithImpl<$Res>
 
 /// Create a copy of TrackProgressState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? percentProgress = null,Object? stringProgress = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? percentProgress = null,Object? stringProgress = null,Object? stringDuration = null,}) {
   return _then(_TrackProgressState(
 percentProgress: null == percentProgress ? _self.percentProgress : percentProgress // ignore: cast_nullable_to_non_nullable
 as double,stringProgress: null == stringProgress ? _self.stringProgress : stringProgress // ignore: cast_nullable_to_non_nullable
+as String,stringDuration: null == stringDuration ? _self.stringDuration : stringDuration // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }

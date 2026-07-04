@@ -108,4 +108,14 @@ class TracksRepository {
 
     tracksSubject.add(_items);
   }
+
+  /// Replaces a track with a server-updated copy and re-emits. Used after
+  /// lyrics are embedded so hasLyrics is reflected everywhere without a full
+  /// refetch. (Hive cache refreshes on the next getAllTracks, like editTrack.)
+  void applyTrackUpdate(Track updated) {
+    final index = _items.indexWhere((track) => track.id == updated.id);
+    if (index == -1) return;
+    _items[index] = updated;
+    tracksSubject.add(_items);
+  }
 }

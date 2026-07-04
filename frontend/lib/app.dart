@@ -10,6 +10,7 @@ import 'package:basement_music/repositories/admin_repository.dart';
 import 'package:basement_music/repositories/artists_repository.dart';
 import 'package:basement_music/repositories/auth_repository.dart';
 import 'package:basement_music/repositories/favourites_repository.dart';
+import 'package:basement_music/repositories/lyrics_repository.dart';
 import 'package:basement_music/repositories/repositories.dart';
 import 'package:basement_music/repositories/soulseek_repository.dart';
 import 'package:basement_music/rest_client.dart';
@@ -78,6 +79,7 @@ Future<void> runBasement(AppConfig config) async {
   final favouritesRepository = FavouritesRepository(restClient);
   final adminRepository = AdminRepository(restClient);
   final soulseekRepository = SoulseekRepository(restClient);
+  final lyricsRepository = LyricsRepository(restClient, dio);
 
   final authCubit = AuthCubit(authRepository);
   final router = AppRouter.createRouter(authCubit);
@@ -113,6 +115,7 @@ Future<void> runBasement(AppConfig config) async {
       favouritesRepository: favouritesRepository,
       adminRepository: adminRepository,
       soulseekRepository: soulseekRepository,
+      lyricsRepository: lyricsRepository,
       authCubit: authCubit,
       router: router,
     ),
@@ -131,6 +134,7 @@ class BasementMusic extends StatelessWidget {
   final FavouritesRepository favouritesRepository;
   final AdminRepository adminRepository;
   final SoulseekRepository soulseekRepository;
+  final LyricsRepository lyricsRepository;
   final AuthCubit authCubit;
   final GoRouter router;
 
@@ -147,6 +151,7 @@ class BasementMusic extends StatelessWidget {
     required this.favouritesRepository,
     required this.adminRepository,
     required this.soulseekRepository,
+    required this.lyricsRepository,
     required this.authCubit,
     required this.router,
   });
@@ -165,6 +170,7 @@ class BasementMusic extends StatelessWidget {
       favouritesRepository: favouritesRepository,
       adminRepository: adminRepository,
       soulseekRepository: soulseekRepository,
+      lyricsRepository: lyricsRepository,
       authCubit: authCubit,
       child: BlocBuilder<SettingsCubit, SettingsState>(
         builder: (_, settingsState) => Sizer(

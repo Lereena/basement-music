@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class RepeatToggle extends StatelessWidget {
-  const RepeatToggle({super.key});
+  final double size;
+
+  const RepeatToggle({super.key, this.size = 30});
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +15,7 @@ class RepeatToggle extends StatelessWidget {
       onTap: () => settingsCubit.setRepeat(!settingsCubit.state.repeat),
       child: BlocBuilder<SettingsCubit, SettingsState>(
         builder: (context, state) {
-          return Icon(state.repeat ? Icons.repeat_on_outlined : Icons.repeat, size: 30);
+          return Icon(state.repeat ? Icons.repeat_on_outlined : Icons.repeat, size: size);
         },
       ),
     );
