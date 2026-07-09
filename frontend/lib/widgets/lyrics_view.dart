@@ -4,10 +4,12 @@ import 'package:basement_music/audio_player_handler.dart';
 import 'package:basement_music/bloc/lyrics_cubit/lyrics_cubit.dart';
 import 'package:basement_music/models/track.dart';
 import 'package:basement_music/repositories/lyrics_repository.dart';
+import 'package:basement_music/routing/routes.dart';
 import 'package:basement_music/widgets/dialogs/confirm_action_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lyric/flutter_lyric.dart';
+import 'package:go_router/go_router.dart';
 
 /// Lyrics shown in place of the track cover, sized to the same box so
 /// toggling causes no layout shift.
@@ -35,6 +37,15 @@ class _LyricsViewState extends State<LyricsView> {
     if (oldWidget.track.id != widget.track.id || oldWidget.source != widget.source) {
       context.read<LyricsCubit>().load(widget.track, widget.source);
     }
+  }
+
+  Future<void> _onEditTiming() async {
+    final saved = await context.push<bool>(RouteName.lyricsTiming(widget.track.id, widget.source.name));
+    if (saved != true || !mounted) return;
+
+    // The editor wrote into the track file; the cubit's memoized lyrics for
+    // this view are now stale — refetch.
+    await context.read<LyricsCubit>().retry(widget.track);
   }
 
   Future<void> _onSave() async {
@@ -85,14 +96,25 @@ class _LyricsViewState extends State<LyricsView> {
                   },
                 ),
               ),
-              if (canSave)
-                TextButton.icon(
-                  icon: saving
-                      ? const SizedBox.square(dimension: 16, child: CircularProgressIndicator(strokeWidth: 2))
-                      : const Icon(Icons.save_outlined),
-                  label: const Text('Save to track'),
-                  onPressed: saving ? null : _onSave,
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (canSave)
+                    TextButton.icon(
+                      icon: saving
+                          ? const SizedBox.square(dimension: 16, child: CircularProgressIndicator(strokeWidth: 2))
+                          : const Icon(Icons.save_outlined),
+                      label: const Text('Save to track'),
+                      onPressed: saving ? null : _onSave,
+                    ),
+                  if (!lyrics.instrumental)
+                    TextButton.icon(
+                      icon: const Icon(Icons.timer_outlined),
+                      label: const Text('Edit timing'),
+                      onPressed: saving ? null : _onEditTiming,
+                    ),
+                ],
+              ),
             ],
           ),
         ),

@@ -1,7 +1,10 @@
 import 'dart:async';
 
+import 'package:basement_music/audio_player_handler.dart';
 import 'package:basement_music/bloc/auth_cubit/auth_cubit.dart';
+import 'package:basement_music/bloc/timing_editor_cubit/timing_editor_cubit.dart';
 import 'package:basement_music/pages/artist_edit_page.dart';
+import 'package:basement_music/pages/lyrics_timing_page.dart';
 import 'package:basement_music/pages/artist_page.dart';
 import 'package:basement_music/pages/edit_playlist/playlist_edit_page.dart';
 import 'package:basement_music/pages/library/library_page.dart';
@@ -15,9 +18,12 @@ import 'package:basement_music/pages/upload/from_device/upload_from_device.dart'
 import 'package:basement_music/pages/upload/from_youtube/extract_from_youtube.dart';
 import 'package:basement_music/pages/upload/from_soulseek/soulseek_search_page.dart';
 import 'package:basement_music/pages/upload/upload_page.dart';
+import 'package:basement_music/repositories/lyrics_repository.dart';
+import 'package:basement_music/repositories/repositories.dart';
 import 'package:basement_music/routing/app_scaffold_shell.dart';
 import 'package:basement_music/routing/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -51,6 +57,38 @@ class AppRouter {
           pageBuilder: (_, _) => const MaterialPage(child: RegisterCodePage()),
         ),
         GoRoute(path: RouteName.initial, redirect: (_, _) => RouteName.tracks),
+        GoRoute(
+          path: '/track/:id/lyricsTiming',
+          parentNavigatorKey: _rootNavigatorKey,
+          // Direct navigation (web refresh) before tracks load: no track to
+          // edit against, fall back to the tracks page.
+          redirect: (context, state) {
+            final id = state.pathParameters['id'];
+            final known = context.read<TracksRepository>().items.any((track) => track.id == id);
+            return known ? null : RouteName.tracks;
+          },
+          pageBuilder: (context, state) {
+            final track = context
+                .read<TracksRepository>()
+                .items
+                .firstWhere((track) => track.id == state.pathParameters['id']);
+            final source =
+                state.uri.queryParameters['source'] == LyricsSource.file.name ? LyricsSource.file : LyricsSource.server;
+
+            return MaterialPage(
+              child: BlocProvider(
+                create: (context) => TimingEditorCubit(
+                  context.read<LyricsRepository>(),
+                  context.read<TracksRepository>(),
+                  context.read<AudioPlayerHandler>(),
+                  track: track,
+                  source: source,
+                )..init(),
+                child: const LyricsTimingPage(),
+              ),
+            );
+          },
+        ),
         StatefulShellRoute.indexedStack(
           builder: (_, _, navigationShell) => AppScaffoldShell(navigationShell: navigationShell),
           branches: <StatefulShellBranch>[

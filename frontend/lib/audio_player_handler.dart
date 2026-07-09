@@ -44,6 +44,9 @@ class AudioPlayerHandler extends BaseAudioHandler {
   Stream<Duration> get onPositionChanged => _audioPlayer.onPositionChanged;
   Stream<PlayerState> get onPlayerStateChanged => _audioPlayer.onPlayerStateChanged;
 
+  Future<Duration?> getCurrentPosition() => _audioPlayer.getCurrentPosition();
+  Future<void> setPlaybackRate(double rate) => _audioPlayer.setPlaybackRate(rate);
+
   Playlist currentPlaylist = Playlist.empty();
 
   // A preview is a one-off stream (e.g. a Soulseek temp track) rather than a
