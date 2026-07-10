@@ -3,6 +3,7 @@ import 'package:basement_music/bloc/favourites_cubit/favourites_cubit.dart';
 import 'package:basement_music/bloc/player_cubit/player_cubit.dart';
 import 'package:basement_music/models/playlist.dart';
 import 'package:basement_music/models/track.dart';
+import 'package:basement_music/theme/theme.dart';
 import 'package:basement_music/widgets/buttons/more_button.dart';
 import 'package:basement_music/widgets/controls/pause_button.dart';
 import 'package:basement_music/widgets/controls/play_button.dart';
@@ -35,69 +36,94 @@ class TrackCard extends StatelessWidget {
           child: Opacity(
             opacity: canBePlayed ? 1 : 0.5,
             child: BlocBuilder<PlayerCubit, PlayerState>(
-              builder: (context, playerState) => ColoredBox(
-                color: playerCubit.state.currentTrack == track
-                    ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.1)
-                    : Colors.transparent,
-                child: Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                      child: SizedBox(
-                        width: 40,
-                        height: 40,
-                        child: Stack(
-                          alignment: Alignment.center,
+              builder: (context, playerState) {
+                final isCurrent = playerCubit.state.currentTrack == track;
+
+                return Container(
+                  margin: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xxs),
+                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
+                  decoration: BoxDecoration(
+                    color: isCurrent ? context.semanticColors.nowPlayingHighlight : null,
+                    borderRadius: AppRadius.mdAll,
+                  ),
+                  child: Row(
+                    children: [
+                      ClipRRect(
+                        borderRadius: AppRadius.smAll,
+                        child: SizedBox(
+                          width: 44,
+                          height: 44,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Cover(
+                                cover: track.cover,
+                                size: 44,
+                                overlay: CoverOverlay(isCaching: isCaching, isCached: isCached),
+                              ),
+                              if (isCurrent && playerState.isPlay)
+                                const PauseButton()
+                              else
+                                PlayButton(track: track, state: playerState, openedPlaylist: openedPlaylist),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.md),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Cover(
-                              cover: track.cover,
-                              overlay: CoverOverlay(isCaching: isCaching, isCached: isCached),
+                            DefaultTextStyle.merge(
+                              style: context.textTheme.titleMedium!.copyWith(
+                                color: isCurrent ? context.colorScheme.primary : null,
+                              ),
+                              child: TrackName(track: track, moving: isCurrent, fontSize: 16),
                             ),
-                            if (playerCubit.state.currentTrack == track && playerState.isPlay)
-                              const PauseButton()
-                            else
-                              PlayButton(track: track, state: playerState, openedPlaylist: openedPlaylist),
+                            const SizedBox(height: AppSpacing.xxs),
+                            Text(
+                              track.artist,
+                              overflow: TextOverflow.ellipsis,
+                              style: context.textTheme.bodyMedium?.copyWith(
+                                color: context.colorScheme.onSurfaceVariant,
+                              ),
+                            ),
                           ],
                         ),
                       ),
-                    ),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          TrackName(track: track, moving: playerCubit.state.currentTrack == track),
-                          Text(track.artist, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 16)),
-                        ],
+                      const SizedBox(width: AppSpacing.sm),
+                      Text(
+                        track.durationStr,
+                        overflow: TextOverflow.ellipsis,
+                        style: context.textTheme.labelMedium?.copyWith(color: context.colorScheme.onSurfaceVariant),
                       ),
-                    ),
-                    const SizedBox(width: 10),
-                    Text(track.durationStr, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 16)),
-                    BlocBuilder<FavouritesCubit, FavouritesState>(
-                      buildWhen: (previous, current) {
-                        bool favOf(FavouritesState s) =>
-                            s.maybeWhen(loaded: (tracks) => tracks.any((t) => t.id == track.id), orElse: () => false);
+                      BlocBuilder<FavouritesCubit, FavouritesState>(
+                        buildWhen: (previous, current) {
+                          bool favOf(FavouritesState s) =>
+                              s.maybeWhen(loaded: (tracks) => tracks.any((t) => t.id == track.id), orElse: () => false);
 
-                        // Ignore transient loadInProgress/error so cards don't flash; only react when this track's status changes.
-                        final isResolved = current.maybeWhen(loaded: (_) => true, orElse: () => false);
-                        return isResolved && favOf(previous) != favOf(current);
-                      },
-                      builder: (context, _) {
-                        final isFav = context.read<FavouritesCubit>().isFavourite(track.id);
-                        return IconButton(
-                          icon: Icon(
-                            isFav ? Icons.favorite : Icons.favorite_border,
-                            color: isFav ? Theme.of(context).colorScheme.error : null,
-                            size: 20,
-                          ),
-                          onPressed: () => context.read<FavouritesCubit>().toggleFavourite(track.id),
-                        );
-                      },
-                    ),
-                    MoreButton(track: track, playlist: containingPlaylist),
-                    const SizedBox(width: 15),
-                  ],
-                ),
-              ),
+                          // Ignore transient loadInProgress/error so cards don't flash; only react when this track's status changes.
+                          final isResolved = current.maybeWhen(loaded: (_) => true, orElse: () => false);
+                          return isResolved && favOf(previous) != favOf(current);
+                        },
+                        builder: (context, _) {
+                          final isFav = context.read<FavouritesCubit>().isFavourite(track.id);
+                          return IconButton(
+                            icon: Icon(
+                              isFav ? Icons.favorite : Icons.favorite_border,
+                              color: isFav ? context.semanticColors.favourite : null,
+                              size: 20,
+                            ),
+                            onPressed: () => context.read<FavouritesCubit>().toggleFavourite(track.id),
+                          );
+                        },
+                      ),
+                      MoreButton(track: track, playlist: containingPlaylist),
+                      const SizedBox(width: AppSpacing.xs),
+                    ],
+                  ),
+                );
+              },
             ),
           ),
         );
