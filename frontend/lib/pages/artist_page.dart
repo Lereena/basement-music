@@ -1,5 +1,4 @@
 import 'package:basement_music/bloc/artist_cubit/artist_cubit.dart';
-import 'package:basement_music/bloc/auth_cubit/auth_cubit.dart';
 import 'package:basement_music/models/album.dart';
 import 'package:basement_music/models/artist.dart';
 import 'package:basement_music/models/playlist.dart';
@@ -32,18 +31,13 @@ class _ArtistPage extends StatelessWidget {
 
   const _ArtistPage({required this.artistId});
 
-  bool _isAdmin(BuildContext context) => context.read<AuthCubit>().state.maybeWhen(
-    authenticated: (user) => user.isAdmin,
-    orElse: () => false,
-  );
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ArtistCubit, ArtistState>(
       builder: (context, state) => state.when(
         initial: () => const Scaffold(body: SizedBox.shrink()),
         loadInProgress: () => const Scaffold(body: Center(child: CircularProgressIndicator())),
-        loaded: (artist) => Scaffold(body: _ArtistView(artist: artist, isAdmin: _isAdmin(context))),
+        loaded: (artist) => Scaffold(body: _ArtistView(artist: artist)),
         loadedEmpty: (name) => Scaffold(
           appBar: AppBar(title: Text(name)),
           body: const Center(child: Text('No tracks')),
@@ -58,9 +52,8 @@ class _ArtistView extends StatelessWidget {
   static const _maxTracks = 10;
 
   final Artist artist;
-  final bool isAdmin;
 
-  const _ArtistView({required this.artist, required this.isAdmin});
+  const _ArtistView({required this.artist});
 
   Future<void> _createAlbum(BuildContext context) async {
     final cubit = context.read<ArtistCubit>();
@@ -83,28 +76,26 @@ class _ArtistView extends StatelessWidget {
         SliverAppBar(
           expandedHeight: 240,
           pinned: true,
-          actions: isAdmin
-              ? [
-                  IconButton(
-                    icon: const Icon(Icons.travel_explore),
-                    tooltip: 'Fetch info',
-                    onPressed: () => ArtistMetadataDialog.show(
-                      context: context,
-                      artistId: artist.id,
-                      artistName: artist.name,
-                      onApplied: () => context.read<ArtistCubit>().loadArtist(),
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.edit_outlined),
-                    onPressed: () async {
-                      final cubit = context.read<ArtistCubit>();
-                      await context.push(RouteName.artistEdit(artist.id));
-                      cubit.loadArtist();
-                    },
-                  ),
-                ]
-              : null,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.travel_explore),
+              tooltip: 'Fetch info',
+              onPressed: () => ArtistMetadataDialog.show(
+                context: context,
+                artistId: artist.id,
+                artistName: artist.name,
+                onApplied: () => context.read<ArtistCubit>().loadArtist(),
+              ),
+            ),
+            IconButton(
+              icon: const Icon(Icons.edit_outlined),
+              onPressed: () async {
+                final cubit = context.read<ArtistCubit>();
+                await context.push(RouteName.artistEdit(artist.id));
+                cubit.loadArtist();
+              },
+            ),
+          ],
           flexibleSpace: FlexibleSpaceBar(
             title: Text(artist.name),
             background: Stack(
@@ -157,27 +148,25 @@ class _ArtistView extends StatelessWidget {
               ),
             ),
           ),
-        if (albums.isNotEmpty || isAdmin)
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-              child: Text('Albums', style: theme.textTheme.titleMedium),
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+            child: Text('Albums', style: theme.textTheme.titleMedium),
+          ),
+        ),
+        SliverToBoxAdapter(
+          child: SizedBox(
+            height: 180,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.all(16),
+              children: [
+                for (final album in albums) _AlbumCard(album: album),
+                _NewAlbumCard(onTap: () => _createAlbum(context)),
+              ],
             ),
           ),
-        if (albums.isNotEmpty || isAdmin)
-          SliverToBoxAdapter(
-            child: SizedBox(
-              height: 180,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.all(16),
-                children: [
-                  for (final album in albums) _AlbumCard(album: album),
-                  if (isAdmin) _NewAlbumCard(onTap: () => _createAlbum(context)),
-                ],
-              ),
-            ),
-          ),
+        ),
         if (artist.description != null && artist.description!.isNotEmpty)
           SliverToBoxAdapter(
             child: Padding(

@@ -1,5 +1,4 @@
 import 'package:basement_music/bloc/album_cubit/album_cubit.dart';
-import 'package:basement_music/bloc/auth_cubit/auth_cubit.dart';
 import 'package:basement_music/models/album.dart';
 import 'package:basement_music/models/playlist.dart';
 import 'package:basement_music/repositories/albums_repository.dart';
@@ -33,11 +32,6 @@ class _AlbumPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isAdmin = context.read<AuthCubit>().state.maybeWhen(
-      authenticated: (user) => user.isAdmin,
-      orElse: () => false,
-    );
-
     return BlocBuilder<AlbumCubit, AlbumState>(
       builder: (context, state) => state.when(
         initial: () => const SizedBox.shrink(),
@@ -45,7 +39,7 @@ class _AlbumPage extends StatelessWidget {
         loaded: (album) => Scaffold(
           appBar: BasementAppBar(
             title: album.title,
-            actions: isAdmin ? _adminActions(context, album) : null,
+            actions: _actions(context, album),
           ),
           body: HorizontalSpaceReducer(child: _AlbumBody(album: album)),
         ),
@@ -57,7 +51,7 @@ class _AlbumPage extends StatelessWidget {
     );
   }
 
-  List<Widget> _adminActions(BuildContext context, Album album) => [
+  List<Widget> _actions(BuildContext context, Album album) => [
     IconButton(
       icon: const Icon(Icons.image_outlined),
       tooltip: 'Fetch cover',

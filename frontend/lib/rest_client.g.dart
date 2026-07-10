@@ -599,7 +599,7 @@ class _RestClient implements RestClient {
           )
           .compose(
             _dio.options,
-            '/admin/artist/${id}/image',
+            '/artist/${id}/image',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -627,7 +627,7 @@ class _RestClient implements RestClient {
           )
           .compose(
             _dio.options,
-            '/admin/artist/${id}',
+            '/artist/${id}',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -662,7 +662,7 @@ class _RestClient implements RestClient {
           )
           .compose(
             _dio.options,
-            '/admin/track/${trackId}/artists',
+            '/track/${trackId}/artists',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -753,7 +753,7 @@ class _RestClient implements RestClient {
           )
           .compose(
             _dio.options,
-            '/admin/album',
+            '/album',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -789,7 +789,7 @@ class _RestClient implements RestClient {
           )
           .compose(
             _dio.options,
-            '/admin/album/${id}',
+            '/album/${id}',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -816,7 +816,7 @@ class _RestClient implements RestClient {
       Options(method: 'DELETE', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/admin/album/${id}',
+            '/album/${id}',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -843,7 +843,7 @@ class _RestClient implements RestClient {
           )
           .compose(
             _dio.options,
-            '/admin/album/${id}/artists',
+            '/album/${id}/artists',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -878,7 +878,7 @@ class _RestClient implements RestClient {
           )
           .compose(
             _dio.options,
-            '/admin/album/${id}/tracks',
+            '/album/${id}/tracks',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -913,7 +913,7 @@ class _RestClient implements RestClient {
           )
           .compose(
             _dio.options,
-            '/admin/track/${trackId}/album',
+            '/track/${trackId}/album',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -941,7 +941,7 @@ class _RestClient implements RestClient {
           )
           .compose(
             _dio.options,
-            '/admin/album/${id}/image',
+            '/album/${id}/image',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -963,7 +963,7 @@ class _RestClient implements RestClient {
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/admin/artist/${id}/metadata/search',
+            '/artist/${id}/metadata/search',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -997,7 +997,7 @@ class _RestClient implements RestClient {
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/admin/artist/${id}/metadata/preview',
+            '/artist/${id}/metadata/preview',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -1033,7 +1033,7 @@ class _RestClient implements RestClient {
           )
           .compose(
             _dio.options,
-            '/admin/artist/${id}/metadata/apply',
+            '/artist/${id}/metadata/apply',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -1063,7 +1063,7 @@ class _RestClient implements RestClient {
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/admin/album/${id}/cover/search',
+            '/album/${id}/cover/search',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -1103,7 +1103,7 @@ class _RestClient implements RestClient {
           )
           .compose(
             _dio.options,
-            '/admin/album/${id}/cover/apply',
+            '/album/${id}/cover/apply',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -1139,7 +1139,7 @@ class _RestClient implements RestClient {
           )
           .compose(
             _dio.options,
-            '/admin/playlist/${id}/image',
+            '/playlist/${id}/image',
             queryParameters: queryParameters,
             data: _data,
           )

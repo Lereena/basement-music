@@ -118,14 +118,14 @@ abstract class RestClient {
   @GET('/artist/{id}')
   Future<Artist> getArtist(@Path('id') String id);
 
-  @PATCH('/admin/artist/{id}/image')
+  @PATCH('/artist/{id}/image')
   @MultiPart()
   Future<void> updateArtistImage({
     @Path('id') required String id,
     @Part(name: 'image') required MultipartFile image,
   });
 
-  @PATCH('/admin/artist/{id}')
+  @PATCH('/artist/{id}')
   @FormUrlEncoded()
   Future<Artist> editArtist({
     @Path('id') required String id,
@@ -133,7 +133,7 @@ abstract class RestClient {
     @Field('description') required String description,
   });
 
-  @PATCH('/admin/track/{trackId}/artists')
+  @PATCH('/track/{trackId}/artists')
   @FormUrlEncoded()
   Future<Track> setTrackArtists({
     @Path('trackId') required String trackId,
@@ -147,14 +147,14 @@ abstract class RestClient {
   @GET('/album/{id}')
   Future<Album> getAlbum(@Path('id') String id);
 
-  @POST('/admin/album')
+  @POST('/album')
   @FormUrlEncoded()
   Future<Album> createAlbum({
     @Field('title') required String title,
     @Field('artistIds') required List<String> artistIds,
   });
 
-  @PATCH('/admin/album/{id}')
+  @PATCH('/album/{id}')
   @FormUrlEncoded()
   Future<Album> editAlbum({
     @Path('id') required String id,
@@ -162,31 +162,31 @@ abstract class RestClient {
     @Field('year') required String year,
   });
 
-  @DELETE('/admin/album/{id}')
+  @DELETE('/album/{id}')
   Future<void> deleteAlbum(@Path('id') String id);
 
-  @PATCH('/admin/album/{id}/artists')
+  @PATCH('/album/{id}/artists')
   @FormUrlEncoded()
   Future<Album> setAlbumArtists({
     @Path('id') required String id,
     @Field('artistIds') required List<String> artistIds,
   });
 
-  @PATCH('/admin/album/{id}/tracks')
+  @PATCH('/album/{id}/tracks')
   @FormUrlEncoded()
   Future<Album> setAlbumTracks({
     @Path('id') required String id,
     @Field('trackIds') required List<String> trackIds,
   });
 
-  @PATCH('/admin/track/{trackId}/album')
+  @PATCH('/track/{trackId}/album')
   @FormUrlEncoded()
   Future<void> setTrackAlbum({
     @Path('trackId') required String trackId,
     @Field('albumId') required String albumId,
   });
 
-  @PATCH('/admin/album/{id}/image')
+  @PATCH('/album/{id}/image')
   @MultiPart()
   Future<void> updateAlbumImage({
     @Path('id') required String id,
@@ -194,19 +194,19 @@ abstract class RestClient {
   });
 
   // Metadata (MusicBrainz / CoverArtArchive)
-  @GET('/admin/artist/{id}/metadata/search')
+  @GET('/artist/{id}/metadata/search')
   Future<List<ArtistCandidate>> searchArtistMetadata({
     @Path('id') required String id,
     @Query('query') required String query,
   });
 
-  @GET('/admin/artist/{id}/metadata/preview')
+  @GET('/artist/{id}/metadata/preview')
   Future<ArtistMetadataPreview> previewArtistMetadata({
     @Path('id') required String id,
     @Query('mbid') required String mbid,
   });
 
-  @POST('/admin/artist/{id}/metadata/apply')
+  @POST('/artist/{id}/metadata/apply')
   @FormUrlEncoded()
   Future<Artist> applyArtistMetadata({
     @Path('id') required String id,
@@ -214,20 +214,20 @@ abstract class RestClient {
     @Field('imageUrl') required String imageUrl,
   });
 
-  @GET('/admin/album/{id}/cover/search')
+  @GET('/album/{id}/cover/search')
   Future<List<ReleaseGroupCandidate>> searchAlbumCover({
     @Path('id') required String id,
     @Query('query') required String query,
   });
 
-  @POST('/admin/album/{id}/cover/apply')
+  @POST('/album/{id}/cover/apply')
   @FormUrlEncoded()
   Future<Album> applyAlbumCover({
     @Path('id') required String id,
     @Field('mbid') required String mbid,
   });
 
-  @PATCH('/admin/playlist/{id}/image')
+  @PATCH('/playlist/{id}/image')
   @MultiPart()
   Future<void> updatePlaylistImage({
     @Path('id') required String id,
