@@ -41,9 +41,14 @@ class PlaylistsRepository {
     _items.clear();
     _items.addAll(result.map(_resolveImageUrl));
     await _persistenceBox.put(_cacheKey, jsonEncode(_items.map((e) => e.toJson()).toList()));
-    playlistsSubject.add(_items);
+    playlistsSubject.add(List.of(_items));
 
     return true;
+  }
+
+  Future<List<Playlist>> searchPlaylists(String query) async {
+    final result = await _restClient.searchPlaylists(query);
+    return result.map(_resolveImageUrl).toList();
   }
 
   Future<Playlist> getPlaylist(String playlistId) async {
@@ -60,7 +65,7 @@ class PlaylistsRepository {
     final result = await _restClient.createPlaylist(title);
     _items.add(_resolveImageUrl(result));
 
-    playlistsSubject.add(_items);
+    playlistsSubject.add(List.of(_items));
   }
 
   Future<void> editPlaylist({required String id, required String title, required List<String> tracksIds}) async {
@@ -70,14 +75,14 @@ class PlaylistsRepository {
     final playlistIndex = _items.indexWhere((item) => item.id == id);
     _items[playlistIndex] = playlist;
 
-    playlistsSubject.add(_items);
+    playlistsSubject.add(List.of(_items));
   }
 
   Future<void> deletePlaylist(String playlistId) async {
     await _restClient.deletePlaylist(playlistId);
 
     _items.removeWhere((element) => element.id == playlistId);
-    playlistsSubject.add(_items);
+    playlistsSubject.add(List.of(_items));
   }
 
   Future<void> addTrackToPlaylist(String playlistId, String trackId) {

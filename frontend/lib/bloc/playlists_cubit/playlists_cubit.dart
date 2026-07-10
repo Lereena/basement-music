@@ -15,19 +15,29 @@ class PlaylistsCubit extends Cubit<PlaylistsState> {
   final PlaylistsRepository playlistsRepository;
   final ConnectivityStatusRepository connectivityStatusRepository;
 
+  late final StreamSubscription _connectivitySubscription;
+  late final StreamSubscription<List<Playlist>> _playlistsSubscription;
+
   PlaylistsCubit({required this.playlistsRepository, required this.connectivityStatusRepository})
     : super(
         playlistsRepository.items.isNotEmpty
-            ? PlaylistsState.loaded(playlists: playlistsRepository.items)
+            ? PlaylistsState.loaded(playlists: List.of(playlistsRepository.items))
             : const PlaylistsState.loading(),
       ) {
-    connectivityStatusRepository.statusSubject.listen((status) {
+    _connectivitySubscription = connectivityStatusRepository.statusSubject.listen((status) {
       if (!status.contains(ConnectivityResult.none)) {
         loadPlaylists();
       }
     });
 
-    playlistsRepository.playlistsSubject.listen((value) => _updatePlaylists(value));
+    _playlistsSubscription = playlistsRepository.playlistsSubject.listen((value) => _updatePlaylists(value));
+  }
+
+  @override
+  Future<void> close() {
+    _connectivitySubscription.cancel();
+    _playlistsSubscription.cancel();
+    return super.close();
   }
 
   Playlist get openedPlaylist => playlistsRepository.openedPlaylist;
@@ -38,11 +48,12 @@ class PlaylistsCubit extends Cubit<PlaylistsState> {
 
     try {
       await playlistsRepository.getAllPlaylists();
+      if (isClosed) return;
 
       if (playlistsRepository.items.isEmpty) {
         emit(const PlaylistsState.empty());
       } else {
-        emit(PlaylistsState.loaded(playlists: playlistsRepository.items));
+        emit(PlaylistsState.loaded(playlists: List.of(playlistsRepository.items)));
       }
     } catch (e) {
       final oldPlaylists = oldState.maybeWhen(loaded: (playlists) => playlists, orElse: () => <Playlist>[]);

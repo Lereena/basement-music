@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:collection/collection.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'package:basement_music/logger.dart';
@@ -14,12 +15,19 @@ class ArtistCubit extends Cubit<ArtistState> {
   final ArtistsRepository artistsRepository;
   final String artistId;
 
+  late final StreamSubscription<List<Artist>> _subscription;
+
   ArtistCubit({required this.artistsRepository, required this.artistId}) : super(const ArtistState.initial()) {
-    artistsRepository.artistsSubject.listen(
-      (value) => _artistUpdated(
-        value.firstWhere((element) => element.id == artistId),
-      ),
-    );
+    _subscription = artistsRepository.artistsSubject.listen((value) {
+      final artist = value.firstWhereOrNull((element) => element.id == artistId);
+      if (artist != null) _artistUpdated(artist);
+    });
+  }
+
+  @override
+  Future<void> close() {
+    _subscription.cancel();
+    return super.close();
   }
 
   Future<void> uploadImage(List<int> bytes, String filename) async {
@@ -32,12 +40,8 @@ class ArtistCubit extends Cubit<ArtistState> {
 
     try {
       final artist = await artistsRepository.getArtist(artistId);
-
-      if (artist.tracks?.isEmpty ?? true) {
-        emit(ArtistState.loadedEmpty(name: artist.name));
-      } else {
-        emit(ArtistState.loaded(artist: artist));
-      }
+      if (isClosed) return;
+      emit(ArtistState.loaded(artist: artist));
     } catch (e) {
       emit(const ArtistState.error());
       logger.e('Error loading artist: $e');
@@ -45,6 +49,7 @@ class ArtistCubit extends Cubit<ArtistState> {
   }
 
   void _artistUpdated(Artist artist) {
+    if (isClosed) return;
     emit(ArtistState.loaded(artist: artist));
   }
 }

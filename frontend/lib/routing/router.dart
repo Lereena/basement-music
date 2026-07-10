@@ -1,8 +1,11 @@
 import 'dart:async';
 
 import 'package:basement_music/bloc/auth_cubit/auth_cubit.dart';
+import 'package:basement_music/pages/album_edit_page.dart';
+import 'package:basement_music/pages/album_page.dart';
 import 'package:basement_music/pages/artist_edit_page.dart';
 import 'package:basement_music/pages/artist_page.dart';
+import 'package:basement_music/pages/artist_tracks_page.dart';
 import 'package:basement_music/pages/edit_playlist/playlist_edit_page.dart';
 import 'package:basement_music/pages/library/library_page.dart';
 import 'package:basement_music/pages/login_page.dart';
@@ -85,8 +88,21 @@ class AppRouter {
                       pageBuilder: (_, state) => MaterialPage(child: ArtistPage(artistId: state.pathParameters['id']!)),
                     ),
                     GoRoute(
+                      path: "artist/:id/tracks",
+                      pageBuilder: (_, state) =>
+                          MaterialPage(child: ArtistTracksPage(artistId: state.pathParameters['id']!)),
+                    ),
+                    GoRoute(
                       path: "artist/:id/edit",
                       pageBuilder: (_, state) => MaterialPage(child: ArtistEditPage(artistId: state.pathParameters['id']!)),
+                    ),
+                    GoRoute(
+                      path: "album/:id",
+                      pageBuilder: (_, state) => MaterialPage(child: AlbumPage(albumId: state.pathParameters['id']!)),
+                    ),
+                    GoRoute(
+                      path: "album/:id/edit",
+                      pageBuilder: (_, state) => MaterialPage(child: AlbumEditPage(albumId: state.pathParameters['id']!)),
                     ),
                   ],
                 ),

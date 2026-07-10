@@ -14,4 +14,7 @@ type Track struct {
 	Cover     string
 	Url       string
 	HasLyrics bool `gorm:"not null;default:false"`
+
+	AlbumId       *string `gorm:"index"`
+	AlbumPosition int     `gorm:"not null;default:0"`
 }

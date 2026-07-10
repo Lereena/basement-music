@@ -15,6 +15,7 @@ class Track extends Equatable {
   @JsonKey(fromJson: _coverFromJson)
   final String cover;
   final bool hasLyrics;
+  final String? albumId;
 
   const Track({
     required this.id,
@@ -24,6 +25,7 @@ class Track extends Equatable {
     this.duration = 111,
     this.cover = 'assets/cover_placeholder.png',
     this.hasLyrics = false,
+    this.albumId,
   });
 
   static String _coverFromJson(String json) =>
@@ -49,6 +51,7 @@ class Track extends Equatable {
     String? artist,
     String? cover,
     bool? hasLyrics,
+    String? albumId,
   }) {
     return Track(
       id: id,
@@ -58,6 +61,7 @@ class Track extends Equatable {
       duration: duration,
       cover: cover ?? this.cover,
       hasLyrics: hasLyrics ?? this.hasLyrics,
+      albumId: albumId ?? this.albumId,
     );
   }
 

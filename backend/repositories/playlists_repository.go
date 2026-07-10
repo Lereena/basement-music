@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -113,6 +114,27 @@ func (repo *PlaylistsRepository) loadOrderedTracks(playlistId string) []models.T
 func (repo *PlaylistsRepository) GetAllPlaylists(w http.ResponseWriter, r *http.Request) {
 	var playlists []models.Playlist
 	repo.DB.Model(&models.Playlist{}).Order("created_at").Find(&playlists)
+	for i := range playlists {
+		playlists[i].Tracks = repo.loadOrderedTracks(playlists[i].Id)
+	}
+	json.NewEncoder(w).Encode(playlists)
+}
+
+func (repo *PlaylistsRepository) SearchPlaylists(w http.ResponseWriter, r *http.Request) {
+	query, err := url.QueryUnescape(r.URL.Query().Get("query"))
+	if err != nil {
+		respond.RespondError(w, http.StatusBadRequest, "Failed to decode search query")
+		return
+	}
+
+	if strings.TrimSpace(query) == "" {
+		json.NewEncoder(w).Encode([]models.Playlist{})
+		return
+	}
+
+	searchQuery := "%" + strings.ToLower(query) + "%"
+	var playlists []models.Playlist
+	repo.DB.Model(&models.Playlist{}).Where("title ILIKE ?", searchQuery).Order("created_at").Find(&playlists)
 	for i := range playlists {
 		playlists[i].Tracks = repo.loadOrderedTracks(playlists[i].Id)
 	}
