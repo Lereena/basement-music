@@ -102,7 +102,13 @@ class _ArtistView extends StatelessWidget {
               ),
             ],
             flexibleSpace: FlexibleSpaceBar(
-              title: Text(artist.name),
+              title: Text(
+                artist.name,
+                style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800, letterSpacing: 0.3),
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
               background: Stack(
                 fit: StackFit.expand,
                 children: [
@@ -115,7 +121,11 @@ class _ArtistView extends StatelessWidget {
                       gradient: LinearGradient(
                         begin: Alignment.center,
                         end: Alignment.bottomCenter,
-                        colors: [Colors.transparent, theme.colorScheme.surfaceContainerLowest],
+                        stops: const [0.3, 0.9],
+                        colors: [
+                          theme.colorScheme.surfaceContainerLowest.withAlpha(0),
+                          theme.colorScheme.surfaceContainerLowest,
+                        ],
                       ),
                     ),
                   ),
@@ -124,7 +134,11 @@ class _ArtistView extends StatelessWidget {
                       gradient: LinearGradient(
                         begin: Alignment.center,
                         end: Alignment.topCenter,
-                        colors: [Colors.transparent, theme.colorScheme.surfaceContainerLowest],
+                        stops: const [0.5, 0.9],
+                        colors: [
+                          theme.colorScheme.surfaceContainerLowest.withAlpha(0),
+                          theme.colorScheme.surfaceContainerLowest,
+                        ],
                       ),
                     ),
                   ),
