@@ -2,6 +2,7 @@ import 'package:basement_music/bloc/player_cubit/player_cubit.dart';
 import 'package:basement_music/bloc/track_progress_cubit/track_progress_cubit.dart';
 import 'package:basement_music/models/track.dart';
 import 'package:basement_music/repositories/lyrics_repository.dart';
+import 'package:basement_music/routing/routes.dart';
 import 'package:basement_music/widgets/controls/lyrics_menu_button.dart';
 import 'package:basement_music/widgets/controls/next_button.dart';
 import 'package:basement_music/widgets/controls/pause_button.dart';
@@ -15,6 +16,7 @@ import 'package:basement_music/widgets/track_name.dart';
 import 'package:basement_music/widgets/track_seek_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class CurrentTrackView extends StatefulWidget {
   /// Expanded is the full-screen (sheet) presentation: bigger typography
@@ -63,12 +65,14 @@ class _CurrentTrackViewState extends State<CurrentTrackView> {
                   LyricsMenuButton(
                     track: track,
                     lyricsShown: _showLyrics,
+                    activeSource: _lyricsSource,
                     size: expanded ? 24 : 20,
                     onShowLyrics: (source) => setState(() {
                       _showLyrics = true;
                       _lyricsSource = source;
                     }),
                     onHideLyrics: () => setState(() => _showLyrics = false),
+                    onEditTiming: (source) => context.push(RouteName.lyricsTiming(track.id, source.name)),
                   ),
                 ],
               ),
