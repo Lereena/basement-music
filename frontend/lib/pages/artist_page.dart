@@ -237,7 +237,7 @@ class _AlbumCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return GestureDetector(
-      onTap: () => context.go(RouteName.album(album.id)),
+      onTap: () => context.push(RouteName.album(album.id)),
       child: Container(
         width: 130,
         margin: const EdgeInsets.only(right: 12),
