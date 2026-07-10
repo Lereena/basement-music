@@ -4,6 +4,7 @@ import 'package:rxdart/rxdart.dart';
 import 'package:basement_music/models/album.dart';
 import 'package:basement_music/models/artist.dart';
 import 'package:basement_music/models/metadata_candidates.dart';
+import 'package:basement_music/models/track.dart';
 import 'package:basement_music/rest_client.dart';
 
 class ArtistsRepository {
@@ -23,9 +24,16 @@ class ArtistsRepository {
     _items.clear();
     _items.addAll(result.map(_resolveImageUrl));
 
-    artistsSubject.add(_items);
+    // Emit a fresh list instance — reusing the mutated `_items` reference makes
+    // freezed state equality short-circuit on identical() and skip the rebuild.
+    artistsSubject.add(List.of(_items));
 
     return true;
+  }
+
+  Future<List<Artist>> searchArtists(String query) async {
+    final result = await _restClient.searchArtists(query);
+    return result.map(_resolveImageUrl).toList();
   }
 
   Future<Artist> getArtist(String artistId) async {
@@ -39,16 +47,24 @@ class ArtistsRepository {
     } else {
       _items.add(artist);
     }
-    artistsSubject.add(_items);
+    artistsSubject.add(List.of(_items));
 
     return artist;
   }
 
-  Future<void> updateArtistImage(String artistId, List<int> bytes, String filename) {
-    return _restClient.updateArtistImage(
+  Future<void> updateArtistImage(String artistId, List<int> bytes, String filename) async {
+    await _restClient.updateArtistImage(
       id: artistId,
       image: MultipartFile.fromBytes(bytes, filename: filename),
     );
+  }
+
+  // Rebinds a track to the given artists (entity-level). Returns the updated
+  // track and refreshes the artist list so grids/pages reflect the change.
+  Future<Track> setTrackArtists(String trackId, List<String> artistIds) async {
+    final track = await _restClient.setTrackArtists(trackId: trackId, artistIds: artistIds);
+    await getAllArtists();
+    return track;
   }
 
   Future<Artist> editArtist({required String id, required String name, String description = ''}) async {
@@ -70,13 +86,24 @@ class ArtistsRepository {
   }
 
   Artist _resolveImageUrl(Artist a) {
-    final image = (a.image == null || a.image!.startsWith('http')) ? a.image : '$_baseUrl${a.image!}';
+    final image = imageUrlWithVersion(a.image, _baseUrl, a.updatedAt);
     final albums = a.albums?.map(_resolveAlbumCover).toList();
     return a.copyWith(image: image, albums: albums);
   }
 
-  Album _resolveAlbumCover(Album album) {
-    if (album.cover == null || album.cover!.startsWith('http')) return album;
-    return album.copyWith(cover: '$_baseUrl${album.cover!}');
-  }
+  Album _resolveAlbumCover(Album album) => album.copyWith(
+    cover: imageUrlWithVersion(album.cover, _baseUrl, album.updatedAt),
+  );
+}
+
+// Resolves a server image path to an absolute URL and appends a version query
+// (?v=<updatedAt>) so the URL changes when the underlying bytes change. The
+// stable path alone would be served stale from Flutter's ImageCache and the
+// browser HTTP cache on web; the version busts both when the row is updated.
+String? imageUrlWithVersion(String? path, String baseUrl, String? updatedAt) {
+  if (path == null) return null;
+  final absolute = path.startsWith('http') ? path : '$baseUrl$path';
+  if (updatedAt == null || updatedAt.isEmpty) return absolute;
+  final separator = absolute.contains('?') ? '&' : '?';
+  return '$absolute${separator}v=${Uri.encodeComponent(updatedAt)}';
 }

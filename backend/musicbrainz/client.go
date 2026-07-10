@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"regexp"
 	"strings"
 	"sync"
 	"time"
@@ -188,8 +189,10 @@ func (c *Client) GetArtistDetails(mbid string) (ArtistDetails, error) {
 	return details, nil
 }
 
-// wikipediaSummary walks Wikidata → enwiki title → Wikipedia REST summary and
-// returns (extract, imageURL). Any missing hop yields empty strings, not errors.
+// wikipediaSummary walks Wikidata → best Wikipedia sitelink → REST summary and
+// returns (extract, imageURL). Prefers the English article but falls back to any
+// other language when there's no enwiki page, then to the Wikidata description.
+// Any missing hop yields empty strings, not errors.
 func (c *Client) wikipediaSummary(wikidataURL string) (string, string) {
 	entity := wikidataURL[strings.LastIndex(wikidataURL, "/")+1:]
 	if entity == "" {
@@ -201,6 +204,9 @@ func (c *Client) wikipediaSummary(wikidataURL string) (string, string) {
 			Sitelinks map[string]struct {
 				Title string `json:"title"`
 			} `json:"sitelinks"`
+			Descriptions map[string]struct {
+				Value string `json:"value"`
+			} `json:"descriptions"`
 		} `json:"entities"`
 	}
 	status, err := c.getJSON("https://www.wikidata.org/wiki/Special:EntityData/"+entity+".json", false, &wd)
@@ -208,27 +214,65 @@ func (c *Client) wikipediaSummary(wikidataURL string) (string, string) {
 		return "", ""
 	}
 
-	title := ""
-	if e, ok := wd.Entities[entity]; ok {
-		if sl, ok := e.Sitelinks["enwiki"]; ok {
-			title = sl.Title
-		}
-	}
-	if title == "" {
+	e, ok := wd.Entities[entity]
+	if !ok {
 		return "", ""
 	}
 
-	var summary struct {
-		Extract       string `json:"extract"`
-		OriginalImage struct {
-			Source string `json:"source"`
-		} `json:"originalimage"`
+	lang, title := pickWikipediaSitelink(e.Sitelinks)
+
+	var extract, image string
+	if title != "" {
+		var summary struct {
+			Extract       string `json:"extract"`
+			OriginalImage struct {
+				Source string `json:"source"`
+			} `json:"originalimage"`
+		}
+		summaryURL := "https://" + lang + ".wikipedia.org/api/rest_v1/page/summary/" + url.PathEscape(title)
+		status, err = c.getJSON(summaryURL, false, &summary)
+		if err == nil && status == http.StatusOK {
+			extract = summary.Extract
+			image = summary.OriginalImage.Source
+		}
 	}
-	status, err = c.getJSON("https://en.wikipedia.org/api/rest_v1/page/summary/"+url.PathEscape(title), false, &summary)
-	if err != nil || status != http.StatusOK {
-		return "", ""
+
+	// Fall back to the Wikidata description (short, but better than nothing).
+	if extract == "" {
+		if d, ok := e.Descriptions["en"]; ok {
+			extract = d.Value
+		}
 	}
-	return summary.Extract, summary.OriginalImage.Source
+
+	return extract, image
+}
+
+// wikiSitelinkRe matches language-Wikipedia sitelink keys ("enwiki", "fiwiki")
+// while excluding sister projects ("commonswiki", "enwikiquote", …).
+var wikiSitelinkRe = regexp.MustCompile(`^([a-z]{2,3})wiki$`)
+
+// pickWikipediaSitelink returns (lang, title) for the best available Wikipedia
+// article: English first, otherwise the alphabetically-first language so the
+// choice is deterministic.
+func pickWikipediaSitelink(sitelinks map[string]struct {
+	Title string `json:"title"`
+}) (string, string) {
+	if sl, ok := sitelinks["enwiki"]; ok {
+		return "en", sl.Title
+	}
+
+	bestLang, bestTitle := "", ""
+	for key, sl := range sitelinks {
+		m := wikiSitelinkRe.FindStringSubmatch(key)
+		if m == nil {
+			continue
+		}
+		lang := m[1]
+		if bestLang == "" || lang < bestLang {
+			bestLang, bestTitle = lang, sl.Title
+		}
+	}
+	return bestLang, bestTitle
 }
 
 // SearchReleaseGroups returns release-group candidates for an artist+title,

@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'tracks_search_cubit.dart';
+part of 'search_cubit.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -12,7 +12,7 @@ part of 'tracks_search_cubit.dart';
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
-mixin _$TracksSearchState {
+mixin _$SearchState {
 
 
 
@@ -20,7 +20,7 @@ mixin _$TracksSearchState {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TracksSearchState);
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SearchState);
 }
 
 
@@ -29,20 +29,20 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'TracksSearchState()';
+  return 'SearchState()';
 }
 
 
 }
 
 /// @nodoc
-class $TracksSearchStateCopyWith<$Res>  {
-$TracksSearchStateCopyWith(TracksSearchState _, $Res Function(TracksSearchState) __);
+class $SearchStateCopyWith<$Res>  {
+$SearchStateCopyWith(SearchState _, $Res Function(SearchState) __);
 }
 
 
-/// Adds pattern-matching-related methods to [TracksSearchState].
-extension TracksSearchStatePatterns on TracksSearchState {
+/// Adds pattern-matching-related methods to [SearchState].
+extension SearchStatePatterns on SearchState {
 /// A variant of `map` that fallback to returning `orElse`.
 ///
 /// It is equivalent to doing:
@@ -131,13 +131,13 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function( String searchQuery)?  loadInProgress,TResult Function( String searchQuery,  List<Track> tracks)?  success,TResult Function( String searchQuery)?  successEmpty,TResult Function()?  error,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function( String query)?  loadInProgress,TResult Function( String query,  List<Artist> artists,  List<Playlist> playlists,  List<Track> tracks)?  success,TResult Function( String query)?  successEmpty,TResult Function()?  error,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial();case _LoadInProgress() when loadInProgress != null:
-return loadInProgress(_that.searchQuery);case _Success() when success != null:
-return success(_that.searchQuery,_that.tracks);case _SuccessEmpty() when successEmpty != null:
-return successEmpty(_that.searchQuery);case _Error() when error != null:
+return loadInProgress(_that.query);case _Success() when success != null:
+return success(_that.query,_that.artists,_that.playlists,_that.tracks);case _SuccessEmpty() when successEmpty != null:
+return successEmpty(_that.query);case _Error() when error != null:
 return error();case _:
   return orElse();
 
@@ -156,13 +156,13 @@ return error();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function( String searchQuery)  loadInProgress,required TResult Function( String searchQuery,  List<Track> tracks)  success,required TResult Function( String searchQuery)  successEmpty,required TResult Function()  error,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function( String query)  loadInProgress,required TResult Function( String query,  List<Artist> artists,  List<Playlist> playlists,  List<Track> tracks)  success,required TResult Function( String query)  successEmpty,required TResult Function()  error,}) {final _that = this;
 switch (_that) {
 case _Initial():
 return initial();case _LoadInProgress():
-return loadInProgress(_that.searchQuery);case _Success():
-return success(_that.searchQuery,_that.tracks);case _SuccessEmpty():
-return successEmpty(_that.searchQuery);case _Error():
+return loadInProgress(_that.query);case _Success():
+return success(_that.query,_that.artists,_that.playlists,_that.tracks);case _SuccessEmpty():
+return successEmpty(_that.query);case _Error():
 return error();case _:
   throw StateError('Unexpected subclass');
 
@@ -180,13 +180,13 @@ return error();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function( String searchQuery)?  loadInProgress,TResult? Function( String searchQuery,  List<Track> tracks)?  success,TResult? Function( String searchQuery)?  successEmpty,TResult? Function()?  error,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function( String query)?  loadInProgress,TResult? Function( String query,  List<Artist> artists,  List<Playlist> playlists,  List<Track> tracks)?  success,TResult? Function( String query)?  successEmpty,TResult? Function()?  error,}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial();case _LoadInProgress() when loadInProgress != null:
-return loadInProgress(_that.searchQuery);case _Success() when success != null:
-return success(_that.searchQuery,_that.tracks);case _SuccessEmpty() when successEmpty != null:
-return successEmpty(_that.searchQuery);case _Error() when error != null:
+return loadInProgress(_that.query);case _Success() when success != null:
+return success(_that.query,_that.artists,_that.playlists,_that.tracks);case _SuccessEmpty() when successEmpty != null:
+return successEmpty(_that.query);case _Error() when error != null:
 return error();case _:
   return null;
 
@@ -198,7 +198,7 @@ return error();case _:
 /// @nodoc
 
 
-class _Initial implements TracksSearchState {
+class _Initial implements SearchState {
   const _Initial();
   
 
@@ -218,7 +218,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'TracksSearchState.initial()';
+  return 'SearchState.initial()';
 }
 
 
@@ -230,13 +230,13 @@ String toString() {
 /// @nodoc
 
 
-class _LoadInProgress implements TracksSearchState {
-  const _LoadInProgress({required this.searchQuery});
+class _LoadInProgress implements SearchState {
+  const _LoadInProgress({required this.query});
   
 
- final  String searchQuery;
+ final  String query;
 
-/// Create a copy of TracksSearchState
+/// Create a copy of SearchState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
@@ -246,27 +246,27 @@ _$LoadInProgressCopyWith<_LoadInProgress> get copyWith => __$LoadInProgressCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _LoadInProgress&&(identical(other.searchQuery, searchQuery) || other.searchQuery == searchQuery));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _LoadInProgress&&(identical(other.query, query) || other.query == query));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,searchQuery);
+int get hashCode => Object.hash(runtimeType,query);
 
 @override
 String toString() {
-  return 'TracksSearchState.loadInProgress(searchQuery: $searchQuery)';
+  return 'SearchState.loadInProgress(query: $query)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class _$LoadInProgressCopyWith<$Res> implements $TracksSearchStateCopyWith<$Res> {
+abstract mixin class _$LoadInProgressCopyWith<$Res> implements $SearchStateCopyWith<$Res> {
   factory _$LoadInProgressCopyWith(_LoadInProgress value, $Res Function(_LoadInProgress) _then) = __$LoadInProgressCopyWithImpl;
 @useResult
 $Res call({
- String searchQuery
+ String query
 });
 
 
@@ -281,11 +281,11 @@ class __$LoadInProgressCopyWithImpl<$Res>
   final _LoadInProgress _self;
   final $Res Function(_LoadInProgress) _then;
 
-/// Create a copy of TracksSearchState
+/// Create a copy of SearchState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? searchQuery = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? query = null,}) {
   return _then(_LoadInProgress(
-searchQuery: null == searchQuery ? _self.searchQuery : searchQuery // ignore: cast_nullable_to_non_nullable
+query: null == query ? _self.query : query // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }
@@ -296,11 +296,25 @@ as String,
 /// @nodoc
 
 
-class _Success implements TracksSearchState {
-  const _Success({required this.searchQuery, required final  List<Track> tracks}): _tracks = tracks;
+class _Success implements SearchState {
+  const _Success({required this.query, required final  List<Artist> artists, required final  List<Playlist> playlists, required final  List<Track> tracks}): _artists = artists,_playlists = playlists,_tracks = tracks;
   
 
- final  String searchQuery;
+ final  String query;
+ final  List<Artist> _artists;
+ List<Artist> get artists {
+  if (_artists is EqualUnmodifiableListView) return _artists;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_artists);
+}
+
+ final  List<Playlist> _playlists;
+ List<Playlist> get playlists {
+  if (_playlists is EqualUnmodifiableListView) return _playlists;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_playlists);
+}
+
  final  List<Track> _tracks;
  List<Track> get tracks {
   if (_tracks is EqualUnmodifiableListView) return _tracks;
@@ -309,7 +323,7 @@ class _Success implements TracksSearchState {
 }
 
 
-/// Create a copy of TracksSearchState
+/// Create a copy of SearchState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
@@ -319,27 +333,27 @@ _$SuccessCopyWith<_Success> get copyWith => __$SuccessCopyWithImpl<_Success>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Success&&(identical(other.searchQuery, searchQuery) || other.searchQuery == searchQuery)&&const DeepCollectionEquality().equals(other._tracks, _tracks));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Success&&(identical(other.query, query) || other.query == query)&&const DeepCollectionEquality().equals(other._artists, _artists)&&const DeepCollectionEquality().equals(other._playlists, _playlists)&&const DeepCollectionEquality().equals(other._tracks, _tracks));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,searchQuery,const DeepCollectionEquality().hash(_tracks));
+int get hashCode => Object.hash(runtimeType,query,const DeepCollectionEquality().hash(_artists),const DeepCollectionEquality().hash(_playlists),const DeepCollectionEquality().hash(_tracks));
 
 @override
 String toString() {
-  return 'TracksSearchState.success(searchQuery: $searchQuery, tracks: $tracks)';
+  return 'SearchState.success(query: $query, artists: $artists, playlists: $playlists, tracks: $tracks)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class _$SuccessCopyWith<$Res> implements $TracksSearchStateCopyWith<$Res> {
+abstract mixin class _$SuccessCopyWith<$Res> implements $SearchStateCopyWith<$Res> {
   factory _$SuccessCopyWith(_Success value, $Res Function(_Success) _then) = __$SuccessCopyWithImpl;
 @useResult
 $Res call({
- String searchQuery, List<Track> tracks
+ String query, List<Artist> artists, List<Playlist> playlists, List<Track> tracks
 });
 
 
@@ -354,12 +368,14 @@ class __$SuccessCopyWithImpl<$Res>
   final _Success _self;
   final $Res Function(_Success) _then;
 
-/// Create a copy of TracksSearchState
+/// Create a copy of SearchState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? searchQuery = null,Object? tracks = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? query = null,Object? artists = null,Object? playlists = null,Object? tracks = null,}) {
   return _then(_Success(
-searchQuery: null == searchQuery ? _self.searchQuery : searchQuery // ignore: cast_nullable_to_non_nullable
-as String,tracks: null == tracks ? _self._tracks : tracks // ignore: cast_nullable_to_non_nullable
+query: null == query ? _self.query : query // ignore: cast_nullable_to_non_nullable
+as String,artists: null == artists ? _self._artists : artists // ignore: cast_nullable_to_non_nullable
+as List<Artist>,playlists: null == playlists ? _self._playlists : playlists // ignore: cast_nullable_to_non_nullable
+as List<Playlist>,tracks: null == tracks ? _self._tracks : tracks // ignore: cast_nullable_to_non_nullable
 as List<Track>,
   ));
 }
@@ -370,13 +386,13 @@ as List<Track>,
 /// @nodoc
 
 
-class _SuccessEmpty implements TracksSearchState {
-  const _SuccessEmpty({required this.searchQuery});
+class _SuccessEmpty implements SearchState {
+  const _SuccessEmpty({required this.query});
   
 
- final  String searchQuery;
+ final  String query;
 
-/// Create a copy of TracksSearchState
+/// Create a copy of SearchState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
@@ -386,27 +402,27 @@ _$SuccessEmptyCopyWith<_SuccessEmpty> get copyWith => __$SuccessEmptyCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SuccessEmpty&&(identical(other.searchQuery, searchQuery) || other.searchQuery == searchQuery));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SuccessEmpty&&(identical(other.query, query) || other.query == query));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,searchQuery);
+int get hashCode => Object.hash(runtimeType,query);
 
 @override
 String toString() {
-  return 'TracksSearchState.successEmpty(searchQuery: $searchQuery)';
+  return 'SearchState.successEmpty(query: $query)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class _$SuccessEmptyCopyWith<$Res> implements $TracksSearchStateCopyWith<$Res> {
+abstract mixin class _$SuccessEmptyCopyWith<$Res> implements $SearchStateCopyWith<$Res> {
   factory _$SuccessEmptyCopyWith(_SuccessEmpty value, $Res Function(_SuccessEmpty) _then) = __$SuccessEmptyCopyWithImpl;
 @useResult
 $Res call({
- String searchQuery
+ String query
 });
 
 
@@ -421,11 +437,11 @@ class __$SuccessEmptyCopyWithImpl<$Res>
   final _SuccessEmpty _self;
   final $Res Function(_SuccessEmpty) _then;
 
-/// Create a copy of TracksSearchState
+/// Create a copy of SearchState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? searchQuery = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? query = null,}) {
   return _then(_SuccessEmpty(
-searchQuery: null == searchQuery ? _self.searchQuery : searchQuery // ignore: cast_nullable_to_non_nullable
+query: null == query ? _self.query : query // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }
@@ -436,7 +452,7 @@ as String,
 /// @nodoc
 
 
-class _Error implements TracksSearchState {
+class _Error implements SearchState {
   const _Error();
   
 
@@ -456,7 +472,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'TracksSearchState.error()';
+  return 'SearchState.error()';
 }
 
 

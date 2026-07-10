@@ -146,6 +146,7 @@ func main() {
 	protected.HandleFunc("/soulseek/temp", slskRepo.CleanupSession).Methods("DELETE")
 
 	protected.HandleFunc("/playlists", playlistsRepo.GetAllPlaylists).Methods("GET")
+	protected.HandleFunc("/playlists/search", playlistsRepo.SearchPlaylists).Methods("GET")
 	protected.HandleFunc("/playlist/{id}", playlistsRepo.GetPlaylist).Methods("GET")
 	protected.HandleFunc("/playlist/create/{title}", playlistsRepo.CreatePlaylist).Methods("POST")
 	protected.HandleFunc("/playlist/{id}", playlistsRepo.EditPlaylist).Methods("PATCH")
@@ -155,8 +156,10 @@ func main() {
 	protected.HandleFunc("/playlist/{playlistId}/tracks/order", playlistsRepo.ReorderPlaylistTracks).Methods("PATCH")
 
 	protected.HandleFunc("/artists", artistsRepo.GetAllArtists).Methods("GET")
+	protected.HandleFunc("/artists/search", artistsRepo.SearchArtists).Methods("GET")
 	protected.HandleFunc("/artist/{id}", artistsRepo.GetArtist).Methods("GET")
 	admin.HandleFunc("/artist/{id}", artistsRepo.EditArtist).Methods("PATCH")
+	admin.HandleFunc("/track/{trackId}/artists", artistsRepo.SetTrackArtists).Methods("PATCH")
 	admin.HandleFunc("/artist/{id}/image", artistsRepo.UpdateArtistImage).Methods("PATCH")
 	admin.HandleFunc("/playlist/{id}/image", playlistsRepo.UpdatePlaylistImage).Methods("PATCH")
 

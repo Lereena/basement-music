@@ -5,6 +5,7 @@ import 'package:basement_music/models/track.dart';
 import 'package:basement_music/widgets/dialogs/add_to_playlist_dialog.dart';
 import 'package:basement_music/widgets/dialogs/remove_from_playlist_dialog.dart';
 import 'package:basement_music/widgets/dialogs/set_album_dialog.dart';
+import 'package:basement_music/widgets/dialogs/set_track_artists_dialog.dart';
 import 'package:basement_music/widgets/edit_track.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -47,6 +48,14 @@ class MoreButton extends StatelessWidget {
                 },
               ),
               if (isAdmin) ...[
+                const Divider(),
+                SimpleDialogOption(
+                  child: const Text('Change artist'),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    SetTrackArtistsDialog.show(context: context, track: track);
+                  },
+                ),
                 const Divider(),
                 SimpleDialogOption(
                   child: const Text('Set album'),

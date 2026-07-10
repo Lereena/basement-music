@@ -11,6 +11,7 @@ class Artist {
   final String name;
   final String? image;
   final String? description;
+  final String? updatedAt;
   final List<Track>? tracks;
   final List<Album>? albums;
 
@@ -19,6 +20,7 @@ class Artist {
     required this.name,
     required this.image,
     this.description,
+    this.updatedAt,
     this.tracks,
     this.albums,
   });
@@ -27,12 +29,20 @@ class Artist {
 
   Map<String, dynamic> toJson() => _$ArtistToJson(this);
 
-  Artist copyWith({String? name, String? image, String? description, List<Track>? tracks, List<Album>? albums}) {
+  Artist copyWith({
+    String? name,
+    String? image,
+    String? description,
+    String? updatedAt,
+    List<Track>? tracks,
+    List<Album>? albums,
+  }) {
     return Artist(
       id: id,
       name: name ?? this.name,
       image: image ?? this.image,
       description: description ?? this.description,
+      updatedAt: updatedAt ?? this.updatedAt,
       tracks: tracks ?? this.tracks,
       albums: albums ?? this.albums,
     );

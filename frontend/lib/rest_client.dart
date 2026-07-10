@@ -69,6 +69,9 @@ abstract class RestClient {
   @GET('/playlists')
   Future<List<Playlist>> getAllPlaylists();
 
+  @GET('/playlists/search')
+  Future<List<Playlist>> searchPlaylists(@Query('query') String query);
+
   @GET('/playlist/{id}')
   Future<Playlist> getPlaylist(@Path('id') String id);
 
@@ -107,6 +110,9 @@ abstract class RestClient {
   @GET('/artists')
   Future<List<Artist>> getAllArtists();
 
+  @GET('/artists/search')
+  Future<List<Artist>> searchArtists(@Query('query') String query);
+
   @GET('/artist/{id}')
   Future<Artist> getArtist(@Path('id') String id);
 
@@ -123,6 +129,13 @@ abstract class RestClient {
     @Path('id') required String id,
     @Field('name') required String name,
     @Field('description') required String description,
+  });
+
+  @PATCH('/admin/track/{trackId}/artists')
+  @FormUrlEncoded()
+  Future<Track> setTrackArtists({
+    @Path('trackId') required String trackId,
+    @Field('artistIds') required List<String> artistIds,
   });
 
   // Albums

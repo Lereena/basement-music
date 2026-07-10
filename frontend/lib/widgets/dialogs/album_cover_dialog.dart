@@ -31,7 +31,11 @@ class AlbumCoverDialog extends StatelessWidget {
             applied: () {
               onApplied?.call();
               Future.delayed(const Duration(milliseconds: 900), () {
-                if (context.mounted) Navigator.of(context).pop();
+                // Only pop if this dialog is still the top route — otherwise the
+                // pop would remove the page underneath and empty the stack.
+                if (context.mounted && (ModalRoute.of(context)?.isCurrent ?? false)) {
+                  Navigator.of(context).pop();
+                }
               });
             },
             orElse: () {},

@@ -99,6 +99,8 @@ Future<void> runBasement(AppConfig config) async {
     ),
   );
 
+  final artistsRepository = ArtistsRepository(restClient, baseUrl: config.baseUrl);
+
   runApp(
     BasementMusic(
       audioHandler: audioHandler,
@@ -110,8 +112,8 @@ Future<void> runBasement(AppConfig config) async {
         persistenceBox: playlistsPersistenceBox,
         baseUrl: config.baseUrl,
       ),
-      artistsRepository: ArtistsRepository(restClient, baseUrl: config.baseUrl),
-      albumsRepository: AlbumsRepository(restClient, baseUrl: config.baseUrl),
+      artistsRepository: artistsRepository,
+      albumsRepository: AlbumsRepository(restClient, baseUrl: config.baseUrl, artistsRepository: artistsRepository),
       connectivityStatusRepository: connectivityStatusRepository,
       authRepository: authRepository,
       favouritesRepository: favouritesRepository,

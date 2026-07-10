@@ -11,6 +11,7 @@ Album _$AlbumFromJson(Map<String, dynamic> json) => Album(
   title: json['Title'] as String,
   year: (json['Year'] as num?)?.toInt(),
   cover: json['Cover'] as String?,
+  updatedAt: json['UpdatedAt'] as String?,
   artists: (json['Artists'] as List<dynamic>?)
       ?.map((e) => Artist.fromJson(e as Map<String, dynamic>))
       .toList(),
@@ -26,6 +27,7 @@ Map<String, dynamic> _$AlbumToJson(Album instance) => <String, dynamic>{
   'Title': instance.title,
   'Year': instance.year,
   'Cover': instance.cover,
+  'UpdatedAt': instance.updatedAt,
   'Artists': instance.artists,
   'Tracks': instance.tracks,
 };

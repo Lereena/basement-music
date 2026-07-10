@@ -11,6 +11,7 @@ Artist _$ArtistFromJson(Map<String, dynamic> json) => Artist(
   name: json['Name'] as String,
   image: json['Image'] as String?,
   description: json['Description'] as String?,
+  updatedAt: json['UpdatedAt'] as String?,
   tracks: (json['Tracks'] as List<dynamic>?)
       ?.map((e) => Track.fromJson(e as Map<String, dynamic>))
       .toList(),
@@ -24,6 +25,7 @@ Map<String, dynamic> _$ArtistToJson(Artist instance) => <String, dynamic>{
   'Name': instance.name,
   'Image': instance.image,
   'Description': instance.description,
+  'UpdatedAt': instance.updatedAt,
   'Tracks': instance.tracks,
   'Albums': instance.albums,
 };
