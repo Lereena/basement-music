@@ -86,7 +86,7 @@ class _CurrentTrackViewState extends State<CurrentTrackView> {
                     return Center(
                       child: _showLyrics
                           ? LyricsView(track: track, size: size, source: _lyricsSource)
-                          : Cover(key: const Key('album_cover'), cover: track.cover, size: size),
+                          : Cover(key: const Key('album_cover'), cover: track.cover, version: track.updatedAt, size: size),
                     );
                   },
                 ),

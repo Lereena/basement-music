@@ -12,11 +12,10 @@ Track _$TrackFromJson(Map<String, dynamic> json) => Track(
   artist: json['Artist'] as String,
   url: json['Url'] as String? ?? '',
   duration: (json['Duration'] as num?)?.toInt() ?? 111,
-  cover: json['Cover'] == null
-      ? 'assets/cover_placeholder.png'
-      : Track._coverFromJson(json['Cover'] as String),
+  cover: json['Cover'] as String? ?? '',
   hasLyrics: json['HasLyrics'] as bool? ?? false,
   albumId: json['AlbumId'] as String?,
+  updatedAt: json['UpdatedAt'] as String?,
 );
 
 Map<String, dynamic> _$TrackToJson(Track instance) => <String, dynamic>{
@@ -28,4 +27,5 @@ Map<String, dynamic> _$TrackToJson(Track instance) => <String, dynamic>{
   'Cover': instance.cover,
   'HasLyrics': instance.hasLyrics,
   'AlbumId': instance.albumId,
+  'UpdatedAt': instance.updatedAt,
 };

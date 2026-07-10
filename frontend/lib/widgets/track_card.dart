@@ -51,6 +51,7 @@ class TrackCard extends StatelessWidget {
                           children: [
                             Cover(
                               cover: track.cover,
+                              version: track.updatedAt,
                               overlay: CoverOverlay(isCaching: isCaching, isCached: isCached),
                             ),
                             if (playerCubit.state.currentTrack == track && playerState.isPlay)

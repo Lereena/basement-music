@@ -231,6 +231,8 @@ func (repo *AlbumsRepository) SetAlbumTracks(w http.ResponseWriter, r *http.Requ
 			Updates(map[string]any{"album_id": id, "album_position": i})
 	}
 
+	repo.SyncAlbumCoverToTracks(id)
+
 	loaded, _ := repo.loadAlbum(id)
 	respond.RespondJSON(w, http.StatusOK, loaded)
 }
@@ -270,6 +272,8 @@ func (repo *AlbumsRepository) SetTrackAlbum(w http.ResponseWriter, r *http.Reque
 
 	repo.DB.Model(&models.Track{}).Where("id = ?", trackId).
 		Updates(map[string]any{"album_id": albumId, "album_position": maxPos + 1})
+
+	repo.SyncAlbumCoverToTrack(trackId)
 
 	w.WriteHeader(http.StatusNoContent)
 }
@@ -321,6 +325,8 @@ func (repo *AlbumsRepository) UpdateAlbumImage(w http.ResponseWriter, r *http.Re
 		respond.RespondError(w, http.StatusNotFound, "album not found")
 		return
 	}
+
+	repo.SyncAlbumCoverToTracks(id)
 
 	w.WriteHeader(http.StatusNoContent)
 }
