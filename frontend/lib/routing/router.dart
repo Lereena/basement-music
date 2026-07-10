@@ -5,6 +5,7 @@ import 'package:basement_music/pages/album_edit_page.dart';
 import 'package:basement_music/pages/album_page.dart';
 import 'package:basement_music/pages/artist_edit_page.dart';
 import 'package:basement_music/pages/artist_page.dart';
+import 'package:basement_music/pages/artist_tracks_page.dart';
 import 'package:basement_music/pages/edit_playlist/playlist_edit_page.dart';
 import 'package:basement_music/pages/library/library_page.dart';
 import 'package:basement_music/pages/login_page.dart';
@@ -85,6 +86,11 @@ class AppRouter {
                     GoRoute(
                       path: "artist/:id",
                       pageBuilder: (_, state) => MaterialPage(child: ArtistPage(artistId: state.pathParameters['id']!)),
+                    ),
+                    GoRoute(
+                      path: "artist/:id/tracks",
+                      pageBuilder: (_, state) =>
+                          MaterialPage(child: ArtistTracksPage(artistId: state.pathParameters['id']!)),
                     ),
                     GoRoute(
                       path: "artist/:id/edit",

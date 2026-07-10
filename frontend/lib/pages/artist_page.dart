@@ -55,6 +55,8 @@ class _ArtistPage extends StatelessWidget {
 }
 
 class _ArtistView extends StatelessWidget {
+  static const _maxTracks = 10;
+
   final Artist artist;
   final bool isAdmin;
 
@@ -74,6 +76,7 @@ class _ArtistView extends StatelessWidget {
     final theme = Theme.of(context);
     final tracks = artist.tracks ?? [];
     final albums = artist.albums ?? [];
+    final visibleTracks = tracks.take(_maxTracks).toList();
 
     return CustomScrollView(
       slivers: [
@@ -124,17 +127,40 @@ class _ArtistView extends StatelessWidget {
             ),
           ),
         ),
-        if (artist.description != null && artist.description!.isNotEmpty)
+        if (tracks.isNotEmpty)
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: _ExpandableText(text: artist.description!),
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+              child: Text('Tracks', style: theme.textTheme.titleMedium),
+            ),
+          ),
+        SliverList(
+          delegate: SliverChildBuilderDelegate(
+            (context, index) => TrackCard(
+              track: visibleTracks[index],
+              containingPlaylist: Playlist.anonymous(visibleTracks),
+              openedPlaylist: Playlist.anonymous(visibleTracks),
+            ),
+            childCount: visibleTracks.length,
+          ),
+        ),
+        if (tracks.length > _maxTracks)
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton(
+                  onPressed: () => context.push(RouteName.artistTracks(artist.id)),
+                  child: const Text('See more'),
+                ),
+              ),
             ),
           ),
         if (albums.isNotEmpty || isAdmin)
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
               child: Text('Albums', style: theme.textTheme.titleMedium),
             ),
           ),
@@ -152,23 +178,13 @@ class _ArtistView extends StatelessWidget {
               ),
             ),
           ),
-        if (tracks.isNotEmpty)
+        if (artist.description != null && artist.description!.isNotEmpty)
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-              child: Text('Tracks', style: theme.textTheme.titleMedium),
+              padding: const EdgeInsets.all(16),
+              child: _ExpandableText(text: artist.description!),
             ),
           ),
-        SliverList(
-          delegate: SliverChildBuilderDelegate(
-            (context, index) => TrackCard(
-              track: tracks[index],
-              containingPlaylist: Playlist.anonymous(tracks),
-              openedPlaylist: Playlist.anonymous(tracks),
-            ),
-            childCount: tracks.length,
-          ),
-        ),
         const SliverToBoxAdapter(child: SizedBox(height: 24)),
       ],
     );
