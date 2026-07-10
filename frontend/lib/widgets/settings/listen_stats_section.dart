@@ -9,31 +9,17 @@ class ListenStatsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Text(
-            'Wrapped stats',
-            style: theme.textTheme.titleMedium?.copyWith(color: theme.colorScheme.primary, fontWeight: FontWeight.bold),
-          ),
+    return ListTile(
+      leading: const Icon(Icons.equalizer_outlined),
+      title: const Text('Listen events'),
+      subtitle: const Text('Collected listens from all users'),
+      onTap: () => showDialog<void>(
+        context: context,
+        builder: (_) => BlocProvider(
+          create: (_) => ListenStatsCubit(context.read<StatsRepository>())..loadPage(1),
+          child: const ListenStatsDialog(),
         ),
-        ListTile(
-          leading: const Icon(Icons.equalizer_outlined),
-          title: const Text('Listen events'),
-          subtitle: const Text('Collected listens from all users'),
-          onTap: () => showDialog<void>(
-            context: context,
-            builder: (_) => BlocProvider(
-              create: (_) => ListenStatsCubit(context.read<StatsRepository>())..loadPage(1),
-              child: const ListenStatsDialog(),
-            ),
-          ),
-        ),
-      ],
+      ),
     );
   }
 }
