@@ -5,6 +5,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 
 import 'package:basement_music/logger.dart';
 import 'package:basement_music/models/listen_event.dart';
+import 'package:basement_music/models/listen_stats.dart';
 import 'package:basement_music/repositories/connectivity_status_repository.dart';
 import 'package:basement_music/rest_client.dart';
 
@@ -12,6 +13,11 @@ class StatsRepository {
   static const _pendingKey = 'pending';
   static const _openSessionKey = 'open_session';
   static const _maxPending = 1000;
+  // Server rejects batches over 500 events; flush in chunks so a long
+  // offline backlog can't get permanently stuck on a 400.
+  static const _maxBatchSize = 500;
+  // Server caps admin stats pages at 100 entries.
+  static const listenStatsPageSize = 100;
 
   final RestClient _restClient;
   final ConnectivityStatusRepository _connectivityStatusRepository;
@@ -55,7 +61,7 @@ class StatsRepository {
     try {
       final json = jsonDecode(cached) as Map<String, dynamic>;
       final durationMs = json['duration_ms'] as int;
-      if (durationMs > 4000) {
+      if (durationMs > minListenDurationMs) {
         addFinalized(
           ListenEvent(
             clientEventId: json['client_event_id'] as String,
@@ -109,10 +115,13 @@ class StatsRepository {
 
     _flushing = true;
     try {
-      final batch = List<ListenEvent>.from(_pending);
-      await _restClient.postListens(batch.map((e) => e.toJson()).toList());
-      _pending.removeWhere((e) => batch.any((b) => b.clientEventId == e.clientEventId));
-      _persistPending();
+      while (_pending.isNotEmpty) {
+        final batch = _pending.take(_maxBatchSize).toList();
+        await _restClient.postListens(batch);
+        final sentIds = batch.map((e) => e.clientEventId).toSet();
+        _pending.removeWhere((e) => sentIds.contains(e.clientEventId));
+        _persistPending();
+      }
     } catch (e) {
       logger.w('Listen stats flush failed, will retry: $e');
     } finally {
@@ -123,6 +132,9 @@ class StatsRepository {
   void _persistPending() {
     _persistenceBox.put(_pendingKey, jsonEncode(_pending.map((e) => e.toJson()).toList()));
   }
+
+  /// Admin-only: one page of listen events across all users, newest first.
+  Future<ListenStatsPage> fetchListenStats(int page) => _restClient.getListenStats(page, listenStatsPageSize);
 
   // Best-effort push before sign-out, then drop whatever's left — next login
   // starts a fresh queue rather than carrying over the previous user's data.

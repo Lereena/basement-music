@@ -8,7 +8,6 @@ import 'package:basement_music/audio_player_handler.dart';
 import 'package:basement_music/models/listen_event.dart';
 import 'package:basement_music/repositories/stats_repository.dart';
 
-const _minListenMs = 4000;
 const _persistIntervalSeconds = 15;
 
 class _OpenSession {
@@ -88,7 +87,7 @@ class ListenTracker {
     if (session == null) return;
 
     session.stopwatch.stop();
-    if (session.stopwatch.elapsedMilliseconds > _minListenMs) {
+    if (session.stopwatch.elapsedMilliseconds > minListenDurationMs) {
       _statsRepository.addFinalized(
         ListenEvent(
           clientEventId: session.clientEventId,

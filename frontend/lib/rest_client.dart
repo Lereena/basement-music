@@ -3,6 +3,8 @@ import 'package:retrofit/retrofit.dart';
 
 import 'package:basement_music/models/app_user.dart';
 import 'package:basement_music/models/artist.dart';
+import 'package:basement_music/models/listen_event.dart';
+import 'package:basement_music/models/listen_stats.dart';
 import 'package:basement_music/models/lyrics.dart';
 import 'package:basement_music/models/playlist.dart';
 import 'package:basement_music/models/registration_code.dart';
@@ -141,7 +143,10 @@ abstract class RestClient {
 
   // Stats
   @POST('/user/listens')
-  Future<void> postListens(@Body() List<Map<String, dynamic>> events);
+  Future<void> postListens(@Body() List<ListenEvent> events);
+
+  @GET('/admin/listens')
+  Future<ListenStatsPage> getListenStats(@Query('page') int page, @Query('page_size') int pageSize);
 
   // Admin
   @POST('/admin/registration-codes')

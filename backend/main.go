@@ -113,6 +113,7 @@ func main() {
 	// Admin routes
 	admin := protected.PathPrefix("/admin").Subrouter()
 	admin.Use(middleware.AdminMiddleware)
+	admin.HandleFunc("/listens", statsRepo.GetListens).Methods("GET")
 	admin.HandleFunc("/registration-codes", adminRepo.GenerateCode).Methods("POST")
 	admin.HandleFunc("/registration-codes", adminRepo.ListCodes).Methods("GET")
 	admin.HandleFunc("/soulseek/credentials", slskRepo.SetCredentials).Methods("POST")

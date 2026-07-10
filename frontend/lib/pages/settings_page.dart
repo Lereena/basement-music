@@ -56,6 +56,10 @@ class SettingsPage extends StatelessWidget {
                               child: const UserManagementSection(),
                             ),
                             const SizedBox(height: 8),
+                            // Debug view for listening stats
+                            // const Divider(indent: 16, endIndent: 16),
+                            // const ListenStatsSection(),
+                            // const SizedBox(height: 8),
                           ],
                         ),
                       )

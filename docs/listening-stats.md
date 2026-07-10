@@ -49,15 +49,18 @@ The server insert is a pure append with `ON CONFLICT (client_event_id) DO NOTHIN
   - Per-event validation (duration > 4s, ≤ 6h cap, non-empty ids, valid RFC3339 timestamp) — invalid rows are skipped, not fail the whole batch.
   - Batches over 500 events are rejected with 400.
   - Forces `UserID` from the authenticated request, ignoring anything the client sends.
-  - Responds `201` on success — safe to retry.
+  - Responds `201` on success — safe to retry. A failed DB insert returns `500` so the client keeps the batch queued.
+- `GET /api/admin/listens?page=N&page_size=M` (admin only) — all users' listen events, newest first, page size clamped to 100, with user email and track title/artist resolved. Surfaced in the app under Settings → admin section → "Listen events".
+- `backend/repositories/stats_repository_test.go` — handler tests (validation, idempotency, batch limit) against a throwaway SQLite DB.
 
 ## Frontend
 
 - `frontend/lib/models/listen_event.dart` — JSON model, snake_case wire format matching the Go tags.
-- `frontend/lib/rest_client.dart` — `postListens(List<Map<String, dynamic>>)`.
+- `frontend/lib/rest_client.dart` — `postListens(List<ListenEvent>)`.
 - `frontend/lib/repositories/stats_repository.dart` — queue + flush:
   - Hive box `listen_stats`, two keys: `pending` (finalized, unsynced events, capped at 1000, drops oldest) and `open_session` (in-progress session, for kill recovery).
   - `addFinalized()` appends and immediately attempts a flush.
+  - Flushes in chunks of 500 so a long offline backlog never trips the server's batch limit.
   - Flushes automatically on reconnect (subscribes to `ConnectivityStatusRepository`).
   - On app launch, if an `open_session` exists (previous run was killed mid-play), it's promoted to `pending` if it accumulated more than 4s, then discarded.
   - `flushAndClearForSignOut()` — best-effort push on sign-out, then the local queue is cleared unconditionally. The next login starts a fresh queue rather than carrying over data across accounts.
@@ -68,6 +71,7 @@ The server insert is a pure append with `ON CONFLICT (client_event_id) DO NOTHIN
   - `completed` → finalize (also what splits repeat-one plays into separate sessions).
   - `Timer.periodic(15s)` persists the open session while playing, bounding kill-window data loss.
 - Wired in `frontend/lib/app.dart` / `frontend/lib/provider_wrapper.dart`; `AuthCubit.signOut()` flushes and clears the queue before signing out.
+- `frontend/test/stats_repository_test.dart` — queue/flush tests: chunking, offline queueing + reconnect flush, retry on failure, cap, kill recovery, sign-out clearing.
 
 ## Known limitations (accepted for v1)
 
