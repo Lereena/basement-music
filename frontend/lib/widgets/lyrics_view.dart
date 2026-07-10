@@ -49,17 +49,12 @@ class _LyricsViewState extends State<LyricsView> {
   }
 
   Future<void> _onSave() async {
-    final confirmed = await ConfirmActionDialog.show(
-      context: context,
-      title: 'Save these lyrics into the track file?',
-    );
+    final confirmed = await ConfirmActionDialog.show(context: context, title: 'Save these lyrics into the track file?');
     if (!confirmed || !mounted) return;
 
     final ok = await context.read<LyricsCubit>().save(widget.track);
     if (!ok && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to save lyrics')),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Failed to save lyrics')));
     }
   }
 
@@ -85,12 +80,14 @@ class _LyricsViewState extends State<LyricsView> {
                 child: LayoutBuilder(
                   builder: (context, constraints) {
                     if (lyrics.hasSynced) {
-                      return _SyncedLyrics(lrc: lyrics.syncedLyrics!, width: widget.size, height: constraints.maxHeight);
+                      return _SyncedLyrics(
+                        lrc: lyrics.syncedLyrics!,
+                        width: widget.size,
+                        height: constraints.maxHeight,
+                      );
                     }
                     if (lyrics.hasPlain) {
-                      return SingleChildScrollView(
-                        child: Text(lyrics.plainLyrics!, textAlign: TextAlign.center),
-                      );
+                      return SingleChildScrollView(child: Text(lyrics.plainLyrics!, textAlign: TextAlign.center));
                     }
                     return const Center(child: Text('Instrumental'));
                   },
@@ -179,12 +176,12 @@ class _SyncedLyricsState extends State<_SyncedLyrics> {
         contentAlignment: CrossAxisAlignment.center,
         lineGap: 18,
         translationLineGap: 8,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
         selectionAnchorPosition: 0.5,
         selectionAlignment: MainAxisAlignment.center,
         selectedColor: colorScheme.onSurface,
         selectedTranslationColor: colorScheme.onSurface,
-        fadeRange: FadeRange(top: 30, bottom: 30),
+        fadeRange: FadeRange(top: 20, bottom: 20),
         scrollDuration: const Duration(milliseconds: 240),
         selectionAutoResumeDuration: const Duration(milliseconds: 320),
         activeAutoResumeDuration: const Duration(milliseconds: 3000),
