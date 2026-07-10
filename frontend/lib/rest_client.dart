@@ -3,6 +3,7 @@ import 'package:retrofit/retrofit.dart';
 
 import 'package:basement_music/models/app_user.dart';
 import 'package:basement_music/models/artist.dart';
+import 'package:basement_music/models/lyrics.dart';
 import 'package:basement_music/models/playlist.dart';
 import 'package:basement_music/models/registration_code.dart';
 import 'package:basement_music/models/soulseek_connection.dart';
@@ -39,6 +40,19 @@ abstract class RestClient {
   Future<void> uploadLocalTracks(
     @Part(name: "files") List<MultipartFile> files,
   );
+
+  @GET('/track/{id}/lyrics/file')
+  Future<Lyrics> getFileLyrics(@Path('id') String id);
+
+  @GET('/track/{id}/lyrics/search')
+  Future<Lyrics> searchLyrics(@Path('id') String id);
+
+  @POST('/track/{id}/lyrics')
+  @FormUrlEncoded()
+  Future<Track> saveLyrics({
+    @Path('id') required String id,
+    @Field('lyrics') required String lyrics,
+  });
 
   @GET('/yt/fetchVideoInfo')
   Future<VideoInfo?> fetchYtVideoInfo(@Query('url') String url);

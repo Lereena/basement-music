@@ -10,6 +10,7 @@ import 'package:basement_music/repositories/admin_repository.dart';
 import 'package:basement_music/repositories/artists_repository.dart';
 import 'package:basement_music/repositories/auth_repository.dart';
 import 'package:basement_music/repositories/favourites_repository.dart';
+import 'package:basement_music/repositories/lyrics_repository.dart';
 import 'package:basement_music/repositories/repositories.dart';
 import 'package:basement_music/repositories/soulseek_repository.dart';
 import 'package:basement_music/rest_client.dart';
@@ -85,6 +86,7 @@ Future<void> runBasement(AppConfig config) async {
     connectivityStatusRepository,
     persistenceBox: statsBox,
   );
+  final lyricsRepository = LyricsRepository(restClient, dio);
 
   final authCubit = AuthCubit(authRepository, statsRepository);
   final router = AppRouter.createRouter(authCubit);
@@ -124,6 +126,7 @@ Future<void> runBasement(AppConfig config) async {
       soulseekRepository: soulseekRepository,
       statsRepository: statsRepository,
       listenTracker: listenTracker,
+      lyricsRepository: lyricsRepository,
       authCubit: authCubit,
       router: router,
     ),
@@ -144,6 +147,7 @@ class BasementMusic extends StatelessWidget {
   final SoulseekRepository soulseekRepository;
   final StatsRepository statsRepository;
   final ListenTracker listenTracker;
+  final LyricsRepository lyricsRepository;
   final AuthCubit authCubit;
   final GoRouter router;
 
@@ -162,6 +166,7 @@ class BasementMusic extends StatelessWidget {
     required this.soulseekRepository,
     required this.statsRepository,
     required this.listenTracker,
+    required this.lyricsRepository,
     required this.authCubit,
     required this.router,
   });
@@ -181,6 +186,7 @@ class BasementMusic extends StatelessWidget {
       adminRepository: adminRepository,
       soulseekRepository: soulseekRepository,
       statsRepository: statsRepository,
+      lyricsRepository: lyricsRepository,
       authCubit: authCubit,
       child: BlocBuilder<SettingsCubit, SettingsState>(
         builder: (_, settingsState) => Sizer(

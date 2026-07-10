@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PreviousButton extends StatelessWidget {
-  const PreviousButton({super.key});
+  final double size;
+
+  const PreviousButton({super.key, this.size = 30});
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +16,7 @@ class PreviousButton extends StatelessWidget {
         if (playerCubit.state.isInitial) return;
         playerCubit.previous();
       },
-      child: const Icon(Icons.fast_rewind, size: 30),
+      child: Icon(Icons.fast_rewind, size: size),
     );
   }
 }

@@ -79,6 +79,17 @@ class AudioPlayerHandler extends BaseAudioHandler {
   }
 
   @override
+  Future<void> seek(Duration position) async {
+    try {
+      await _audioPlayer.seek(position);
+    } catch (_) {
+      // The source may already be released (e.g. a finished iOS preview).
+      return;
+    }
+    playbackState.add(playbackState.value.copyWith(updatePosition: position));
+  }
+
+  @override
   Future<void> play() async {
     final item = mediaItem.valueOrNull;
     if (item == null) return;
@@ -90,6 +101,7 @@ class AudioPlayerHandler extends BaseAudioHandler {
         playbackState.value.copyWith(
           playing: true,
           controls: [MediaControl.pause],
+          systemActions: const {MediaAction.seek},
           updatePosition: await _audioPlayer.getCurrentPosition() ?? Duration.zero,
           processingState: AudioProcessingState.ready,
         ),
@@ -110,6 +122,7 @@ class AudioPlayerHandler extends BaseAudioHandler {
       playbackState.value.copyWith(
         playing: true,
         controls: [MediaControl.skipToPrevious, MediaControl.pause, MediaControl.skipToNext],
+        systemActions: const {MediaAction.seek},
         updatePosition: await _audioPlayer.getCurrentPosition() ?? Duration.zero,
         processingState: AudioProcessingState.ready,
       ),
@@ -124,6 +137,7 @@ class AudioPlayerHandler extends BaseAudioHandler {
       playbackState.value.copyWith(
         playing: false,
         controls: [MediaControl.skipToPrevious, MediaControl.play, MediaControl.skipToNext],
+        systemActions: const {MediaAction.seek},
         updatePosition: await _audioPlayer.getCurrentPosition() ?? Duration.zero,
         processingState: AudioProcessingState.ready,
       ),

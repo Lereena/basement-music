@@ -3,6 +3,7 @@ import 'package:basement_music/bloc/auth_cubit/auth_cubit.dart';
 import 'package:basement_music/bloc/cacher_cubit/cacher_cubit.dart';
 import 'package:basement_music/bloc/connectivity_status_cubit/connectivity_status_cubit.dart';
 import 'package:basement_music/bloc/favourites_cubit/favourites_cubit.dart';
+import 'package:basement_music/bloc/lyrics_cubit/lyrics_cubit.dart';
 import 'package:basement_music/bloc/player_cubit/player_cubit.dart';
 import 'package:basement_music/bloc/settings_cubit/settings_cubit.dart';
 import 'package:basement_music/bloc/soulseek_login_cubit/soulseek_login_cubit.dart';
@@ -12,6 +13,7 @@ import 'package:basement_music/repositories/admin_repository.dart';
 import 'package:basement_music/repositories/artists_repository.dart';
 import 'package:basement_music/repositories/auth_repository.dart';
 import 'package:basement_music/repositories/favourites_repository.dart';
+import 'package:basement_music/repositories/lyrics_repository.dart';
 import 'package:basement_music/repositories/repositories.dart';
 import 'package:basement_music/repositories/soulseek_repository.dart';
 import 'package:flutter/material.dart';
@@ -33,6 +35,7 @@ class ProviderWrapper extends StatelessWidget {
     required this.adminRepository,
     required this.soulseekRepository,
     required this.statsRepository,
+    required this.lyricsRepository,
     required this.authCubit,
   });
 
@@ -49,6 +52,7 @@ class ProviderWrapper extends StatelessWidget {
   final AdminRepository adminRepository;
   final SoulseekRepository soulseekRepository;
   final StatsRepository statsRepository;
+  final LyricsRepository lyricsRepository;
   final AuthCubit authCubit;
 
   @override
@@ -67,6 +71,7 @@ class ProviderWrapper extends StatelessWidget {
         RepositoryProvider.value(value: adminRepository),
         RepositoryProvider.value(value: soulseekRepository),
         RepositoryProvider.value(value: statsRepository),
+        RepositoryProvider.value(value: lyricsRepository),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -76,13 +81,18 @@ class ProviderWrapper extends StatelessWidget {
           BlocProvider(create: (_) => FavouritesCubit(favouritesRepository)..loadFavourites()),
           BlocProvider(create: (_) => ConnectivityStatusCubit(connectivityStatusRepository)),
           BlocProvider(create: (_) => TrackProgressCubit(audioHandler)),
+          BlocProvider(create: (_) => LyricsCubit(lyricsRepository, tracksRepository)),
           BlocProvider(
             create: (_) =>
                 CacherCubit(cacheRepository: cacheRepository, tracksRepository: tracksRepository)..initialize(),
           ),
           BlocProvider(create: (_) => SettingsCubit(settingsRepository)..retrieveSettings()),
           BlocProvider(
-            create: (_) => PlayerCubit(audioHandler: audioHandler, tracksRepository: tracksRepository),
+            create: (_) => PlayerCubit(
+              audioHandler: audioHandler,
+              tracksRepository: tracksRepository,
+              lyricsRepository: lyricsRepository,
+            ),
           ),
         ],
         child: child,

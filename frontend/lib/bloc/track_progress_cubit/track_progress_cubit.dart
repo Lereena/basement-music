@@ -16,11 +16,30 @@ class TrackProgressCubit extends Cubit<TrackProgressState> {
     });
   }
 
-  void updateProgress(Duration progress) {
-    final percentProgress = progress.inSeconds.toDouble() /
-        (audioHandler.mediaItem.value?.duration?.inSeconds ?? 1);
-    final stringProgress = durationString(progress.inSeconds);
+  bool get canSeek => (audioHandler.mediaItem.value?.duration?.inSeconds ?? 0) > 0;
 
-    emit(TrackProgressState(percentProgress: percentProgress, stringProgress: stringProgress));
+  void updateProgress(Duration progress) {
+    final totalSeconds = audioHandler.mediaItem.value?.duration?.inSeconds ?? 0;
+    final percentProgress =
+        totalSeconds > 0 ? (progress.inSeconds / totalSeconds).clamp(0.0, 1.0) : 0.0;
+
+    emit(
+      state.copyWith(
+        percentProgress: percentProgress,
+        stringProgress: durationString(progress.inSeconds),
+        stringDuration: durationString(totalSeconds),
+      ),
+    );
+  }
+
+  Future<void> seek(double percent) async {
+    final total = audioHandler.mediaItem.value?.duration;
+    if (total == null || total.inSeconds <= 0) return;
+
+    final target = total * percent.clamp(0.0, 1.0);
+    await audioHandler.seek(target);
+    // Optimistic update: prevents the slider thumb from snapping back
+    // before the position stream catches up.
+    updateProgress(target);
   }
 }

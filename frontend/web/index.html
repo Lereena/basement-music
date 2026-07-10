@@ -15,13 +15,13 @@
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="description" content="Your music player">
 
-  <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png" media="(prefers-color-scheme: light)">
-  <link rel="icon" type="image/png" sizes="32x32" href="favicon.png" media="(prefers-color-scheme: light)">
-  <link rel="icon" type="image/png" sizes="16x16" href="favicon.png" media="(prefers-color-scheme: light)">
-  
-  <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon-colored.png" media="(prefers-color-scheme: dark)">
-  <link rel="icon" type="image/png" sizes="32x32" href="favicon.png" media="(prefers-color-scheme: dark)">
-  <link rel="icon" type="image/png" sizes="16x16" href="favicon.png" media="(prefers-color-scheme: dark)">
+  <link id="apple-touch-icon-light" rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png" media="(prefers-color-scheme: light)">
+  <link id="favicon-32-light" rel="icon" type="image/png" sizes="32x32" href="favicon.png" media="(prefers-color-scheme: light)">
+  <link id="favicon-16-light" rel="icon" type="image/png" sizes="16x16" href="favicon.png" media="(prefers-color-scheme: light)">
+
+  <link id="apple-touch-icon-dark" rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon-colored.png" media="(prefers-color-scheme: dark)">
+  <link id="favicon-32-dark" rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32-colored.png" media="(prefers-color-scheme: dark)">
+  <link id="favicon-16-dark" rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16-colored.png" media="(prefers-color-scheme: dark)">
 
   <title>Basement</title>
   <link rel="manifest" href="manifest.json">
@@ -110,9 +110,9 @@
 
    <!-- Change the favicon depending on color mode -->
   <script>
-    const favicon32 = document.querySelector('link[rel="icon" sizes="32x32"]')
-    const favicon16 = document.querySelector('link[rel="icon" sizes="16x16"]')
-    const appleTouchFavicon = document.querySelector('link[rel="apple-touch-icon""]')
+    const favicon32 = document.getElementById('favicon-32-light')
+    const favicon16 = document.getElementById('favicon-16-light')
+    const appleTouchFavicon = document.getElementById('apple-touch-icon-light')
 
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
     mediaQuery.addEventListener('change', themeChange)
