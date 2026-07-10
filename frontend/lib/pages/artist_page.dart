@@ -1,10 +1,13 @@
 import 'package:basement_music/bloc/artist_cubit/artist_cubit.dart';
+import 'package:basement_music/bloc/favourites_cubit/favourites_cubit.dart';
 import 'package:basement_music/models/album.dart';
 import 'package:basement_music/models/artist.dart';
+import 'package:basement_music/models/favourite_type.dart';
 import 'package:basement_music/models/playlist.dart';
 import 'package:basement_music/repositories/albums_repository.dart';
 import 'package:basement_music/repositories/artists_repository.dart';
 import 'package:basement_music/routing/routes.dart';
+import 'package:basement_music/widgets/buttons/favourite_button.dart';
 import 'package:basement_music/widgets/dialogs/artist_metadata_dialog.dart';
 import 'package:basement_music/widgets/track_card.dart';
 import 'package:flutter/material.dart';
@@ -71,8 +74,15 @@ class _ArtistView extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final tracks = artist.tracks ?? [];
-    final albums = artist.albums ?? [];
     final visibleTracks = tracks.take(_maxTracks).toList();
+
+    // Favourite albums first, each group keeping its original order.
+    final favouritesCubit = context.watch<FavouritesCubit>();
+    final allAlbums = artist.albums ?? [];
+    final albums = [
+      ...allAlbums.where((a) => favouritesCubit.isFavouriteAlbum(a.id)),
+      ...allAlbums.where((a) => !favouritesCubit.isFavouriteAlbum(a.id)),
+    ];
 
     return SafeArea(
       bottom: false,
@@ -82,6 +92,7 @@ class _ArtistView extends StatelessWidget {
             expandedHeight: 240,
             pinned: true,
             actions: [
+              FavouriteButton(type: FavouriteType.artist, id: artist.id),
               IconButton(
                 icon: const Icon(Icons.travel_explore),
                 tooltip: 'Fetch info',

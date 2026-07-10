@@ -74,11 +74,13 @@ class TrackCard extends StatelessWidget {
                     Text(track.durationStr, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 16)),
                     BlocBuilder<FavouritesCubit, FavouritesState>(
                       buildWhen: (previous, current) {
-                        bool favOf(FavouritesState s) =>
-                            s.maybeWhen(loaded: (tracks) => tracks.any((t) => t.id == track.id), orElse: () => false);
+                        bool favOf(FavouritesState s) => s.maybeWhen(
+                          loaded: (tracks, _, _, _) => tracks.any((t) => t.id == track.id),
+                          orElse: () => false,
+                        );
 
                         // Ignore transient loadInProgress/error so cards don't flash; only react when this track's status changes.
-                        final isResolved = current.maybeWhen(loaded: (_) => true, orElse: () => false);
+                        final isResolved = current.maybeWhen(loaded: (_, _, _, _) => true, orElse: () => false);
                         return isResolved && favOf(previous) != favOf(current);
                       },
                       builder: (context, _) {

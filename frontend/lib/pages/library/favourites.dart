@@ -11,7 +11,7 @@ class _Favourites extends StatelessWidget {
         child: state.when(
           initial: () => const ScrollablePlaceholder(child: SizedBox.shrink()),
           loadInProgress: () => const ScrollablePlaceholder(child: CircularProgressIndicator()),
-          loaded: (tracks) => tracks.isEmpty
+          loaded: (tracks, _, _, _) => tracks.isEmpty
               ? const ScrollablePlaceholder(child: Text('No favourites yet'))
               : ListView.separated(
                   physics: const AlwaysScrollableScrollPhysics(),

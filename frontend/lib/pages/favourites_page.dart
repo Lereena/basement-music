@@ -20,7 +20,7 @@ class FavouritesPage extends StatelessWidget {
             builder: (context, state) => state.when(
               initial: () => const SizedBox.shrink(),
               loadInProgress: () => const Center(child: CircularProgressIndicator()),
-              loaded: (tracks) => tracks.isEmpty
+              loaded: (tracks, _, _, _) => tracks.isEmpty
                   ? const Center(child: Text('No favourites yet'))
                   : ListView.separated(
                       separatorBuilder: (_, _) => const Divider(height: 1),

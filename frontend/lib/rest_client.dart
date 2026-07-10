@@ -245,11 +245,20 @@ abstract class RestClient {
   @GET('/user/favourites')
   Future<List<Track>> getFavourites();
 
-  @POST('/user/favourites/{trackId}')
-  Future<void> addFavourite(@Path('trackId') String trackId);
+  @GET('/user/favourites/playlists')
+  Future<List<Playlist>> getFavouritePlaylists();
 
-  @DELETE('/user/favourites/{trackId}')
-  Future<void> removeFavourite(@Path('trackId') String trackId);
+  @GET('/user/favourites/artists')
+  Future<List<Artist>> getFavouriteArtists();
+
+  @GET('/user/favourites/albums')
+  Future<List<Album>> getFavouriteAlbums();
+
+  @POST('/user/favourites/{itemType}/{id}')
+  Future<void> addFavourite(@Path('itemType') String itemType, @Path('id') String id);
+
+  @DELETE('/user/favourites/{itemType}/{id}')
+  Future<void> removeFavourite(@Path('itemType') String itemType, @Path('id') String id);
 
   // Stats
   @POST('/user/listens')

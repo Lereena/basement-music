@@ -4,6 +4,7 @@ import 'package:basement_music/bloc/favourites_cubit/favourites_cubit.dart';
 import 'package:basement_music/bloc/playlists_cubit/playlists_cubit.dart';
 import 'package:basement_music/bloc/settings_cubit/settings_cubit.dart';
 import 'package:basement_music/bloc/tracks_cubit/tracks_cubit.dart';
+import 'package:basement_music/models/artist.dart';
 import 'package:basement_music/models/playlist.dart';
 import 'package:basement_music/repositories/artists_repository.dart';
 import 'package:basement_music/repositories/repositories.dart';
@@ -63,6 +64,22 @@ enum LibraryPageTab {
       await newState;
     },
   };
+}
+
+class _SectionHeader extends StatelessWidget {
+  final String title;
+
+  const _SectionHeader({required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(12, 12, 12, 4),
+        child: Text(title, style: Theme.of(context).textTheme.titleMedium),
+      ),
+    );
+  }
 }
 
 class LibraryPage extends StatelessWidget {

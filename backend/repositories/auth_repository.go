@@ -31,7 +31,7 @@ type AuthRepository struct {
 }
 
 func (repo *AuthRepository) Init() {
-	repo.DB.AutoMigrate(&models.User{}, &models.RegistrationCode{}, &models.Favourite{})
+	repo.DB.AutoMigrate(&models.User{}, &models.RegistrationCode{})
 }
 
 // POST /api/auth/register

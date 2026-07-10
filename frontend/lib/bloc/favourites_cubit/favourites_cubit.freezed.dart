@@ -128,12 +128,12 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loadInProgress,TResult Function( List<Track> tracks)?  loaded,TResult Function()?  error,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loadInProgress,TResult Function( List<Track> tracks,  List<Playlist> playlists,  List<Artist> artists,  List<Album> albums)?  loaded,TResult Function()?  error,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial();case _LoadInProgress() when loadInProgress != null:
 return loadInProgress();case _Loaded() when loaded != null:
-return loaded(_that.tracks);case _Error() when error != null:
+return loaded(_that.tracks,_that.playlists,_that.artists,_that.albums);case _Error() when error != null:
 return error();case _:
   return orElse();
 
@@ -152,12 +152,12 @@ return error();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loadInProgress,required TResult Function( List<Track> tracks)  loaded,required TResult Function()  error,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loadInProgress,required TResult Function( List<Track> tracks,  List<Playlist> playlists,  List<Artist> artists,  List<Album> albums)  loaded,required TResult Function()  error,}) {final _that = this;
 switch (_that) {
 case _Initial():
 return initial();case _LoadInProgress():
 return loadInProgress();case _Loaded():
-return loaded(_that.tracks);case _Error():
+return loaded(_that.tracks,_that.playlists,_that.artists,_that.albums);case _Error():
 return error();case _:
   throw StateError('Unexpected subclass');
 
@@ -175,12 +175,12 @@ return error();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loadInProgress,TResult? Function( List<Track> tracks)?  loaded,TResult? Function()?  error,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loadInProgress,TResult? Function( List<Track> tracks,  List<Playlist> playlists,  List<Artist> artists,  List<Album> albums)?  loaded,TResult? Function()?  error,}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial();case _LoadInProgress() when loadInProgress != null:
 return loadInProgress();case _Loaded() when loaded != null:
-return loaded(_that.tracks);case _Error() when error != null:
+return loaded(_that.tracks,_that.playlists,_that.artists,_that.albums);case _Error() when error != null:
 return error();case _:
   return null;
 
@@ -257,7 +257,7 @@ String toString() {
 
 
 class _Loaded implements FavouritesState {
-  const _Loaded({required final  List<Track> tracks}): _tracks = tracks;
+  const _Loaded({required final  List<Track> tracks, required final  List<Playlist> playlists, required final  List<Artist> artists, required final  List<Album> albums}): _tracks = tracks,_playlists = playlists,_artists = artists,_albums = albums;
   
 
  final  List<Track> _tracks;
@@ -265,6 +265,27 @@ class _Loaded implements FavouritesState {
   if (_tracks is EqualUnmodifiableListView) return _tracks;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_tracks);
+}
+
+ final  List<Playlist> _playlists;
+ List<Playlist> get playlists {
+  if (_playlists is EqualUnmodifiableListView) return _playlists;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_playlists);
+}
+
+ final  List<Artist> _artists;
+ List<Artist> get artists {
+  if (_artists is EqualUnmodifiableListView) return _artists;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_artists);
+}
+
+ final  List<Album> _albums;
+ List<Album> get albums {
+  if (_albums is EqualUnmodifiableListView) return _albums;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_albums);
 }
 
 
@@ -278,16 +299,16 @@ _$LoadedCopyWith<_Loaded> get copyWith => __$LoadedCopyWithImpl<_Loaded>(this, _
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Loaded&&const DeepCollectionEquality().equals(other._tracks, _tracks));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Loaded&&const DeepCollectionEquality().equals(other._tracks, _tracks)&&const DeepCollectionEquality().equals(other._playlists, _playlists)&&const DeepCollectionEquality().equals(other._artists, _artists)&&const DeepCollectionEquality().equals(other._albums, _albums));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_tracks));
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_tracks),const DeepCollectionEquality().hash(_playlists),const DeepCollectionEquality().hash(_artists),const DeepCollectionEquality().hash(_albums));
 
 @override
 String toString() {
-  return 'FavouritesState.loaded(tracks: $tracks)';
+  return 'FavouritesState.loaded(tracks: $tracks, playlists: $playlists, artists: $artists, albums: $albums)';
 }
 
 
@@ -298,7 +319,7 @@ abstract mixin class _$LoadedCopyWith<$Res> implements $FavouritesStateCopyWith<
   factory _$LoadedCopyWith(_Loaded value, $Res Function(_Loaded) _then) = __$LoadedCopyWithImpl;
 @useResult
 $Res call({
- List<Track> tracks
+ List<Track> tracks, List<Playlist> playlists, List<Artist> artists, List<Album> albums
 });
 
 
@@ -315,10 +336,13 @@ class __$LoadedCopyWithImpl<$Res>
 
 /// Create a copy of FavouritesState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? tracks = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? tracks = null,Object? playlists = null,Object? artists = null,Object? albums = null,}) {
   return _then(_Loaded(
 tracks: null == tracks ? _self._tracks : tracks // ignore: cast_nullable_to_non_nullable
-as List<Track>,
+as List<Track>,playlists: null == playlists ? _self._playlists : playlists // ignore: cast_nullable_to_non_nullable
+as List<Playlist>,artists: null == artists ? _self._artists : artists // ignore: cast_nullable_to_non_nullable
+as List<Artist>,albums: null == albums ? _self._albums : albums // ignore: cast_nullable_to_non_nullable
+as List<Album>,
   ));
 }
 

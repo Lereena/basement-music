@@ -51,7 +51,10 @@ func main() {
 	authRepo.Init()
 
 	adminRepo := &repositories.AdminRepository{DB: db}
-	favsRepo := &repositories.FavouritesRepository{DB: db}
+
+	favsRepo := &repositories.FavouritesRepository{DB: db, Playlists: playlistsRepo}
+	favsRepo.Init()
+
 	lyricsRepo := &repositories.LyricsRepository{DB: db, Cfg: &cfg, Lrclib: lrclib.NewClient()}
 	metadataRepo := &repositories.MetadataRepository{DB: db, Cfg: &cfg, MB: musicbrainz.NewClient()}
 
@@ -113,6 +116,12 @@ func main() {
 
 	// User routes
 	protected.HandleFunc("/user/favourites", favsRepo.GetFavourites).Methods("GET")
+	protected.HandleFunc("/user/favourites/playlists", favsRepo.GetFavouritePlaylists).Methods("GET")
+	protected.HandleFunc("/user/favourites/artists", favsRepo.GetFavouriteArtists).Methods("GET")
+	protected.HandleFunc("/user/favourites/albums", favsRepo.GetFavouriteAlbums).Methods("GET")
+	protected.HandleFunc("/user/favourites/{itemType:track|playlist|artist|album}/{id}", favsRepo.AddFavouriteItem).Methods("POST")
+	protected.HandleFunc("/user/favourites/{itemType:track|playlist|artist|album}/{id}", favsRepo.RemoveFavouriteItem).Methods("DELETE")
+	// Legacy single-segment track favourite routes (older clients)
 	protected.HandleFunc("/user/favourites/{trackId}", favsRepo.AddFavourite).Methods("POST")
 	protected.HandleFunc("/user/favourites/{trackId}", favsRepo.RemoveFavourite).Methods("DELETE")
 	protected.HandleFunc("/user/listens", statsRepo.PostListens).Methods("POST")

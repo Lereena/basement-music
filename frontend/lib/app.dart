@@ -79,7 +79,7 @@ Future<void> runBasement(AppConfig config) async {
   final connectivityStatusRepository = ConnectivityStatusRepository();
   final cacheRepository = CacheRepository(config, cacheBox);
   final authRepository = AuthRepository(restClient);
-  final favouritesRepository = FavouritesRepository(restClient);
+  final favouritesRepository = FavouritesRepository(restClient, baseUrl: config.baseUrl);
   final adminRepository = AdminRepository(restClient);
   final soulseekRepository = SoulseekRepository(restClient);
   final statsRepository = StatsRepository(restClient, connectivityStatusRepository, persistenceBox: statsBox);
