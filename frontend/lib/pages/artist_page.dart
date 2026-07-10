@@ -42,7 +42,10 @@ class _ArtistPage extends StatelessWidget {
           appBar: AppBar(title: Text(name)),
           body: const Center(child: Text('No tracks')),
         ),
-        error: () => Scaffold(appBar: AppBar(), body: const Center(child: Text('Error loading artist'))),
+        error: () => Scaffold(
+          appBar: AppBar(),
+          body: const Center(child: Text('Error loading artist')),
+        ),
       ),
     );
   }
@@ -71,111 +74,124 @@ class _ArtistView extends StatelessWidget {
     final albums = artist.albums ?? [];
     final visibleTracks = tracks.take(_maxTracks).toList();
 
-    return CustomScrollView(
-      slivers: [
-        SliverAppBar(
-          expandedHeight: 240,
-          pinned: true,
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.travel_explore),
-              tooltip: 'Fetch info',
-              onPressed: () => ArtistMetadataDialog.show(
-                context: context,
-                artistId: artist.id,
-                artistName: artist.name,
-                onApplied: () => context.read<ArtistCubit>().loadArtist(),
+    return SafeArea(
+      bottom: false,
+      child: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 240,
+            pinned: true,
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.travel_explore),
+                tooltip: 'Fetch info',
+                onPressed: () => ArtistMetadataDialog.show(
+                  context: context,
+                  artistId: artist.id,
+                  artistName: artist.name,
+                  onApplied: () => context.read<ArtistCubit>().loadArtist(),
+                ),
               ),
-            ),
-            IconButton(
-              icon: const Icon(Icons.edit_outlined),
-              onPressed: () async {
-                final cubit = context.read<ArtistCubit>();
-                await context.push(RouteName.artistEdit(artist.id));
-                cubit.loadArtist();
-              },
-            ),
-          ],
-          flexibleSpace: FlexibleSpaceBar(
-            title: Text(artist.name),
-            background: Stack(
-              fit: StackFit.expand,
-              children: [
-                if (artist.image != null)
-                  Image.network(artist.image!, fit: BoxFit.cover, errorBuilder: (_, _, _) => _imagePlaceholder(theme))
-                else
-                  _imagePlaceholder(theme),
-                DecoratedBox(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [Colors.transparent, theme.colorScheme.surface.withValues(alpha: 0.9)],
+              IconButton(
+                icon: const Icon(Icons.edit_outlined),
+                onPressed: () async {
+                  final cubit = context.read<ArtistCubit>();
+                  await context.push(RouteName.artistEdit(artist.id));
+                  cubit.loadArtist();
+                },
+              ),
+            ],
+            flexibleSpace: FlexibleSpaceBar(
+              title: Text(artist.name),
+              background: Stack(
+                fit: StackFit.expand,
+                children: [
+                  if (artist.image != null)
+                    Image.network(artist.image!, fit: BoxFit.cover, errorBuilder: (_, _, _) => _imagePlaceholder(theme))
+                  else
+                    _imagePlaceholder(theme),
+                  DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.center,
+                        end: Alignment.bottomCenter,
+                        colors: [Colors.transparent, theme.colorScheme.surfaceContainerLowest],
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        if (tracks.isNotEmpty)
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-              child: Text('Tracks', style: theme.textTheme.titleMedium),
-            ),
-          ),
-        SliverList(
-          delegate: SliverChildBuilderDelegate(
-            (context, index) => TrackCard(
-              track: visibleTracks[index],
-              containingPlaylist: Playlist.anonymous(visibleTracks),
-              openedPlaylist: Playlist.anonymous(visibleTracks),
-            ),
-            childCount: visibleTracks.length,
-          ),
-        ),
-        if (tracks.length > _maxTracks)
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: TextButton(
-                  onPressed: () => context.push(RouteName.artistTracks(artist.id)),
-                  child: const Text('See more'),
-                ),
+                  DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.center,
+                        end: Alignment.topCenter,
+                        colors: [Colors.transparent, theme.colorScheme.surfaceContainerLowest],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-            child: Text('Albums', style: theme.textTheme.titleMedium),
-          ),
-        ),
-        SliverToBoxAdapter(
-          child: SizedBox(
-            height: 180,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.all(16),
-              children: [
-                for (final album in albums) _AlbumCard(album: album),
-                _NewAlbumCard(onTap: () => _createAlbum(context)),
-              ],
+          if (tracks.isNotEmpty) SliverToBoxAdapter(child: SizedBox(height: 16)),
+          SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) => TrackCard(
+                track: visibleTracks[index],
+                containingPlaylist: Playlist.anonymous(visibleTracks),
+                openedPlaylist: Playlist.anonymous(visibleTracks),
+              ),
+              childCount: visibleTracks.length,
             ),
           ),
-        ),
-        if (artist.description != null && artist.description!.isNotEmpty)
+          if (tracks.length > _maxTracks)
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: TextButton(
+                    onPressed: () => context.push(RouteName.artistTracks(artist.id)),
+                    child: const Text('See more'),
+                  ),
+                ),
+              ),
+            ),
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: _ExpandableText(text: artist.description!),
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+              child: Text('Albums', style: theme.textTheme.titleMedium),
             ),
           ),
-        const SliverToBoxAdapter(child: SizedBox(height: 24)),
-      ],
+          SliverToBoxAdapter(
+            child: SizedBox(
+              height: 180,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                children: [
+                  for (final album in albums) _AlbumCard(album: album),
+                  _NewAlbumCard(onTap: () => _createAlbum(context)),
+                ],
+              ),
+            ),
+          ),
+          if (artist.description != null && artist.description!.isNotEmpty) ...[
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                child: Text('Bio', style: theme.textTheme.titleMedium),
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: _ExpandableText(text: artist.description!),
+              ),
+            ),
+          ],
+          const SliverToBoxAdapter(child: SizedBox(height: 12)),
+        ],
+      ),
     );
   }
 
@@ -206,10 +222,7 @@ class _ExpandableTextState extends State<_ExpandableText> {
           overflow: _expanded ? TextOverflow.visible : TextOverflow.ellipsis,
           style: Theme.of(context).textTheme.bodyMedium,
         ),
-        TextButton(
-          onPressed: () => setState(() => _expanded = !_expanded),
-          child: Text(_expanded ? 'Less' : 'More'),
-        ),
+        TextButton(onPressed: () => setState(() => _expanded = !_expanded), child: Text(_expanded ? 'Less' : 'More')),
       ],
     );
   }
@@ -235,7 +248,12 @@ class _AlbumCard extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: album.cover != null
-                    ? Image.network(album.cover!, width: 130, fit: BoxFit.cover, errorBuilder: (_, _, _) => _placeholder(theme))
+                    ? Image.network(
+                        album.cover!,
+                        width: 130,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, _, _) => _placeholder(theme),
+                      )
                     : _placeholder(theme),
               ),
             ),
@@ -247,11 +265,8 @@ class _AlbumCard extends StatelessWidget {
     );
   }
 
-  Widget _placeholder(ThemeData theme) => Container(
-    width: 130,
-    color: theme.colorScheme.surfaceContainerHighest,
-    child: const Icon(Icons.album, size: 48),
-  );
+  Widget _placeholder(ThemeData theme) =>
+      Container(width: 130, color: theme.colorScheme.surfaceContainerHighest, child: const Icon(Icons.album, size: 48));
 }
 
 class _NewAlbumCard extends StatelessWidget {
