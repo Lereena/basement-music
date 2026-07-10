@@ -1,7 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:rxdart/rxdart.dart';
 
+import 'package:basement_music/models/album.dart';
 import 'package:basement_music/models/artist.dart';
+import 'package:basement_music/models/metadata_candidates.dart';
 import 'package:basement_music/rest_client.dart';
 
 class ArtistsRepository {
@@ -27,8 +29,19 @@ class ArtistsRepository {
   }
 
   Future<Artist> getArtist(String artistId) async {
-    final artist = await _restClient.getArtist(artistId);
-    return _resolveImageUrl(artist);
+    final artist = _resolveImageUrl(await _restClient.getArtist(artistId));
+
+    // Keep the in-memory list and subscribers in sync so cubits listening on
+    // artistsSubject refresh after an edit/metadata mutation.
+    final index = _items.indexWhere((item) => item.id == artistId);
+    if (index != -1) {
+      _items[index] = artist;
+    } else {
+      _items.add(artist);
+    }
+    artistsSubject.add(_items);
+
+    return artist;
   }
 
   Future<void> updateArtistImage(String artistId, List<int> bytes, String filename) {
@@ -38,8 +51,32 @@ class ArtistsRepository {
     );
   }
 
+  Future<Artist> editArtist({required String id, required String name, String description = ''}) async {
+    await _restClient.editArtist(id: id, name: name, description: description);
+    return getArtist(id);
+  }
+
+  Future<List<ArtistCandidate>> searchMetadata(String artistId, {String query = ''}) {
+    return _restClient.searchArtistMetadata(id: artistId, query: query);
+  }
+
+  Future<ArtistMetadataPreview> previewMetadata(String artistId, String mbid) {
+    return _restClient.previewArtistMetadata(id: artistId, mbid: mbid);
+  }
+
+  Future<Artist> applyMetadata(String artistId, {String description = '', String imageUrl = ''}) async {
+    await _restClient.applyArtistMetadata(id: artistId, description: description, imageUrl: imageUrl);
+    return getArtist(artistId);
+  }
+
   Artist _resolveImageUrl(Artist a) {
-    if (a.image == null || a.image!.startsWith('http')) return a;
-    return Artist(id: a.id, name: a.name, image: '$_baseUrl${a.image!}', tracks: a.tracks);
+    final image = (a.image == null || a.image!.startsWith('http')) ? a.image : '$_baseUrl${a.image!}';
+    final albums = a.albums?.map(_resolveAlbumCover).toList();
+    return a.copyWith(image: image, albums: albums);
+  }
+
+  Album _resolveAlbumCover(Album album) {
+    if (album.cover == null || album.cover!.startsWith('http')) return album;
+    return album.copyWith(cover: '$_baseUrl${album.cover!}');
   }
 }

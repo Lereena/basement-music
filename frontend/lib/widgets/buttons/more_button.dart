@@ -1,8 +1,10 @@
+import 'package:basement_music/bloc/auth_cubit/auth_cubit.dart';
 import 'package:basement_music/bloc/cacher_cubit/cacher_cubit.dart';
 import 'package:basement_music/models/playlist.dart';
 import 'package:basement_music/models/track.dart';
 import 'package:basement_music/widgets/dialogs/add_to_playlist_dialog.dart';
 import 'package:basement_music/widgets/dialogs/remove_from_playlist_dialog.dart';
+import 'package:basement_music/widgets/dialogs/set_album_dialog.dart';
 import 'package:basement_music/widgets/edit_track.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +19,10 @@ class MoreButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cacherCubit = context.read<CacherCubit>();
+    final isAdmin = context.read<AuthCubit>().state.maybeWhen(
+      authenticated: (user) => user.isAdmin,
+      orElse: () => false,
+    );
 
     return InkWell(
       child: const Icon(Icons.more_vert),
@@ -40,6 +46,16 @@ class MoreButton extends StatelessWidget {
                   AddToPlaylistDialog.show(context: context, trackId: track.id);
                 },
               ),
+              if (isAdmin) ...[
+                const Divider(),
+                SimpleDialogOption(
+                  child: const Text('Set album'),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    SetAlbumDialog.show(context: context, trackId: track.id);
+                  },
+                ),
+              ],
               if (playlist != null) ...[
                 const Divider(),
                 SimpleDialogOption(

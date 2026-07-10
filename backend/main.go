@@ -14,6 +14,7 @@ import (
 	"github.com/Lereena/server_basement_music/lrclib"
 	"github.com/Lereena/server_basement_music/middleware"
 	"github.com/Lereena/server_basement_music/models"
+	"github.com/Lereena/server_basement_music/musicbrainz"
 	"github.com/Lereena/server_basement_music/repositories"
 )
 
@@ -43,16 +44,21 @@ func main() {
 	artistsRepo := &repositories.ArtistsRepository{DB: db, Cfg: &cfg}
 	artistsRepo.Init()
 
+	albumsRepo := &repositories.AlbumsRepository{DB: db, Cfg: &cfg}
+	albumsRepo.Init()
+
 	authRepo := &repositories.AuthRepository{DB: db}
 	authRepo.Init()
 
 	adminRepo := &repositories.AdminRepository{DB: db}
 	favsRepo := &repositories.FavouritesRepository{DB: db}
 	lyricsRepo := &repositories.LyricsRepository{DB: db, Cfg: &cfg, Lrclib: lrclib.NewClient()}
+	metadataRepo := &repositories.MetadataRepository{DB: db, Cfg: &cfg, MB: musicbrainz.NewClient()}
 
 	localDirectoryWorker := &LocalDirectoryWorker{
 		musicRepo:   musicRepo,
 		artistsRepo: artistsRepo,
+		albumsRepo:  albumsRepo,
 		Cfg:         &cfg,
 	}
 	localDirectoryWorker.ScanMusicDirectory()
@@ -90,6 +96,7 @@ func main() {
 
 	// Images are public — Image.network can't attach auth headers
 	router.HandleFunc("/artist/{id}/image", artistsRepo.GetArtistImage).Methods("GET")
+	router.HandleFunc("/album/{id}/image", albumsRepo.GetAlbumImage).Methods("GET")
 	router.HandleFunc("/playlist/{id}/image", playlistsRepo.GetPlaylistImage).Methods("GET")
 
 	// Temp Soulseek audio is public — audioplayers can't attach headers, IDs are non-enumerable UUIDs
@@ -149,8 +156,27 @@ func main() {
 
 	protected.HandleFunc("/artists", artistsRepo.GetAllArtists).Methods("GET")
 	protected.HandleFunc("/artist/{id}", artistsRepo.GetArtist).Methods("GET")
+	admin.HandleFunc("/artist/{id}", artistsRepo.EditArtist).Methods("PATCH")
 	admin.HandleFunc("/artist/{id}/image", artistsRepo.UpdateArtistImage).Methods("PATCH")
 	admin.HandleFunc("/playlist/{id}/image", playlistsRepo.UpdatePlaylistImage).Methods("PATCH")
+
+	// Albums
+	protected.HandleFunc("/albums", albumsRepo.GetAllAlbums).Methods("GET")
+	protected.HandleFunc("/album/{id}", albumsRepo.GetAlbum).Methods("GET")
+	admin.HandleFunc("/album", albumsRepo.CreateAlbum).Methods("POST")
+	admin.HandleFunc("/album/{id}", albumsRepo.EditAlbum).Methods("PATCH")
+	admin.HandleFunc("/album/{id}", albumsRepo.DeleteAlbum).Methods("DELETE")
+	admin.HandleFunc("/album/{id}/artists", albumsRepo.SetAlbumArtists).Methods("PATCH")
+	admin.HandleFunc("/album/{id}/tracks", albumsRepo.SetAlbumTracks).Methods("PATCH")
+	admin.HandleFunc("/album/{id}/image", albumsRepo.UpdateAlbumImage).Methods("PATCH")
+	admin.HandleFunc("/track/{trackId}/album", albumsRepo.SetTrackAlbum).Methods("PATCH")
+
+	// Metadata (MusicBrainz / CoverArtArchive)
+	admin.HandleFunc("/artist/{id}/metadata/search", metadataRepo.SearchArtistMetadata).Methods("GET")
+	admin.HandleFunc("/artist/{id}/metadata/preview", metadataRepo.PreviewArtistMetadata).Methods("GET")
+	admin.HandleFunc("/artist/{id}/metadata/apply", metadataRepo.ApplyArtistMetadata).Methods("POST")
+	admin.HandleFunc("/album/{id}/cover/search", metadataRepo.SearchAlbumCover).Methods("GET")
+	admin.HandleFunc("/album/{id}/cover/apply", metadataRepo.ApplyAlbumCover).Methods("POST")
 
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"*"},

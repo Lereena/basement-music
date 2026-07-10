@@ -8,6 +8,8 @@ abstract class RouteName {
   static String playlistEdit(String id) => '/library/playlist/$id/edit';
   static String artist(String id) => '/library/artist/$id';
   static String artistEdit(String id) => '/library/artist/$id/edit';
+  static String album(String id) => '/library/album/$id';
+  static String albumEdit(String id) => '/library/album/$id/edit';
   static String get search => '/search';
   static String get settings => '/settings';
   static String get upload => '/upload';

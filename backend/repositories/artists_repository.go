@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/Lereena/server_basement_music/config"
 	"github.com/Lereena/server_basement_music/models"
@@ -106,13 +107,77 @@ func (repo *ArtistsRepository) GetArtist(w http.ResponseWriter, r *http.Request)
 	id := params["id"]
 
 	var artist models.Artist
-	err := repo.DB.Where(&models.Artist{Id: id}).Preload("Tracks").First(&artist).Error
+	err := repo.DB.Where(&models.Artist{Id: id}).Preload("Tracks").Preload("Albums").First(&artist).Error
 	if err != nil {
 		respond.RespondError(w, http.StatusNotFound, "Artist not found")
 		return
 	}
 
 	respond.RespondJSON(w, http.StatusOK, artist)
+}
+
+// EditArtist updates an artist's name and/or description. On rename, every
+// associated track's comma-joined Artist string is rewritten so the next scan
+// finds the track under the new name instead of resurrecting the old one.
+// PATCH /api/admin/artist/{id}  form: name, description (empty = unchanged)
+func (repo *ArtistsRepository) EditArtist(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
+	if err := r.ParseForm(); err != nil {
+		respond.RespondError(w, http.StatusBadRequest, "failed to parse form")
+		return
+	}
+
+	var artist models.Artist
+	if err := repo.DB.Where(&models.Artist{Id: id}).Preload("Tracks").First(&artist).Error; err != nil {
+		respond.RespondError(w, http.StatusNotFound, "Artist not found")
+		return
+	}
+
+	newName := strings.TrimSpace(r.FormValue("name"))
+	newDescription := strings.TrimSpace(r.FormValue("description"))
+
+	updates := map[string]any{}
+	if newDescription != "" {
+		updates["description"] = newDescription
+	}
+	if newName != "" && newName != artist.Name {
+		updates["name"] = newName
+		repo.renameArtistInTracks(artist, newName)
+	}
+	if len(updates) > 0 {
+		repo.DB.Model(&artist).Updates(updates)
+	}
+
+	var updated models.Artist
+	repo.DB.Where(&models.Artist{Id: id}).Preload("Tracks").Preload("Albums").First(&updated)
+	respond.RespondJSON(w, http.StatusOK, updated)
+}
+
+// renameArtistInTracks rewrites the comma-joined Artist string of every track
+// associated with the artist, replacing the old name with the new one.
+func (repo *ArtistsRepository) renameArtistInTracks(artist models.Artist, newName string) {
+	for _, track := range artist.Tracks {
+		parts := strings.Split(track.Artist, ",")
+		changed := false
+		for i, part := range parts {
+			if strings.TrimSpace(part) == artist.Name {
+				parts[i] = newName
+				changed = true
+			}
+		}
+		if changed {
+			rejoined := strings.Join(trimAll(parts), ", ")
+			repo.DB.Model(&models.Track{}).Where("id = ?", track.Id).Update("artist", rejoined)
+		}
+	}
+}
+
+func trimAll(parts []string) []string {
+	out := make([]string, len(parts))
+	for i, p := range parts {
+		out[i] = strings.TrimSpace(p)
+	}
+	return out
 }
 
 func (repo *ArtistsRepository) CreateArtist(name string) string {

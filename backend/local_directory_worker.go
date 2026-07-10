@@ -7,8 +7,11 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
+
+	"github.com/bogem/id3v2/v2"
 
 	"github.com/Lereena/server_basement_music/config"
 	"github.com/Lereena/server_basement_music/models"
@@ -18,6 +21,7 @@ import (
 type LocalDirectoryWorker struct {
 	musicRepo   *repositories.TracksRepository
 	artistsRepo *repositories.ArtistsRepository
+	albumsRepo  *repositories.AlbumsRepository
 	Cfg         *config.Config
 }
 
@@ -30,13 +34,12 @@ func (ldw *LocalDirectoryWorker) ScanMusicDirectory() {
 		return
 	}
 
+	// Rebuild of artist_tracks is idempotent (CreateArtist is find-or-create).
+	// Artists themselves are durable now — never wiped — so curated data
+	// (descriptions/images/album links) survives restarts and rescans.
 	err = ldw.artistsRepo.DB.Exec("DELETE FROM artist_tracks").Error
 	if err != nil {
 		log.Printf("Error clearing artist_tracks table: %v", err)
-	}
-	err = ldw.musicRepo.DB.Exec("DELETE FROM artists").Error
-	if err != nil {
-		log.Printf("Error clearing artists table: %v", err)
 	}
 
 	for _, f := range files {
@@ -51,7 +54,57 @@ func (ldw *LocalDirectoryWorker) ScanMusicDirectory() {
 		track := models.Track{}
 		ldw.musicRepo.DB.Where("Url = ?", f.Name()).First(&track)
 		ldw.handleArtists(track.Artist, track.Id)
+		ldw.handleAlbum(track)
 	}
+
+	ldw.pruneOrphanArtists()
+}
+
+// pruneOrphanArtists removes artists left with no tracks, no albums, and no
+// curated metadata — i.e. artists that only existed because of tracks now gone.
+// Curated artists (with a description or image) are always kept.
+func (ldw *LocalDirectoryWorker) pruneOrphanArtists() {
+	err := ldw.artistsRepo.DB.Exec(`
+		DELETE FROM artists a
+		WHERE NOT EXISTS (SELECT 1 FROM artist_tracks at WHERE at.artist_id = a.id)
+		  AND NOT EXISTS (SELECT 1 FROM album_artists aa WHERE aa.artist_id = a.id)
+		  AND a.description IS NULL AND a.image IS NULL
+	`).Error
+	if err != nil {
+		log.Printf("Error pruning orphan artists: %v", err)
+	}
+}
+
+// handleAlbum derives an album from the track's embedded TALB (album) frame.
+// Only .mp3 files carry ID3 tags. Never overwrites a non-nil AlbumId so manual
+// bindings always win over scan-derived ones.
+func (ldw *LocalDirectoryWorker) handleAlbum(track models.Track) {
+	if track.AlbumId != nil {
+		return
+	}
+	if !strings.EqualFold(filepath.Ext(track.Url), ".mp3") {
+		return
+	}
+
+	path := filepath.Join(ldw.Cfg.MusicPath, track.Url)
+	tag, err := id3v2.Open(path, id3v2.Options{Parse: true, ParseFrames: []string{"TALB"}})
+	if err != nil {
+		return
+	}
+	title := strings.TrimSpace(tag.Album())
+	tag.Close()
+	if title == "" {
+		return
+	}
+
+	var artistIds []string
+	ldw.artistsRepo.DB.
+		Table("artist_tracks").
+		Where("track_id = ?", track.Id).
+		Pluck("artist_id", &artistIds)
+
+	albumId := ldw.albumsRepo.FindOrCreateAlbum(title, artistIds)
+	ldw.musicRepo.DB.Model(&models.Track{}).Where("id = ?", track.Id).Update("album_id", albumId)
 }
 
 func (ldw *LocalDirectoryWorker) UploadFile(w http.ResponseWriter, r *http.Request) {
@@ -92,6 +145,7 @@ func (ldw *LocalDirectoryWorker) UploadFile(w http.ResponseWriter, r *http.Reque
 		track := models.Track{}
 		ldw.musicRepo.DB.Where("Url = ?", file.Filename).First(&track)
 		ldw.handleArtists(track.Artist, track.Id)
+		ldw.handleAlbum(track)
 	}
 }
 

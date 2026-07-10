@@ -32,12 +32,7 @@ class ArtistCubit extends Cubit<ArtistState> {
 
     try {
       final artist = await artistsRepository.getArtist(artistId);
-
-      if (artist.tracks?.isEmpty ?? true) {
-        emit(ArtistState.loadedEmpty(name: artist.name));
-      } else {
-        emit(ArtistState.loaded(artist: artist));
-      }
+      emit(ArtistState.loaded(artist: artist));
     } catch (e) {
       emit(const ArtistState.error());
       logger.e('Error loading artist: $e');

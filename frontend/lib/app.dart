@@ -7,6 +7,7 @@ import 'package:basement_music/bloc/settings_cubit/settings_cubit.dart';
 import 'package:basement_music/firebase_options.dart';
 import 'package:basement_music/provider_wrapper.dart';
 import 'package:basement_music/repositories/admin_repository.dart';
+import 'package:basement_music/repositories/albums_repository.dart';
 import 'package:basement_music/repositories/artists_repository.dart';
 import 'package:basement_music/repositories/auth_repository.dart';
 import 'package:basement_music/repositories/favourites_repository.dart';
@@ -110,6 +111,7 @@ Future<void> runBasement(AppConfig config) async {
         baseUrl: config.baseUrl,
       ),
       artistsRepository: ArtistsRepository(restClient, baseUrl: config.baseUrl),
+      albumsRepository: AlbumsRepository(restClient, baseUrl: config.baseUrl),
       connectivityStatusRepository: connectivityStatusRepository,
       authRepository: authRepository,
       favouritesRepository: favouritesRepository,
@@ -129,6 +131,7 @@ class BasementMusic extends StatelessWidget {
   final SettingsRepository settingsRepository;
   final PlaylistsRepository playlistsRepository;
   final ArtistsRepository artistsRepository;
+  final AlbumsRepository albumsRepository;
   final ConnectivityStatusRepository connectivityStatusRepository;
   final AuthRepository authRepository;
   final FavouritesRepository favouritesRepository;
@@ -146,6 +149,7 @@ class BasementMusic extends StatelessWidget {
     required this.settingsRepository,
     required this.playlistsRepository,
     required this.artistsRepository,
+    required this.albumsRepository,
     required this.connectivityStatusRepository,
     required this.authRepository,
     required this.favouritesRepository,
@@ -166,6 +170,7 @@ class BasementMusic extends StatelessWidget {
       cacheRepository: cacheRepository,
       settingsRepository: settingsRepository,
       artistsRepository: artistsRepository,
+      albumsRepository: albumsRepository,
       authRepository: authRepository,
       favouritesRepository: favouritesRepository,
       adminRepository: adminRepository,
