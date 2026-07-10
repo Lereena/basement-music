@@ -123,6 +123,7 @@ class _SoulseekAdminSectionState extends State<SoulseekAdminSection> {
                   icon: const Icon(Icons.link_off),
                   label: const Text('Disconnect'),
                 ),
+                SizedBox(height: 8),
               ],
               Row(
                 children: [

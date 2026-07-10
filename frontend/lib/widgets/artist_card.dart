@@ -10,51 +10,47 @@ class ArtistCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     final trackCount = artist.tracks?.length ?? 0;
 
-    return Card(
-      child: InkWell(
-        onTap: onTap,
-        child: Row(
+    return GestureDetector(
+      onTap: onTap,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: Stack(
+          fit: StackFit.expand,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(8),
-              child: AspectRatio(
-                aspectRatio: 1,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(2),
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      artist.image != null
-                          ? Image.network(
-                              artist.image!,
-                              fit: BoxFit.cover,
-                              errorBuilder: (_, _, _) => const _Placeholder(),
-                            )
-                          : const _Placeholder(),
-                    ],
-                  ),
+            artist.image != null
+                ? Image.network(
+                    artist.image!,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, _, _) => _Placeholder(name: artist.name),
+                  )
+                : _Placeholder(name: artist.name),
+            DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.center,
+                  end: Alignment.bottomCenter,
+                  colors: [Colors.transparent, Colors.black.withValues(alpha: 0.7)],
                 ),
               ),
             ),
-            Expanded(
+            Positioned(
+              left: 8,
+              right: 8,
+              bottom: 8,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
                     artist.name,
-                    style: theme.textTheme.bodyLarge?.copyWith(height: 1.2),
+                    style: theme.textTheme.titleSmall?.copyWith(color: Colors.white, fontWeight: FontWeight.w600),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
                   Text(
                     '$trackCount ${trackCount == 1 ? 'track' : 'tracks'}',
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.64),
-                    ),
+                    style: theme.textTheme.bodySmall?.copyWith(color: Colors.white70),
                   ),
                 ],
               ),
@@ -67,13 +63,21 @@ class ArtistCard extends StatelessWidget {
 }
 
 class _Placeholder extends StatelessWidget {
-  const _Placeholder();
+  final String name;
+
+  const _Placeholder({required this.name});
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final letter = name.isNotEmpty ? name[0].toUpperCase() : '?';
     return Container(
-      color: Theme.of(context).colorScheme.surfaceContainerHighest,
-      child: const Icon(Icons.person, size: 48),
+      color: theme.colorScheme.primaryContainer,
+      alignment: Alignment.center,
+      child: Text(
+        letter,
+        style: theme.textTheme.displayMedium?.copyWith(color: theme.colorScheme.onPrimaryContainer),
+      ),
     );
   }
 }

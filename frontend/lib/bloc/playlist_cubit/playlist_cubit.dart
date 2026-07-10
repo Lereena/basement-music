@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:basement_music/logger.dart';
 import 'package:basement_music/models/playlist.dart';
 import 'package:basement_music/repositories/playlists_repository.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -13,10 +14,19 @@ class PlaylistCubit extends Cubit<PlaylistState> {
   final PlaylistsRepository playlistsRepository;
   final String playlistId;
 
+  late final StreamSubscription<List<Playlist>> _subscription;
+
   PlaylistCubit({required this.playlistsRepository, required this.playlistId}) : super(const PlaylistState.initial()) {
-    playlistsRepository.playlistsSubject.listen(
-      (value) => _updatePlaylist(value.firstWhere((element) => element.id == playlistId)),
-    );
+    _subscription = playlistsRepository.playlistsSubject.listen((value) {
+      final playlist = value.firstWhereOrNull((element) => element.id == playlistId);
+      if (playlist != null) _updatePlaylist(playlist);
+    });
+  }
+
+  @override
+  Future<void> close() {
+    _subscription.cancel();
+    return super.close();
   }
 
   Future<void> load() async {

@@ -16,6 +16,7 @@ Track _$TrackFromJson(Map<String, dynamic> json) => Track(
       ? 'assets/cover_placeholder.png'
       : Track._coverFromJson(json['Cover'] as String),
   hasLyrics: json['HasLyrics'] as bool? ?? false,
+  albumId: json['AlbumId'] as String?,
 );
 
 Map<String, dynamic> _$TrackToJson(Track instance) => <String, dynamic>{
@@ -26,4 +27,5 @@ Map<String, dynamic> _$TrackToJson(Track instance) => <String, dynamic>{
   'Duration': instance.duration,
   'Cover': instance.cover,
   'HasLyrics': instance.hasLyrics,
+  'AlbumId': instance.albumId,
 };

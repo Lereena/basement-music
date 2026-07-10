@@ -5,6 +5,7 @@ import 'package:basement_music/utils/horizontal_space_reducer.dart';
 import 'package:basement_music/widgets/app_bar.dart';
 import 'package:basement_music/widgets/settings/cache_all_tracks_settings_line.dart';
 import 'package:basement_music/widgets/settings/home_page_setting_line.dart';
+import 'package:basement_music/widgets/settings/listen_stats_section.dart';
 import 'package:basement_music/widgets/settings/soulseek_admin_section.dart';
 import 'package:basement_music/widgets/settings/theme_setting_line.dart';
 import 'package:basement_music/widgets/settings/user_management_section.dart';
@@ -55,6 +56,10 @@ class SettingsPage extends StatelessWidget {
                               create: (_) => AdminCubit(context.read<AdminRepository>())..loadCodes(),
                               child: const UserManagementSection(),
                             ),
+                            const SizedBox(height: 8),
+                            // Debug view for listening stats
+                            const Divider(indent: 16, endIndent: 16),
+                            const ListenStatsSection(),
                             const SizedBox(height: 8),
                           ],
                         ),

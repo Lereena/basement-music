@@ -10,6 +10,7 @@ import 'package:basement_music/bloc/soulseek_login_cubit/soulseek_login_cubit.da
 import 'package:basement_music/bloc/soulseek_settings_cubit/soulseek_settings_cubit.dart';
 import 'package:basement_music/bloc/track_progress_cubit/track_progress_cubit.dart';
 import 'package:basement_music/repositories/admin_repository.dart';
+import 'package:basement_music/repositories/albums_repository.dart';
 import 'package:basement_music/repositories/artists_repository.dart';
 import 'package:basement_music/repositories/auth_repository.dart';
 import 'package:basement_music/repositories/favourites_repository.dart';
@@ -30,10 +31,12 @@ class ProviderWrapper extends StatelessWidget {
     required this.playlistsRepository,
     required this.connectivityStatusRepository,
     required this.artistsRepository,
+    required this.albumsRepository,
     required this.authRepository,
     required this.favouritesRepository,
     required this.adminRepository,
     required this.soulseekRepository,
+    required this.statsRepository,
     required this.lyricsRepository,
     required this.authCubit,
   });
@@ -45,11 +48,13 @@ class ProviderWrapper extends StatelessWidget {
   final SettingsRepository settingsRepository;
   final PlaylistsRepository playlistsRepository;
   final ArtistsRepository artistsRepository;
+  final AlbumsRepository albumsRepository;
   final ConnectivityStatusRepository connectivityStatusRepository;
   final AuthRepository authRepository;
   final FavouritesRepository favouritesRepository;
   final AdminRepository adminRepository;
   final SoulseekRepository soulseekRepository;
+  final StatsRepository statsRepository;
   final LyricsRepository lyricsRepository;
   final AuthCubit authCubit;
 
@@ -64,10 +69,12 @@ class ProviderWrapper extends StatelessWidget {
         RepositoryProvider.value(value: playlistsRepository),
         RepositoryProvider.value(value: connectivityStatusRepository),
         RepositoryProvider.value(value: artistsRepository),
+        RepositoryProvider.value(value: albumsRepository),
         RepositoryProvider.value(value: authRepository),
         RepositoryProvider.value(value: favouritesRepository),
         RepositoryProvider.value(value: adminRepository),
         RepositoryProvider.value(value: soulseekRepository),
+        RepositoryProvider.value(value: statsRepository),
         RepositoryProvider.value(value: lyricsRepository),
       ],
       child: MultiBlocProvider(
