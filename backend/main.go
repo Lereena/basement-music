@@ -50,6 +50,9 @@ func main() {
 	favsRepo := &repositories.FavouritesRepository{DB: db}
 	lyricsRepo := &repositories.LyricsRepository{DB: db, Cfg: &cfg, Lrclib: lrclib.NewClient()}
 
+	statsRepo := &repositories.StatsRepository{DB: db}
+	statsRepo.Init()
+
 	localDirectoryWorker := &LocalDirectoryWorker{
 		musicRepo:   musicRepo,
 		artistsRepo: artistsRepo,
@@ -105,10 +108,12 @@ func main() {
 	protected.HandleFunc("/user/favourites", favsRepo.GetFavourites).Methods("GET")
 	protected.HandleFunc("/user/favourites/{trackId}", favsRepo.AddFavourite).Methods("POST")
 	protected.HandleFunc("/user/favourites/{trackId}", favsRepo.RemoveFavourite).Methods("DELETE")
+	protected.HandleFunc("/user/listens", statsRepo.PostListens).Methods("POST")
 
 	// Admin routes
 	admin := protected.PathPrefix("/admin").Subrouter()
 	admin.Use(middleware.AdminMiddleware)
+	admin.HandleFunc("/listens", statsRepo.GetListens).Methods("GET")
 	admin.HandleFunc("/registration-codes", adminRepo.GenerateCode).Methods("POST")
 	admin.HandleFunc("/registration-codes", adminRepo.ListCodes).Methods("GET")
 	admin.HandleFunc("/soulseek/credentials", slskRepo.SetCredentials).Methods("POST")

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:basement_music/models/app_user.dart';
 import 'package:basement_music/repositories/auth_repository.dart';
+import 'package:basement_music/repositories/stats_repository.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,11 +12,12 @@ part 'auth_cubit.freezed.dart';
 part 'auth_state.dart';
 
 class AuthCubit extends Cubit<AuthState> {
-  AuthCubit(this._authRepository) : super(const AuthState.loading()) {
+  AuthCubit(this._authRepository, this._statsRepository) : super(const AuthState.loading()) {
     _subscription = _authRepository.authStateChanges.listen(_onAuthStateChanged);
   }
 
   final AuthRepository _authRepository;
+  final StatsRepository _statsRepository;
   late final StreamSubscription<User?> _subscription;
 
   Future<void> _onAuthStateChanged(User? firebaseUser) async {
@@ -60,6 +62,7 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   Future<void> signOut() async {
+    await _statsRepository.flushAndClearForSignOut();
     await _authRepository.signOut();
     // authStateChanges fires → unauthenticated
   }

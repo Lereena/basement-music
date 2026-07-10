@@ -6,6 +6,7 @@ require (
 	firebase.google.com/go/v4 v4.20.0
 	github.com/TheKinrar/goydl v0.0.0-20210916211739-e36980173c4c
 	github.com/agnivade/levenshtein v1.1.1
+	github.com/bogem/id3v2/v2 v2.1.4
 	github.com/google/uuid v1.6.0
 	github.com/gorilla/mux v1.8.0
 	github.com/jinzhu/gorm v1.9.16
@@ -13,6 +14,7 @@ require (
 	github.com/rs/cors v1.8.2
 	google.golang.org/api v0.279.0
 	gorm.io/driver/postgres v1.3.7
+	gorm.io/driver/sqlite v1.3.6
 	gorm.io/gorm v1.23.4
 )
 
@@ -32,7 +34,6 @@ require (
 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/metric v0.56.0 // indirect
 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/resourcemapping v0.56.0 // indirect
 	github.com/MicahParks/keyfunc v1.9.0 // indirect
-	github.com/bogem/id3v2/v2 v2.1.4 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/cncf/xds/go v0.0.0-20260202195803-dba9d589def2 // indirect
 	github.com/envoyproxy/go-control-plane/envoy v1.37.0 // indirect
@@ -55,7 +56,8 @@ require (
 	github.com/jackc/pgtype v1.11.0 // indirect
 	github.com/jackc/pgx/v4 v4.16.1 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
-	github.com/jinzhu/now v1.1.4 // indirect
+	github.com/jinzhu/now v1.1.5 // indirect
+	github.com/mattn/go-sqlite3 v1.14.12 // indirect
 	github.com/planetscale/vtprotobuf v0.6.1-0.20240319094008-0393e58bdf10 // indirect
 	github.com/spiffe/go-spiffe/v2 v2.6.0 // indirect
 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
