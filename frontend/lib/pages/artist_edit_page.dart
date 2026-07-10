@@ -1,9 +1,9 @@
 import 'package:basement_music/bloc/artist_edit_cubit/artist_edit_cubit.dart';
 import 'package:basement_music/repositories/artists_repository.dart';
 import 'package:basement_music/utils/horizontal_space_reducer.dart';
+import 'package:basement_music/utils/pick_and_crop_image.dart';
 import 'package:basement_music/widgets/app_bar.dart';
 import 'package:basement_music/widgets/image_picker_box.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -27,11 +27,14 @@ class _ArtistEdit extends StatelessWidget {
   const _ArtistEdit();
 
   Future<void> _pickImage(BuildContext context) async {
-    final result = await FilePicker.pickFiles(type: FileType.image, withData: true);
-    if (result == null || result.files.isEmpty || result.files.first.bytes == null) return;
-    if (context.mounted) {
-      context.read<ArtistEditCubit>().pickImage(result.files.first.bytes!, result.files.first.name);
-    }
+    final state = context.read<ArtistEditCubit>().state;
+    final picked = await pickAndCropImage(
+      context,
+      currentImageUrl: state.currentImageUrl,
+      currentBytes: state.pickedBytes,
+    );
+    if (picked == null || !context.mounted) return;
+    context.read<ArtistEditCubit>().pickImage(picked.bytes, picked.name);
   }
 
   @override

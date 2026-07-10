@@ -4,9 +4,9 @@ import 'package:basement_music/repositories/albums_repository.dart';
 import 'package:basement_music/repositories/artists_repository.dart';
 import 'package:basement_music/repositories/repositories.dart';
 import 'package:basement_music/utils/horizontal_space_reducer.dart';
+import 'package:basement_music/utils/pick_and_crop_image.dart';
 import 'package:basement_music/widgets/app_bar.dart';
 import 'package:basement_music/widgets/image_picker_box.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -34,11 +34,14 @@ class _AlbumEdit extends StatelessWidget {
   const _AlbumEdit();
 
   Future<void> _pickCover(BuildContext context) async {
-    final result = await FilePicker.pickFiles(type: FileType.image, withData: true);
-    if (result == null || result.files.isEmpty || result.files.first.bytes == null) return;
-    if (context.mounted) {
-      context.read<AlbumEditCubit>().pickCover(result.files.first.bytes!, result.files.first.name);
-    }
+    final state = context.read<AlbumEditCubit>().state;
+    final picked = await pickAndCropImage(
+      context,
+      currentImageUrl: state.album?.cover,
+      currentBytes: state.pickedCoverBytes,
+    );
+    if (picked == null || !context.mounted) return;
+    context.read<AlbumEditCubit>().pickCover(picked.bytes, picked.name);
   }
 
   @override
@@ -92,15 +95,15 @@ class _EditFormState extends State<_EditForm> {
     final state = widget.state;
 
     final selectedTracks = state.orderedTrackIds
-        .map((id) => state.allTracks.firstWhere(
-              (t) => t.id == id,
-              orElse: () => Track(id: id, title: id, artist: ''),
-            ))
+        .map(
+          (id) => state.allTracks.firstWhere(
+            (t) => t.id == id,
+            orElse: () => Track(id: id, title: id, artist: ''),
+          ),
+        )
         .toList();
 
-    final filtered = state.allTracks
-        .where((t) => _trackQuery.isEmpty || t.matchesQuery(_trackQuery))
-        .toList();
+    final filtered = state.allTracks.where((t) => _trackQuery.isEmpty || t.matchesQuery(_trackQuery)).toList();
 
     return ListView(
       padding: const EdgeInsets.all(16),
@@ -134,11 +137,13 @@ class _EditFormState extends State<_EditForm> {
           spacing: 8,
           runSpacing: 4,
           children: state.allArtists
-              .map((a) => FilterChip(
-                    label: Text(a.name),
-                    selected: state.selectedArtistIds.contains(a.id),
-                    onSelected: (_) => cubit.toggleArtist(a.id),
-                  ))
+              .map(
+                (a) => FilterChip(
+                  label: Text(a.name),
+                  selected: state.selectedArtistIds.contains(a.id),
+                  onSelected: (_) => cubit.toggleArtist(a.id),
+                ),
+              )
               .toList(),
         ),
         const SizedBox(height: 24),
@@ -157,7 +162,10 @@ class _EditFormState extends State<_EditForm> {
               ListTile(
                 key: ValueKey(track.id),
                 contentPadding: EdgeInsets.zero,
-                leading: ReorderableDragStartListener(index: selectedTracks.indexOf(track), child: const Icon(Icons.drag_handle)),
+                leading: ReorderableDragStartListener(
+                  index: selectedTracks.indexOf(track),
+                  child: const Icon(Icons.drag_handle),
+                ),
                 title: Text(track.title, maxLines: 1, overflow: TextOverflow.ellipsis),
                 subtitle: Text(track.artist, maxLines: 1, overflow: TextOverflow.ellipsis),
                 trailing: IconButton(
@@ -175,13 +183,15 @@ class _EditFormState extends State<_EditForm> {
           onChanged: (value) => setState(() => _trackQuery = value),
         ),
         const SizedBox(height: 8),
-        ...filtered.map((track) => CheckboxListTile(
-              contentPadding: EdgeInsets.zero,
-              value: state.orderedTrackIds.contains(track.id),
-              title: Text(track.title, maxLines: 1, overflow: TextOverflow.ellipsis),
-              subtitle: Text(track.artist, maxLines: 1, overflow: TextOverflow.ellipsis),
-              onChanged: (_) => cubit.toggleTrack(track.id),
-            )),
+        ...filtered.map(
+          (track) => CheckboxListTile(
+            contentPadding: EdgeInsets.zero,
+            value: state.orderedTrackIds.contains(track.id),
+            title: Text(track.title, maxLines: 1, overflow: TextOverflow.ellipsis),
+            subtitle: Text(track.artist, maxLines: 1, overflow: TextOverflow.ellipsis),
+            onChanged: (_) => cubit.toggleTrack(track.id),
+          ),
+        ),
         const SizedBox(height: 32),
       ],
     );

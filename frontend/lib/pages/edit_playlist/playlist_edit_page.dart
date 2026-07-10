@@ -5,8 +5,8 @@ import 'package:basement_music/models/track.dart';
 import 'package:basement_music/pages/upload/result_page.dart';
 import 'package:basement_music/repositories/playlists_repository.dart';
 import 'package:basement_music/utils/horizontal_space_reducer.dart';
+import 'package:basement_music/utils/pick_and_crop_image.dart';
 import 'package:basement_music/widgets/app_bar.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -51,11 +51,19 @@ class _PlaylistEditState extends State<_PlaylistEdit> {
   late final _appBarActions = [IconButton(onPressed: _onSave, icon: const Icon(Icons.save))];
 
   Future<void> _pickImage() async {
-    final result = await FilePicker.pickFiles(type: FileType.image, withData: true);
-    if (result == null || result.files.isEmpty || result.files.first.bytes == null) return;
+    final currentImageUrl = context.read<PlaylistEditorCubit>().state.maybeWhen(
+      editInProgress: (_, _, image, _) => image,
+      orElse: () => null,
+    );
+    final picked = await pickAndCropImage(
+      context,
+      currentImageUrl: currentImageUrl,
+      currentBytes: _data.imageBytes,
+    );
+    if (picked == null) return;
     setState(() {
-      _data.imageBytes = result.files.first.bytes;
-      _data.imageFilename = result.files.first.name;
+      _data.imageBytes = picked.bytes;
+      _data.imageFilename = picked.name;
     });
   }
 
