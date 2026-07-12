@@ -7,6 +7,7 @@ import 'package:basement_music/utils/horizontal_space_reducer.dart';
 import 'package:basement_music/widgets/app_bar.dart';
 import 'package:basement_music/widgets/dialogs/album_cover_dialog.dart';
 import 'package:basement_music/widgets/track_card.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -35,12 +36,12 @@ class _AlbumPage extends StatelessWidget {
     return BlocBuilder<AlbumCubit, AlbumState>(
       builder: (context, state) => state.when(
         initial: () => const SizedBox.shrink(),
-        loading: () => Scaffold(appBar: BasementAppBar(title: ''), body: const Center(child: CircularProgressIndicator())),
+        loading: () => Scaffold(
+          appBar: BasementAppBar(title: ''),
+          body: const Center(child: CircularProgressIndicator()),
+        ),
         loaded: (album) => Scaffold(
-          appBar: BasementAppBar(
-            title: album.title,
-            actions: _actions(context, album),
-          ),
+          appBar: BasementAppBar(title: album.title, actions: _actions(context, album)),
           body: HorizontalSpaceReducer(child: _AlbumBody(album: album)),
         ),
         error: () => Scaffold(
@@ -61,14 +62,8 @@ class _AlbumPage extends StatelessWidget {
         onApplied: () => context.read<AlbumCubit>().loadAlbum(),
       ),
     ),
-    IconButton(
-      icon: const Icon(Icons.edit_outlined),
-      onPressed: () => context.go(RouteName.albumEdit(albumId)),
-    ),
-    IconButton(
-      icon: const Icon(Icons.delete_outline),
-      onPressed: () => _confirmDelete(context),
-    ),
+    IconButton(icon: const Icon(Icons.edit_outlined), onPressed: () => context.go(RouteName.albumEdit(albumId))),
+    IconButton(icon: const Icon(Icons.delete_outline), onPressed: () => _confirmDelete(context)),
   ];
 
   Future<void> _confirmDelete(BuildContext context) async {
@@ -116,7 +111,11 @@ class _AlbumBody extends StatelessWidget {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(8),
                         child: album.cover != null
-                            ? Image.network(album.cover!, fit: BoxFit.cover, errorBuilder: (_, _, _) => _cover(theme))
+                            ? CachedNetworkImage(
+                                imageUrl: album.cover!,
+                                fit: BoxFit.cover,
+                                errorWidget: (_, _, _) => _cover(theme),
+                              )
                             : _cover(theme),
                       ),
                     ),
@@ -125,19 +124,21 @@ class _AlbumBody extends StatelessWidget {
                 const SizedBox(height: 16),
                 Text(album.title, style: theme.textTheme.headlineSmall),
                 if (album.year != null)
-                  Text('${album.year}', style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.64),
-                  )),
+                  Text(
+                    '${album.year}',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.64),
+                    ),
+                  ),
                 if (artists.isNotEmpty) ...[
                   const SizedBox(height: 12),
                   Wrap(
                     spacing: 8,
                     runSpacing: 4,
                     children: artists
-                        .map((a) => ActionChip(
-                              label: Text(a.name),
-                              onPressed: () => context.go(RouteName.artist(a.id)),
-                            ))
+                        .map(
+                          (a) => ActionChip(label: Text(a.name), onPressed: () => context.go(RouteName.artist(a.id))),
+                        )
                         .toList(),
                   ),
                 ],
@@ -147,17 +148,15 @@ class _AlbumBody extends StatelessWidget {
           ),
         ),
         SliverList(
-          delegate: SliverChildBuilderDelegate(
-            (context, index) {
-              final track = album.tracks[index];
-              return TrackCard(
-                track: track,
-                containingPlaylist: Playlist.anonymous(album.tracks),
-                openedPlaylist: Playlist.anonymous(album.tracks),
-              );
-            },
-            childCount: album.tracks.length,
-          ),
+          delegate: SliverChildBuilderDelegate((context, index) {
+            final track = album.tracks[index];
+
+            return TrackCard(
+              track: track,
+              containingPlaylist: Playlist.anonymous(album.tracks),
+              openedPlaylist: Playlist.anonymous(album.tracks),
+            );
+          }, childCount: album.tracks.length),
         ),
         const SliverToBoxAdapter(child: SizedBox(height: 24)),
       ],

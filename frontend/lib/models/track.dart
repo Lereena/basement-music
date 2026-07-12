@@ -12,10 +12,15 @@ class Track extends Equatable {
   final String title;
   final String artist;
   final int duration;
-  @JsonKey(fromJson: _coverFromJson)
+
+  /// Raw server path ('/api/track/{id}/cover' or '/api/album/{id}/image'),
+  /// an asset path, or empty. Resolved to a displayable image by [Cover].
   final String cover;
   final bool hasLyrics;
   final String? albumId;
+
+  /// Bumped by the server when the cover bytes change — used to bust image caches.
+  final String? updatedAt;
 
   const Track({
     required this.id,
@@ -23,13 +28,11 @@ class Track extends Equatable {
     required this.artist,
     this.url = '',
     this.duration = 111,
-    this.cover = 'assets/cover_placeholder.png',
+    this.cover = '',
     this.hasLyrics = false,
     this.albumId,
+    this.updatedAt,
   });
-
-  static String _coverFromJson(String json) =>
-      json.isEmpty ? 'assets/cover_placeholder.png' : json;
 
   factory Track.fromJson(Map<String, dynamic> json) => _$TrackFromJson(json);
 
@@ -52,6 +55,7 @@ class Track extends Equatable {
     String? cover,
     bool? hasLyrics,
     String? albumId,
+    String? updatedAt,
   }) {
     return Track(
       id: id,
@@ -62,6 +66,7 @@ class Track extends Equatable {
       cover: cover ?? this.cover,
       hasLyrics: hasLyrics ?? this.hasLyrics,
       albumId: albumId ?? this.albumId,
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 

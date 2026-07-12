@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 /// A square, tappable image slot showing (in priority order) freshly-picked
@@ -34,7 +35,11 @@ class ImagePickerBox extends StatelessWidget {
               if (pickedBytes != null)
                 Image.memory(pickedBytes!, fit: BoxFit.cover)
               else if (currentImageUrl != null)
-                Image.network(currentImageUrl!, fit: BoxFit.cover, errorBuilder: (_, _, _) => _placeholder(theme))
+                CachedNetworkImage(
+                  imageUrl: currentImageUrl!,
+                  fit: BoxFit.cover,
+                  errorWidget: (_, _, _) => _placeholder(theme),
+                )
               else
                 _placeholder(theme),
               Positioned(

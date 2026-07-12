@@ -74,11 +74,20 @@ class AudioPlayerHandler extends BaseAudioHandler {
         title: track.title,
         artist: track.artist,
         duration: Duration(seconds: track.duration),
+        artUri: _artUri(track),
         // streamUrl overrides the default /api/track/{id} source. Used for
         // Soulseek temp previews, which are not regular library tracks.
         extras: streamUrl != null ? {'streamUrl': streamUrl} : null,
       ),
     );
+  }
+
+  // Cover art for the OS media notification. Asset placeholders can't be
+  // served to the system UI, so only real server covers are passed.
+  Uri? _artUri(Track track) {
+    final cover = track.cover;
+    if (cover.isEmpty || cover.startsWith('assets/')) return null;
+    return Uri.tryParse(cover.startsWith('http') ? cover : '${appConfig.baseUrl}$cover');
   }
 
   @override

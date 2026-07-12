@@ -7,6 +7,7 @@ import 'package:basement_music/widgets/controls/play_button.dart';
 import 'package:basement_music/widgets/controls/previous_button.dart';
 import 'package:basement_music/widgets/controls/repeat_toggle.dart';
 import 'package:basement_music/widgets/controls/shuffle_toggle.dart';
+import 'package:basement_music/widgets/cover.dart';
 import 'package:basement_music/widgets/current_track_sheet.dart';
 import 'package:basement_music/widgets/track_name.dart';
 import 'package:basement_music/widgets/track_progress_indicator.dart';
@@ -45,7 +46,8 @@ class BottomPlayer extends StatelessWidget {
                         PlayButton(track: state.currentTrack, state: state, isBottomPlayer: true),
                       const NextButton(),
                       const SizedBox(width: 15),
-                      if (state.isPause || state.isPlay) Image.asset(state.currentTrack.cover, height: 40, width: 40),
+                      if (state.isPause || state.isPlay)
+                        Cover(cover: state.currentTrack.cover, version: state.currentTrack.updatedAt),
                       const SizedBox(width: 10),
                       if (state.isPlay || state.isPause) ...[
                         Expanded(

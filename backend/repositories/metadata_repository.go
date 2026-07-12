@@ -15,9 +15,10 @@ import (
 )
 
 type MetadataRepository struct {
-	DB  *gorm.DB
-	Cfg *config.Config
-	MB  *musicbrainz.Client
+	DB     *gorm.DB
+	Cfg    *config.Config
+	MB     *musicbrainz.Client
+	Albums *AlbumsRepository
 }
 
 func (repo *MetadataRepository) artistImagesDir() string {
@@ -188,6 +189,8 @@ func (repo *MetadataRepository) ApplyAlbumCover(w http.ResponseWriter, r *http.R
 
 	coverPath := "/api/album/" + id + "/image"
 	repo.DB.Model(&album).Update("cover", coverPath)
+
+	repo.Albums.SyncAlbumCoverToTracks(id)
 
 	var updated models.Album
 	repo.DB.Where(&models.Album{Id: id}).Preload("Artists").First(&updated)

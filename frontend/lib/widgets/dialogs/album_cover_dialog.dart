@@ -5,6 +5,7 @@ import 'package:basement_music/repositories/albums_repository.dart';
 import 'package:basement_music/widgets/dialogs/base_dialog.dart';
 import 'package:basement_music/widgets/icons/error_icon.dart';
 import 'package:basement_music/widgets/icons/success_icon.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -14,13 +15,15 @@ class AlbumCoverDialog extends StatelessWidget {
 
   const AlbumCoverDialog._({required this.album, this.onApplied});
 
-  static Future<void> show({required BuildContext context, required Album album, VoidCallback? onApplied}) => showDialog(
-    context: context,
-    builder: (_) => BlocProvider(
-      create: (_) => AlbumCoverCubit(albumsRepository: context.read<AlbumsRepository>(), albumId: album.id)..search(),
-      child: AlbumCoverDialog._(album: album, onApplied: onApplied),
-    ),
-  );
+  static Future<void> show({required BuildContext context, required Album album, VoidCallback? onApplied}) =>
+      showDialog(
+        context: context,
+        builder: (_) => BlocProvider(
+          create: (_) =>
+              AlbumCoverCubit(albumsRepository: context.read<AlbumsRepository>(), albumId: album.id)..search(),
+          child: AlbumCoverDialog._(album: album, onApplied: onApplied),
+        ),
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -94,10 +97,10 @@ class _CandidatesGrid extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(6),
                   child: candidate.coverUrl != null
-                      ? Image.network(
-                          candidate.coverUrl!,
+                      ? CachedNetworkImage(
+                          imageUrl: candidate.coverUrl!,
                           fit: BoxFit.cover,
-                          errorBuilder: (_, _, _) => _placeholder(context, candidate.title),
+                          errorWidget: (_, _, _) => _placeholder(context, candidate.title),
                         )
                       : _placeholder(context, candidate.title),
                 ),

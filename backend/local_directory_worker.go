@@ -55,6 +55,7 @@ func (ldw *LocalDirectoryWorker) ScanMusicDirectory() {
 		ldw.musicRepo.DB.Where("Url = ?", f.Name()).First(&track)
 		ldw.handleArtists(track.Artist, track.Id)
 		ldw.handleAlbum(track)
+		ldw.handleCover(track.Id)
 	}
 
 	ldw.pruneOrphanArtists()
@@ -107,6 +108,17 @@ func (ldw *LocalDirectoryWorker) handleAlbum(track models.Track) {
 	ldw.musicRepo.DB.Model(&models.Track{}).Where("id = ?", track.Id).Update("album_id", albumId)
 }
 
+// handleCover backfills the track's cover: from the album image when the track
+// is bound to an album that has one, otherwise from a picture already embedded
+// in the file's metadata.
+func (ldw *LocalDirectoryWorker) handleCover(trackId string) {
+	if trackId == "" {
+		return
+	}
+	ldw.albumsRepo.SyncAlbumCoverToTrack(trackId)
+	ldw.musicRepo.BackfillCoverFromFile(trackId)
+}
+
 func (ldw *LocalDirectoryWorker) UploadFile(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseMultipartForm(32 << 20)
 	if err != nil {
@@ -146,6 +158,7 @@ func (ldw *LocalDirectoryWorker) UploadFile(w http.ResponseWriter, r *http.Reque
 		ldw.musicRepo.DB.Where("Url = ?", file.Filename).First(&track)
 		ldw.handleArtists(track.Artist, track.Id)
 		ldw.handleAlbum(track)
+		ldw.handleCover(track.Id)
 	}
 }
 

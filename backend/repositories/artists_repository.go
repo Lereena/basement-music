@@ -42,6 +42,9 @@ func (repo *ArtistsRepository) GetArtistImage(w http.ResponseWriter, r *http.Req
 		respond.RespondError(w, http.StatusNotFound, "image not found")
 		return
 	}
+	// Callers append ?v=<updatedAt>, so a new URL is minted whenever the image
+	// changes — safe to tell clients to never revalidate.
+	w.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
 	http.ServeFile(w, r, path)
 }
 
