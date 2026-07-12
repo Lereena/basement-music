@@ -7,6 +7,7 @@ import 'package:basement_music/repositories/artists_repository.dart';
 import 'package:basement_music/routing/routes.dart';
 import 'package:basement_music/widgets/dialogs/artist_metadata_dialog.dart';
 import 'package:basement_music/widgets/track_card.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -113,7 +114,11 @@ class _ArtistView extends StatelessWidget {
                 fit: StackFit.expand,
                 children: [
                   if (artist.image != null)
-                    Image.network(artist.image!, fit: BoxFit.cover, errorBuilder: (_, _, _) => _imagePlaceholder(theme))
+                    CachedNetworkImage(
+                      imageUrl: artist.image!,
+                      fit: BoxFit.cover,
+                      errorWidget: (_, _, _) => _imagePlaceholder(theme),
+                    )
                   else
                     _imagePlaceholder(theme),
                   DecoratedBox(
@@ -262,11 +267,11 @@ class _AlbumCard extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: album.cover != null
-                    ? Image.network(
-                        album.cover!,
+                    ? CachedNetworkImage(
+                        imageUrl: album.cover!,
                         width: 130,
                         fit: BoxFit.cover,
-                        errorBuilder: (_, _, _) => _placeholder(theme),
+                        errorWidget: (_, _, _) => _placeholder(theme),
                       )
                     : _placeholder(theme),
               ),

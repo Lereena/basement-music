@@ -4,6 +4,7 @@ import 'package:basement_music/repositories/artists_repository.dart';
 import 'package:basement_music/widgets/dialogs/base_dialog.dart';
 import 'package:basement_music/widgets/icons/error_icon.dart';
 import 'package:basement_music/widgets/icons/success_icon.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -171,7 +172,11 @@ class _PreviewState extends State<_Preview> {
               constraints: const BoxConstraints(maxWidth: 160, maxHeight: 160),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8),
-                child: Image.network(imageUrl, fit: BoxFit.cover, errorBuilder: (_, _, _) => const SizedBox.shrink()),
+                child: CachedNetworkImage(
+                  imageUrl: imageUrl,
+                  fit: BoxFit.cover,
+                  errorWidget: (_, _, _) => const SizedBox.shrink(),
+                ),
               ),
             ),
           const SizedBox(height: 12),
@@ -185,10 +190,8 @@ class _PreviewState extends State<_Preview> {
           Align(
             alignment: Alignment.centerRight,
             child: FilledButton(
-              onPressed: () => context.read<ArtistMetadataCubit>().apply(
-                description: _controller.text,
-                imageUrl: imageUrl ?? '',
-              ),
+              onPressed: () =>
+                  context.read<ArtistMetadataCubit>().apply(description: _controller.text, imageUrl: imageUrl ?? ''),
               child: const Text('Apply'),
             ),
           ),

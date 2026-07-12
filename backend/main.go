@@ -53,7 +53,7 @@ func main() {
 	adminRepo := &repositories.AdminRepository{DB: db}
 	favsRepo := &repositories.FavouritesRepository{DB: db}
 	lyricsRepo := &repositories.LyricsRepository{DB: db, Cfg: &cfg, Lrclib: lrclib.NewClient()}
-	metadataRepo := &repositories.MetadataRepository{DB: db, Cfg: &cfg, MB: musicbrainz.NewClient()}
+	metadataRepo := &repositories.MetadataRepository{DB: db, Cfg: &cfg, MB: musicbrainz.NewClient(), Albums: albumsRepo}
 
 	statsRepo := &repositories.StatsRepository{DB: db}
 	statsRepo.Init()
@@ -100,6 +100,7 @@ func main() {
 	// Images are public — Image.network can't attach auth headers
 	router.HandleFunc("/artist/{id}/image", artistsRepo.GetArtistImage).Methods("GET")
 	router.HandleFunc("/album/{id}/image", albumsRepo.GetAlbumImage).Methods("GET")
+	router.HandleFunc("/track/{id}/cover", musicRepo.GetTrackCover).Methods("GET")
 	router.HandleFunc("/playlist/{id}/image", playlistsRepo.GetPlaylistImage).Methods("GET")
 
 	// Temp Soulseek audio is public — audioplayers can't attach headers, IDs are non-enumerable UUIDs

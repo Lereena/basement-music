@@ -9,6 +9,7 @@ import 'package:basement_music/widgets/controls/pause_button.dart';
 import 'package:basement_music/widgets/controls/play_button.dart';
 import 'package:basement_music/widgets/cover.dart';
 import 'package:basement_music/widgets/cover_overlay.dart';
+import 'package:basement_music/widgets/keep_alive.dart';
 import 'package:basement_music/widgets/track_name.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,11 +26,12 @@ class TrackCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final playerCubit = context.read<PlayerCubit>();
 
-    return BlocBuilder<CacherCubit, CacherState>(
-      builder: (context, cacherState) {
-        final isCaching = cacherState.isCaching([track.id]);
-        final isCached = cacherState.isCached([track.id]);
-        final canBePlayed = active || isCached;
+    return KeepAliveWrapper(
+      child: BlocBuilder<CacherCubit, CacherState>(
+        builder: (context, cacherState) {
+          final isCaching = cacherState.isCaching([track.id]);
+          final isCached = cacherState.isCached([track.id]);
+          final canBePlayed = active || isCached;
 
         return IgnorePointer(
           ignoring: !canBePlayed,
@@ -59,6 +61,7 @@ class TrackCard extends StatelessWidget {
                               Cover(
                                 cover: track.cover,
                                 size: 44,
+                                version: track.updatedAt,
                                 overlay: CoverOverlay(isCaching: isCaching, isCached: isCached),
                               ),
                               if (isCurrent && playerState.isPlay)
@@ -128,6 +131,7 @@ class TrackCard extends StatelessWidget {
           ),
         );
       },
+      ),
     );
   }
 }
