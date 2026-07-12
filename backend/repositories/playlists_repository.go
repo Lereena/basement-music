@@ -41,6 +41,7 @@ func (repo *PlaylistsRepository) GetPlaylistImage(w http.ResponseWriter, r *http
 		respond.RespondError(w, http.StatusNotFound, "image not found")
 		return
 	}
+	w.Header().Set("Cache-Control", "public, max-age=3600")
 	http.ServeFile(w, r, path)
 }
 

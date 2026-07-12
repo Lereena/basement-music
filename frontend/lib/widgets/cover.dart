@@ -1,5 +1,6 @@
 import 'package:basement_music/audio_player_handler.dart';
 import 'package:basement_music/utils/image_url.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -17,13 +18,7 @@ class Cover extends StatelessWidget {
   final Widget? overlay;
   final double size;
 
-  const Cover({
-    super.key,
-    required this.cover,
-    this.version,
-    this.overlay,
-    this.size = 40,
-  });
+  const Cover({super.key, required this.cover, this.version, this.overlay, this.size = 40});
 
   @override
   Widget build(BuildContext context) {
@@ -32,11 +27,7 @@ class Cover extends StatelessWidget {
       children: [
         _image(context),
         if (overlay != null)
-          Container(
-            color: Theme.of(context).shadowColor.withValues(alpha: 0.2),
-            width: size,
-            height: size,
-          ),
+          Container(color: Theme.of(context).shadowColor.withValues(alpha: 0.2), width: size, height: size),
         overlay ?? const SizedBox.shrink(),
       ],
     );
@@ -48,12 +39,12 @@ class Cover extends StatelessWidget {
     }
 
     final baseUrl = context.read<AudioPlayerHandler>().appConfig.baseUrl;
-    return Image.network(
-      imageUrlWithVersion(cover, baseUrl, version)!,
+    return CachedNetworkImage(
+      imageUrl: imageUrlWithVersion(cover, baseUrl, version)!,
       width: size,
       height: size,
       fit: BoxFit.cover,
-      errorBuilder: (_, _, _) => Image.asset(_placeholderAsset, width: size, height: size),
+      errorWidget: (_, _, _) => Image.asset(_placeholderAsset, width: size, height: size),
     );
   }
 }

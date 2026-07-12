@@ -53,6 +53,7 @@ dependencies:
   uuid: ^4.5.3
   web_socket_channel: ^3.0.3
   crop_your_image: ^2.0.0
+  cached_network_image: ^3.4.1
 
 dev_dependencies:
   build_runner: ^2.4.6

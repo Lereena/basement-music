@@ -3,6 +3,7 @@ import 'package:basement_music/models/artist.dart';
 import 'package:basement_music/models/playlist.dart';
 import 'package:basement_music/repositories/artists_repository.dart';
 import 'package:basement_music/widgets/track_card.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -60,7 +61,7 @@ class _TracksView extends StatelessWidget {
               CircleAvatar(
                 radius: 18,
                 backgroundColor: theme.colorScheme.primaryContainer,
-                backgroundImage: artist.image != null ? NetworkImage(artist.image!) : null,
+                backgroundImage: artist.image != null ? CachedNetworkImageProvider(artist.image!) : null,
                 child: artist.image == null ? const Icon(Icons.person, size: 20) : null,
               ),
               const SizedBox(width: 12),

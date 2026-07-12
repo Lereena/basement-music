@@ -7,6 +7,7 @@ import 'package:basement_music/repositories/playlists_repository.dart';
 import 'package:basement_music/utils/horizontal_space_reducer.dart';
 import 'package:basement_music/utils/pick_and_crop_image.dart';
 import 'package:basement_music/widgets/app_bar.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -55,12 +56,10 @@ class _PlaylistEditState extends State<_PlaylistEdit> {
       editInProgress: (_, _, image, _) => image,
       orElse: () => null,
     );
-    final picked = await pickAndCropImage(
-      context,
-      currentImageUrl: currentImageUrl,
-      currentBytes: _data.imageBytes,
-    );
+
+    final picked = await pickAndCropImage(context, currentImageUrl: currentImageUrl, currentBytes: _data.imageBytes);
     if (picked == null) return;
+
     setState(() {
       _data.imageBytes = picked.bytes;
       _data.imageFilename = picked.name;
@@ -173,10 +172,7 @@ class _EditView extends StatelessWidget {
               key: ValueKey(track.id),
               child: ListTile(
                 contentPadding: EdgeInsets.zero,
-                leading: ReorderableDragStartListener(
-                  index: index,
-                  child: const Icon(Icons.drag_handle),
-                ),
+                leading: ReorderableDragStartListener(index: index, child: const Icon(Icons.drag_handle)),
                 title: Text(track.title, maxLines: 1, overflow: TextOverflow.ellipsis),
                 subtitle: Text(track.artist, maxLines: 1, overflow: TextOverflow.ellipsis),
               ),
@@ -212,7 +208,11 @@ class _ImagePicker extends StatelessWidget {
               if (pickedBytes != null)
                 Image.memory(pickedBytes!, fit: BoxFit.cover)
               else if (currentImageUrl != null)
-                Image.network(currentImageUrl!, fit: BoxFit.cover, errorBuilder: (_, _, _) => _placeholder(theme))
+                CachedNetworkImage(
+                  imageUrl: currentImageUrl!,
+                  fit: BoxFit.cover,
+                  errorWidget: (_, _, _) => _placeholder(theme),
+                )
               else
                 _placeholder(theme),
               Positioned(

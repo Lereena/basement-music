@@ -73,6 +73,7 @@ func (repo *TracksRepository) GetTrackCover(w http.ResponseWriter, r *http.Reque
 	}
 
 	w.Header().Set("Content-Type", mimeType)
+	w.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
 	w.Write(image)
 }
 
