@@ -1,4 +1,5 @@
 import 'package:basement_music/models/artist.dart';
+import 'package:basement_music/theme/theme.dart';
 import 'package:basement_music/widgets/keep_alive.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +19,7 @@ class ArtistCard extends StatelessWidget {
       child: GestureDetector(
         onTap: onTap,
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: AppRadius.smAll,
           child: Stack(
             fit: StackFit.expand,
             children: [
@@ -39,9 +40,9 @@ class ArtistCard extends StatelessWidget {
                 ),
               ),
               Positioned(
-                left: 8,
-                right: 8,
-                bottom: 8,
+                left: AppSpacing.sm,
+                right: AppSpacing.sm,
+                bottom: AppSpacing.sm,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

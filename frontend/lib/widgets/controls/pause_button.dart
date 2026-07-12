@@ -4,8 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PauseButton extends StatelessWidget {
   final double size;
+  final Color? color;
 
-  const PauseButton({super.key, this.size = 30});
+  const PauseButton({super.key, this.size = 30, this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +14,7 @@ class PauseButton extends StatelessWidget {
 
     return InkWell(
       onTap: () => playerCubit.pause(),
-      child: Icon(Icons.pause, size: size),
+      child: Icon(Icons.pause, size: size, color: color),
     );
   }
 }

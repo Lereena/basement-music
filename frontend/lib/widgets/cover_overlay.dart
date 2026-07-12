@@ -21,7 +21,7 @@ class CoverOverlay extends StatelessWidget {
           child: Icon(
             Icons.download_done,
             size: 15,
-            color: Theme.of(context).primaryColor,
+            color: Theme.of(context).colorScheme.primary,
           ),
         ),
       );
@@ -38,7 +38,7 @@ class CoverOverlay extends StatelessWidget {
               Icon(
                 Icons.download_outlined,
                 size: 15,
-                color: Theme.of(context).primaryColor,
+                color: Theme.of(context).colorScheme.primary,
               ),
               const SizedBox(
                 height: 15,

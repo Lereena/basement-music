@@ -3,6 +3,7 @@ import 'package:basement_music/bloc/track_progress_cubit/track_progress_cubit.da
 import 'package:basement_music/models/track.dart';
 import 'package:basement_music/repositories/lyrics_repository.dart';
 import 'package:basement_music/routing/routes.dart';
+import 'package:basement_music/theme/theme.dart';
 import 'package:basement_music/widgets/controls/lyrics_menu_button.dart';
 import 'package:basement_music/widgets/controls/next_button.dart';
 import 'package:basement_music/widgets/controls/pause_button.dart';
@@ -55,7 +56,7 @@ class _CurrentTrackViewState extends State<CurrentTrackView> {
         }
 
         return Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AppSpacing.lg),
           child: Column(
             children: [
               Row(
@@ -91,17 +92,20 @@ class _CurrentTrackViewState extends State<CurrentTrackView> {
                   },
                 ),
               ),
-              SizedBox(height: expanded ? 30 : 20),
-              TrackName(track: track, moving: true, fontSize: expanded ? 24 : 18),
+              SizedBox(height: expanded ? AppSpacing.xl : AppSpacing.lg),
+              DefaultTextStyle.merge(
+                style: context.textTheme.titleLarge,
+                child: TrackName(track: track, moving: true, fontSize: expanded ? 24 : 18),
+              ),
               Text(
                 track.artist,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(
+                style: context.textTheme.bodyLarge?.copyWith(
                   fontSize: expanded ? 18 : 16,
-                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+                  color: context.colorScheme.onSurfaceVariant,
                 ),
               ),
-              SizedBox(height: expanded ? 30 : 20),
+              SizedBox(height: expanded ? AppSpacing.xl : AppSpacing.lg),
               // Scoped so position ticks don't rebuild the cover/marquee/controls
               // above — keeps drag frames cheap.
               BlocBuilder<TrackProgressCubit, TrackProgressState>(
@@ -121,12 +125,12 @@ class _CurrentTrackViewState extends State<CurrentTrackView> {
                           Text(
                             progress.stringProgress,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(fontSize: 16),
+                            style: context.textTheme.labelLarge?.copyWith(color: context.colorScheme.onSurfaceVariant),
                           ),
                           Text(
                             progress.stringDuration,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(fontSize: 16),
+                            style: context.textTheme.labelLarge?.copyWith(color: context.colorScheme.onSurfaceVariant),
                           ),
                         ],
                       ),
@@ -134,7 +138,7 @@ class _CurrentTrackViewState extends State<CurrentTrackView> {
                   );
                 },
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSpacing.lg),
               if (expanded)
                 _ExpandedControls(track: track, state: state)
               else
@@ -156,20 +160,19 @@ class _ExpandedControls extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.colorScheme;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         const ShuffleToggle(size: 28),
         const PreviousButton(size: 44),
         Container(
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(color: Theme.of(context).colorScheme.onSurface, width: 2),
-          ),
+          padding: const EdgeInsets.all(AppSpacing.md),
+          decoration: BoxDecoration(shape: BoxShape.circle, color: colorScheme.primary),
           child: state.isPlay
-              ? const PauseButton(size: 44)
-              : PlayButton(track: track, state: state, isBottomPlayer: true, size: 44),
+              ? PauseButton(size: 44, color: colorScheme.onPrimary)
+              : PlayButton(track: track, state: state, isBottomPlayer: true, size: 44, color: colorScheme.onPrimary),
         ),
         const NextButton(size: 44),
         const RepeatToggle(size: 28),

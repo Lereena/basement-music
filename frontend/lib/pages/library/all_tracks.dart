@@ -19,9 +19,9 @@ class _AllTracks extends StatelessWidget {
               child: state.when(
                 loadInProgress: () => const ScrollablePlaceholder(child: CircularProgressIndicator()),
                 empty: () => const ScrollablePlaceholder(child: Text('No tracks')),
-                loaded: (tracks) => ListView.separated(
+                loaded: (tracks) => ListView.builder(
                   physics: const AlwaysScrollableScrollPhysics(),
-                  separatorBuilder: (_, _) => const Divider(height: 1),
+                  padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
                   itemCount: tracks.length,
                   itemBuilder: (_, i) => TrackCard(track: tracks[i], active: active),
                 ),

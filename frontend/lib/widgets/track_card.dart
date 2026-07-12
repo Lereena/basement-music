@@ -40,6 +40,7 @@ class TrackCard extends StatelessWidget {
             child: BlocBuilder<PlayerCubit, PlayerState>(
               builder: (context, playerState) {
                 final isCurrent = playerCubit.state.currentTrack == track;
+                final isFavouritesList = openedPlaylist?.id == 'favourites';
 
                 return Container(
                   margin: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xxs),
@@ -64,10 +65,26 @@ class TrackCard extends StatelessWidget {
                                 version: track.updatedAt,
                                 overlay: CoverOverlay(isCaching: isCaching, isCached: isCached),
                               ),
-                              if (isCurrent && playerState.isPlay)
-                                const PauseButton()
-                              else
-                                PlayButton(track: track, state: playerState, openedPlaylist: openedPlaylist),
+                              // Circular scrim keeps the control legible on any
+                              // artwork, light or dark.
+                              Container(
+                                width: 30,
+                                height: 30,
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.black.withValues(alpha: 0.45),
+                                ),
+                                child: isCurrent && playerState.isPlay
+                                    ? const PauseButton(size: 20, color: Colors.white)
+                                    : PlayButton(
+                                        track: track,
+                                        state: playerState,
+                                        openedPlaylist: openedPlaylist,
+                                        size: 20,
+                                        color: Colors.white,
+                                      ),
+                              ),
                             ],
                           ),
                         ),
@@ -100,28 +117,37 @@ class TrackCard extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                         style: context.textTheme.labelMedium?.copyWith(color: context.colorScheme.onSurfaceVariant),
                       ),
-                      BlocBuilder<FavouritesCubit, FavouritesState>(
-                        buildWhen: (previous, current) {
-                          bool favOf(FavouritesState s) =>
-                              s.maybeWhen(loaded: (tracks) => tracks.any((t) => t.id == track.id), orElse: () => false);
+                      // On the Favourites list the heart is redundant — removal
+                      // lives in the ⋮ menu instead.
+                      if (!isFavouritesList)
+                        BlocBuilder<FavouritesCubit, FavouritesState>(
+                          buildWhen: (previous, current) {
+                            bool favOf(FavouritesState s) => s.maybeWhen(
+                              loaded: (tracks) => tracks.any((t) => t.id == track.id),
+                              orElse: () => false,
+                            );
 
-                          // Ignore transient loadInProgress/error so cards don't flash; only react when this track's status changes.
-                          final isResolved = current.maybeWhen(loaded: (_) => true, orElse: () => false);
-                          return isResolved && favOf(previous) != favOf(current);
-                        },
-                        builder: (context, _) {
-                          final isFav = context.read<FavouritesCubit>().isFavourite(track.id);
-                          return IconButton(
-                            icon: Icon(
-                              isFav ? Icons.favorite : Icons.favorite_border,
-                              color: isFav ? context.semanticColors.favourite : null,
-                              size: 20,
-                            ),
-                            onPressed: () => context.read<FavouritesCubit>().toggleFavourite(track.id),
-                          );
-                        },
+                            // Ignore transient loadInProgress/error so cards don't flash; only react when this track's status changes.
+                            final isResolved = current.maybeWhen(loaded: (_) => true, orElse: () => false);
+                            return isResolved && favOf(previous) != favOf(current);
+                          },
+                          builder: (context, _) {
+                            final isFav = context.read<FavouritesCubit>().isFavourite(track.id);
+                            return IconButton(
+                              icon: Icon(
+                                isFav ? Icons.favorite : Icons.favorite_border,
+                                color: isFav ? context.semanticColors.favourite : null,
+                                size: 20,
+                              ),
+                              onPressed: () => context.read<FavouritesCubit>().toggleFavourite(track.id),
+                            );
+                          },
+                        ),
+                      MoreButton(
+                        track: track,
+                        playlist: containingPlaylist,
+                        showRemoveFavourite: isFavouritesList,
                       ),
-                      MoreButton(track: track, playlist: containingPlaylist),
                       const SizedBox(width: AppSpacing.xs),
                     ],
                   ),

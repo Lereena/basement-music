@@ -1,5 +1,10 @@
+import 'package:basement_music/theme/theme.dart';
 import 'package:flutter/material.dart';
 
+/// App-bar title for pushed sub-pages (album, playlist, settings, edit flows).
+///
+/// Top-level nav destinations (All tracks, Search) render no title and rely on
+/// the bottom nav / rail labels instead.
 class PageTitle extends StatelessWidget {
   final String text;
 
@@ -7,27 +12,6 @@ class PageTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(
-            width: 2,
-            color: theme.primaryColor,
-          ),
-        ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 2),
-        child: Text(
-          text,
-          style: TextStyle(
-            color: theme.primaryColor,
-            fontSize: 18,
-            letterSpacing: 1.1,
-          ),
-        ),
-      ),
-    );
+    return Text(text, style: context.textTheme.titleLarge);
   }
 }

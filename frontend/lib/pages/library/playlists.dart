@@ -20,11 +20,12 @@ class _Playlists extends StatelessWidget {
           loaded: (playlists) => LayoutBuilder(
             builder: (context, constraints) => GridView.builder(
               physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: _crossAxisCount(constraints.maxWidth),
-                crossAxisSpacing: 8,
-                mainAxisSpacing: 4,
-                childAspectRatio: 4.5,
+                crossAxisSpacing: AppSpacing.sm,
+                mainAxisSpacing: AppSpacing.xs,
+                childAspectRatio: 3.6,
               ),
               itemCount: playlists.length,
               itemBuilder: (context, index) => PlaylistCard(

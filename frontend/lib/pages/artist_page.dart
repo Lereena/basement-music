@@ -5,6 +5,7 @@ import 'package:basement_music/models/playlist.dart';
 import 'package:basement_music/repositories/albums_repository.dart';
 import 'package:basement_music/repositories/artists_repository.dart';
 import 'package:basement_music/routing/routes.dart';
+import 'package:basement_music/theme/theme.dart';
 import 'package:basement_music/widgets/dialogs/artist_metadata_dialog.dart';
 import 'package:basement_music/widgets/track_card.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -151,7 +152,7 @@ class _ArtistView extends StatelessWidget {
               ),
             ),
           ),
-          if (tracks.isNotEmpty) SliverToBoxAdapter(child: SizedBox(height: 16)),
+          if (tracks.isNotEmpty) const SliverToBoxAdapter(child: SizedBox(height: AppSpacing.lg)),
           SliverList(
             delegate: SliverChildBuilderDelegate(
               (context, index) => TrackCard(
@@ -165,7 +166,7 @@ class _ArtistView extends StatelessWidget {
           if (tracks.length > _maxTracks)
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: TextButton(
@@ -177,7 +178,7 @@ class _ArtistView extends StatelessWidget {
             ),
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+              padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.lg, AppSpacing.lg, 0),
               child: Text('Albums', style: theme.textTheme.titleMedium),
             ),
           ),
@@ -186,7 +187,7 @@ class _ArtistView extends StatelessWidget {
               height: 180,
               child: ListView(
                 scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.sm),
                 children: [
                   for (final album in albums) _AlbumCard(album: album),
                   _NewAlbumCard(onTap: () => _createAlbum(context)),
@@ -197,18 +198,18 @@ class _ArtistView extends StatelessWidget {
           if (artist.description != null && artist.description!.isNotEmpty) ...[
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.lg, AppSpacing.lg, 0),
                 child: Text('Bio', style: theme.textTheme.titleMedium),
               ),
             ),
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.sm),
                 child: _ExpandableText(text: artist.description!),
               ),
             ),
           ],
-          const SliverToBoxAdapter(child: SizedBox(height: 12)),
+          const SliverToBoxAdapter(child: SizedBox(height: AppSpacing.md)),
         ],
       ),
     );
@@ -259,13 +260,13 @@ class _AlbumCard extends StatelessWidget {
       onTap: () => context.push(RouteName.album(album.id)),
       child: Container(
         width: 130,
-        margin: const EdgeInsets.only(right: 12),
+        margin: const EdgeInsets.only(right: AppSpacing.md),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: AppRadius.smAll,
                 child: album.cover != null
                     ? CachedNetworkImage(
                         imageUrl: album.cover!,
@@ -276,7 +277,7 @@ class _AlbumCard extends StatelessWidget {
                     : _placeholder(theme),
               ),
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: AppSpacing.xs),
             Text(album.title, maxLines: 1, overflow: TextOverflow.ellipsis, style: theme.textTheme.bodyMedium),
           ],
         ),
@@ -300,20 +301,20 @@ class _NewAlbumCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         width: 130,
-        margin: const EdgeInsets.only(right: 12),
+        margin: const EdgeInsets.only(right: AppSpacing.md),
         child: Column(
           children: [
             Expanded(
               child: Container(
                 width: 130,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: AppRadius.smAll,
                   border: Border.all(color: theme.colorScheme.outline),
                 ),
                 child: const Icon(Icons.add, size: 40),
               ),
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: AppSpacing.xs),
             Text('New album', maxLines: 1, overflow: TextOverflow.ellipsis, style: theme.textTheme.bodyMedium),
           ],
         ),
