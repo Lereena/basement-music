@@ -1,5 +1,6 @@
 import 'package:basement_music/bloc/artist_edit_cubit/artist_edit_cubit.dart';
 import 'package:basement_music/repositories/artists_repository.dart';
+import 'package:basement_music/theme/theme.dart';
 import 'package:basement_music/utils/horizontal_space_reducer.dart';
 import 'package:basement_music/utils/pick_and_crop_image.dart';
 import 'package:basement_music/widgets/app_bar.dart';
@@ -61,7 +62,7 @@ class _ArtistEdit extends StatelessWidget {
           ),
           body: HorizontalSpaceReducer(
             child: ListView(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AppSpacing.lg),
               children: [
                 ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 164, maxHeight: 164),
@@ -72,13 +73,13 @@ class _ArtistEdit extends StatelessWidget {
                     placeholderIcon: Icons.person,
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: AppSpacing.xl),
                 TextFormField(
                   decoration: const InputDecoration(label: Text('Name')),
                   initialValue: state.name,
                   onChanged: context.read<ArtistEditCubit>().setName,
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: AppSpacing.lg),
                 TextFormField(
                   decoration: const InputDecoration(label: Text('Description'), border: OutlineInputBorder()),
                   initialValue: state.description,
@@ -86,7 +87,7 @@ class _ArtistEdit extends StatelessWidget {
                   minLines: 3,
                   onChanged: context.read<ArtistEditCubit>().setDescription,
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: AppSpacing.xxl),
               ],
             ),
           ),

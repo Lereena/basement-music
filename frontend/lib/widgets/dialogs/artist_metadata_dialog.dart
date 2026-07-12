@@ -1,7 +1,9 @@
 import 'package:basement_music/bloc/artist_metadata_cubit/artist_metadata_cubit.dart';
 import 'package:basement_music/models/metadata_candidates.dart';
 import 'package:basement_music/repositories/artists_repository.dart';
+import 'package:basement_music/theme/theme.dart';
 import 'package:basement_music/widgets/dialogs/base_dialog.dart';
+import 'package:basement_music/widgets/dialogs/dialog_loading.dart';
 import 'package:basement_music/widgets/icons/error_icon.dart';
 import 'package:basement_music/widgets/icons/success_icon.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -50,19 +52,19 @@ class ArtistMetadataDialog extends StatelessWidget {
           );
         },
         builder: (context, state) => state.when(
-          initial: () => const Center(child: CircularProgressIndicator()),
-          searching: () => const Center(child: CircularProgressIndicator()),
+          initial: () => const DialogLoading(message: 'Searching…'),
+          searching: () => const DialogLoading(message: 'Searching…'),
           candidates: (candidates) => _Candidates(candidates: candidates, initialQuery: artistName),
-          previewLoading: () => const Center(child: CircularProgressIndicator()),
+          previewLoading: () => const DialogLoading(message: 'Loading preview…'),
           preview: (preview) => _Preview(preview: preview),
-          applying: () => const Center(child: CircularProgressIndicator()),
-          applied: () => Column(
+          applying: () => const DialogLoading(message: 'Applying…'),
+          applied: () => const Column(
             mainAxisSize: MainAxisSize.min,
-            children: const [SuccessIcon(), SizedBox(height: 20), Text('Artist info updated')],
+            children: [SuccessIcon(), SizedBox(height: AppSpacing.lg), Text('Artist info updated')],
           ),
           error: (message) => Column(
             mainAxisSize: MainAxisSize.min,
-            children: [ErrorIcon(), const SizedBox(height: 20), Text(message)],
+            children: [ErrorIcon(), const SizedBox(height: AppSpacing.lg), Text(message)],
           ),
         ),
       ),
@@ -94,8 +96,8 @@ class _CandidatesState extends State<_Candidates> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text('Choose artist', style: Theme.of(context).textTheme.titleLarge),
-        const SizedBox(height: 12),
+        Text('Choose artist', style: context.textTheme.titleLarge),
+        const SizedBox(height: AppSpacing.md),
         Row(
           children: [
             Expanded(
@@ -111,9 +113,9 @@ class _CandidatesState extends State<_Candidates> {
             ),
           ],
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: AppSpacing.sm),
         if (widget.candidates.isEmpty)
-          const Padding(padding: EdgeInsets.all(16), child: Text('No matches'))
+          const Padding(padding: EdgeInsets.all(AppSpacing.lg), child: Text('No matches'))
         else
           Flexible(
             child: ListView.separated(
@@ -165,28 +167,30 @@ class _PreviewState extends State<_Preview> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text('Preview', style: Theme.of(context).textTheme.titleLarge),
-          const SizedBox(height: 12),
+          Text('Preview', style: context.textTheme.titleLarge),
+          const SizedBox(height: AppSpacing.md),
           if (imageUrl != null && imageUrl.isNotEmpty)
-            ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 160, maxHeight: 160),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
+            ClipRRect(
+              borderRadius: AppRadius.smAll,
+              child: SizedBox(
+                width: 160,
+                height: 160,
                 child: CachedNetworkImage(
                   imageUrl: imageUrl,
                   fit: BoxFit.cover,
-                  errorWidget: (_, _, _) => const SizedBox.shrink(),
+                  placeholder: (_, _) => const DialogImageLoading(),
+                  errorWidget: (_, _, _) => const DialogImageError(),
                 ),
               ),
             ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.md),
           TextField(
             controller: _controller,
             maxLines: 6,
             minLines: 3,
             decoration: const InputDecoration(label: Text('Description'), border: OutlineInputBorder()),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppSpacing.lg),
           Align(
             alignment: Alignment.centerRight,
             child: FilledButton(

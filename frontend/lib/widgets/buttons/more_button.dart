@@ -120,11 +120,12 @@ class _MenuOption extends StatelessWidget {
   Widget build(BuildContext context) {
     return SimpleDialogOption(
       onPressed: onPressed,
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.md, horizontal: AppSpacing.xl),
       child: Row(
         children: [
-          Icon(icon, size: 20, color: context.colorScheme.onSurfaceVariant),
-          const SizedBox(width: AppSpacing.md),
-          Text(label, style: context.textTheme.bodyLarge),
+          Icon(icon, size: 24, color: context.colorScheme.onSurfaceVariant),
+          const SizedBox(width: AppSpacing.lg),
+          Text(label, style: context.textTheme.titleMedium),
         ],
       ),
     );

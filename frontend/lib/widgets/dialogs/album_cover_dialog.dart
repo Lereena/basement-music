@@ -2,7 +2,9 @@ import 'package:basement_music/bloc/album_cover_cubit/album_cover_cubit.dart';
 import 'package:basement_music/models/album.dart';
 import 'package:basement_music/models/metadata_candidates.dart';
 import 'package:basement_music/repositories/albums_repository.dart';
+import 'package:basement_music/theme/theme.dart';
 import 'package:basement_music/widgets/dialogs/base_dialog.dart';
+import 'package:basement_music/widgets/dialogs/dialog_loading.dart';
 import 'package:basement_music/widgets/icons/error_icon.dart';
 import 'package:basement_music/widgets/icons/success_icon.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -45,17 +47,17 @@ class AlbumCoverDialog extends StatelessWidget {
           );
         },
         builder: (context, state) => state.when(
-          initial: () => const Center(child: CircularProgressIndicator()),
-          searching: () => const Center(child: CircularProgressIndicator()),
+          initial: () => const DialogLoading(message: 'Searching covers…'),
+          searching: () => const DialogLoading(message: 'Searching covers…'),
           candidates: (candidates) => _CandidatesGrid(candidates: candidates),
-          applying: () => const Center(child: CircularProgressIndicator()),
-          applied: () => Column(
+          applying: () => const DialogLoading(message: 'Applying…'),
+          applied: () => const Column(
             mainAxisSize: MainAxisSize.min,
-            children: const [SuccessIcon(), SizedBox(height: 20), Text('Cover updated')],
+            children: [SuccessIcon(), SizedBox(height: AppSpacing.lg), Text('Cover updated')],
           ),
           error: (message) => Column(
             mainAxisSize: MainAxisSize.min,
-            children: [ErrorIcon(), const SizedBox(height: 20), Text(message)],
+            children: [ErrorIcon(), const SizedBox(height: AppSpacing.lg), Text(message)],
           ),
         ),
       ),
@@ -71,23 +73,23 @@ class _CandidatesGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (candidates.isEmpty) {
-      return const Padding(padding: EdgeInsets.all(24), child: Text('No covers found'));
+      return const Padding(padding: EdgeInsets.all(AppSpacing.xl), child: Text('No covers found'));
     }
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         Padding(
-          padding: const EdgeInsets.only(bottom: 12, top: 4),
-          child: Text('Choose cover', style: Theme.of(context).textTheme.titleLarge),
+          padding: const EdgeInsets.only(bottom: AppSpacing.md, top: AppSpacing.xs),
+          child: Text('Choose cover', style: context.textTheme.titleLarge),
         ),
         Flexible(
           child: GridView.builder(
             shrinkWrap: true,
             gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
               maxCrossAxisExtent: 140,
-              crossAxisSpacing: 8,
-              mainAxisSpacing: 8,
+              crossAxisSpacing: AppSpacing.sm,
+              mainAxisSpacing: AppSpacing.sm,
             ),
             itemCount: candidates.length,
             itemBuilder: (context, index) {
@@ -95,11 +97,12 @@ class _CandidatesGrid extends StatelessWidget {
               return GestureDetector(
                 onTap: () => context.read<AlbumCoverCubit>().apply(candidate.id),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(6),
+                  borderRadius: AppRadius.smAll,
                   child: candidate.coverUrl != null
                       ? CachedNetworkImage(
                           imageUrl: candidate.coverUrl!,
                           fit: BoxFit.cover,
+                          placeholder: (_, _) => const DialogImageLoading(),
                           errorWidget: (_, _, _) => _placeholder(context, candidate.title),
                         )
                       : _placeholder(context, candidate.title),

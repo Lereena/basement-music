@@ -2,6 +2,7 @@ import 'package:basement_music/bloc/playlist_creation_cubit/playlist_creation_cu
 import 'package:basement_music/repositories/playlists_repository.dart';
 import 'package:basement_music/theme/theme.dart';
 import 'package:basement_music/widgets/dialogs/base_dialog.dart';
+import 'package:basement_music/widgets/dialogs/dialog_loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -32,7 +33,7 @@ class _CreatePlaylistDialogState extends State<CreatePlaylistDialog> {
       key: _formKey,
       child: BlocBuilder<PlaylistCreationCubit, PlaylistCreationState>(
         builder: (context, state) => state.when(
-          inProgress: () => const CircularProgressIndicator(),
+          inProgress: () => const DialogLoading(message: 'Creating playlist…'),
           success: () {
             Future.delayed(const Duration(seconds: 2), () {
               if (context.mounted) {
