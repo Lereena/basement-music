@@ -4,12 +4,14 @@ class SearchField extends StatefulWidget {
   final void Function(String) onSearch;
   final bool autofocus;
   final Widget? leading;
+  final String? hint;
 
   const SearchField({
     super.key,
     required this.onSearch,
     required this.autofocus,
     this.leading,
+    this.hint,
   });
 
   @override
@@ -35,9 +37,10 @@ class _SearchFieldState extends State<SearchField> {
       style: Theme.of(context).textTheme.titleLarge,
       onSubmitted: (text) => widget.onSearch(text),
       decoration: InputDecoration(
+        hintText: widget.hint,
         prefixIcon: widget.leading,
         suffixIcon: InkWell(
-          hoverColor: Theme.of(context).primaryColor.withValues(alpha: 0.1),
+          hoverColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(30),
           onTap: () {
             widget.onSearch(_controller.text);

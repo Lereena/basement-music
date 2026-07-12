@@ -1,3 +1,4 @@
+import 'package:basement_music/theme/theme.dart';
 import 'package:flutter/material.dart';
 
 class BaseDialog extends StatelessWidget {
@@ -7,20 +8,24 @@ class BaseDialog extends StatelessWidget {
   const BaseDialog({
     super.key,
     required this.child,
-    this.padding = const EdgeInsets.all(16),
+    this.padding = const EdgeInsets.all(AppSpacing.lg),
   });
 
   @override
   Widget build(BuildContext context) {
+    // The surface is a Material (not a colored Container) so that ListTile /
+    // CheckboxListTile ink splashes paint on top of it and stay visible.
     return Center(
       child: Dialog(
-        child: Container(
-          constraints: const BoxConstraints(maxWidth: 450),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
-            borderRadius: BorderRadius.circular(8),
+        backgroundColor: Colors.transparent,
+        child: Material(
+          color: context.colorScheme.surface,
+          borderRadius: AppRadius.lgAll,
+          clipBehavior: Clip.antiAlias,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 450),
+            child: Padding(padding: padding, child: child),
           ),
-          child: Padding(padding: padding, child: child),
         ),
       ),
     );

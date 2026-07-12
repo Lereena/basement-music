@@ -1,4 +1,5 @@
 import 'package:basement_music/models/playlist.dart';
+import 'package:basement_music/theme/theme.dart';
 import 'package:basement_music/widgets/keep_alive.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -21,23 +22,19 @@ class PlaylistCard extends StatelessWidget {
           child: Row(
             children: [
               Padding(
-                padding: const EdgeInsets.all(8),
-                child: AspectRatio(
-                  aspectRatio: 1,
+                padding: const EdgeInsets.all(AppSpacing.sm),
+                child: SizedBox(
+                  width: 56,
+                  height: 56,
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(2),
-                    child: Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        playlist.image != null
-                            ? CachedNetworkImage(
-                                imageUrl: playlist.image!,
-                                fit: BoxFit.cover,
-                                errorWidget: (_, _, _) => const _Placeholder(),
-                              )
-                            : const _Placeholder(),
-                      ],
-                    ),
+                    borderRadius: AppRadius.smAll,
+                    child: playlist.image != null
+                        ? CachedNetworkImage(
+                            imageUrl: playlist.image!,
+                            fit: BoxFit.cover,
+                            errorWidget: (_, _, _) => const _Placeholder(),
+                          )
+                        : const _Placeholder(),
                   ),
                 ),
               ),
@@ -54,9 +51,7 @@ class PlaylistCard extends StatelessWidget {
                     ),
                     Text(
                       '$trackCount ${trackCount == 1 ? 'track' : 'tracks'}',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.64),
-                      ),
+                      style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                     ),
                   ],
                 ),

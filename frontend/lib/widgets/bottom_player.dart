@@ -1,12 +1,11 @@
 import 'package:basement_music/bloc/player_cubit/player_cubit.dart';
 import 'package:basement_music/bloc/track_progress_cubit/track_progress_cubit.dart';
 import 'package:basement_music/models/track.dart';
+import 'package:basement_music/theme/theme.dart';
 import 'package:basement_music/widgets/controls/next_button.dart';
 import 'package:basement_music/widgets/controls/pause_button.dart';
 import 'package:basement_music/widgets/controls/play_button.dart';
 import 'package:basement_music/widgets/controls/previous_button.dart';
-import 'package:basement_music/widgets/controls/repeat_toggle.dart';
-import 'package:basement_music/widgets/controls/shuffle_toggle.dart';
 import 'package:basement_music/widgets/cover.dart';
 import 'package:basement_music/widgets/current_track_sheet.dart';
 import 'package:basement_music/widgets/track_name.dart';
@@ -35,45 +34,38 @@ class BottomPlayer extends StatelessWidget {
               children: [
                 TrackProgressIndicator(percentProgress: progress.percentProgress),
                 Container(
-                  height: 70,
-                  padding: const EdgeInsets.all(10),
+                  height: 72,
+                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
                   child: Row(
                     children: [
+                      ClipRRect(
+                        borderRadius: AppRadius.smAll,
+                        child: Cover(cover: state.currentTrack.cover, version: state.currentTrack.updatedAt, size: 48),
+                      ),
+                      const SizedBox(width: AppSpacing.md),
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            TrackName(track: state.currentTrack, moving: true),
+                            Text(
+                              state.currentTrack.artist,
+                              overflow: TextOverflow.ellipsis,
+                              style: context.textTheme.bodyMedium?.copyWith(color: context.colorScheme.onSurfaceVariant),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.sm),
                       const PreviousButton(),
+                      const SizedBox(width: AppSpacing.xs),
                       if (state.isPlay)
-                        const PauseButton()
+                        const PauseButton(size: 34)
                       else if (state.isPause || state.isInitial)
-                        PlayButton(track: state.currentTrack, state: state, isBottomPlayer: true),
+                        PlayButton(track: state.currentTrack, state: state, isBottomPlayer: true, size: 34),
+                      const SizedBox(width: AppSpacing.xs),
                       const NextButton(),
-                      const SizedBox(width: 15),
-                      if (state.isPause || state.isPlay)
-                        Cover(cover: state.currentTrack.cover, version: state.currentTrack.updatedAt),
-                      const SizedBox(width: 10),
-                      if (state.isPlay || state.isPause) ...[
-                        Expanded(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              TrackName(track: state.currentTrack, moving: true),
-                              Text(
-                                state.currentTrack.artist,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(fontSize: 16),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 20),
-                        Text(
-                          progress.stringProgress,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontSize: 16),
-                        ),
-                        const SizedBox(width: 10),
-                        const ShuffleToggle(),
-                        const RepeatToggle(),
-                      ],
                     ],
                   ),
                 ),

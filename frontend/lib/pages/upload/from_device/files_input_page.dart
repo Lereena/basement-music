@@ -1,6 +1,7 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
+import 'package:basement_music/theme/theme.dart';
 import 'package:basement_music/utils/track_data.dart';
 
 class FilesInputPage extends StatelessWidget {
@@ -20,6 +21,12 @@ class FilesInputPage extends StatelessWidget {
     this.onEditFileInfo,
     required this.onCancel,
   });
+
+  ButtonStyle _bigButtonStyle(BuildContext context) => FilledButton.styleFrom(
+    minimumSize: const Size(220, 52),
+    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl, vertical: AppSpacing.md),
+    textStyle: Theme.of(context).textTheme.titleMedium,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -65,14 +72,22 @@ class FilesInputPage extends StatelessWidget {
           ],
           FilledButton(
             onPressed: onSelectFiles,
+            style: _bigButtonStyle(context),
             child: const Text('Add files'),
           ),
           if (onMoveNext != null && selectedFiles?.isNotEmpty == true) ...[
-            const SizedBox(height: 16),
-            FilledButton(onPressed: onMoveNext, child: const Text('Next')),
+            const SizedBox(height: AppSpacing.md),
+            FilledButton(onPressed: onMoveNext, style: _bigButtonStyle(context), child: const Text('Next')),
           ],
-          const SizedBox(height: 16),
-          TextButton(onPressed: onCancel, child: const Text('Cancel')),
+          const SizedBox(height: AppSpacing.md),
+          TextButton(
+            onPressed: onCancel,
+            style: TextButton.styleFrom(
+              minimumSize: const Size(220, 52),
+              textStyle: theme.textTheme.titleMedium,
+            ),
+            child: const Text('Cancel'),
+          ),
         ],
       ),
     );

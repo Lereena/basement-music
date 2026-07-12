@@ -33,9 +33,19 @@ class _SoulseekSearchView extends StatefulWidget {
 }
 
 class _SoulseekSearchViewState extends State<_SoulseekSearchView> {
+  // Cached in didChangeDependencies so dispose() doesn't do an unsafe
+  // ancestor lookup on a deactivated element.
+  late SoulseekSearchCubit _cubit;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _cubit = context.read<SoulseekSearchCubit>();
+  }
+
   @override
   void dispose() {
-    context.read<SoulseekSearchCubit>().cleanup();
+    _cubit.cleanup();
     super.dispose();
   }
 

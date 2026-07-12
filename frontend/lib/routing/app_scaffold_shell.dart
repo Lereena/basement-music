@@ -1,6 +1,7 @@
 import 'package:basement_music/bloc/settings_cubit/settings_cubit.dart';
 import 'package:basement_music/routing/app_scaffold.dart';
 import 'package:basement_music/routing/breakpoints.dart';
+import 'package:basement_music/theme/theme.dart';
 import 'package:basement_music/widgets/leading_rail_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -99,7 +100,7 @@ class _NavigationSidebar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final colorScheme = context.colorScheme;
 
     return SizedBox(
       width: extended ? 256.0 : 80.0,
@@ -107,28 +108,26 @@ class _NavigationSidebar extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16),
+            padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
             child: Center(child: LeadingRailWidget(extended: extended)),
           ),
           ..._Destination.values.indexed.map((entry) {
             final (i, dest) = entry;
             final selected = i == selectedIndex;
-            final iconColor = selected
-                ? theme.primaryColor.withValues(alpha: 0.8)
-                : theme.colorScheme.onSurface.withValues(alpha: 0.64);
+            final iconColor = selected ? colorScheme.primary : colorScheme.onSurfaceVariant;
 
             return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.xxs),
               child: Material(
                 color: Colors.transparent,
-                borderRadius: BorderRadius.circular(30),
+                borderRadius: AppRadius.fullAll,
                 child: InkWell(
-                  hoverColor: theme.primaryColor.withValues(alpha: 0.1),
-                  highlightColor: theme.primaryColor.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(30),
+                  hoverColor: colorScheme.primary.withValues(alpha: 0.1),
+                  highlightColor: colorScheme.primary.withValues(alpha: 0.2),
+                  borderRadius: AppRadius.fullAll,
                   onTap: () => onDestinationSelected(i),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.lg),
                     child: extended
                         ? Row(
                             children: [
@@ -136,8 +135,8 @@ class _NavigationSidebar extends StatelessWidget {
                                 data: IconThemeData(color: iconColor),
                                 child: dest.icon(homePage),
                               ),
-                              const SizedBox(width: 12),
-                              Text(dest.title(homePage), style: TextStyle(color: iconColor)),
+                              const SizedBox(width: AppSpacing.md),
+                              Text(dest.title(homePage), style: context.textTheme.labelLarge?.copyWith(color: iconColor)),
                             ],
                           )
                         : Tooltip(
@@ -173,27 +172,23 @@ class _NavigationBottomBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final colorScheme = context.colorScheme;
 
     return NavigationBarTheme(
       data: NavigationBarThemeData(
         indicatorColor: Colors.transparent,
         overlayColor: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.hovered)) return theme.primaryColor.withValues(alpha: 0.1);
-          if (states.contains(WidgetState.pressed)) return theme.primaryColor.withValues(alpha: 0.2);
+          if (states.contains(WidgetState.hovered)) return colorScheme.primary.withValues(alpha: 0.1);
+          if (states.contains(WidgetState.pressed)) return colorScheme.primary.withValues(alpha: 0.2);
           return null;
         }),
         iconTheme: WidgetStateProperty.resolveWith((states) {
-          final color = states.contains(WidgetState.selected)
-              ? theme.primaryColor.withValues(alpha: 0.9)
-              : theme.colorScheme.onSurface;
+          final color = states.contains(WidgetState.selected) ? colorScheme.primary : colorScheme.onSurfaceVariant;
           return IconThemeData(color: color);
         }),
         labelTextStyle: WidgetStateProperty.resolveWith((states) {
-          final color = states.contains(WidgetState.selected)
-              ? theme.primaryColor.withValues(alpha: 0.9)
-              : theme.colorScheme.onSurface;
-          return TextStyle(color: color);
+          final color = states.contains(WidgetState.selected) ? colorScheme.primary : colorScheme.onSurfaceVariant;
+          return (context.textTheme.labelMedium ?? const TextStyle()).copyWith(color: color);
         }),
       ),
       child: NavigationBar(

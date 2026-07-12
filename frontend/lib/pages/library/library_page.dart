@@ -9,6 +9,7 @@ import 'package:basement_music/repositories/artists_repository.dart';
 import 'package:basement_music/repositories/repositories.dart';
 import 'package:basement_music/routing/breakpoints.dart';
 import 'package:basement_music/routing/routes.dart';
+import 'package:basement_music/theme/theme.dart';
 import 'package:basement_music/utils/horizontal_space_reducer.dart';
 import 'package:basement_music/widgets/artist_card.dart';
 import 'package:basement_music/widgets/create_playlist.dart';
@@ -109,24 +110,21 @@ class _LibraryPageContentState extends State<_LibraryPageContent> with SingleTic
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final colorScheme = context.colorScheme;
 
     return Scaffold(
       appBar: AppBar(
         title: TabBar(
           controller: tabController,
           indicatorSize: TabBarIndicatorSize.label,
-          indicatorColor: theme.primaryColor,
-          labelColor: theme.primaryColor,
+          indicatorColor: colorScheme.primary,
+          labelColor: colorScheme.primary,
+          unselectedLabelColor: colorScheme.onSurfaceVariant,
           padding: EdgeInsets.zero,
-          labelPadding: EdgeInsets.symmetric(vertical: 8),
+          labelPadding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
           overlayColor: WidgetStateProperty.all(Colors.transparent),
-          labelStyle: TextStyle(
-            color: theme.primaryColor,
-            fontWeight: FontWeight.w500,
-            fontSize: 18,
-            letterSpacing: 1.1,
-          ),
+          labelStyle: context.textTheme.titleMedium,
+          unselectedLabelStyle: context.textTheme.titleMedium,
           tabs: widget.tabs.map((tab) => Tab(text: tab.title, height: 28, iconMargin: EdgeInsets.zero)).toList(),
           onTap: (index) => setState(() => tab = widget.tabs[index]),
         ),

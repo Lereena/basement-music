@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:basement_music/bloc/soulseek_login_cubit/soulseek_login_cubit.dart';
 import 'package:basement_music/bloc/soulseek_settings_cubit/soulseek_settings_cubit.dart';
 import 'package:basement_music/routing/routes.dart';
+import 'package:basement_music/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -113,28 +114,23 @@ class _SoulseekAdminSectionState extends State<SoulseekAdminSection> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (isConnected) ...[
-                ElevatedButton.icon(
+                FilledButton.icon(
                   onPressed: () => cubit.disconnect(),
-                  style: OutlinedButton.styleFrom(
-                    backgroundColor: theme.colorScheme.error.withValues(alpha: 0.8),
-                    foregroundColor: theme.colorScheme.surface,
-                    side: BorderSide(color: theme.colorScheme.error, width: 2),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: theme.colorScheme.error,
+                    foregroundColor: theme.colorScheme.onError,
                   ),
                   icon: const Icon(Icons.link_off),
                   label: const Text('Disconnect'),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: AppSpacing.sm),
               ],
-              Row(
-                children: [
-                  ElevatedButton.icon(
-                    onPressed: () => _openCredentialsDialog(context, cubit),
-                    icon: const Icon(Icons.key),
-                    label: const Text('Update credentials'),
-                  ),
-                ],
+              ElevatedButton.icon(
+                onPressed: () => _openCredentialsDialog(context, cubit),
+                icon: const Icon(Icons.key),
+                label: const Text('Update credentials'),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: AppSpacing.lg),
               const _DisconnectAfterField(),
             ],
           ),
@@ -253,28 +249,35 @@ class _DisconnectAfterFieldState extends State<_DisconnectAfterField> {
       _controller.text = cubit.state.minutes.toString();
     }
 
-    return Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          child: TextFormField(
-            controller: _controller,
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(
-              label: Text('Disconnect after inactivity (in minutes)', style: theme.textTheme.bodyLarge),
-              helperText: '0 = never',
+        Text('Disconnect after inactivity', style: theme.textTheme.titleSmall),
+        const SizedBox(height: AppSpacing.sm),
+        Row(
+          children: [
+            SizedBox(
+              width: 140,
+              child: TextFormField(
+                controller: _controller,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(suffixText: 'min'),
+              ),
             ),
-          ),
+            const SizedBox(width: AppSpacing.md),
+            ElevatedButton(
+              onPressed: cubit.state.loading
+                  ? null
+                  : () {
+                      final minutes = int.tryParse(_controller.text.trim());
+                      if (minutes != null && minutes >= 0) cubit.save(minutes);
+                    },
+              child: const Text('Save'),
+            ),
+          ],
         ),
-        const SizedBox(width: 12),
-        ElevatedButton(
-          onPressed: cubit.state.loading
-              ? null
-              : () {
-                  final minutes = int.tryParse(_controller.text.trim());
-                  if (minutes != null && minutes >= 0) cubit.save(minutes);
-                },
-          child: const Text('Save'),
-        ),
+        const SizedBox(height: AppSpacing.xs),
+        Text('0 = never', style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
       ],
     );
   }

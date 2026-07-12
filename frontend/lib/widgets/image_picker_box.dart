@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:basement_music/theme/theme.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
@@ -28,7 +29,7 @@ class ImagePickerBox extends StatelessWidget {
       child: AspectRatio(
         aspectRatio: 1,
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: AppRadius.smAll,
           child: Stack(
             fit: StackFit.expand,
             children: [
@@ -38,16 +39,22 @@ class ImagePickerBox extends StatelessWidget {
                 CachedNetworkImage(
                   imageUrl: currentImageUrl!,
                   fit: BoxFit.cover,
+                  placeholder: (_, _) => ColoredBox(
+                    color: theme.colorScheme.surfaceContainerHighest,
+                    child: const Center(
+                      child: SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2)),
+                    ),
+                  ),
                   errorWidget: (_, _, _) => _placeholder(theme),
                 )
               else
                 _placeholder(theme),
               Positioned(
-                right: 8,
-                bottom: 8,
+                right: AppSpacing.sm,
+                bottom: AppSpacing.sm,
                 child: Container(
-                  padding: const EdgeInsets.all(6),
-                  decoration: BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.circular(4)),
+                  padding: const EdgeInsets.all(AppSpacing.xs),
+                  decoration: BoxDecoration(color: Colors.black54, borderRadius: AppRadius.smAll),
                   child: const Icon(Icons.image_outlined, size: 18, color: Colors.white),
                 ),
               ),

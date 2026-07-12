@@ -14,11 +14,11 @@ class _Artists extends StatelessWidget {
           empty: () => ScrollablePlaceholder(child: Text('No artists', style: Theme.of(context).textTheme.bodyLarge)),
           loaded: (artists) => GridView.builder(
             physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(AppSpacing.md),
             gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
               maxCrossAxisExtent: 200,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
+              crossAxisSpacing: AppSpacing.md,
+              mainAxisSpacing: AppSpacing.md,
               childAspectRatio: 1,
             ),
             itemCount: artists.length,

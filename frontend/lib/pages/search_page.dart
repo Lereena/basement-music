@@ -6,8 +6,8 @@ import 'package:basement_music/models/track.dart';
 import 'package:basement_music/repositories/artists_repository.dart';
 import 'package:basement_music/repositories/repositories.dart';
 import 'package:basement_music/routing/routes.dart';
+import 'package:basement_music/theme/theme.dart';
 import 'package:basement_music/utils/horizontal_space_reducer.dart';
-import 'package:basement_music/widgets/app_bar.dart';
 import 'package:basement_music/widgets/artist_card.dart';
 import 'package:basement_music/widgets/playlist_card.dart';
 import 'package:basement_music/widgets/search_field.dart';
@@ -39,25 +39,31 @@ class _SearchPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: BasementAppBar(title: 'Search', scrolledUnderElevation: 0),
-      body: HorizontalSpaceReducer(
-        child: Column(
-          children: [
-            SearchField(autofocus: true, onSearch: (query) => context.read<SearchCubit>().onSearch(query)),
-            const SizedBox(height: 15),
-            Expanded(
-              child: BlocBuilder<SearchCubit, SearchState>(
-                builder: (_, state) => state.when(
-                  initial: () => const SizedBox.shrink(),
-                  loadInProgress: (_) => const Center(child: CircularProgressIndicator()),
-                  successEmpty: (_) => const Center(child: Text('Nothing found')),
-                  success: (_, artists, playlists, tracks) =>
-                      _Results(artists: artists, playlists: playlists, tracks: tracks),
-                  error: () => const Center(child: Text('Error searching')),
+      body: SafeArea(
+        child: HorizontalSpaceReducer(
+          child: Column(
+            children: [
+              const SizedBox(height: AppSpacing.sm),
+              SearchField(
+                autofocus: true,
+                hint: 'Tracks, artists, playlists',
+                onSearch: (query) => context.read<SearchCubit>().onSearch(query),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              Expanded(
+                child: BlocBuilder<SearchCubit, SearchState>(
+                  builder: (_, state) => state.when(
+                    initial: () => const _SearchHint(),
+                    loadInProgress: (_) => const Center(child: CircularProgressIndicator()),
+                    successEmpty: (_) => const Center(child: Text('Nothing found')),
+                    success: (_, artists, playlists, tracks) =>
+                        _Results(artists: artists, playlists: playlists, tracks: tracks),
+                    error: () => const Center(child: Text('Error searching')),
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -86,8 +92,8 @@ class _Results extends StatelessWidget {
                 height: 170,
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  separatorBuilder: (_, _) => const SizedBox(width: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                  separatorBuilder: (_, _) => const SizedBox(width: AppSpacing.md),
                   itemCount: artists.length,
                   itemBuilder: (_, index) => SizedBox(
                     width: 150,
@@ -114,10 +120,29 @@ class _Results extends StatelessWidget {
                 (track) => TrackCard(track: track, openedPlaylist: openedPlaylist, active: active),
               ),
             ],
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.lg),
           ],
         );
       },
+    );
+  }
+}
+
+class _SearchHint extends StatelessWidget {
+  const _SearchHint();
+
+  @override
+  Widget build(BuildContext context) {
+    final color = context.colorScheme.onSurfaceVariant;
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.search, size: 48, color: color),
+          const SizedBox(height: AppSpacing.md),
+          Text('Search your library', style: context.textTheme.titleMedium?.copyWith(color: color)),
+        ],
+      ),
     );
   }
 }
@@ -130,8 +155,8 @@ class _SectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
-      child: Text(title, style: Theme.of(context).textTheme.titleMedium),
+      padding: const EdgeInsets.fromLTRB(AppSpacing.md, AppSpacing.md, AppSpacing.md, AppSpacing.sm),
+      child: Text(title, style: context.textTheme.titleMedium),
     );
   }
 }

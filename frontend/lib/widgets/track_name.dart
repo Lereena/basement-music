@@ -11,18 +11,22 @@ class TrackName extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Inherit the ambient text style (TrackCard sets the title token + the
+    // current-track color) and only override the size for the caller.
+    final style = DefaultTextStyle.of(context).style.copyWith(fontSize: fontSize);
+
     return SizedBox(
       height: MediaQuery.of(context).textScaler.scale(fontSize * 1.25),
       child: moving
           ? MarqueeText(
               text: TextSpan(text: track.title),
-              style: TextStyle(fontSize: fontSize),
+              style: style,
               speed: 10,
               textAlign: TextAlign.start,
             )
           : Text(
               track.title,
-              style: TextStyle(fontSize: fontSize),
+              style: style,
               overflow: TextOverflow.ellipsis,
             ),
     );

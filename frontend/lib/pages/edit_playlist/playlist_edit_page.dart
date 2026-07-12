@@ -4,6 +4,7 @@ import 'package:basement_music/bloc/playlist_edit_cubit/playlist_edit_cubit.dart
 import 'package:basement_music/models/track.dart';
 import 'package:basement_music/pages/upload/result_page.dart';
 import 'package:basement_music/repositories/playlists_repository.dart';
+import 'package:basement_music/theme/theme.dart';
 import 'package:basement_music/utils/horizontal_space_reducer.dart';
 import 'package:basement_music/utils/pick_and_crop_image.dart';
 import 'package:basement_music/widgets/app_bar.dart';
@@ -146,20 +147,20 @@ class _EditView extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSpacing.lg),
               ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 164, maxHeight: 164),
                 child: _ImagePicker(currentImageUrl: currentImageUrl, pickedBytes: data.imageBytes, onTap: onPickImage),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSpacing.xl),
               TextFormField(
                 decoration: const InputDecoration(label: Text('Title')),
                 initialValue: data.title,
                 validator: (value) => value?.isNotEmpty != true ? 'Field is required' : null,
                 onChanged: (value) => data.title = value,
               ),
-              const SizedBox(height: 24),
-              if (tracks.isNotEmpty) Text('Tracks', style: Theme.of(context).textTheme.titleMedium),
+              const SizedBox(height: AppSpacing.xl),
+              if (tracks.isNotEmpty) Text('Tracks', style: context.textTheme.titleMedium),
             ],
           ),
         ),
@@ -179,7 +180,7 @@ class _EditView extends StatelessWidget {
             );
           },
         ),
-        const SliverToBoxAdapter(child: SizedBox(height: 32)),
+        const SliverToBoxAdapter(child: SizedBox(height: AppSpacing.xxl)),
       ],
     );
   }
@@ -201,7 +202,7 @@ class _ImagePicker extends StatelessWidget {
       child: AspectRatio(
         aspectRatio: 1,
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: AppRadius.smAll,
           child: Stack(
             fit: StackFit.expand,
             children: [
@@ -211,16 +212,17 @@ class _ImagePicker extends StatelessWidget {
                 CachedNetworkImage(
                   imageUrl: currentImageUrl!,
                   fit: BoxFit.cover,
+                  placeholder: (_, _) => _placeholder(theme),
                   errorWidget: (_, _, _) => _placeholder(theme),
                 )
               else
                 _placeholder(theme),
               Positioned(
-                right: 8,
-                bottom: 8,
+                right: AppSpacing.sm,
+                bottom: AppSpacing.sm,
                 child: Container(
-                  padding: const EdgeInsets.all(6),
-                  decoration: BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.circular(4)),
+                  padding: const EdgeInsets.all(AppSpacing.xs),
+                  decoration: BoxDecoration(color: Colors.black54, borderRadius: AppRadius.smAll),
                   child: const Icon(Icons.image_outlined, size: 18, color: Colors.white),
                 ),
               ),

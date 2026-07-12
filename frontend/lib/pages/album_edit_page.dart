@@ -3,6 +3,7 @@ import 'package:basement_music/models/track.dart';
 import 'package:basement_music/repositories/albums_repository.dart';
 import 'package:basement_music/repositories/artists_repository.dart';
 import 'package:basement_music/repositories/repositories.dart';
+import 'package:basement_music/theme/theme.dart';
 import 'package:basement_music/utils/horizontal_space_reducer.dart';
 import 'package:basement_music/utils/pick_and_crop_image.dart';
 import 'package:basement_music/widgets/app_bar.dart';
@@ -106,7 +107,7 @@ class _EditFormState extends State<_EditForm> {
     final filtered = state.allTracks.where((t) => _trackQuery.isEmpty || t.matchesQuery(_trackQuery)).toList();
 
     return ListView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AppSpacing.lg),
       children: [
         ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 164, maxHeight: 164),
@@ -117,25 +118,25 @@ class _EditFormState extends State<_EditForm> {
             placeholderIcon: Icons.album,
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: AppSpacing.xl),
         TextFormField(
           decoration: const InputDecoration(label: Text('Title')),
           initialValue: state.title,
           onChanged: cubit.setTitle,
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: AppSpacing.lg),
         TextFormField(
           decoration: const InputDecoration(label: Text('Year')),
           initialValue: state.year,
           keyboardType: TextInputType.number,
           onChanged: cubit.setYear,
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: AppSpacing.xl),
         Text('Artists', style: theme.textTheme.titleMedium),
-        const SizedBox(height: 8),
+        const SizedBox(height: AppSpacing.sm),
         Wrap(
-          spacing: 8,
-          runSpacing: 4,
+          spacing: AppSpacing.sm,
+          runSpacing: AppSpacing.xs,
           children: state.allArtists
               .map(
                 (a) => FilterChip(
@@ -146,11 +147,11 @@ class _EditFormState extends State<_EditForm> {
               )
               .toList(),
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: AppSpacing.xl),
         Text('Tracks in album', style: theme.textTheme.titleMedium),
         if (selectedTracks.isEmpty)
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
+            padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
             child: Text('None yet', style: theme.textTheme.bodyMedium),
           ),
         ReorderableListView(
@@ -175,14 +176,14 @@ class _EditFormState extends State<_EditForm> {
               ),
           ],
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: AppSpacing.lg),
         Text('Add tracks', style: theme.textTheme.titleMedium),
-        const SizedBox(height: 8),
+        const SizedBox(height: AppSpacing.sm),
         TextField(
           decoration: const InputDecoration(prefixIcon: Icon(Icons.search), hintText: 'Search tracks'),
           onChanged: (value) => setState(() => _trackQuery = value),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: AppSpacing.sm),
         ...filtered.map(
           (track) => CheckboxListTile(
             contentPadding: EdgeInsets.zero,
@@ -192,7 +193,7 @@ class _EditFormState extends State<_EditForm> {
             onChanged: (_) => cubit.toggleTrack(track.id),
           ),
         ),
-        const SizedBox(height: 32),
+        const SizedBox(height: AppSpacing.xxl),
       ],
     );
   }

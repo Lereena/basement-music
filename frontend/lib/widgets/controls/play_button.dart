@@ -10,6 +10,7 @@ class PlayButton extends StatelessWidget {
   final bool isBottomPlayer;
   final Playlist? openedPlaylist;
   final double size;
+  final Color? color;
 
   const PlayButton({
     super.key,
@@ -18,6 +19,7 @@ class PlayButton extends StatelessWidget {
     this.isBottomPlayer = false,
     this.openedPlaylist,
     this.size = 30,
+    this.color,
   });
 
   @override
@@ -29,7 +31,7 @@ class PlayButton extends StatelessWidget {
         if (isBottomPlayer && state.isInitial) return;
         playerCubit.play(track: track, playlist: openedPlaylist);
       },
-      child: Icon(Icons.play_arrow_rounded, size: size),
+      child: Icon(Icons.play_arrow_rounded, size: size, color: color),
     );
   }
 }

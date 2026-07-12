@@ -1,6 +1,8 @@
 import 'package:basement_music/bloc/playlist_creation_cubit/playlist_creation_cubit.dart';
 import 'package:basement_music/repositories/playlists_repository.dart';
+import 'package:basement_music/theme/theme.dart';
 import 'package:basement_music/widgets/dialogs/base_dialog.dart';
+import 'package:basement_music/widgets/dialogs/dialog_loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -31,7 +33,7 @@ class _CreatePlaylistDialogState extends State<CreatePlaylistDialog> {
       key: _formKey,
       child: BlocBuilder<PlaylistCreationCubit, PlaylistCreationState>(
         builder: (context, state) => state.when(
-          inProgress: () => const CircularProgressIndicator(),
+          inProgress: () => const DialogLoading(message: 'Creating playlist…'),
           success: () {
             Future.delayed(const Duration(seconds: 2), () {
               if (context.mounted) {
@@ -39,13 +41,13 @@ class _CreatePlaylistDialogState extends State<CreatePlaylistDialog> {
               }
             });
 
-            return const Column(
+            return Column(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.check_circle, color: Colors.green, size: 30),
-                SizedBox(height: 16),
-                Text('Playlist was successfully created'),
+                Icon(Icons.check_circle, color: context.semanticColors.success, size: 30),
+                const SizedBox(height: AppSpacing.lg),
+                const Text('Playlist was successfully created'),
               ],
             );
           },
@@ -54,26 +56,26 @@ class _CreatePlaylistDialogState extends State<CreatePlaylistDialog> {
             child: Text('Playlist was not created, please try again later'),
           ),
           initial: () => Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text('Create new playlist', style: TextStyle(fontSize: 18)),
+                Text('Create new playlist', style: context.textTheme.titleMedium, textAlign: TextAlign.center),
+                const SizedBox(height: AppSpacing.lg),
                 TextFormField(
-                  decoration: const InputDecoration(label: Text('Title')),
+                  decoration: const InputDecoration(
+                    labelText: 'Title',
+                    hintText: 'Playlist name',
+                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                  ),
                   controller: _titleController,
                   autofocus: true,
                   validator: (value) => value?.isNotEmpty != true ? 'Title must not be empty' : null,
                 ),
-                const SizedBox(height: 16),
-                SizedBox(
-                  height: 40,
-                  child: ElevatedButton(
-                    onPressed: _onCreate,
-                    child: const Text('Create', style: TextStyle(fontSize: 18)),
-                  ),
-                ),
+                const SizedBox(height: AppSpacing.lg),
+                FilledButton(onPressed: _onCreate, child: const Text('Create')),
               ],
             ),
           ),

@@ -3,7 +3,9 @@ import 'package:basement_music/models/artist.dart';
 import 'package:basement_music/models/track.dart';
 import 'package:basement_music/repositories/artists_repository.dart';
 import 'package:basement_music/repositories/repositories.dart';
+import 'package:basement_music/theme/theme.dart';
 import 'package:basement_music/widgets/dialogs/base_dialog.dart';
+import 'package:basement_music/widgets/dialogs/dialog_loading.dart';
 import 'package:basement_music/widgets/icons/error_icon.dart';
 import 'package:basement_music/widgets/icons/success_icon.dart';
 import 'package:flutter/material.dart';
@@ -43,16 +45,16 @@ class SetTrackArtistsDialog extends StatelessWidget {
           );
         },
         builder: (context, state) => state.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
+          loading: () => const DialogLoading(message: 'Loading artists…'),
           loaded: (artists) => _Selector(artists: artists, track: track),
-          saving: () => const Center(child: CircularProgressIndicator()),
-          success: () => Column(
+          saving: () => const DialogLoading(message: 'Saving…'),
+          success: () => const Column(
             mainAxisSize: MainAxisSize.min,
-            children: const [SuccessIcon(), SizedBox(height: 20), Text('Artists updated')],
+            children: [SuccessIcon(), SizedBox(height: AppSpacing.lg), Text('Artists updated')],
           ),
-          error: () => Column(
+          error: () => const Column(
             mainAxisSize: MainAxisSize.min,
-            children: [ErrorIcon(), const SizedBox(height: 20), const Text('Error updating artists')],
+            children: [ErrorIcon(), SizedBox(height: AppSpacing.lg), Text('Error updating artists')],
           ),
         ),
       ),
@@ -92,14 +94,14 @@ class _SelectorState extends State<_Selector> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Padding(
-          padding: const EdgeInsets.only(bottom: 12, top: 4),
-          child: Text('Change artist', style: Theme.of(context).textTheme.titleLarge),
+          padding: const EdgeInsets.only(bottom: AppSpacing.md, top: AppSpacing.xs),
+          child: Text('Change artist', style: context.textTheme.titleLarge),
         ),
         TextField(
           decoration: const InputDecoration(prefixIcon: Icon(Icons.search), hintText: 'Search artists'),
           onChanged: (value) => setState(() => _query = value),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: AppSpacing.sm),
         Flexible(
           child: ListView.builder(
             shrinkWrap: true,
@@ -117,7 +119,7 @@ class _SelectorState extends State<_Selector> {
             },
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: AppSpacing.sm),
         Align(
           alignment: Alignment.centerRight,
           child: FilledButton(
