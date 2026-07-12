@@ -67,7 +67,7 @@ class MoreButton extends StatelessWidget {
               ),
               if (showRemoveFavourite)
                 _MenuOption(
-                  icon: Icons.favorite_border,
+                  icon: Icons.heart_broken_outlined,
                   label: 'Remove from Favourites',
                   onPressed: () {
                     Navigator.pop(context);
