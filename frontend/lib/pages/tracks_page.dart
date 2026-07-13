@@ -29,37 +29,35 @@ class _TracksPage extends StatelessWidget {
     return RefreshIndicator(
       onRefresh: () => _onRefresh(context),
       child: BlocBuilder<ConnectivityStatusCubit, ConnectivityStatusState>(
-        builder: (context, connectivityStatus) {
-          return Scaffold(
-            body: SafeArea(
-              child: HorizontalSpaceReducer(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    BlocBuilder<TracksCubit, TracksState>(
-                      builder: (context, state) => state.when(
-                        loadInProgress: () => const Center(child: CircularProgressIndicator()),
-                        empty: () => const Center(child: Text('No tracks')),
-                        loaded: (tracks) => Expanded(
-                          child: ListView.builder(
-                            padding: const EdgeInsets.only(top: AppSpacing.sm, bottom: AppSpacing.xxxl),
-                            itemCount: tracks.length,
-                            itemBuilder: (context, index) => TrackCard(
-                              track: tracks[index],
-                              active: connectivityStatus.maybeWhen(hasConnection: () => true, orElse: () => false),
-                            ),
-                            prototypeItem: TrackCard(track: Track.empty()),
+        builder: (context, connectivityStatus) => Scaffold(
+          body: SafeArea(
+            child: HorizontalSpaceReducer(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  BlocBuilder<TracksCubit, TracksState>(
+                    builder: (context, state) => state.when(
+                      loadInProgress: () => const Center(child: CircularProgressIndicator()),
+                      empty: () => const Center(child: Text('No tracks')),
+                      loaded: (tracks) => Expanded(
+                        child: ListView.builder(
+                          padding: const EdgeInsets.only(top: AppSpacing.sm, bottom: AppSpacing.xxxl),
+                          itemCount: tracks.length,
+                          itemBuilder: (context, index) => TrackCard(
+                            track: tracks[index],
+                            active: connectivityStatus.maybeWhen(hasConnection: () => true, orElse: () => false),
                           ),
+                          prototypeItem: TrackCard(track: Track.empty()),
                         ),
-                        error: () => const Center(child: Text('Error loading tracks')),
                       ),
+                      error: () => const Center(child: Text('Error loading tracks')),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-          );
-        },
+          ),
+        ),
       ),
     );
   }

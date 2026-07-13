@@ -1054,9 +1054,13 @@ class _RestClient implements RestClient {
   Future<List<ReleaseGroupCandidate>> searchAlbumCover({
     required String id,
     required String query,
+    required String artist,
   }) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'query': query};
+    final queryParameters = <String, dynamic>{
+      r'query': query,
+      r'artist': artist,
+    };
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<List<ReleaseGroupCandidate>>(

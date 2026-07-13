@@ -11,7 +11,8 @@ abstract class RouteName {
   static String artistEdit(String id) => '/library/artist/$id/edit';
   static String lyricsTiming(String id, String source) => '/track/$id/lyricsTiming?source=$source';
   static String album(String id) => '/library/album/$id';
-  static String albumEdit(String id) => '/library/album/$id/edit';
+  static String albumEdit(String id, {bool isNew = false}) =>
+      '/library/album/$id/edit${isNew ? '?new=1' : ''}';
   static String get search => '/search';
   static String get settings => '/settings';
   static String get upload => '/upload';

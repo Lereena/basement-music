@@ -131,6 +131,7 @@ func (repo *MetadataRepository) SearchAlbumCover(w http.ResponseWriter, r *http.
 	}
 
 	query := strings.TrimSpace(r.URL.Query().Get("query"))
+	artistQuery := strings.TrimSpace(r.URL.Query().Get("artist"))
 	title := album.Title
 	artist := ""
 	if len(album.Artists) > 0 {
@@ -138,6 +139,9 @@ func (repo *MetadataRepository) SearchAlbumCover(w http.ResponseWriter, r *http.
 	}
 	if query != "" {
 		title = query
+	}
+	if artistQuery != "" {
+		artist = artistQuery
 	}
 
 	candidates, err := repo.MB.SearchReleaseGroups(artist, title)

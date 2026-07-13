@@ -17,15 +17,24 @@ class AlbumCoverDialog extends StatelessWidget {
 
   const AlbumCoverDialog._({required this.album, this.onApplied});
 
-  static Future<void> show({required BuildContext context, required Album album, VoidCallback? onApplied}) =>
-      showDialog(
-        context: context,
-        builder: (_) => BlocProvider(
-          create: (_) =>
-              AlbumCoverCubit(albumsRepository: context.read<AlbumsRepository>(), albumId: album.id)..search(),
-          child: AlbumCoverDialog._(album: album, onApplied: onApplied),
-        ),
-      );
+  static Future<void> show({
+    required BuildContext context,
+    required Album album,
+    VoidCallback? onApplied,
+    String titleOverride = '',
+    String artistOverride = '',
+  }) => showDialog(
+    context: context,
+    builder: (_) => BlocProvider(
+      create: (_) => AlbumCoverCubit(
+        albumsRepository: context.read<AlbumsRepository>(),
+        albumId: album.id,
+        titleOverride: titleOverride,
+        artistOverride: artistOverride,
+      )..search(),
+      child: AlbumCoverDialog._(album: album, onApplied: onApplied),
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
