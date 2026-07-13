@@ -2,6 +2,10 @@ package repositories
 
 import (
 	"bytes"
+	"image"
+	_ "image/gif"
+	"image/jpeg"
+	_ "image/png"
 	"log"
 	"net/http"
 	"os"
@@ -9,6 +13,7 @@ import (
 
 	"github.com/bogem/id3v2/v2"
 	"github.com/gorilla/mux"
+	xdraw "golang.org/x/image/draw"
 
 	"github.com/Lereena/server_basement_music/models"
 	"github.com/Lereena/server_basement_music/respond"
@@ -16,6 +21,93 @@ import (
 
 // APIC (Attached picture) frame description.
 const apicFrameDescription = "Attached picture"
+
+// maxCoverBytes bounds the encoded size of a cover before it is embedded into a
+// track file. The cover is front-loaded into the mp3's ID3 tag ahead of the
+// audio, so a large image pushes the first MPEG audio frame past the byte window
+// browsers probe when opening the stream. ffmpeg (used by audioplayers on web)
+// then fails with DEMUXER_ERROR_COULD_NOT_OPEN and the track won't play, even
+// though native mobile players — which parse the whole tag — tolerate it. This
+// is a byte budget on purpose: the bug is about bytes ahead of the audio, not
+// pixels. 128 KiB keeps roughly a 2x margin under the ~256 KiB probe window
+// observed to work.
+const maxCoverBytes = 128 * 1024
+
+// coverEdgeCeiling caps the starting longest edge so an oversized source does
+// not waste passes on renders that will never fit; coverEdgeFloor is the
+// smallest render we will settle for.
+const (
+	coverEdgeCeiling = 1000
+	coverEdgeFloor   = 200
+)
+
+// downscaleCover re-encodes data as a JPEG small enough to embed (at most
+// maxCoverBytes), progressively shrinking it until the encoded result fits.
+// Returns the input unchanged if it already fits or cannot be decoded (embedding
+// as-is beats dropping the cover).
+func downscaleCover(data []byte) []byte {
+	if len(data) <= maxCoverBytes {
+		return data
+	}
+
+	src, _, err := image.Decode(bytes.NewReader(data))
+	if err != nil {
+		log.Printf("cover downscale: decode failed, embedding as-is: %v", err)
+		return data
+	}
+
+	b := src.Bounds()
+	longest := b.Dx()
+	if b.Dy() > longest {
+		longest = b.Dy()
+	}
+	if longest > coverEdgeCeiling {
+		longest = coverEdgeCeiling
+	}
+
+	var smallest []byte
+	for edge := longest; edge >= coverEdgeFloor; edge = edge * 4 / 5 {
+		out, err := encodeCoverJPEG(src, edge)
+		if err != nil {
+			log.Printf("cover downscale: encode failed, embedding as-is: %v", err)
+			return data
+		}
+		smallest = out
+		if len(out) <= maxCoverBytes {
+			return out
+		}
+	}
+	// Even at the floor it didn't fit; embed the smallest render produced.
+	return smallest
+}
+
+// encodeCoverJPEG scales src so its longest edge is edge px and returns it as a
+// JPEG.
+func encodeCoverJPEG(src image.Image, edge int) ([]byte, error) {
+	b := src.Bounds()
+	w, h := b.Dx(), b.Dy()
+	nw, nh := edge, edge
+	if w >= h {
+		nh = h * edge / w
+	} else {
+		nw = w * edge / h
+	}
+	if nw < 1 {
+		nw = 1
+	}
+	if nh < 1 {
+		nh = 1
+	}
+
+	dst := image.NewRGBA(image.Rect(0, 0, nw, nh))
+	xdraw.CatmullRom.Scale(dst, dst.Bounds(), src, b, xdraw.Over, nil)
+
+	var buf bytes.Buffer
+	if err := jpeg.Encode(&buf, dst, &jpeg.Options{Quality: 85}); err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
 
 func albumCoverURL(albumId string) string { return "/api/album/" + albumId + "/image" }
 func trackCoverURL(trackId string) string { return "/api/track/" + trackId + "/cover" }
@@ -104,6 +196,7 @@ func (repo *AlbumsRepository) SyncAlbumCoverToTracks(albumId string) {
 	if err != nil {
 		return
 	}
+	image = downscaleCover(image)
 
 	var tracks []models.Track
 	repo.DB.Where("album_id = ?", albumId).Find(&tracks)
@@ -127,6 +220,7 @@ func (repo *AlbumsRepository) SyncAlbumCoverToTrack(trackId string) {
 	if err != nil {
 		return
 	}
+	image = downscaleCover(image)
 
 	repo.syncCoverToTrack(track, *track.AlbumId, image)
 }
