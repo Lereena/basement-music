@@ -141,8 +141,12 @@ class AppRouter {
                     ),
                     GoRoute(
                       path: "album/:id/edit",
-                      pageBuilder: (_, state) =>
-                          MaterialPage(child: AlbumEditPage(albumId: state.pathParameters['id']!)),
+                      pageBuilder: (_, state) => MaterialPage(
+                        child: AlbumEditPage(
+                          albumId: state.pathParameters['id']!,
+                          isNew: state.uri.queryParameters['new'] == '1',
+                        ),
+                      ),
                     ),
                   ],
                 ),

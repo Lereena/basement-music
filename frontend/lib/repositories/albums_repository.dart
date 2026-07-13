@@ -90,8 +90,8 @@ class AlbumsRepository {
     await _refreshTracks();
   }
 
-  Future<List<ReleaseGroupCandidate>> searchCover(String albumId, {String query = ''}) {
-    return _restClient.searchAlbumCover(id: albumId, query: query);
+  Future<List<ReleaseGroupCandidate>> searchCover(String albumId, {String query = '', String artist = ''}) {
+    return _restClient.searchAlbumCover(id: albumId, query: query, artist: artist);
   }
 
   Future<Album> applyCover(String albumId, String mbid) async {

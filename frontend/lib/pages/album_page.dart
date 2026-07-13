@@ -5,7 +5,6 @@ import 'package:basement_music/repositories/albums_repository.dart';
 import 'package:basement_music/routing/routes.dart';
 import 'package:basement_music/utils/horizontal_space_reducer.dart';
 import 'package:basement_music/widgets/app_bar.dart';
-import 'package:basement_music/widgets/dialogs/album_cover_dialog.dart';
 import 'package:basement_music/widgets/track_card.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -53,15 +52,6 @@ class _AlbumPage extends StatelessWidget {
   }
 
   List<Widget> _actions(BuildContext context, Album album) => [
-    IconButton(
-      icon: const Icon(Icons.image_outlined),
-      tooltip: 'Fetch cover',
-      onPressed: () => AlbumCoverDialog.show(
-        context: context,
-        album: album,
-        onApplied: () => context.read<AlbumCubit>().loadAlbum(),
-      ),
-    ),
     IconButton(icon: const Icon(Icons.edit_outlined), onPressed: () => context.go(RouteName.albumEdit(albumId))),
     IconButton(icon: const Icon(Icons.delete_outline), onPressed: () => _confirmDelete(context)),
   ];
@@ -79,8 +69,11 @@ class _AlbumPage extends StatelessWidget {
         ],
       ),
     );
+
     if (confirmed != true) return;
+
     await cubit.deleteAlbum();
+
     if (context.mounted) context.pop();
   }
 }

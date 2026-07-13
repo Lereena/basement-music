@@ -218,6 +218,7 @@ abstract class RestClient {
   Future<List<ReleaseGroupCandidate>> searchAlbumCover({
     @Path('id') required String id,
     @Query('query') required String query,
+    @Query('artist') required String artist,
   });
 
   @POST('/album/{id}/cover/apply')

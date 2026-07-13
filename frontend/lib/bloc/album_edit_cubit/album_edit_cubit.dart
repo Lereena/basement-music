@@ -1,8 +1,5 @@
 import 'dart:typed_data';
 
-import 'package:bloc/bloc.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
-
 import 'package:basement_music/logger.dart';
 import 'package:basement_music/models/album.dart';
 import 'package:basement_music/models/artist.dart';
@@ -10,6 +7,8 @@ import 'package:basement_music/models/track.dart';
 import 'package:basement_music/repositories/albums_repository.dart';
 import 'package:basement_music/repositories/artists_repository.dart';
 import 'package:basement_music/repositories/repositories.dart';
+import 'package:bloc/bloc.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'album_edit_cubit.freezed.dart';
 part 'album_edit_state.dart';
@@ -19,12 +18,14 @@ class AlbumEditCubit extends Cubit<AlbumEditState> {
   final ArtistsRepository artistsRepository;
   final TracksRepository tracksRepository;
   final String albumId;
+  final bool isNew;
 
   AlbumEditCubit({
     required this.albumsRepository,
     required this.artistsRepository,
     required this.tracksRepository,
     required this.albumId,
+    this.isNew = false,
   }) : super(const AlbumEditState());
 
   Future<void> startEditing() async {
@@ -39,7 +40,7 @@ class AlbumEditCubit extends Cubit<AlbumEditState> {
         state.copyWith(
           loading: false,
           album: album,
-          title: album.title,
+          title: isNew ? '' : album.title,
           year: album.year?.toString() ?? '',
           allTracks: List.of(tracksRepository.items),
           allArtists: List.of(artistsRepository.items),
@@ -79,6 +80,15 @@ class AlbumEditCubit extends Cubit<AlbumEditState> {
 
   void pickCover(Uint8List bytes, String filename) {
     emit(state.copyWith(pickedCoverBytes: bytes, pickedCoverFilename: filename));
+  }
+
+  Future<void> reloadCover() async {
+    try {
+      final album = await albumsRepository.getAlbum(albumId);
+      emit(state.copyWith(album: album, pickedCoverBytes: null, pickedCoverFilename: null));
+    } catch (e) {
+      logger.e('Error reloading album cover: $e');
+    }
   }
 
   Future<void> save() async {

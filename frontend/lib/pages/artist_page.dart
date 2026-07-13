@@ -62,9 +62,9 @@ class _ArtistView extends StatelessWidget {
 
   Future<void> _createAlbum(BuildContext context) async {
     final cubit = context.read<ArtistCubit>();
-    final album = await context.read<AlbumsRepository>().createAlbum('New album', [artist.id]);
+    final album = await context.read<AlbumsRepository>().createAlbum('Untitled', [artist.id]);
     if (context.mounted) {
-      await context.push(RouteName.albumEdit(album.id));
+      await context.push(RouteName.albumEdit(album.id, isNew: true));
       cubit.loadArtist();
     }
   }
