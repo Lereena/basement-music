@@ -257,7 +257,12 @@ class _AlbumCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return GestureDetector(
-      onTap: () => context.push(RouteName.album(album.id)),
+      onTap: () async {
+        final cubit = context.read<ArtistCubit>();
+        await context.push(RouteName.album(album.id));
+
+        cubit.loadArtist();
+      },
       child: Container(
         width: 130,
         margin: const EdgeInsets.only(right: AppSpacing.md),

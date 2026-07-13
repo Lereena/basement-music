@@ -78,7 +78,11 @@ class _PlaylistPage extends StatelessWidget {
     Builder(
       builder: (context) {
         return IconButton(
-          onPressed: () => context.go(RouteName.playlistEdit(playlistId)),
+          onPressed: () async {
+            final cubit = context.read<PlaylistCubit>();
+            await context.push(RouteName.playlistEdit(playlistId));
+            cubit.load();
+          },
           icon: const Icon(Icons.edit_outlined),
         );
       },

@@ -52,7 +52,14 @@ class _AlbumPage extends StatelessWidget {
   }
 
   List<Widget> _actions(BuildContext context, Album album) => [
-    IconButton(icon: const Icon(Icons.edit_outlined), onPressed: () => context.go(RouteName.albumEdit(albumId))),
+    IconButton(
+      icon: const Icon(Icons.edit_outlined),
+      onPressed: () async {
+        final cubit = context.read<AlbumCubit>();
+        await context.push(RouteName.albumEdit(albumId));
+        cubit.loadAlbum();
+      },
+    ),
     IconButton(icon: const Icon(Icons.delete_outline), onPressed: () => _confirmDelete(context)),
   ];
 
