@@ -79,6 +79,7 @@ class AppRouter {
                 : LyricsSource.server;
 
             return MaterialPage(
+              key: ValueKey(state.uri.toString()),
               child: BlocProvider(
                 create: (context) => TimingEditorCubit(
                   context.read<LyricsRepository>(),
@@ -113,35 +114,50 @@ class AppRouter {
                   routes: [
                     GoRoute(
                       path: "playlist/:id",
-                      pageBuilder: (_, state) =>
-                          MaterialPage(child: PlaylistPage(playlistId: state.pathParameters['id']!)),
+                      pageBuilder: (_, state) => MaterialPage(
+                        key: ValueKey(state.uri.toString()),
+                        child: PlaylistPage(playlistId: state.pathParameters['id']!),
+                      ),
                     ),
                     GoRoute(
                       path: "playlist/:id/edit",
-                      pageBuilder: (_, state) =>
-                          MaterialPage(child: PlaylistEditPage(playlistId: state.pathParameters['id']!)),
+                      pageBuilder: (_, state) => MaterialPage(
+                        key: ValueKey(state.uri.toString()),
+                        child: PlaylistEditPage(playlistId: state.pathParameters['id']!),
+                      ),
                     ),
                     GoRoute(
                       path: "artist/:id",
-                      pageBuilder: (_, state) => MaterialPage(child: ArtistPage(artistId: state.pathParameters['id']!)),
+                      pageBuilder: (_, state) => MaterialPage(
+                        key: ValueKey(state.uri.toString()),
+                        child: ArtistPage(artistId: state.pathParameters['id']!),
+                      ),
                     ),
                     GoRoute(
                       path: "artist/:id/tracks",
-                      pageBuilder: (_, state) =>
-                          MaterialPage(child: ArtistTracksPage(artistId: state.pathParameters['id']!)),
+                      pageBuilder: (_, state) => MaterialPage(
+                        key: ValueKey(state.uri.toString()),
+                        child: ArtistTracksPage(artistId: state.pathParameters['id']!),
+                      ),
                     ),
                     GoRoute(
                       path: "artist/:id/edit",
-                      pageBuilder: (_, state) =>
-                          MaterialPage(child: ArtistEditPage(artistId: state.pathParameters['id']!)),
+                      pageBuilder: (_, state) => MaterialPage(
+                        key: ValueKey(state.uri.toString()),
+                        child: ArtistEditPage(artistId: state.pathParameters['id']!),
+                      ),
                     ),
                     GoRoute(
                       path: "album/:id",
-                      pageBuilder: (_, state) => MaterialPage(child: AlbumPage(albumId: state.pathParameters['id']!)),
+                      pageBuilder: (_, state) => MaterialPage(
+                        key: ValueKey(state.uri.toString()),
+                        child: AlbumPage(albumId: state.pathParameters['id']!),
+                      ),
                     ),
                     GoRoute(
                       path: "album/:id/edit",
                       pageBuilder: (_, state) => MaterialPage(
+                        key: ValueKey(state.uri.toString()),
                         child: AlbumEditPage(
                           albumId: state.pathParameters['id']!,
                           isNew: state.uri.queryParameters['new'] == '1',
