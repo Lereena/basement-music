@@ -3,7 +3,7 @@
 
 # Basement
 
-Music player with the ability to download tracks from YouTube
+Music player for Web, Android and iOS
 
 ---
 
