@@ -34,6 +34,22 @@ func (ldw *LocalDirectoryWorker) ScanMusicDirectory() {
 		return
 	}
 
+	// Tracks are identified by dash-canonical url, so two files for the same song
+	// that differ only by dash character resolve to a single track. Matching is
+	// done in Go against tracks loaded once up front — a per-file regexp match in
+	// SQL cannot use an index, so it would rescan the whole table for every file.
+	// Loaded before artist_tracks is cleared so a load failure leaves the current
+	// artist bindings intact.
+	var allTracks []models.Track
+	if err := ldw.musicRepo.DB.Find(&allTracks).Error; err != nil {
+		log.Printf("Error loading tracks, aborting scan: %v", err)
+		return
+	}
+	tracksByCanonUrl := make(map[string]models.Track, len(allTracks))
+	for _, t := range allTracks {
+		tracksByCanonUrl[canonicalizeDashes(t.Url)] = t
+	}
+
 	// Rebuild of artist_tracks is idempotent (CreateArtist is find-or-create).
 	// Artists themselves are durable now — never wiped — so curated data
 	// (descriptions/images/album links) survives restarts and rescans.
@@ -42,17 +58,30 @@ func (ldw *LocalDirectoryWorker) ScanMusicDirectory() {
 		log.Printf("Error clearing artist_tracks table: %v", err)
 	}
 
+	// seen guards against processing the second dash-variant file twice within
+	// one scan.
+	seen := map[string]bool{}
 	for _, f := range files {
 		if f.IsDir() {
 			continue
 		}
-		result := ldw.musicRepo.DB.Where("Url = ?", f.Name()).Limit(1).Find(&models.Track{})
-		if result.RowsAffected == 0 {
+		canonUrl := canonicalizeDashes(f.Name())
+		if seen[canonUrl] {
+			log.Printf("Skipping duplicate song file: %s", f.Name())
+			continue
+		}
+		seen[canonUrl] = true
+
+		track, ok := tracksByCanonUrl[canonUrl]
+		if !ok {
 			ldw.saveTrack(f.Name())
+			if err := ldw.musicRepo.DB.Where("url = ?", f.Name()).First(&track).Error; err != nil {
+				log.Printf("Track for file '%s' missing after save, skipping: %v", f.Name(), err)
+				continue
+			}
+			tracksByCanonUrl[canonUrl] = track
 		}
 
-		track := models.Track{}
-		ldw.musicRepo.DB.Where("Url = ?", f.Name()).First(&track)
 		ldw.handleArtists(track.Artist, track.Id)
 		ldw.handleAlbum(track)
 		ldw.handleCover(track.Id)
