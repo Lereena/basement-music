@@ -24,21 +24,19 @@ class AudioPlayerHandler extends BaseAudioHandler {
     required this.cacheRepository,
   });
 
-  final _audioPlayer = AudioPlayer()..setAudioContext(
-    AudioContext(
-      iOS: AudioContextIOS(
-        category: AVAudioSessionCategory.playback,
-        options: {},
+  final _audioPlayer = AudioPlayer()
+    ..setAudioContext(
+      AudioContext(
+        iOS: AudioContextIOS(category: AVAudioSessionCategory.playback, options: {}),
+        android: AudioContextAndroid(
+          isSpeakerphoneOn: false,
+          stayAwake: true,
+          contentType: AndroidContentType.music,
+          usageType: AndroidUsageType.media,
+          audioFocus: AndroidAudioFocus.gain,
+        ),
       ),
-      android: AudioContextAndroid(
-        isSpeakerphoneOn: false,
-        stayAwake: true,
-        contentType: AndroidContentType.music,
-        usageType: AndroidUsageType.media,
-        audioFocus: AndroidAudioFocus.gain,
-      ),
-    ),
-  );
+    );
 
   Stream<void> get onPlayerComplete => _audioPlayer.onPlayerComplete;
   Stream<Duration> get onPositionChanged => _audioPlayer.onPositionChanged;
@@ -166,7 +164,6 @@ class AudioPlayerHandler extends BaseAudioHandler {
 
     late final Track nextTrack;
     if (settingsRepository.repeat) {
-      stop();
       nextTrack =
           availableTracks.firstWhereOrNull((track) => track.id == mediaItem.valueOrNull!.id) ?? availableTracks.first;
     } else {
@@ -196,18 +193,21 @@ class AudioPlayerHandler extends BaseAudioHandler {
     }
 
     late final Track nextTrack;
-    if (!settingsRepository.repeat) {
-      if (settingsRepository.shuffle) {
-        final nextTrackPosition = _shuffledNext(
-          availableTracks,
-          availableTracks.indexWhere((track) => track.id == mediaItem.value?.id),
-        );
-        nextTrack = availableTracks[nextTrackPosition];
-      } else {
-        final lastTrackPosition = availableTracks.indexWhere((track) => track.id == mediaItem.value?.id);
-        final previousTrackPosition = lastTrackPosition > 0 ? lastTrackPosition - 1 : availableTracks.length - 1;
-        nextTrack = availableTracks[previousTrackPosition];
-      }
+    if (settingsRepository.repeat) {
+      // Repeat replays the current track, matching skipToNext. Without this
+      // branch nextTrack stays unassigned and the late field throws.
+      nextTrack =
+          availableTracks.firstWhereOrNull((track) => track.id == mediaItem.valueOrNull!.id) ?? availableTracks.first;
+    } else if (settingsRepository.shuffle) {
+      final nextTrackPosition = _shuffledNext(
+        availableTracks,
+        availableTracks.indexWhere((track) => track.id == mediaItem.value?.id),
+      );
+      nextTrack = availableTracks[nextTrackPosition];
+    } else {
+      final lastTrackPosition = availableTracks.indexWhere((track) => track.id == mediaItem.value?.id);
+      final previousTrackPosition = lastTrackPosition > 0 ? lastTrackPosition - 1 : availableTracks.length - 1;
+      nextTrack = availableTracks[previousTrackPosition];
     }
 
     addMediaItem(nextTrack);
